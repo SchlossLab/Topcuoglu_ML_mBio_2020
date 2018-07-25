@@ -1,4 +1,4 @@
-%matplotlib inline
+
 
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
@@ -113,28 +113,23 @@ for epoch in range(n_epochs):
     history["accuracy_val"].append(100 * correct_val / len(prediction_val))
     print("Loss, accuracy, val loss, val acc at epoch", epoch + 1,history["loss"][-1], history["loss_val"][-1], history["accuracy"][-1], history["accuracy_val"][-1])
 
-print("Best accuracy was")
 
-
+##if you want to plot the accuracy
 plt.plot(history['accuracy'])
 plt.plot(history['accuracy_val'])
 plt.title('Model accuracy')
 plt.ylabel('accuracy')
 plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
-plt.show()
+plt.savefig('results/figures/accuracy_sequential.png')
+#plt.show()
 
-plt.plot(history['loss'])
-plt.plot(history['loss_val'])
-plt.title('Model loss')
-plt.ylabel('loss')
-plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
-plt.show()
-
-
-
-import readline
-with open('pyhistory.txt', 'w') as f:
-    for i in range(readline.get_current_history_length()):
-        f.write(readline.get_history_item(i + 1) + "\n")
+##if you want to plot the loss
+#plt.plot(history['loss'])
+#plt.plot(history['loss_val'])
+#plt.title('Model loss')
+#plt.ylabel('loss')
+#plt.xlabel('epoch')
+#plt.legend(['train', 'test'], loc='upper left')
+#plt.savefig('results/figures/loss_sequential.png')
+#plt.show()
