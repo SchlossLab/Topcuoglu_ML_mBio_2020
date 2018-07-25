@@ -21,8 +21,8 @@
 * Python 3.6.5
 * Latest PyTorch (pip3 install torch torchvision)
 
-#### Clone the repository
-
+#### Run the python code you choose
 ```
 git clone https://github.com/BTopcuoglu/DeepLearning
+python3 code/pyTorch_baxter_feed_forward.py
 ```
