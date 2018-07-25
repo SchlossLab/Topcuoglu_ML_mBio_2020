@@ -24,5 +24,8 @@
 #### Run the python code you choose
 ```
 git clone https://github.com/BTopcuoglu/DeepLearning
+# If using feed forward neural network model
 python3 code/pyTorch_baxter_feed_forward.py
+# If using custom made sequential model
+python3 code/pyTorch_baxter_sequential.py
 ```
