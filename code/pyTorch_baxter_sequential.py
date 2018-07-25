@@ -1,59 +1,61 @@
-
-
+#load modules
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 from sympy import *
 import matplotlib.pyplot as plt
 import operator
-
 from IPython.core.display import display
-
 import torch
 from torch.autograd import Variable
 import torch.utils.data as data_utils
 import torch.nn.init as init
-
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
-
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-
-
 init_printing(use_unicode=True)
 
-
-shared = pd.read_table("/Users/btopcuoglu/Documents/new_project/data/mothur/glne007.final.opti_mcc.unique_list.0.03.subsample.0.03.filter.shared")
+#read in the data
+shared = pd.read_table("data/glne007.final.opti_mcc.unique_list.0.03.subsample.0.03.filter.shared")
+meta = pd.read_table("data/metadata.tsv")
+# check the data
 shared.head()
-meta = pd.read_table("/Users/btopcuoglu/Documents/new_project/data/mothur/metadata.tsv")
 meta.head()
+#only keep sample and diagnosis in metadata
 meta = meta[['sample','dx']]
+##rename "group" column as "sample"
 shared = shared.rename(index=str, columns={"Group":"sample"})
-
+#merge shared and metadata on the sample column
 data=pd.merge(meta,shared,on=['sample'])
+#remove adenoma samples
 data= data[data.dx.str.contains("adenoma") == False]
+# x is defined. only has OTUs
 x = data.drop(["sample", "dx", "numOtus", "label"], axis=1)
 diagnosis = { "cancer":1, "normal":0}
+# y is defined. only has diagnosis
 y = data["dx"].replace(diagnosis)
+#drop NA elements
 y.dropna()
 x.dropna()
+# make sure x and y shapes match
 y = np.expand_dims(y, axis=1)
+#split the dataset to training and test sets
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.5, random_state=82089)
 
-
+#If you want to transform the data
 ##scaler = StandardScaler()
 ##transformed = scaler.fit_transform(x_train)
 ##train = data_utils.TensorDataset(torch.from_numpy(transformed).float(),
 ##                                 torch.from_numpy(y_train).float())
 ##dataloader = data_utils.DataLoader(train, batch_size=233, shuffle=False)
 
-
+## data is converted to tensor
 x_train = x_train.values
 train = data_utils.TensorDataset(torch.from_numpy(x_train).float(), torch.from_numpy(y_train).float())
-
+## dataloader is defined with the training dataset
 dataloader = data_utils.DataLoader(train, batch_size=233, shuffle=False)
-
+#define model
 def create_model(layer_dims):
     model = torch.nn.Sequential()
     for idx, dim in enumerate(layer_dims):
@@ -67,14 +69,14 @@ def create_model(layer_dims):
             model.add_module("relu" + str(idx), torch.nn.ReLU())
     return model
 
-##In a similar manor to the train set, let's now scale and prepare a test set to let us know how our predictions are going.
-
+# define the test_set
 #scaler = StandardScaler()
 #transformed = scaler.fit_transform(x_test)
 x_test = x_test.values
 #y_test = y_test.values
 test_set = torch.from_numpy(x_test).float()
 test_valid = torch.from_numpy(y_test).float()
+
 ## Create model and hyper parameters
 dim_in = x_train.shape[1]
 dim_out = 1
