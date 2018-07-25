@@ -3,7 +3,6 @@ import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 from sympy import *
 import matplotlib.pyplot as plt
-%matplotlib inline
 import operator
 from IPython.core.display import display
 import torch
@@ -116,12 +115,13 @@ plt.title('Model accuracy')
 plt.ylabel('accuracy')
 plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
-plt.show()
-
+plt.savefig('results/figures/accuracy_feed_forward.png')
+#plt.show()
 plt.plot(history['loss'])
 plt.plot(history['loss_val'])
 plt.title('Model loss')
 plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
-plt.show()
+#plt.show()
+plt.savefig('results/figures/loss_feed_forward.png')
