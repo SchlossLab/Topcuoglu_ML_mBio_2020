@@ -136,7 +136,7 @@ for epoch in range(n_epochs):
 x = history["TPR"]
 y = history["TNR"]
 plt.plot(x, y)
-plt.xlabel('False Positive Rate')
+plt.xlabel('True Negative Rate')
 plt.ylabel('True Positive Rate')
 plt.title('ROC')
 plt.show()
