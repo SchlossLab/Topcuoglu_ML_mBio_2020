@@ -17,7 +17,7 @@ from sklearn.preprocessing import StandardScaler
 init_printing(use_unicode=True)
 
 ##read in the data
-shared = pd.read_table("data/glne007.final.opti_mcc.unique_list.0.03.subsample.0.03.filter.shared")
+shared = pd.read_table("data/baxter.0.03.subsample.shared")
 shared.head()
 meta = pd.read_table("data/metadata.tsv")
 ##check and visualize the data
@@ -76,12 +76,12 @@ hidden_size = 20
 num_classes = 1
 model = NeuralNet(input_size, hidden_size, num_classes)
 learning_rate = 0.0007
-n_epochs = 300
+n_epochs = 200
 ## define optimizer and loss function
 loss_fn = torch.nn.MSELoss(size_average=False)
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 ## run the model
-history = { "loss": [], "accuracy": [], "loss_val": [], "accuracy_val": [] }
+history = { "loss": [], "accuracy": [], "loss_val": [], "accuracy_val": [], "TP":[],"TN":[],"FP":[],"FN":[], "TPR":[], "TNR":[] }
 for epoch in range(n_epochs):
     loss = None
     for idx, (minibatch, target) in enumerate(dataloader):
@@ -99,6 +99,19 @@ for epoch in range(n_epochs):
         # This can be uncommented for a per mini batch feedback
         #history["loss_val"].append(loss_val.data[0])
         #history["accuracy_val"].append(100 * correct_val / len(prediction_val))
+        TP = 0
+        FP = 0
+        TN = 0
+        FN = 0
+        for i in range(len(prediction)):
+            if target.numpy()[i]==prediction[i]==1:
+                TP += 1
+            if prediction[i]==1 and target.numpy()[i]==0:
+                FP += 1
+            if target.numpy()[i]==prediction[i]==0:
+                TN += 1
+            if prediction[i]==0 and target.numpy()[i]==1:
+                FN += 1
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
@@ -106,18 +119,37 @@ for epoch in range(n_epochs):
     history["accuracy"].append(100 * correct / len(prediction))
     history["loss_val"].append(loss_val.data[0])
     history["accuracy_val"].append(100 * correct_val / len(prediction_val))
+    history["TP"].append(TP)
+    history["TN"].append(TN)
+    history["FP"].append(FP)
+    history["FN"].append(FN)
+    if (TP+FN) > 0:
+        history["TPR"].append(TP/(TP+FN))
+    if (FP+TN) > 0:
+        history["TNR"].append(TN/(TN+FP))
     print("Loss, accuracy, val loss, val acc at epoch", epoch + 1,history["loss"][-1],
           history["accuracy"][-1], history["loss_val"][-1], history["accuracy_val"][-1] )
 
+
+
+##Plot ROC
+x = history["TPR"]
+y = history["TNR"]
+plt.plot(x, y)
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('ROC')
+plt.show()
+
 ##if you want to plot the accuracy
-#plt.plot(history['accuracy'])
-#plt.plot(history['accuracy_val'])
-#plt.title('Model accuracy')
-#plt.ylabel('accuracy')
-#plt.xlabel('epoch')
-#plt.legend(['train', 'test'], loc='upper left')
+plt.plot(history['accuracy'])
+plt.plot(history['accuracy_val'])
+plt.title('Model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
 #plt.savefig('results/figures/accuracy_feed_forward.png')
-#plt.show()
+plt.show()
 
 ##if you want to plot the loss
 plt.plot(history['loss'])
@@ -126,5 +158,5 @@ plt.title('Model loss')
 plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
-plt.savefig('results/figures/loss_feed_forward.png')
-#plt.show()
+#plt.savefig('results/figures/loss_feed_forward.png')
+plt.show()
