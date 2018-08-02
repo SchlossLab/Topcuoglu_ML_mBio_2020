@@ -72,7 +72,7 @@ class NeuralNet(nn.Module):
 
 ## Create model and hyper parameters
 input_size = x_train.shape[1]
-hidden_size = 20
+hidden_size = 5
 num_classes = 1
 model = NeuralNet(input_size, hidden_size, num_classes)
 learning_rate = 0.0007
