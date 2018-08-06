@@ -20,12 +20,17 @@
 #### Dependencies and locations
 * Python 3.6.5
 * Latest PyTorch (pip3 install torch torchvision)
-
+* Latest Sklearn
 #### Run the python code you choose
 ```
 git clone https://github.com/BTopcuoglu/DeepLearning
+
 # If using feed forward neural network model
 python3 code/pyTorch_baxter_feed_forward.py
+
 # If using custom made sequential model
 python3 code/pyTorch_baxter_sequential.py
+
+# If using Sklearn modeling for Logistic Regression, Multi-Layer Perceptron Neural Network and Random Forest 
+python3 code/sklearn_baxter.py
 ```
