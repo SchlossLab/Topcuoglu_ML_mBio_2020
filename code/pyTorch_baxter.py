@@ -146,3 +146,5 @@ len(pred)
 pred = pred.data.numpy()
 print(accuracy_score(y_test, pred))
 print(confusion_matrix(y_test, pred))
+
+## Evaluate over iterations
