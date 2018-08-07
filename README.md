@@ -25,11 +25,8 @@
 ```
 git clone https://github.com/BTopcuoglu/DeepLearning
 
-# If using feed forward neural network model
-python3 code/pyTorch_baxter_feed_forward.py
-
-# If using custom made sequential model
-python3 code/pyTorch_baxter_sequential.py
+# If using feed forward neural network model with PyTorch
+python3 code/pyTorch_baxter.py
 
 # If using Sklearn modeling for Logistic Regression, Multi-Layer Perceptron Neural Network and Random Forest 
 python3 code/sklearn_baxter.py
