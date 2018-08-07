@@ -1,3 +1,5 @@
+## https://www.kaggle.com/kiranscaria/titanic-pytorch
+## Add modules that are necessary
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 from sympy import *
@@ -14,127 +16,133 @@ from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 init_printing(use_unicode=True)
+import pandas as pd
+import numpy as np
+from torch import nn
+import torch
+from torch.autograd import Variable
+from torch.utils.data import DataLoader, Dataset, TensorDataset
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
+import torch.nn.functional as F
+from sklearn.metrics import confusion_matrix
 
-shared = pd.read_table("/Users/btopcuoglu/Documents/new_project/data/mothur/glne007.final.opti_mcc.unique_list.0.03.subsample.0.03.filter.shared")
+
+##read in the data
+shared = pd.read_table("data/baxter.0.03.subsample.shared")
 shared.head()
-meta = pd.read_table("/Users/btopcuoglu/Documents/new_project/data/mothur/metadata.tsv")
+meta = pd.read_table("data/metadata.tsv")
+##check and visualize the data
 meta.head()
+shared.head()
+## remove unnecessary columns from meta
 meta = meta[['sample','dx']]
+##rename the column name "Group" to match the "sample" in meta
 shared = shared.rename(index=str, columns={"Group":"sample"})
+##merge the 2 datasets on sample
 data=pd.merge(meta,shared,on=['sample'])
+##remove adenoma samples
 data= data[data.dx.str.contains("adenoma") == False]
+##drop all except OTU columns for x
 x = data.drop(["sample", "dx", "numOtus", "label"], axis=1)
+## Cancer =1 Normal =0
 diagnosis = { "cancer":1, "normal":0}
+##generate y which only has diagnosis as 0 and 1
 y = data["dx"].replace(diagnosis)
+##drop if NA elements
 y.dropna()
 x.dropna()
+##split the data to generate training and test sets %80-20
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=82089)
 
-scaler = StandardScaler()
-transformed = scaler.fit_transform(x_train)
-train = data_utils.TensorDataset(torch.from_numpy(transformed).float(),
-                                 torch.from_numpy(y_train.as_matrix()).float())
-dataloader = data_utils.DataLoader(train, batch_size=233, shuffle=False)
 
-def create_model(layer_dims):
-    model = torch.nn.Sequential()
-    for idx, dim in enumerate(layer_dims):
-        if (idx < len(layer_dims) - 1):
-            module = torch.nn.Linear(dim, layer_dims[idx + 1])
-            init.xavier_normal(module.weight)
-            model.add_module("linear" + str(idx), module)
-        else:
-            model.add_module("sig" + str(idx), torch.nn.Sigmoid())
-        if (idx < len(layer_dims) - 2):
-            model.add_module("relu" + str(idx), torch.nn.ReLU())
-    return model
-
-scaler = StandardScaler()
-transformed = scaler.fit_transform(x_test)
-test_set = torch.from_numpy(transformed).float()
-test_valid = torch.from_numpy(y_test.as_matrix()).float()
-
-## Create model and hyper parameters
-dim_in = x_train.shape[1]
-dim_out = 1
-layer_dims = [dim_in, 20, 10, dim_out]
-
-model = create_model(layer_dims)
-
-loss_fn = torch.nn.MSELoss(size_average=False)
-learning_rate = 0.0007
-n_epochs = 300
-optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+class Net(nn.Module):
+    def __init__(self):
+        super(Net, self).__init__()
+        self.fc1 = nn.Linear(6920, 100)
+        self.fc2 = nn.Linear(100, 2)
+    def forward(self, x):
+        x = self.fc1(x)
+        x = F.dropout(x, p=0.1)
+        x = F.relu(x)
+        x = self.fc2(x)
+        x = F.sigmoid(x)
+        return x
 
 
-history = { "loss": [], "accuracy": [], "loss_val": [], "accuracy_val": [], "TP":[],"TN":[],"FP":[],"FN":[], "TPR":[], "FPR":[] }
-for epoch in range(n_epochs):
-    loss = None
-    for idx, (minibatch, target) in enumerate(dataloader):
-        y_pred = model(Variable(minibatch))
-        loss = loss_fn(y_pred, Variable(target.float().view(-1,1)))
-        prediction = [1 if x > 0.5 else 0 for x in y_pred.data.numpy()]
-        correct = (prediction == target.numpy()).sum()
-            # This can be uncommented for a per mini batch feedback
-        #history["loss"].append(loss.data[0])
-        #history["accuracy"].append(100 * correct / len(prediction))
-        y_val_pred = model(Variable(test_set))
-        loss_val = loss_fn(y_val_pred, Variable(test_valid.float().view(-1,1)))
-        prediction_val = [1 if x > 0.5 else 0 for x in y_val_pred.data.numpy()]
-        correct_val = (prediction_val == test_valid.numpy()).sum()
-        # This can be uncommented for a per mini batch feedback
-        #history["loss_val"].append(loss_val.data[0])
-        #history["accuracy_val"].append(100 * correct_val / len(prediction_val))
-        TP = 0
-        FP = 0
-        TN = 0
-        FN = 0
-        for i in range(len(prediction)):
-            if target.numpy()[i]==prediction[i]==1:
-                TP += 1
-            if prediction[i]==1 and target.numpy()[i]==0:
-                FP += 1
-            if target.numpy()[i]==prediction[i]==0:
-                TN += 1
-            if prediction[i]==0 and target.numpy()[i]==1:
-                FN += 1
+
+net = Net()
+
+batch_size = 50
+num_epochs = 50
+learning_rate = 0.001
+batch_no = len(x_train) // batch_size
+
+
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(net.parameters(), lr=learning_rate)
+
+from sklearn.utils import shuffle
+from torch.autograd import Variable
+from scipy import interp
+from sklearn.metrics import (accuracy_score, confusion_matrix, classification_report, roc_curve, auc)
+
+
+pyTorch_plot = plt.figure()
+tprs = []
+aucs = []
+mean_fpr = np.linspace(0, 1, 100)
+for epoch in range(num_epochs):
+    x_train, y_train = shuffle(x_train, y_train)
+    # Mini batch learning
+    for i in range(batch_no):
+        start = i * batch_size
+        end = start + batch_size
+        x_var = Variable(torch.FloatTensor(x_train.values[start:end]))
+        y_var = Variable(torch.LongTensor(y_train.values[start:end]))
+        # Forward + Backward + Optimize
+        ypred_var = net(x_var)
+        loss =criterion(ypred_var, y_var)
+        correct_num = 0
+        ## The outputs of the model (ypred_var) are energies for the 10 classes. Higher the energy for a class, the more the network thinks that the image is of the particular class. So, let’s get the index of the highest energy:
+        values, labels = torch.max(ypred_var, 1)
+        correct_num = np.sum(labels.data.numpy() == y_var.numpy())
+        fpr, tpr, thresholds = roc_curve(y_var.numpy(), labels.data.numpy())
+        tprs.append(interp(mean_fpr, fpr, tpr))
+        tprs[-1][0] = 0.0
+        roc_auc = auc(fpr, tpr)
+        aucs.append(roc_auc)
+        #plt.plot(fpr, tpr, lw=1, alpha=0.3, label='ROC fold %d (AUC = %0.2f)' % (epoch, roc_auc))
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-    history["TP"].append(TP)
-    history["TN"].append(TN)
-    history["FP"].append(FP)
-    history["FN"].append(FN)
-    history["TPR"].append(TP/(TP+FN))
-    history["FPR"].append(FP/(TN+FP))
-    history["loss"].append(loss.data[0])
-    history["accuracy"].append(100 * correct / len(prediction))
-    history["loss_val"].append(loss_val.data[0])
-    history["accuracy_val"].append(100 * correct_val / len(prediction_val))
-    print("Loss, accuracy, val loss, val acc at epoch", epoch + 1, history["loss"][-1], history["accuracy"][-1], history["loss_val"][-1], history["accuracy_val"][-1] )
+        print('Epoch [%d], Loss:%.4f, Accuracy:%.4f' % (epoch, loss.data[0], correct_num/len(labels)))
 
-plt.plot(history['accuracy'])
-plt.plot(history['accuracy_val'])
-plt.title('Model accuracy')
-plt.ylabel('accuracy')
-plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
-plt.show()
-
-plt.plot(history['loss'])
-plt.plot(history['loss_val'])
-plt.title('Model loss')
-plt.ylabel('loss')
-plt.xlabel('epoch')
-plt.legend(['train', 'test'], loc='upper left')
-plt.show()
-
-# x axis values
-x = history["FPR"]
-# corresponding y axis values
-y = history["TPR"]
-plt.plot(x, y)
+plt.plot([0, 1], [0, 1], linestyle='--', color='r', label='Luck', alpha=.8)
+mean_tpr = np.mean(tprs, axis=0)
+mean_tpr[-1] = 1.0
+mean_auc = auc(mean_fpr, mean_tpr)
+std_auc = np.std(aucs)
+plt.plot(mean_fpr, mean_tpr, color='b', label=r'Mean ROC (AUC = %0.2f $\pm$ %0.2f)' % (mean_auc, std_auc), lw=2, alpha=.8)
+std_tpr = np.std(tprs, axis=0)
+tprs_upper = np.minimum(mean_tpr + std_tpr, 1)
+tprs_lower = np.maximum(mean_tpr - std_tpr, 0)
+plt.fill_between(mean_fpr, tprs_lower, tprs_upper, color='grey', alpha=.2, label=r'$\pm$ 1 std. dev.')
+plt.xlim([-0.05, 1.05])
+plt.ylim([-0.05, 1.05])
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
-plt.title('ROC')
-plt.show()
+plt.title('PyTorch Neural Network ROC\n')
+plt.legend(loc="lower right", fontsize=8)
+#plt.show()
+pyTorch_plot.savefig('results/figures/pyTorch_Baxter.png', dpi=1000)
+
+# Evaluate the model
+net.eval()
+pred = net(torch.from_numpy(x_test.values).float())
+pred = torch.max(pred,1)[1]
+len(pred)
+pred = pred.data.numpy()
+print(accuracy_score(y_test, pred))
+print(confusion_matrix(y_test, pred))

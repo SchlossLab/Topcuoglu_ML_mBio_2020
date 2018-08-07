@@ -105,7 +105,7 @@ mean_fpr = np.linspace(0, 1, 100)
 X=x_train.values
 Y=y_train.values
 
-
+logistic_plot = plt.figure()
 i = 0
 for train, test in cv.split(X,Y):
     probas_ = logreg.fit(X[train], Y[train]).predict_proba(X[test])
@@ -134,8 +134,9 @@ plt.ylim([-0.05, 1.05])
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('Logistic Regression ROC\n')
-plt.legend(loc="lower right", fontsize=15)
-plt.show()
+plt.legend(loc="lower right", fontsize=8)
+#plt.show()
+logistic_plot.savefig('results/figures/Logit_Baxter.png', dpi=1000)
 
 ## Predict using the Logistic Regression classifier on the test set
 y_pred = logreg.predict(x_test)
@@ -169,7 +170,7 @@ cv = StratifiedKFold(n_splits=5)
 tprs = []
 aucs = []
 mean_fpr = np.linspace(0, 1, 100)
-
+mlp_plot = plt.figure()
 
 i = 0
 for train, test in cv.split(X,Y):
@@ -199,8 +200,9 @@ plt.ylim([-0.05, 1.05])
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('Neural Network ROC\n')
-plt.legend(loc="lower right", fontsize=15)
-plt.show()
+plt.legend(loc="lower right", fontsize=8)
+#plt.show()
+mlp_plot.savefig('results/figures/MLP_Baxter.png', dpi=1000)
 
 ## ## Predict using the Logistic Regression classifier on the test set
 
@@ -248,6 +250,7 @@ rfc = RandomForestClassifier(bootstrap=True, class_weight=None, criterion='gini'
             verbose=0, warm_start=False)
 
 ## Look at Cross-Validation ROC values on training dataset
+RF_plot = plt.figure()
 cv = StratifiedKFold(n_splits=5)
 tprs = []
 aucs = []
@@ -282,9 +285,9 @@ plt.ylim([-0.05, 1.05])
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('Random Forest ROC\n')
-plt.legend(loc="lower right", fontsize=15)
-plt.show()
-
+plt.legend(loc="lower right", fontsize=8)
+#plt.show()
+RF_plot.savefig('results/figures/Random_Forest_Baxter.png', dpi=1000)
 
 ## Model on Test Set
 y_pred = rfc.predict(x_test)
