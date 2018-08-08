@@ -1,11 +1,13 @@
 ---
 title: "Logistic Regression, MLP and Random Forest with Sklearn and Feed Forward Neural Net with PyTorch on Baxter Dataset"
-output: html_document
+geometry: "left=1cm,right=1cm,top=1cm,bottom=1cm"
+fontsize: 10pt
+output: pdf_document
 ---
 
 ```{r setup, include=FALSE, message=FALSE, warning=FALSE}
 library(knitr)
-opts_chunk$set(tidy.opts=list(width.cutoff=80),tidy=TRUE)
+opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
 library(reticulate)
 use_python("/Library/Frameworks/Python.framework/Versions/3.6/bin/python3", required = TRUE)
 py_config()
@@ -300,14 +302,16 @@ plt.show()
 #RF_plot.savefig('results/figures/Random_Forest_Baxter.png', dpi=1000)
 ```
 
-#### Predict using the Random Forest model on the test set
 
+
+
+
+#### Predict using the Random Forest model on the test set
 ```{python,comment='[Output]', cache=FALSE, message=FALSE, warning=FALSE, engine.path = '/Library/Frameworks/Python.framework/Versions/3.6/bin/python3'}
 y_pred = rfc.predict(x_test)
 print("Performance Accuracy on the Testing data:", round(rfc.score(x_test, y_test) *100))
 print("Number of correct classifiers:", round(accuracy_score(y_test, y_pred, normalize=False)))
 ```
-
 #### Now let's define a 1 hidden layer(n=100) Feed Forward Neural Net
 ```{python,comment='[Output]', cache=FALSE, message=FALSE, warning=FALSE, engine.path = '/Library/Frameworks/Python.framework/Versions/3.6/bin/python3'}
 
@@ -359,7 +363,8 @@ for epoch in range(num_epochs):
         ypred_var = net(x_var)
         loss =criterion(ypred_var, y_var)
         correct_num = 0
-        ## The outputs of the model (ypred_var) are energies for the 10 classes. Higher the energy for a class, the more the network thinks that the image is of the particular class. So, let’s get the index of the highest energy:
+        ## The outputs of the model (ypred_var) are energies for the 10 classes. 
+        #Higher the energy for a class, the more the network thinks that the image is of the         #particular class. So, let’s get the index of the highest energy:
         values, labels = torch.max(ypred_var, 1)
         correct_num = np.sum(labels.data.numpy() == y_var.numpy())
         fpr, tpr, thresholds = roc_curve(y_var.numpy(), labels.data.numpy())
