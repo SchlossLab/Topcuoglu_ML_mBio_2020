@@ -1,8 +1,9 @@
 /data/raw
 /data/processed
-*.Rproj
+!*.Rproj
 *.Rproj.user
 *.Rhistory
 *.RData
 *.Ruserdata
 .Rproj.user
+.Rprofile
