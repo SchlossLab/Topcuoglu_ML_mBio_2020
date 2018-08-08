@@ -1,3 +1,6 @@
+code/*.DS_Store
+results/*.DS_Store
+*.DS_Store
 /data/raw
 /data/processed
 !*.Rproj
