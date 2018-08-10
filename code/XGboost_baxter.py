@@ -132,8 +132,12 @@ cv = StratifiedKFold(n_splits=5)
 tprs = []
 aucs = []
 mean_fpr = np.linspace(0, 1, 100)
+tprs_test = []
+aucs_test = []
+mean_fpr_test = np.linspace(0, 1, 100)
 
-epochs = 10
+XGboost_plot = plt.figure()
+epochs = 50
 for epoch in range(epochs):
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True)
     X=x_train.values
@@ -151,18 +155,13 @@ for epoch in range(epochs):
         aucs.append(roc_auc)
         #plt.plot(fpr, tpr, lw=1, alpha=0.3, label='Epoch %d, ROC fold %d (AUC = %0.2f)' % (epoch, i, roc_auc))
         #i += 1
-    tprs_test = []
-    aucs_test = []
-    mean_fpr_test = np.linspace(0, 1, 100)
-    epochs_test = 50
-    for epoch_test in range(epochs_test):
-        probas_ = clf.predict_proba(X_test)
-        # Compute ROC curve and area the curve
-        fpr_test, tpr_test, thresholds_test = roc_curve(Y_test, probas_[:, 1])
-        tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
-        tprs_test[-1][0] = 0.0
-        roc_auc_test = auc(fpr_test, tpr_test)
-        aucs_test.append(roc_auc_test)
+    probas_ = clf.predict_proba(X_test)
+    # Compute ROC curve and area the curve
+    fpr_test, tpr_test, thresholds_test = roc_curve(Y_test, probas_[:, 1])
+    tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
+    tprs_test[-1][0] = 0.0
+    roc_auc_test = auc(fpr_test, tpr_test)
+    aucs_test.append(roc_auc_test)
 
 
 plt.plot([0, 1], [0, 1], linestyle='--', color='r', label='Luck', alpha=.8)
@@ -171,6 +170,10 @@ mean_tpr_test[-1] = 1.0
 mean_auc_test = auc(mean_fpr_test, mean_tpr_test)
 std_auc_test = np.std(aucs_test)
 plt.plot(mean_fpr_test, mean_tpr_test, color='r', label=r'Mean test ROC (AUC = %0.2f $\pm$ %0.2f)' % (mean_auc_test, std_auc_test), lw=2, alpha=.8)
+std_tpr_test = np.std(tprs_test, axis=0)
+tprs_upper_test = np.minimum(mean_tpr_test + std_tpr_test, 1)
+tprs_lower_test = np.maximum(mean_tpr_test - std_tpr_test, 0)
+plt.fill_between(mean_fpr_test, tprs_lower_test, tprs_upper_test, color='pink', alpha=.2, label=r'$\pm$ 1 std. dev.')
 mean_tpr = np.mean(tprs, axis=0)
 mean_tpr[-1] = 1.0
 mean_auc = auc(mean_fpr, mean_tpr)
@@ -179,16 +182,15 @@ plt.plot(mean_fpr, mean_tpr, color='b', label=r'Mean ROC (AUC = %0.2f $\pm$ %0.2
 std_tpr = np.std(tprs, axis=0)
 tprs_upper = np.minimum(mean_tpr + std_tpr, 1)
 tprs_lower = np.maximum(mean_tpr - std_tpr, 0)
-plt.fill_between(mean_fpr, tprs_lower, tprs_upper, color='grey', alpha=.2, label=r'$\pm$ 1 std. dev.')
+plt.fill_between(mean_fpr, tprs_lower, tprs_upper, color='blue', alpha=.2, label=r'$\pm$ 1 std. dev.')
 plt.xlim([-0.05, 1.05])
 plt.ylim([-0.05, 1.05])
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('XGBoost ROC\n')
 plt.legend(loc="lower right", fontsize=8)
-plt.show()
-
-
+#plt.show()
+XGboost_plot.savefig('results/figures/XGBoost_Baxter.png', dpi=1000)
 
 ######
 #y_pred = clf.predict(x_test.values)
