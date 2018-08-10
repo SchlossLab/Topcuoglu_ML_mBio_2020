@@ -16,6 +16,58 @@ import matplotlib
 from sklearn.cross_validation import train_test_split
 from sklearn.externals import joblib
 from sklearn.metrics import precision_score
+from sklearn import preprocessing
+from sklearn import cross_validation
+from sklearn.model_selection import KFold
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import KFold, cross_val_score, validation_curve
+from sklearn import linear_model
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+from sympy import *
+import matplotlib.pyplot as plt
+from sklearn.model_selection import GridSearchCV
+from sklearn.neural_network import MLPClassifier
+import numpy as np
+from scipy import interp
+from itertools import cycle
+from sklearn import svm, datasets
+from sklearn.metrics import roc_curve, auc
+from sklearn.model_selection import StratifiedKFold
+import numpy as np
+import pandas as pd
+# dependencies for plotting
+import matplotlib.pyplot as plt
+from pylab import rcParams
+import matplotlib as mpl
+# dependencies for statistic analysis
+from scipy import stats
+#importing our parameter tuning dependencies
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import (cross_val_score, GridSearchCV, StratifiedKFold, ShuffleSplit )
+#importing our dependencies for Feature Selection
+from sklearn.feature_selection import (SelectKBest, chi2, RFE, RFECV)
+from sklearn.linear_model import LogisticRegression, RandomizedLogisticRegression
+from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.cross_validation import ShuffleSplit
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import f1_score
+from collections import defaultdict
+# Importing our sklearn dependencies for the modeling
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import NearestNeighbors
+from sklearn.preprocessing import StandardScaler
+from sklearn.cross_validation import KFold
+from sklearn.model_selection import train_test_split
+from sklearn import metrics
+from sklearn.metrics import (accuracy_score, confusion_matrix, classification_report, roc_curve, auc)
+from sklearn.neural_network import MLPClassifier
+from itertools import cycle
+from scipy import interp
+import warnings
+warnings.filterwarnings('ignore')
+
 
 seed = 2008
 np.random.seed(seed)
@@ -44,70 +96,128 @@ y = data["dx"].replace(diagnosis)
 y.dropna()
 x.dropna()
 ##split the data to generate training and test sets %80-20
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=82089)
-
-dtrain = xgb.DMatrix(x_train, label=y_train)
-dtest = xgb.DMatrix(x_test, label=y_test)
-
-
-param = {'max_depth': 1, 'eta': 0.9, 'gamma':0,'silent': 1, 'min_child_weight':1, 'objective': 'binary:logistic'}
-param['nthread'] = 4
-param['eval_metric'] = 'auc'
-
-n_folds = 10
-early_stopping = 10
-
-cv = xgb.cv(param, dtrain, 5000, nfold=n_folds, early_stopping_rounds=early_stopping, verbose_eval=1)
-
-evallist = [(dtest, 'eval'), (dtrain, 'train')]
-num_round = 5
-bst = xgb.train(param, dtrain, num_round, evallist)
-ypred = bst.predict(dtest)
-
-cv=StratifiedKFold(y_train, n_folds=10, shuffle=True, random_state=seed)
-params_grid = {
-    'max_depth':[1, 2, 3],
-    'n_estimators':[5, 10, 25, 50],
-    'learning_rate': np.linspace(0.00001, 1, 3)
-}
-
-params_fixed = {
-    'objective':'binary:logistic',
-    'silent':1
-}
-
-bst_grid = GridSearchCV(
-    estimator=XGBClassifier(**params_fixed, seed=seed),
-    param_grid=params_grid,
-    cv=cv,
-    scoring='accuracy'
-)
-
-bst_grid.fit(x_train,y_train)
-print(bst_grid.best_estimator_.max_depth)
-print(bst_grid.best_estimator_.n_estimators)
-print(bst_grid.best_estimator_.subsample)
-print(bst_grid.best_estimator_.colsample_bytree)
-print(bst_grid.best_estimator_.learning_rate)
+#x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=82089)
+#X=x_train.values
+#Y=y_train.values
 
 
-from xgboost import XGBClassifier
-from sklearn.metrics import accuracy_score
-classifier1=XGBClassifier(max_depth=1, n_estimators=10, subsample=1,
-                         colsample_bytree=1, learning_rate=0.5)
-classifier1.fit(x_train,y_train)
-y_pred1=classifier1.predict(x_test)
-from sklearn.metrics import confusion_matrix
-print(accuracy_score(y_test, y_pred1))
-cm=confusion_matrix(y_test,y_pred1)
+#param = {'max_depth': 1, 'eta': 0.9, 'gamma':0,'silent': 1, 'min_child_weight':1, 'objective': 'binary:logistic'}
+#param['nthread'] = 4
+#param['eval_metric'] = 'auc'
+
+
+#clf = xgb.XGBClassifier()
+#cv = cross_validation.KFold(len(x_train), n_folds=5, shuffle=True, random_state=1)
+#grid = {'learning_rate':[0.0001, 0.001, 0.01, 0.1], 'reg_lambda':[0, 0.001, 0.01, 0.10, 0.50, 1], 'max_depth':[1, 2], 'n_estimators':[150, 200, 250, 300, 500],}
+
+#search = GridSearchCV(estimator=clf, param_grid=grid, scoring='accuracy', n_jobs=1, refit=True, cv=cv)
+#search.fit(x_train, y_train)
+
+#scores = cross_validation.cross_val_score(clf, x_train, y_train, cv=cv, n_jobs=1, scoring='accuracy')
+
+#print(search.best_params_)
+#print(search.best_score_)
+
+#{'learning_rate': 0.01, 'max_depth': 1, 'n_estimators': 250, 'reg_lambda': 0.1}
+
+clf = xgb.XGBClassifier(base_score=0.5, booster='gbtree', colsample_bylevel=1,
+       colsample_bytree=1, gamma=0, learning_rate=0.01, max_delta_step=0,
+       max_depth=1, min_child_weight=1, missing=None, n_estimators=250,
+       n_jobs=1, nthread=None, objective='binary:logistic', random_state=0,
+       reg_alpha=0, reg_lambda=0.1, scale_pos_weight=1, seed=None,
+       silent=True, subsample=1)
+
+
+cv = StratifiedKFold(n_splits=5)
+tprs = []
+aucs = []
+mean_fpr = np.linspace(0, 1, 100)
+
+epochs = 10
+for epoch in range(epochs):
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True)
+    X=x_train.values
+    Y=y_train.values
+    i = 0
+    for train, test in cv.split(X,Y):
+        probas_ = clf.fit(X[train], Y[train]).predict_proba(X[test])
+    # Compute ROC curve and area the curve
+        fpr, tpr, thresholds = roc_curve(Y[test], probas_[:, 1])
+        tprs.append(interp(mean_fpr, fpr, tpr))
+        tprs[-1][0] = 0.0
+        roc_auc = auc(fpr, tpr)
+        aucs.append(roc_auc)
+        plt.plot(fpr, tpr, lw=1, alpha=0.3, label='Epoch %d, ROC fold %d (AUC = %0.2f)' % (epoch, i, roc_auc))
+        i += 1
+
+
+plt.plot([0, 1], [0, 1], linestyle='--', color='r', label='Luck', alpha=.8)
+mean_tpr = np.mean(tprs, axis=0)
+mean_tpr[-1] = 1.0
+mean_auc = auc(mean_fpr, mean_tpr)
+std_auc = np.std(aucs)
+plt.plot(mean_fpr, mean_tpr, color='b', label=r'Mean ROC (AUC = %0.2f $\pm$ %0.2f)' % (mean_auc, std_auc), lw=2, alpha=.8)
+std_tpr = np.std(tprs, axis=0)
+tprs_upper = np.minimum(mean_tpr + std_tpr, 1)
+tprs_lower = np.maximum(mean_tpr - std_tpr, 0)
+plt.fill_between(mean_fpr, tprs_lower, tprs_upper, color='grey', alpha=.2, label=r'$\pm$ 1 std. dev.')
+plt.xlim([-0.05, 1.05])
+plt.ylim([-0.05, 1.05])
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('XGBoost ROC\n')
+plt.legend(loc="lower right", fontsize=8)
+plt.show()
 
 
 
-print("Best accuracy obtained: {O}".format(bst_grid.best_score))
-print("Parameters:")
-for key, value in bst_grid.best_params_.items():
-    print("\t{}:{}".format(key,value))
+tprs = []
+aucs = []
+mean_fpr = np.linspace(0, 1, 100)
+
+epochs = 50
+for epoch in range(epochs):
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True)
+    X=x_test.values
+    Y=y_test.values
+    probas_ = clf.predict_proba(X)
+    # Compute ROC curve and area the curve
+    fpr, tpr, thresholds = roc_curve(Y, probas_[:, 1])
+    tprs.append(interp(mean_fpr, fpr, tpr))
+    tprs[-1][0] = 0.0
+    roc_auc = auc(fpr, tpr)
+    aucs.append(roc_auc)
+    plt.plot(fpr, tpr, lw=1, alpha=0.3, label='Epoch %d (AUC = %0.2f)' % (epoch, roc_auc))
 
 
-classifier=XGBClassifier()
-classifier.fit(x_train,y_train)
+plt.plot([0, 1], [0, 1], linestyle='--', color='r', label='Luck', alpha=.8)
+mean_tpr = np.mean(tprs, axis=0)
+mean_tpr[-1] = 1.0
+mean_auc = auc(mean_fpr, mean_tpr)
+std_auc = np.std(aucs)
+plt.plot(mean_fpr, mean_tpr, color='b', label=r'Mean ROC (AUC = %0.2f $\pm$ %0.2f)' % (mean_auc, std_auc), lw=2, alpha=.8)
+std_tpr = np.std(tprs, axis=0)
+tprs_upper = np.minimum(mean_tpr + std_tpr, 1)
+tprs_lower = np.maximum(mean_tpr - std_tpr, 0)
+plt.fill_between(mean_fpr, tprs_lower, tprs_upper, color='grey', alpha=.2, label=r'$\pm$ 1 std. dev.')
+plt.xlim([-0.05, 1.05])
+plt.ylim([-0.05, 1.05])
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('XGBoost ROC\n')
+plt.legend(loc="lower right", fontsize=8)
+plt.show()
+
+
+
+
+
+
+######
+#y_pred = clf.predict(x_test.values)
+#print("Performance Accuracy on the Testing data:", #round(clf.score(x_test.values, y_test) *100))
+#print("Number of correct classifiers:", round(accuracy_score(y_test, #y_pred, normalize=False)))
+#print("Classification accuracy: ", round(accuracy_score(y_test, y_pred, #normalize=True) * 100))
+# The classification Report# The cla
+#target_names = ['Benign [Class 0]', 'Malignant[Class 1]']
+#print(classification_report(y_test, y_pred, target_names=target_names))
