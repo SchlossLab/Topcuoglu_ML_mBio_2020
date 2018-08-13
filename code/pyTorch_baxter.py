@@ -148,9 +148,9 @@ class Net(nn.Module):
 net = Net()
 
 batch_size = 50
-num_epochs = 40
-learning_rate = 0.0001
-batch_no = 233 // batch_size
+num_epochs = 1000
+learning_rate = 0.00025
+batch_no = 233//batch_size
 
 
 criterion = nn.CrossEntropyLoss()
@@ -190,6 +190,7 @@ for epoch in range(num_epochs):
         optimizer.step()
         print('Epoch [%d], Loss:%.4f, Accuracy:%.4f' % (epoch, loss.data[0], correct_num/len(labels)))
         #plt.plot(fpr, tpr, lw=1, alpha=0.3, label='ROC fold %d (AUC = %0.2f)' % (epoch, roc_auc))
+    net.eval()
     x_var_test = Variable(torch.FloatTensor(x_test.values))
     y_var_test = Variable(torch.LongTensor(y_test.values))
     # Forward + Backward + Optimize
