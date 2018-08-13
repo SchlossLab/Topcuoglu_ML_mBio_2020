@@ -101,25 +101,48 @@ cv = StratifiedKFold(n_splits=5)
 tprs = []
 aucs = []
 mean_fpr = np.linspace(0, 1, 100)
+tprs_test = []
+aucs_test = []
+mean_fpr_test = np.linspace(0, 1, 100)
 
-X=x_train.values
-Y=y_train.values
-
-logistic_plot = plt.figure()
-i = 0
-for train, test in cv.split(X,Y):
-    probas_ = logreg.fit(X[train], Y[train]).predict_proba(X[test])
+Logit_plot = plt.figure()
+epochs = 50
+for epoch in range(epochs):
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True)
+    X=x_train.values
+    Y=y_train.values
+    X_test= x_test.values
+    Y_test= y_test.values
+    i = 0
+    for train, test in cv.split(X,Y):
+        probas_ = logreg.fit(X[train], Y[train]).predict_proba(X[test])
     # Compute ROC curve and area the curve
-    fpr, tpr, thresholds = roc_curve(Y[test], probas_[:, 1])
-    tprs.append(interp(mean_fpr, fpr, tpr))
-    tprs[-1][0] = 0.0
-    roc_auc = auc(fpr, tpr)
-    aucs.append(roc_auc)
-    plt.plot(fpr, tpr, lw=1, alpha=0.3, label='ROC fold %d (AUC = %0.2f)' % (i, roc_auc))
-    i += 1
+        fpr, tpr, thresholds = roc_curve(Y[test], probas_[:, 1])
+        tprs.append(interp(mean_fpr, fpr, tpr))
+        tprs[-1][0] = 0.0
+        roc_auc = auc(fpr, tpr)
+        aucs.append(roc_auc)
+        #plt.plot(fpr, tpr, lw=1, alpha=0.3, label='Epoch %d, ROC fold %d (AUC = %0.2f)' % (epoch, i, roc_auc))
+        #i += 1
+    probas_ = logreg.predict_proba(X_test)
+    # Compute ROC curve and area the curve
+    fpr_test, tpr_test, thresholds_test = roc_curve(Y_test, probas_[:, 1])
+    tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
+    tprs_test[-1][0] = 0.0
+    roc_auc_test = auc(fpr_test, tpr_test)
+    aucs_test.append(roc_auc_test)
 
 
 plt.plot([0, 1], [0, 1], linestyle='--', color='r', label='Luck', alpha=.8)
+mean_tpr_test = np.mean(tprs_test, axis=0)
+mean_tpr_test[-1] = 1.0
+mean_auc_test = auc(mean_fpr_test, mean_tpr_test)
+std_auc_test = np.std(aucs_test)
+plt.plot(mean_fpr_test, mean_tpr_test, color='r', label=r'Mean test ROC (AUC = %0.2f $\pm$ %0.2f)' % (mean_auc_test, std_auc_test), lw=2, alpha=.8)
+std_tpr_test = np.std(tprs_test, axis=0)
+tprs_upper_test = np.minimum(mean_tpr_test + std_tpr_test, 1)
+tprs_lower_test = np.maximum(mean_tpr_test - std_tpr_test, 0)
+plt.fill_between(mean_fpr_test, tprs_lower_test, tprs_upper_test, color='pink', alpha=.2, label=r'$\pm$ 1 std. dev.')
 mean_tpr = np.mean(tprs, axis=0)
 mean_tpr[-1] = 1.0
 mean_auc = auc(mean_fpr, mean_tpr)
@@ -128,15 +151,15 @@ plt.plot(mean_fpr, mean_tpr, color='b', label=r'Mean ROC (AUC = %0.2f $\pm$ %0.2
 std_tpr = np.std(tprs, axis=0)
 tprs_upper = np.minimum(mean_tpr + std_tpr, 1)
 tprs_lower = np.maximum(mean_tpr - std_tpr, 0)
-plt.fill_between(mean_fpr, tprs_lower, tprs_upper, color='grey', alpha=.2, label=r'$\pm$ 1 std. dev.')
+plt.fill_between(mean_fpr, tprs_lower, tprs_upper, color='blue', alpha=.2, label=r'$\pm$ 1 std. dev.')
 plt.xlim([-0.05, 1.05])
 plt.ylim([-0.05, 1.05])
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
-plt.title('Logistic Regression ROC\n')
+plt.title('Logical Regression ROC\n')
 plt.legend(loc="lower right", fontsize=8)
 #plt.show()
-logistic_plot.savefig('results/figures/Logit_Baxter.png', dpi=1000)
+Logit_plot.savefig('results/figures/Logit_Baxter.png', dpi=1000)
 
 ## Predict using the Logistic Regression classifier on the test set
 y_pred = logreg.predict(x_test)
@@ -157,35 +180,53 @@ clf = MLPClassifier(activation='logistic', alpha=0.001, batch_size='auto',
        solver='sgd', tol=0.0001, validation_fraction=0.1, verbose=False,
        warm_start=False)
 
-## Cross validation score
-cv = StratifiedKFold(n_splits=5)
-cv_results = cross_val_score(clf, x_train, y_train, cv=cv)
-print (cv_results.mean()*100, "%")
-
-## Fit the defined model to training data
-clf.fit(x_train, y_train)
-
 ## Plot ROC on cross validation of training dataset
 cv = StratifiedKFold(n_splits=5)
 tprs = []
 aucs = []
 mean_fpr = np.linspace(0, 1, 100)
-mlp_plot = plt.figure()
+tprs_test = []
+aucs_test = []
+mean_fpr_test = np.linspace(0, 1, 100)
 
-i = 0
-for train, test in cv.split(X,Y):
-    probas_ = clf.fit(X[train], Y[train]).predict_proba(X[test])
+MLP_plot = plt.figure()
+epochs = 50
+for epoch in range(epochs):
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True)
+    X=x_train.values
+    Y=y_train.values
+    X_test= x_test.values
+    Y_test= y_test.values
+    i = 0
+    for train, test in cv.split(X,Y):
+        probas_ = clf.fit(X[train], Y[train]).predict_proba(X[test])
     # Compute ROC curve and area the curve
-    fpr, tpr, thresholds = roc_curve(Y[test], probas_[:, 1])
-    tprs.append(interp(mean_fpr, fpr, tpr))
-    tprs[-1][0] = 0.0
-    roc_auc = auc(fpr, tpr)
-    aucs.append(roc_auc)
-    plt.plot(fpr, tpr, lw=1, alpha=0.3, label='ROC fold %d (AUC = %0.2f)' % (i, roc_auc))
-    i += 1
+        fpr, tpr, thresholds = roc_curve(Y[test], probas_[:, 1])
+        tprs.append(interp(mean_fpr, fpr, tpr))
+        tprs[-1][0] = 0.0
+        roc_auc = auc(fpr, tpr)
+        aucs.append(roc_auc)
+        #plt.plot(fpr, tpr, lw=1, alpha=0.3, label='Epoch %d, ROC fold %d (AUC = %0.2f)' % (epoch, i, roc_auc))
+        #i += 1
+    probas_ = clf.predict_proba(X_test)
+    # Compute ROC curve and area the curve
+    fpr_test, tpr_test, thresholds_test = roc_curve(Y_test, probas_[:, 1])
+    tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
+    tprs_test[-1][0] = 0.0
+    roc_auc_test = auc(fpr_test, tpr_test)
+    aucs_test.append(roc_auc_test)
 
 
 plt.plot([0, 1], [0, 1], linestyle='--', color='r', label='Luck', alpha=.8)
+mean_tpr_test = np.mean(tprs_test, axis=0)
+mean_tpr_test[-1] = 1.0
+mean_auc_test = auc(mean_fpr_test, mean_tpr_test)
+std_auc_test = np.std(aucs_test)
+plt.plot(mean_fpr_test, mean_tpr_test, color='r', label=r'Mean test ROC (AUC = %0.2f $\pm$ %0.2f)' % (mean_auc_test, std_auc_test), lw=2, alpha=.8)
+std_tpr_test = np.std(tprs_test, axis=0)
+tprs_upper_test = np.minimum(mean_tpr_test + std_tpr_test, 1)
+tprs_lower_test = np.maximum(mean_tpr_test - std_tpr_test, 0)
+plt.fill_between(mean_fpr_test, tprs_lower_test, tprs_upper_test, color='pink', alpha=.2, label=r'$\pm$ 1 std. dev.')
 mean_tpr = np.mean(tprs, axis=0)
 mean_tpr[-1] = 1.0
 mean_auc = auc(mean_fpr, mean_tpr)
@@ -194,15 +235,15 @@ plt.plot(mean_fpr, mean_tpr, color='b', label=r'Mean ROC (AUC = %0.2f $\pm$ %0.2
 std_tpr = np.std(tprs, axis=0)
 tprs_upper = np.minimum(mean_tpr + std_tpr, 1)
 tprs_lower = np.maximum(mean_tpr - std_tpr, 0)
-plt.fill_between(mean_fpr, tprs_lower, tprs_upper, color='grey', alpha=.2, label=r'$\pm$ 1 std. dev.')
+plt.fill_between(mean_fpr, tprs_lower, tprs_upper, color='blue', alpha=.2, label=r'$\pm$ 1 std. dev.')
 plt.xlim([-0.05, 1.05])
 plt.ylim([-0.05, 1.05])
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
-plt.title('Neural Network ROC\n')
+plt.title('MLP ROC\n')
 plt.legend(loc="lower right", fontsize=8)
 #plt.show()
-mlp_plot.savefig('results/figures/MLP_Baxter.png', dpi=1000)
+MLP_plot.savefig('results/figures/MLP_Baxter.png', dpi=1000)
 
 ## ## Predict using the Logistic Regression classifier on the test set
 
@@ -250,27 +291,52 @@ rfc = RandomForestClassifier(bootstrap=True, class_weight=None, criterion='gini'
             verbose=0, warm_start=False)
 
 ## Look at Cross-Validation ROC values on training dataset
-RF_plot = plt.figure()
 cv = StratifiedKFold(n_splits=5)
 tprs = []
 aucs = []
 mean_fpr = np.linspace(0, 1, 100)
+tprs_test = []
+aucs_test = []
+mean_fpr_test = np.linspace(0, 1, 100)
 
-
-i = 0
-for train, test in cv.split(X,Y):
-    probas_ = rfc.fit(X[train], Y[train]).predict_proba(X[test])
+RF_plot = plt.figure()
+epochs = 50
+for epoch in range(epochs):
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True)
+    X=x_train.values
+    Y=y_train.values
+    X_test= x_test.values
+    Y_test= y_test.values
+    i = 0
+    for train, test in cv.split(X,Y):
+        probas_ = rfc.fit(X[train], Y[train]).predict_proba(X[test])
     # Compute ROC curve and area the curve
-    fpr, tpr, thresholds = roc_curve(Y[test], probas_[:, 1])
-    tprs.append(interp(mean_fpr, fpr, tpr))
-    tprs[-1][0] = 0.0
-    roc_auc = auc(fpr, tpr)
-    aucs.append(roc_auc)
-    plt.plot(fpr, tpr, lw=1, alpha=0.3, label='ROC fold %d (AUC = %0.2f)' % (i, roc_auc))
-    i += 1
+        fpr, tpr, thresholds = roc_curve(Y[test], probas_[:, 1])
+        tprs.append(interp(mean_fpr, fpr, tpr))
+        tprs[-1][0] = 0.0
+        roc_auc = auc(fpr, tpr)
+        aucs.append(roc_auc)
+        #plt.plot(fpr, tpr, lw=1, alpha=0.3, label='Epoch %d, ROC fold %d (AUC = %0.2f)' % (epoch, i, roc_auc))
+        #i += 1
+    probas_ = rfc.predict_proba(X_test)
+    # Compute ROC curve and area the curve
+    fpr_test, tpr_test, thresholds_test = roc_curve(Y_test, probas_[:, 1])
+    tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
+    tprs_test[-1][0] = 0.0
+    roc_auc_test = auc(fpr_test, tpr_test)
+    aucs_test.append(roc_auc_test)
 
 
 plt.plot([0, 1], [0, 1], linestyle='--', color='r', label='Luck', alpha=.8)
+mean_tpr_test = np.mean(tprs_test, axis=0)
+mean_tpr_test[-1] = 1.0
+mean_auc_test = auc(mean_fpr_test, mean_tpr_test)
+std_auc_test = np.std(aucs_test)
+plt.plot(mean_fpr_test, mean_tpr_test, color='r', label=r'Mean test ROC (AUC = %0.2f $\pm$ %0.2f)' % (mean_auc_test, std_auc_test), lw=2, alpha=.8)
+std_tpr_test = np.std(tprs_test, axis=0)
+tprs_upper_test = np.minimum(mean_tpr_test + std_tpr_test, 1)
+tprs_lower_test = np.maximum(mean_tpr_test - std_tpr_test, 0)
+plt.fill_between(mean_fpr_test, tprs_lower_test, tprs_upper_test, color='pink', alpha=.2, label=r'$\pm$ 1 std. dev.')
 mean_tpr = np.mean(tprs, axis=0)
 mean_tpr[-1] = 1.0
 mean_auc = auc(mean_fpr, mean_tpr)
@@ -279,7 +345,7 @@ plt.plot(mean_fpr, mean_tpr, color='b', label=r'Mean ROC (AUC = %0.2f $\pm$ %0.2
 std_tpr = np.std(tprs, axis=0)
 tprs_upper = np.minimum(mean_tpr + std_tpr, 1)
 tprs_lower = np.maximum(mean_tpr - std_tpr, 0)
-plt.fill_between(mean_fpr, tprs_lower, tprs_upper, color='grey', alpha=.2, label=r'$\pm$ 1 std. dev.')
+plt.fill_between(mean_fpr, tprs_lower, tprs_upper, color='blue', alpha=.2, label=r'$\pm$ 1 std. dev.')
 plt.xlim([-0.05, 1.05])
 plt.ylim([-0.05, 1.05])
 plt.xlabel('False Positive Rate')
@@ -287,13 +353,14 @@ plt.ylabel('True Positive Rate')
 plt.title('Random Forest ROC\n')
 plt.legend(loc="lower right", fontsize=8)
 #plt.show()
-RF_plot.savefig('results/figures/Random_Forest_Baxter.png', dpi=1000)
+RF_plot.savefig('results/figures/RF_Baxter.png', dpi=1000)
+
 
 ## Model on Test Set
-y_pred = rfc.predict(x_test)
-print("Performance Accuracy on the Testing data:", round(rfc.score(x_test, y_test) *100))
-print("Number of correct classifiers:", round(accuracy_score(y_test, y_pred, normalize=False)))
-print("Classification accuracy: ", round(accuracy_score(y_test, y_pred, normalize=True) * 100))
+#y_pred = rfc.predict(x_test)
+#print("Performance Accuracy on the Testing data:", round(rfc.score(x_test, y_test) *100))
+#print("Number of correct classifiers:", round(accuracy_score(y_test, y_pred, normalize=False)))
+#print("Classification accuracy: ", round(accuracy_score(y_test, y_pred, normalize=True) * 100))
 # The classification Report# The cla
-target_names = ['Benign [Class 0]', 'Malignant[Class 1]']
-print(classification_report(y_test, y_pred, target_names=target_names))
+#target_names = ['Benign [Class 0]', 'Malignant[Class 1]']
+#print(classification_report(y_test, y_pred, target_names=target_names))
