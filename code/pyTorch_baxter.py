@@ -150,7 +150,7 @@ net = Net()
 
 batch_size = 50
 num_epochs = 100
-learning_rate = 0.0001
+learning_rate = 0.0005
 batch_no = 233//batch_size
 
 
