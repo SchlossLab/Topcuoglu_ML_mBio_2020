@@ -128,7 +128,7 @@ clf = xgb.XGBClassifier(base_score=0.5, booster='gbtree', colsample_bylevel=1,
        silent=True, subsample=1)
 
 
-cv = StratifiedKFold(n_splits=5)
+cv = StratifiedKFold(n_splits=5, shuffle=True)
 tprs = []
 aucs = []
 mean_fpr = np.linspace(0, 1, 100)
