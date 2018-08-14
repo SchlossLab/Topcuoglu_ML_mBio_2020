@@ -148,7 +148,7 @@ class Net(nn.Module):
 net = Net()
 
 batch_size = 50
-num_epochs = 1000
+num_epochs = 200
 learning_rate = 0.00025
 batch_no = 233//batch_size
 
@@ -230,5 +230,13 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('PyTorch Neural Network ROC\n')
 plt.legend(loc="lower right", fontsize=8)
-plt.show()
-#pyTorch_plot.savefig('results/figures/pyTorch_Baxter.png', dpi=1000)
+#plt.show()
+pyTorch_plot.savefig('results/figures/pyTorch_Baxter.png', dpi=1000)
+
+net.eval()
+pred = net(torch.from_numpy(x.values).float())
+pred = torch.max(pred,1)[1]
+len(pred)
+pred = pred.data.numpy()
+print(accuracy_score(y, pred))
+print(confusion_matrix(y, pred))
