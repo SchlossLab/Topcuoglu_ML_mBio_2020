@@ -128,6 +128,7 @@ y = data["dx"].replace(diagnosis)
 y.dropna()
 x.dropna()
 
+x_train1, X_test, y_train1, Y_test = train_test_split(x, y, test_size=0.2, shuffle=True)
 
 
 class Net(nn.Module):
@@ -166,7 +167,7 @@ aucs_test = []
 mean_fpr_test = np.linspace(0, 1, 100)
 
 for epoch in range(num_epochs):
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True)
+    x_train, x_test, y_train, y_test = train_test_split(x_train1, y_train1, test_size=0.2, shuffle=True)
     # Mini batch learning
     for i in range(batch_no):
         start = i * batch_size
@@ -234,9 +235,9 @@ plt.legend(loc="lower right", fontsize=8)
 pyTorch_plot.savefig('results/figures/pyTorch_Baxter.png', dpi=1000)
 
 net.eval()
-pred = net(torch.from_numpy(x.values).float())
+pred = net(torch.from_numpy(X_test.values).float())
 pred = torch.max(pred,1)[1]
 len(pred)
 pred = pred.data.numpy()
-print(accuracy_score(y, pred))
-print(confusion_matrix(y, pred))
+print(accuracy_score(Y_test, pred))
+print(confusion_matrix(Y_test, pred))
