@@ -163,7 +163,7 @@ for epoch in range(epochs):
     aucs_test.append(roc_auc_test)
 
 
-plt.plot([0, 1], [0, 1], linestyle='--', color='r', label='Luck', alpha=.8)
+plt.plot([0, 1], [0, 1], linestyle='--', color='green', label='Luck', alpha=.8)
 mean_tpr_test = np.mean(tprs_test, axis=0)
 mean_tpr_test[-1] = 1.0
 mean_auc_test = auc(mean_fpr_test, mean_tpr_test)
@@ -172,7 +172,7 @@ plt.plot(mean_fpr_test, mean_tpr_test, color='r', label=r'Mean test ROC (AUC = %
 std_tpr_test = np.std(tprs_test, axis=0)
 tprs_upper_test = np.minimum(mean_tpr_test + std_tpr_test, 1)
 tprs_lower_test = np.maximum(mean_tpr_test - std_tpr_test, 0)
-plt.fill_between(mean_fpr_test, tprs_lower_test, tprs_upper_test, color='pink', alpha=.2, label=r'$\pm$ 1 std. dev.')
+plt.fill_between(mean_fpr_test, tprs_lower_test, tprs_upper_test, color='tomato', alpha=.2, label=r'$\pm$ 1 std. dev.')
 mean_tpr = np.mean(tprs, axis=0)
 mean_tpr[-1] = 1.0
 mean_auc = auc(mean_fpr, mean_tpr)
@@ -181,7 +181,7 @@ plt.plot(mean_fpr, mean_tpr, color='b', label=r'Mean ROC (AUC = %0.2f $\pm$ %0.2
 std_tpr = np.std(tprs, axis=0)
 tprs_upper = np.minimum(mean_tpr + std_tpr, 1)
 tprs_lower = np.maximum(mean_tpr - std_tpr, 0)
-plt.fill_between(mean_fpr, tprs_lower, tprs_upper, color='blue', alpha=.2, label=r'$\pm$ 1 std. dev.')
+plt.fill_between(mean_fpr, tprs_lower, tprs_upper, color='dodgerblue', alpha=.2, label=r'$\pm$ 1 std. dev.')
 plt.xlim([-0.05, 1.05])
 plt.ylim([-0.05, 1.05])
 plt.xlabel('False Positive Rate')
