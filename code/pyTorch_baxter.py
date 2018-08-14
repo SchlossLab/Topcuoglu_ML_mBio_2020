@@ -127,8 +127,8 @@ y = data["dx"].replace(diagnosis)
 ##drop if NA elements
 y.dropna()
 x.dropna()
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True)
 
-x_train1, X_test, y_train1, Y_test = train_test_split(x, y, test_size=0.2, shuffle=True)
 
 
 class Net(nn.Module):
@@ -138,7 +138,7 @@ class Net(nn.Module):
         self.fc2 = nn.Linear(100, 2)
     def forward(self, x):
         x = self.fc1(x)
-        x = F.dropout(x, p=0.1)
+        x = F.dropout(x, p=0.5)
         x = F.relu(x)
         x = self.fc2(x)
         x = F.sigmoid(x)
@@ -149,13 +149,13 @@ class Net(nn.Module):
 net = Net()
 
 batch_size = 50
-num_epochs = 200
-learning_rate = 0.00025
+num_epochs = 100
+learning_rate = 0.0001
 batch_no = 233//batch_size
 
 
 criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(net.parameters(), lr=learning_rate)
+optimizer = torch.optim.Adam(net.parameters(), lr=learning_rate, weight_decay=1e-2)
 
 
 pyTorch_plot = plt.figure()
@@ -167,7 +167,6 @@ aucs_test = []
 mean_fpr_test = np.linspace(0, 1, 100)
 
 for epoch in range(num_epochs):
-    x_train, x_test, y_train, y_test = train_test_split(x_train1, y_train1, test_size=0.2, shuffle=True)
     # Mini batch learning
     for i in range(batch_no):
         start = i * batch_size
@@ -191,7 +190,7 @@ for epoch in range(num_epochs):
         optimizer.step()
         print('Epoch [%d], Loss:%.4f, Accuracy:%.4f' % (epoch, loss.data[0], correct_num/len(labels)))
         #plt.plot(fpr, tpr, lw=1, alpha=0.3, label='ROC fold %d (AUC = %0.2f)' % (epoch, roc_auc))
-    net.eval()
+    #net.eval()
     x_var_test = Variable(torch.FloatTensor(x_test.values))
     y_var_test = Variable(torch.LongTensor(y_test.values))
     # Forward + Backward + Optimize
@@ -235,9 +234,9 @@ plt.legend(loc="lower right", fontsize=8)
 pyTorch_plot.savefig('results/figures/pyTorch_Baxter.png', dpi=1000)
 
 net.eval()
-pred = net(torch.from_numpy(X_test.values).float())
+pred = net(torch.from_numpy(x_test.values).float())
 pred = torch.max(pred,1)[1]
 len(pred)
 pred = pred.data.numpy()
-print(accuracy_score(Y_test, pred))
-print(confusion_matrix(Y_test, pred))
+print(accuracy_score(y_test, pred))
+print(confusion_matrix(y_test, pred))
