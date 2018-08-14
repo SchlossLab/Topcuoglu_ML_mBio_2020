@@ -96,7 +96,7 @@ y = data["dx"].replace(diagnosis)
 y.dropna()
 x.dropna()
 ##split the data to generate training and test sets %80-20
-#x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=82089)
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=82089)
 #X=x_train.values
 #Y=y_train.values
 
@@ -139,7 +139,6 @@ mean_fpr_test = np.linspace(0, 1, 100)
 XGboost_plot = plt.figure()
 epochs = 50
 for epoch in range(epochs):
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True)
     X=x_train.values
     Y=y_train.values
     X_test= x_test.values
