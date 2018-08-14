@@ -121,11 +121,11 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_
 #{'learning_rate': 0.01, 'max_depth': 1, 'n_estimators': 250, 'reg_lambda': 0.1}
 
 clf = xgb.XGBClassifier(base_score=0.5, booster='gbtree', colsample_bylevel=1,
-       colsample_bytree=1, gamma=0, learning_rate=0.01, max_delta_step=0,
-       max_depth=1, min_child_weight=1, missing=None, n_estimators=250,
+       colsample_bytree=1, gamma=0, learning_rate=0.001, max_delta_step=0,
+       max_depth=10, min_child_weight=1, missing=None, n_estimators=100,
        n_jobs=1, nthread=None, objective='binary:logistic', random_state=0,
        reg_alpha=0, reg_lambda=0.1, scale_pos_weight=1, seed=None,
-       silent=True, subsample=1)
+       silent=True, subsample=0.8)
 
 
 cv = StratifiedKFold(n_splits=5, shuffle=True)
