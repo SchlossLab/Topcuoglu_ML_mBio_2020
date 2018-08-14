@@ -106,7 +106,7 @@ aucs_test = []
 mean_fpr_test = np.linspace(0, 1, 100)
 
 Logit_plot = plt.figure()
-epochs = 50
+epochs = 100
 for epoch in range(epochs):
     X=x_train.values
     Y=y_train.values
@@ -189,7 +189,7 @@ aucs_test = []
 mean_fpr_test = np.linspace(0, 1, 100)
 
 MLP_plot = plt.figure()
-epochs = 50
+epochs = 100
 for epoch in range(epochs):
     X=x_train.values
     Y=y_train.values
