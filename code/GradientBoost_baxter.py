@@ -141,7 +141,7 @@ aucs_test = []
 mean_fpr_test = np.linspace(0, 1, 100)
 
 tpot_plot = plt.figure()
-epochs = 200
+epochs = 100
 for epoch in range(epochs):
     X=x_train
     Y=y_train.values
@@ -166,7 +166,6 @@ for epoch in range(epochs):
     roc_auc_test = auc(fpr_test, tpr_test)
     aucs_test.append(roc_auc_test)
 
-
 plt.plot([0, 1], [0, 1], linestyle='--', color='green', label='Luck', alpha=.8)
 mean_tpr_test = np.mean(tprs_test, axis=0)
 mean_tpr_test[-1] = 1.0
@@ -190,7 +189,7 @@ plt.xlim([-0.05, 1.05])
 plt.ylim([-0.05, 1.05])
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
-plt.title('Gradient Boosting Classifier from Tpoy ROC\n')
+plt.title('Gradient Boosting Classifier ROC\n')
 plt.legend(loc="lower right", fontsize=8)
 #plt.show()
 tpot_plot.savefig('results/figures/Tpot_Baxter.png', dpi=1000)
