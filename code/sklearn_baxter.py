@@ -21,7 +21,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from pylab import rcParams
 import matplotlib as mpl
-import seaborn as sns
 # dependencies for statistic analysis
 from scipy import stats
 #importing our parameter tuning dependencies
@@ -89,9 +88,9 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_
 ## Define L2 regularized logistic classifier
 
 logreg = linear_model.LogisticRegression(C=0.001)
-kfold = StratifiedKFold(n_splits=5, shuffle=True)
-cv_results = cross_val_score(logreg, x_train, y_train, cv=kfold)
-print (cv_results.mean()*100, "%")
+#kfold = StratifiedKFold(n_splits=5, shuffle=True)
+#cv_results = cross_val_score(logreg, x_train, y_train, cv=kfold)
+#print (cv_results.mean()*100, "%")
 
 ## Fit to training sets
 logreg.fit(x_train, y_train)
@@ -206,13 +205,13 @@ for epoch in range(epochs):
         aucs.append(roc_auc)
         #plt.plot(fpr, tpr, lw=1, alpha=0.3, label='Epoch %d, ROC fold %d (AUC = %0.2f)' % (epoch, i, roc_auc))
         #i += 1
-    probas_ = clf.predict_proba(X_test)
+        probas_ = clf.predict_proba(X_test)
     # Compute ROC curve and area the curve
-    fpr_test, tpr_test, thresholds_test = roc_curve(Y_test, probas_[:, 1])
-    tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
-    tprs_test[-1][0] = 0.0
-    roc_auc_test = auc(fpr_test, tpr_test)
-    aucs_test.append(roc_auc_test)
+        fpr_test, tpr_test, thresholds_test = roc_curve(Y_test, probas_[:, 1])
+        tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
+        tprs_test[-1][0] = 0.0
+        roc_auc_test = auc(fpr_test, tpr_test)
+        aucs_test.append(roc_auc_test)
 
 
 plt.plot([0, 1], [0, 1], linestyle='--', color='green', label='Luck', alpha=.8)
@@ -240,7 +239,7 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('MLP ROC\n')
 plt.legend(loc="lower right", fontsize=8)
-#plt.show()
+plt.show()
 MLP_plot.savefig('results/figures/MLP_Baxter.png', dpi=1000)
 
 ## ## Predict using the Logistic Regression classifier on the test set
@@ -258,27 +257,27 @@ print(classification_report(y_test, y_pred, target_names=target_names))
 ########################### Random Forest #######################
 
 # Decide on the number of decision trees
-param_grid = {
-    'n_estimators': [ 25, 50, 100, 120, 150, 300, 500, 800, 1000], # the more parameters, the more computational expensive
+#param_grid = {
+#    'n_estimators': [ 25, 50, 100, 120, 150, 300, 500, 800, 1000], # the more parameters, the more computational expensive
      #"max_depth": [ 5, 8, 15, 25, 30, None],
     #'max_features': ['auto', 'sqrt', 'log2', None]
-     }
+#     }
 
 #use out-of-bag samples ("oob_score= True") to estimate the generalization accuracy.
-rfc = RandomForestClassifier(bootstrap= True, n_jobs= 1, oob_score= True)
+#rfc = RandomForestClassifier(bootstrap= True, n_jobs= 1, oob_score= True)
 #let's use cv=10 in the GridSearchCV call
 #performance estimation
 #initiate the grid
-grid = GridSearchCV(rfc, param_grid = param_grid, cv=10, scoring ='accuracy')
+#grid = GridSearchCV(rfc, param_grid = param_grid, cv=10, scoring ='accuracy')
 #fit your data before you can get the best parameter combination.
-grid.fit(x_train,y_train)
-grid.cv_results_
+#grid.fit(x_train,y_train)
+#grid.cv_results_
 
 # Let's find out the best scores, parameter and the estimator from the gridsearchCV
-print("GridSearhCV best model:\n ")
-print('The best score: ', grid.best_score_)
-print('The best parameter:', grid.best_params_)
-print('The best model estimator:', grid.best_estimator_)
+#print("GridSearhCV best model:\n ")
+#print('The best score: ', grid.best_score_)
+#print('The best parameter:', grid.best_params_)
+#print('The best model estimator:', grid.best_estimator_)
 
 ### Define Random Forest Classifier
 rfc = RandomForestClassifier(bootstrap=True, class_weight=None, criterion='gini',
@@ -349,8 +348,11 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('Random Forest ROC\n')
 plt.legend(loc="lower right", fontsize=8)
-#plt.show()
+plt.show()
 RF_plot.savefig('results/figures/RF_Baxter.png', dpi=1000)
+
+feature_importances = pd.DataFrame(rfc.feature_importances_,                                    index = x_train.columns,                                   columns=['importance']).sort_values('importance',                     ascending=False)
+
 
 
 ## Model on Test Set
