@@ -101,7 +101,10 @@ from torch.autograd import Variable
 from scipy import interp
 from sklearn.metrics import (accuracy_score, confusion_matrix, classification_report, roc_curve, auc)
 from tpot import TPOTClassifier
-from sklearn.metrics.scorer import make_scorer
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.ensemble import GradientBoostingClassifier
+
 
 shared = pd.read_table("data/baxter.0.03.subsample.shared")
 shared.head()
@@ -124,9 +127,8 @@ y = data["class"].replace(diagnosis)
 y.dropna()
 x.dropna()
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True)
 
-tpot = TPOTClassifier(generations=5, population_size=50, verbosity=2, cv=5, n_jobs=1, scoring='roc_auc')
+tpot = TPOTClassifier(generations=50, population_size=50, verbosity=2, cv=5, n_jobs=1, scoring='roc_auc')
 
 tpot.fit(x_train, y_train)
 
