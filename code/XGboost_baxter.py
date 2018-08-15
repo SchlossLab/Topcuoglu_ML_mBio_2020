@@ -137,7 +137,7 @@ aucs_test = []
 mean_fpr_test = np.linspace(0, 1, 100)
 
 XGboost_plot = plt.figure()
-epochs = 50
+epochs = 100
 for epoch in range(epochs):
     X=x_train.values
     Y=y_train.values
@@ -191,6 +191,8 @@ plt.legend(loc="lower right", fontsize=8)
 #plt.show()
 XGboost_plot.savefig('results/figures/XGBoost_Baxter.png', dpi=1000)
 
+plot_importance(clf, max_num_features=10)
+pyplot.show()
 ######
 #y_pred = clf.predict(x_test.values)
 #print("Performance Accuracy on the Testing data:", #round(clf.score(x_test.values, y_test) *100))
