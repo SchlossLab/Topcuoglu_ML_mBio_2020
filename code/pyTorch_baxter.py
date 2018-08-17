@@ -139,7 +139,6 @@ class Net(nn.Module):
     def forward(self, x):
         x = self.fc1(x)
         x = F.dropout(x, p=0.5)
-        x = F.relu(x)
         x = self.fc2(x)
         x = F.sigmoid(x)
         return x
