@@ -8,13 +8,13 @@ from sympy import *
 import matplotlib.pyplot as plt
 from scipy import interp
 from sklearn.metrics import roc_curve, auc
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import RepeatedStratifiedKFold
+from sklearn.model_selection import GridSearchCV
 
 
 ############## PRE-PROCESS DATA ######################
 
 ## Read in the data
-
 
 ## shared has our input features(OTUs)
 shared = pd.read_table("data/baxter.0.03.subsample.shared")
@@ -51,14 +51,23 @@ y = data["dx"].replace(diagnosis)
 y.dropna()
 x.dropna()
 
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True)
 ######################### Logistic Regression ##############################
 
 ## Define L2 regularized logistic classifier
+#logreg = linear_model.LogisticRegression()
+#C = {"C": [0.00001, 0.0001,0.001,0.01,0.1,1,10,100]}
+#cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=100, random_state=200889)
+#clf = GridSearchCV(logreg, C, cv=cv, verbose=0)
+#best_model = clf.fit(x_train, y_train)
+#print(best_model.best_estimator_)
+#print('Best C:', best_model.best_estimator_.get_params()['C'])
 
-logreg = linear_model.LogisticRegression(C=0.001)
+logreg = linear_model.LogisticRegression()
 
 ## Generate ROC curves
-cv = StratifiedKFold(n_splits=5, shuffle=True)
+cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=100, random_state=200889)
+C = {"C": [0.000001, 0.00001, 0.0001, 0.01]}
 
 tprs = []
 aucs = []
@@ -69,28 +78,32 @@ aucs_test = []
 mean_fpr_test = np.linspace(0, 1, 100)
 
 Logit_plot = plt.figure()
-epochs = 100
+epochs = 500
+
+
+
+
+## Converting to numpy array from pandas
+X=x_train.values
+Y=y_train.values
+X_test= x_test.values
+Y_test= y_test.values
+
+    ## Plot mean ROC curve for 100 epochs of cross-validation with n_splits=5 and n_repeats=100 to evaluate the variation in our model. We also choose the best coefficient for our estimatot. The train set is used here for cross-validation.
+for train, test in cv.split(X,Y):
+    clf = GridSearchCV(logreg, C, cv=cv, verbose=0)
+    best_model = clf.fit(X[train], Y[train])
+    probas_ = best_model.predict_proba(X[test])
+    fpr, tpr, thresholds = roc_curve(Y[test], probas_[:, 1])
+    tprs.append(interp(mean_fpr, fpr, tpr))
+    tprs[-1][0] = 0.0
+    roc_auc = auc(fpr, tpr)
+    aucs.append(roc_auc)
+    print('Best C:', best_model.best_estimator_.get_params()['C'])
 
 for epoch in range(epochs):
-    # For each epoch, generate new train and test sets by splitting randomly, 80/20 ratios
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True)
-
-    ## Converting to numpy array from pandas
-    X=x_train.values
-    Y=y_train.values
-    X_test= x_test.values
-    Y_test= y_test.values
-
-    ## Plot mean ROC curve for 100 epochs of cross-validation with n_splits=5. The train set is used here for cross-validation.
-    for train, test in cv.split(X,Y):
-        probas_ = logreg.fit(X[train], Y[train]).predict_proba(X[test])
-        fpr, tpr, thresholds = roc_curve(Y[test], probas_[:, 1])
-        tprs.append(interp(mean_fpr, fpr, tpr))
-        tprs[-1][0] = 0.0
-        roc_auc = auc(fpr, tpr)
-        aucs.append(roc_auc)
     ## Plot mean ROC curve for 100 epochs of test set that is generated from splitting in the beginning of the loop.
-    probas_ = logreg.predict_proba(X_test)
+    probas_ = best_model.predict_proba(X_test)
     # Compute ROC curve and area the curve
     fpr_test, tpr_test, thresholds_test = roc_curve(Y_test, probas_[:, 1])
     tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
@@ -124,5 +137,5 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('L2 Logistic Regression ROC\n')
 plt.legend(loc="lower right", fontsize=8)
-#plt.show()
-Logit_plot.savefig('results/figures/Logit_Baxter.png', dpi=1000)
+plt.show()
+#Logit_plot.savefig('results/figures/Logit_Baxter.png', dpi=1000)
