@@ -48,6 +48,10 @@ y = data["class"].replace(diagnosis)
 y.dropna()
 x.dropna()
 
+## Split dataset to 80% training 20% test sets.
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
+
 
 # Score on the training set was:0.8492612704601008
 exported_pipeline = make_pipeline(
