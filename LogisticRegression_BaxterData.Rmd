@@ -1,6 +1,6 @@
 ---
 title: "Logistic Regression on Baxter colorectal cancer dataset"
-output: pdf_document
+output: html_document
 
 ---
 
@@ -36,7 +36,8 @@ from sympy import *
 import matplotlib.pyplot as plt
 from scipy import interp
 from sklearn.metrics import roc_curve, auc
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import RepeatedStratifiedKFold
+from sklearn.model_selection import GridSearchCV
 ```
 
 #### Pre-process the data
@@ -49,6 +50,8 @@ We have 292 samples with labels:
 I would like to do a classification model to predict discrete values (diagnosis 1 or 0)
 
 ```{python,tidy = TRUE,comment='[Output]', cache=FALSE, message=FALSE, warning=FALSE, engine.path = '/Library/Frameworks/Python.framework/Versions/3.6/bin/python3'}
+############## PRE-PROCESS DATA ######################
+
 ## Read in the data
 
 ## shared has our input features(OTUs)
@@ -86,22 +89,42 @@ y = data["dx"].replace(diagnosis)
 y.dropna()
 x.dropna()
 
+## Split dataset to 80% training 20% test sets.
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
+
+
 ```
 
 #### Now let's define a L2 regularized logistic regression model
+- We tune our hyper-parameter(regualarization strength) here with 80-20 splits and 1000 repeats. 
+- Once we have our "C" value tuned, we define our best model.
 ```{python,tidy = TRUE,comment='[Output]', cache=FALSE, message=FALSE, warning=FALSE, engine.path = '/Library/Frameworks/Python.framework/Versions/3.6/bin/python3'}
+######################### Logistic Regression ##############################
 
-logreg = linear_model.LogisticRegression(C=0.001) # coefficient is chosen to increase penalty for weights (overfitting).
+## Define L2 regularized logistic classifier
+logreg = linear_model.LogisticRegression()
+
+## Define the n-folds for hyper-parameter optimization on training set.
+cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=1000, random_state=200889)
+## We will try these regularization strength coefficients to optimize our model
+C = {"C": [0.0000001, 0.000001, 0.00001, 0.0001]}
+## Define the best model:
+clf = GridSearchCV(logreg, C, cv=cv, verbose=0, scoring='roc_auc')
+best_model = clf.fit(x_train, y_train)
+print('Best C:', best_model.best_estimator_.get_params()['C'])
+print('Best model:', best_model.best_estimator_)
+## The best model we pick here will be used for predicting test set.
+best_model = best_model.best_estimator_
+
 ```
 
 #### Plot ROC curve for cross validation of training set and then test set 
-1. Data is split to 80-20 training-test 100 times in a loop. 
-2. Each training set then is split to 80-20; 5 times to do a cross-validation ROC. A mean cross validation ROC is generated.
-3. For each epoch, the test set that is generated in the beginning of the loop is predicted by the model and a mean test ROC is generated.
+1. Plot mean ROC curve for cross-validation with n_splits=5 (80-20 stratified) and n_repeats=1000 to evaluate the variation of prediction in our training set.
+2. Plot ROC curve for never before seen test set.
 
 ```{python,tidy = TRUE,comment='[Output]', cache=FALSE, message=FALSE, warning=FALSE, engine.path = '/Library/Frameworks/Python.framework/Versions/3.6/bin/python3'}
-cv = StratifiedKFold(n_splits=5, shuffle=True)
-
+## Now let's plot some ROC curves
 tprs = []
 aucs = []
 mean_fpr = np.linspace(0, 1, 100)
@@ -110,44 +133,40 @@ tprs_test = []
 aucs_test = []
 mean_fpr_test = np.linspace(0, 1, 100)
 
+Logit_plot = plt.figure()
 
-epochs = 100
+## Converting to numpy array from pandas
+X=x_train.values
+Y=y_train.values
+X_test= x_test.values
+Y_test= y_test.values
 
-for epoch in range(epochs):
-    # For each epoch, generate new train and test sets by splitting randomly, 80/20 ratios
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True)
+## Plot mean ROC curve for cross-validation with n_splits=5 and n_repeats=1000 to evaluate the variation of prediction in our training set.
+for train, test in cv.split(X,Y):
+    probas_ = best_model.fit(X[train], Y[train]).predict_proba(X[test])
+    fpr, tpr, thresholds = roc_curve(Y[test], probas_[:, 1])
+    tprs.append(interp(mean_fpr, fpr, tpr))
+    tprs[-1][0] = 0.0
+    roc_auc = auc(fpr, tpr)
+    aucs.append(roc_auc)
+    
 
-    ## Converting to numpy array from pandas
-    X=x_train.values
-    Y=y_train.values
-    X_test= x_test.values
-    Y_test= y_test.values
+## Predict and plot ROC curve for never before seen test set.
+probas_ = best_model.predict_proba(x_test)
+# Compute ROC curve and area the curve
+fpr_test, tpr_test, thresholds_test = roc_curve(y_test, probas_[:, 1])
+tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
+tprs_test[-1][0] = 0.0
+roc_auc_test = auc(fpr_test, tpr_test)
+aucs_test.append(roc_auc_test)
 
-    ## Plot mean ROC curve for 100 epochs of cross-validation with n_splits=5. The train set is used here for cross-validation.
-    for train, test in cv.split(X,Y):
-        probas_ = logreg.fit(X[train], Y[train]).predict_proba(X[test])
-        fpr, tpr, thresholds = roc_curve(Y[test], probas_[:, 1])
-        tprs.append(interp(mean_fpr, fpr, tpr))
-        tprs[-1][0] = 0.0
-        roc_auc = auc(fpr, tpr)
-        aucs.append(roc_auc)
-        
-    ## Plot mean ROC curve for 100 epochs of test set that is generated from splitting in the beginning of the loop.
-    probas_ = logreg.predict_proba(X_test)
-    # Compute ROC curve and area the curve
-    fpr_test, tpr_test, thresholds_test = roc_curve(Y_test, probas_[:, 1])
-    tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
-    tprs_test[-1][0] = 0.0
-    roc_auc_test = auc(fpr_test, tpr_test)
-    aucs_test.append(roc_auc_test)
 
-## Now let's plot this
 plt.plot([0, 1], [0, 1], linestyle='--', color='green', label='Luck', alpha=.8)
 mean_tpr_test = np.mean(tprs_test, axis=0)
 mean_tpr_test[-1] = 1.0
 mean_auc_test = auc(mean_fpr_test, mean_tpr_test)
 std_auc_test = np.std(aucs_test)
-plt.plot(mean_fpr_test, mean_tpr_test, color='r', label=r'Mean test ROC (AUC = %0.2f $\pm$ %0.2f)' % (mean_auc_test, std_auc_test), lw=2, alpha=.8)
+plt.plot(mean_fpr_test, mean_tpr_test, color='r', label=r'Never-before-seen test set ROC (AUC = %0.2f $\pm$ %0.2f)' % (mean_auc_test, std_auc_test), lw=2, alpha=.8)
 std_tpr_test = np.std(tprs_test, axis=0)
 tprs_upper_test = np.minimum(mean_tpr_test + std_tpr_test, 1)
 tprs_lower_test = np.maximum(mean_tpr_test - std_tpr_test, 0)
@@ -168,4 +187,6 @@ plt.ylabel('True Positive Rate')
 plt.title('L2 Logistic Regression ROC\n')
 plt.legend(loc="lower right", fontsize=8)
 plt.show()
+#Logit_plot.savefig('results/figures/Logit_Baxter.png', dpi=1000)
+
 ```
