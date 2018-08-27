@@ -10,6 +10,7 @@ from scipy import interp
 from sklearn.metrics import roc_curve, auc
 from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.model_selection import GridSearchCV
+from sklearn.externals import joblib
 
 
 ############## PRE-PROCESS DATA ######################
@@ -136,3 +137,6 @@ plt.title('L2 Logistic Regression ROC\n')
 plt.legend(loc="lower right", fontsize=8)
 #plt.show()
 Logit_plot.savefig('results/figures/Logit_Baxter.png', dpi=1000)
+
+filename = 'finalized_logistic_model.sav'
+joblib.dump(best_model, filename)
