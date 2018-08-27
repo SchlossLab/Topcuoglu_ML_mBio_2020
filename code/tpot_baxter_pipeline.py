@@ -83,7 +83,7 @@ Y=y_train.values
 X_test= x_test.values
 Y_test= y_test.values
 
-## Plot mean ROC curve for cross-validation with n_splits=5 and n_repeats=100 to evaluate the variation of prediction in our training set.
+## Plot mean ROC curve for cross-validation with n_splits=5 and n_repeats=1000 to evaluate the variation of prediction in our training set.
 for train, test in cv.split(X,Y):
     probas_ = exported_pipeline.fit(X[train], Y[train]).predict_proba(X[test])
     fpr, tpr, thresholds = roc_curve(Y[test], probas_[:, 1])
