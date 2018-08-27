@@ -13,6 +13,17 @@ from sklearn.metrics import roc_curve, auc
 import matplotlib.pyplot as plt
 from scipy import interp
 from sklearn.model_selection import StratifiedKFold
+from sklearn.linear_model import LogisticRegression
+from sklearn import linear_model
+from sklearn.model_selection import train_test_split
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+from sympy import *
+import matplotlib.pyplot as plt
+from scipy import interp
+from sklearn.metrics import roc_curve, auc
+from sklearn.model_selection import RepeatedStratifiedKFold
+from sklearn.model_selection import GridSearchCV
 
 
 # Make sure that the class is labeled 'target' in the data file
