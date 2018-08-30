@@ -52,62 +52,73 @@ y = data["dx"].replace(diagnosis)
 y.dropna()
 x.dropna()
 
-## Split dataset to 80% training 20% test sets.
-
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
-
-######################### Logistic Regression ##############################
-
-## Define L2 regularized logistic classifier
-logreg = linear_model.LogisticRegression()
-
-## Define the n-folds for hyper-parameter optimization on training set.
-cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=1000, random_state=200889)
-## We will try these regularization strength coefficients to optimize our model
-C = {"C": [0.0000001, 0.000001, 0.00001, 0.0001]}
-## Define the best model:
-clf = GridSearchCV(logreg, C, cv=cv, verbose=0, scoring='roc_auc')
-best_model = clf.fit(x_train, y_train)
-print('Best C:', best_model.best_estimator_.get_params()['C'])
-print('Best model:', best_model.best_estimator_)
-## The best model we pick here will be used for predicting test set.
-best_model = best_model.best_estimator_
-
-## Now let's plot some ROC curves
-tprs = []
-aucs = []
-mean_fpr = np.linspace(0, 1, 100)
-
+## Generate empty lists to fill with AUC values for test-set
 tprs_test = []
 aucs_test = []
 mean_fpr_test = np.linspace(0, 1, 100)
 
-Logit_plot = plt.figure()
+################## Logistic Regression ###############
+
+## We will select hyper-parameters and an optimal model during trainign with 80% of the data and test that best model on the remanining %20 x100 times.
+
+# For each epoch, the chosen best model will be tested on the %20 test set that was not seen before during trainig. We will report mean AUC values +/- sd for the testing/predicting.
+
+# For each epoch, we will also be splitting the 80% training data 5-fold again, another 100 times and cross validate (inner loop). We will report mean AUC values +/- sd for each cross-validation.
+
+epochs= 100
+for epoch in range(epochs):
+    ## Split dataset to 80% training 20% test sets.
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
+
+## Define L2 regularized logistic classifier
+    logreg = linear_model.LogisticRegression()
+
+## Define the n-folds for hyper-parameter optimization on training set.
+    cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=100, random_state=200889)
+## We will try these regularization strength coefficients to optimize our model
+    C = {"C": [0.0000001, 0.000001, 0.00001, 0.0001]}
+## Define the best model:
+    clf = GridSearchCV(logreg, C, cv=cv, verbose=0, scoring='roc_auc')
+    best_model = clf.fit(x_train, y_train)
+    print('Best C:', best_model.best_estimator_.get_params()['C'])
+    print('Best model:', best_model.best_estimator_)
+## The best model we pick here will be used for predicting test set.
+    best_model = best_model.best_estimator_
+
+## Now let's plot some ROC curves
+## Generate empty lists to fill with AUC values for train-set cv
+    tprs = []
+    aucs = []
+    mean_fpr = np.linspace(0, 1, 100)
+
+    Logit_plot = plt.figure()
 
 ## Converting to numpy array from pandas
-X=x_train.values
-Y=y_train.values
-X_test= x_test.values
-Y_test= y_test.values
-
-## Plot mean ROC curve for cross-validation with n_splits=5 and n_repeats=100 to evaluate the variation of prediction in our training set.
-for train, test in cv.split(X,Y):
-    probas_ = best_model.fit(X[train], Y[train]).predict_proba(X[test])
-    fpr, tpr, thresholds = roc_curve(Y[test], probas_[:, 1])
-    tprs.append(interp(mean_fpr, fpr, tpr))
-    tprs[-1][0] = 0.0
-    roc_auc = auc(fpr, tpr)
-    aucs.append(roc_auc)
-    ## Plot mean ROC curve for test set after each fitting of subset training set
+    X=x_train.values
+    Y=y_train.values
+    X_test= x_test.values
+    Y_test= y_test.values
 
 ## Plot mean ROC curve for never before seen test set.
-probas_ = best_model.predict_proba(x_test)
+    probas_ = best_model.predict_proba(x_test)
 # Compute ROC curve and area the curve
-fpr_test, tpr_test, thresholds_test = roc_curve(y_test, probas_[:, 1])
-tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
-tprs_test[-1][0] = 0.0
-roc_auc_test = auc(fpr_test, tpr_test)
-aucs_test.append(roc_auc_test)
+    fpr_test, tpr_test, thresholds_test = roc_curve(y_test, probas_[:, 1])
+    tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
+    tprs_test[-1][0] = 0.0
+    roc_auc_test = auc(fpr_test, tpr_test)
+    aucs_test.append(roc_auc_test)
+    print("Test", roc_auc_test)
+
+## Plot mean ROC curve for cross-validation with n_splits=5 and n_repeats=100 to evaluate the variation of prediction in our training set.
+    for train, test in cv.split(X,Y):
+        probas_ = best_model.fit(X[train], Y[train]).predict_proba(X[test])
+        fpr, tpr, thresholds = roc_curve(Y[test], probas_[:, 1])
+        tprs.append(interp(mean_fpr, fpr, tpr))
+        tprs[-1][0] = 0.0
+        roc_auc = auc(fpr, tpr)
+        aucs.append(roc_auc)
+        print("Train", roc_auc)
+    ## Plot mean ROC curve for test set after each fitting of subset training set
 
 
 plt.plot([0, 1], [0, 1], linestyle='--', color='green', label='Luck', alpha=.8)
