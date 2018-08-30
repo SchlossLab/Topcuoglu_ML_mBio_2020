@@ -97,7 +97,7 @@ x.dropna()
   - The only hyper-parameter in Logit here will be the strength of the L2-regularization
 2. For each epoch, the chosen best model will be tested on the %20 test set that was not seen before during trainig. We will report mean AUC values +/- sd for the testing/predicting.
 3. For each epoch, we will also be splitting the 80% training data 5-fold again, another 100 times and cross validate (inner loop). We will report mean AUC values +/- sd for each cross-validation.
-- 
+
 ```{python,tidy = TRUE,comment='[Output]', cache=FALSE, message=FALSE, warning=FALSE, engine.path = '/Library/Frameworks/Python.framework/Versions/3.6/bin/python3'}
 ## Generate empty lists to fill with AUC values for test-set
 tprs_test = []
@@ -121,8 +121,6 @@ for epoch in range(epochs):
     ## Define the best model:
     clf = GridSearchCV(logreg, C, cv=cv, verbose=0, scoring='roc_auc')
     best_model = clf.fit(x_train, y_train)
-    print('Best C:', best_model.best_estimator_.get_params()['C'])
-    print('Best model:', best_model.best_estimator_)
     ## The best model we pick here will be used for predicting test set.
     best_model = best_model.best_estimator_
 
@@ -146,8 +144,7 @@ for epoch in range(epochs):
     tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
     tprs_test[-1][0] = 0.0
     roc_auc_test = auc(fpr_test, tpr_test)
-    aucs_test.append(roc_auc_test)
-    print("Test", roc_auc_test)
+
 
     ## Plot mean ROC curve for cross-validation with n_splits=5 and n_repeats=100 to evaluate the variation of prediction in our training set.
     for train, test in cv.split(X,Y):
@@ -157,7 +154,7 @@ for epoch in range(epochs):
         tprs[-1][0] = 0.0
         roc_auc = auc(fpr, tpr)
         aucs.append(roc_auc)
-        print("Train", roc_auc)
+
 
 ```
 
