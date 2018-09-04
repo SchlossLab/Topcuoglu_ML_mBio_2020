@@ -48,11 +48,6 @@ y = data["class"].replace(diagnosis)
 y.dropna()
 x.dropna()
 
-## Split dataset to 80% training 20% test sets.
-
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
-
-
 # Score on the training set was:0.8492612704601008
 exported_pipeline = make_pipeline(
     StackingEstimator(estimator=RandomForestClassifier(bootstrap=True, criterion="gini", max_features=0.8, min_samples_leaf=2, min_samples_split=2, n_estimators=100)),
@@ -67,40 +62,44 @@ exported_pipeline = make_pipeline(
 )
 
 
-cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=100, random_state=200889)
-tprs = []
-aucs = []
-mean_fpr = np.linspace(0, 1, 100)
-
 tprs_test = []
 aucs_test = []
 mean_fpr_test = np.linspace(0, 1, 100)
 
+epochs= 100
+for epoch in range(epochs):
+    ## Split dataset to 80% training 20% test sets.
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
+
+    cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=100, random_state=200889)
+    tprs = []
+    aucs = []
+    mean_fpr = np.linspace(0, 1, 100)
 
 ## Converting to numpy array from pandas
-X=x_train.values
-Y=y_train.values
-X_test= x_test.values
-Y_test= y_test.values
-Tpot_plot = plt.figure()
+    X=x_train.values
+    Y=y_train.values
+    X_test= x_test.values
+    Y_test= y_test.values
+    Tpot_plot = plt.figure()
 ## Plot mean ROC curve for cross-validation with n_splits=5 and n_repeats=100 to evaluate the variation of prediction in our training set.
-for train, test in cv.split(X,Y):
-    probas_ = exported_pipeline.fit(X[train], Y[train]).predict_proba(X[test])
-    fpr, tpr, thresholds = roc_curve(Y[test], probas_[:, 1])
-    tprs.append(interp(mean_fpr, fpr, tpr))
-    tprs[-1][0] = 0.0
-    roc_auc = auc(fpr, tpr)
-    aucs.append(roc_auc)
+    for train, test in cv.split(X,Y):
+        probas_ = exported_pipeline.fit(X[train], Y[train]).predict_proba(X[test])
+        fpr, tpr, thresholds = roc_curve(Y[test], probas_[:, 1])
+        tprs.append(interp(mean_fpr, fpr, tpr))
+        tprs[-1][0] = 0.0
+        roc_auc = auc(fpr, tpr)
+        aucs.append(roc_auc)
     ## Plot mean ROC curve for test set after each fitting of subset training set
 
 ## Plot mean ROC curve for never before seen test set.
-probas_ = exported_pipeline.predict_proba(x_test)
+    probas_ = exported_pipeline.predict_proba(x_test)
 # Compute ROC curve and area the curve
-fpr_test, tpr_test, thresholds_test = roc_curve(y_test, probas_[:, 1])
-tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
-tprs_test[-1][0] = 0.0
-roc_auc_test = auc(fpr_test, tpr_test)
-aucs_test.append(roc_auc_test)
+    fpr_test, tpr_test, thresholds_test = roc_curve(y_test, probas_[:, 1])
+    tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
+    tprs_test[-1][0] = 0.0
+    roc_auc_test = auc(fpr_test, tpr_test)
+    aucs_test.append(roc_auc_test)
 
 
 
