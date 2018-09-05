@@ -4,12 +4,15 @@ output: html_document
 
 ---
 ### Backgorund
-Colorectal cancer is one of the leading cause of death among cancers in the United States. Early diagnosis highly increases the chance of survival. However the current diagnostic methods are expensive and invasive. As a less invasive tool, numerous studies have used gut microbiome composition to predict disease progression. Each study uses different machine learning pipelines to classify disease progression which negatively impacts the reproducibility, robustness and actionability of this tool. 
+Colorectal cancer is one of the leading cause of death among cancers in the United States. Early diagnosis highly increases the chance of survival. However the current diagnostic methods are expensive and invasive. As a less invasive tool, numerous studies have used gut microbiome composition to predict disease progression. Each study uses different machine learning pipelines to classify disease progression which negatively impacts the reproducibility, robustness and actionability of this tool.
+
 ### Goal of this project
 We want to evaluate the classification success of different machine learning methods. We also want to discuss the reproducibility, robustness, actionability, interpretibility and susceptibility to overfitting of each method. 
+
 ### Methods
 We sequenced the 16S rRNA genes from the stool samples of 292 patients, 120 with colorectal cancer
 and 172 with healthy colons. We used the relative abundances of the bacterial populations within each sample to develop a L2-regularized logistic regression, SVM(linear), SVM(non-linear), decision tree, random forest, XGBoost and feed forward neural net(1 hidden layer) classification models that detects colonic lesions using the relative abundance of gut microbiota. 
+
 ### Results
 So far, I have used L2 logistic, Random Forest, PyTorch and XGboost to classify. I've also used the TPOT algorithm to see if this can be used by our scientific community when choosing ML pipelines. 
 
