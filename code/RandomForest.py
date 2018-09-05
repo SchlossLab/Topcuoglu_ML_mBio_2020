@@ -50,26 +50,33 @@ y = data["dx"].replace(diagnosis)
 y.dropna()
 x.dropna()
 
+## Generate empty lists to fill with AUC values for test-set
+tprs_test = []
+aucs_test = []
+mean_fpr_test = np.linspace(0, 1, 100)
+
 ########################### Random Forest #######################
-epochs= 100
+epochs= 10
 for epoch in range(epochs):
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
 
 # Decide on the number of decision trees
-    param_grid = {'n_estimators': [ 25, 50, 100, 120, 150, 300, 500, 800, 1000], "max_depth": [ 5, 8, 15, 25, 30, None],'max_features': ['auto', 'sqrt', 'log2', None, 0.8], 'criterion': ["entropy", "gini"]
-     }
-
+    #param_grid = {'n_estimators': [ 25, 50, 100, 120, 150, 300, 500, 800, 1000], "max_depth": [ 5, 8, 15, 25, 30, None],'max_features': ['auto', 'sqrt', 'log2', None, 0.8], 'criterion': ["entropy", "gini"]
+     #}
+    param_grid = {'n_estimators': [ 25, 50, 100, 120, 150, 300, 500, 1000]}
+     ## Define the n-folds for hyper-parameter optimization on training set.
+    cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=200889)
     #use out-of-bag samples ("oob_score= True") to estimate the generalization accuracy.
-    rfc = RandomForestClassifier(bootstrap= True, n_jobs= 1, oob_score= True)
+    rfc = RandomForestClassifier(bootstrap= True, n_jobs= 1)
     #let's use cv=10 in the GridSearchCV call
     #performance estimation
     #initiate the grid
-    grid = GridSearchCV(rfc, param_grid = param_grid, cv=5, scoring ='roc_auc')
+    grid = GridSearchCV(rfc, param_grid = param_grid, cv=cv, scoring ='roc_auc')
     #fit your data before you can get the best parameter combination.
     grid.fit(x_train,y_train)
     best_model = grid.fit(x_train,y_train)
     best_model = best_model.best_estimator_
-    print('Best tree number:', best_model.best_estimator_.get_params()['n_estimators'])
+    print('Best model:', best_model.best_estimator_)
 
     tprs = []
     aucs = []
@@ -131,7 +138,7 @@ plt.ylabel('True Positive Rate')
 plt.title('L2 Logistic Regression ROC\n')
 plt.legend(loc="lower right", fontsize=8)
 #plt.show()
-Logit_plot.savefig('results/figures/RF_Baxter.png', dpi=1000)
+RF_plot.savefig('results/figures/RF_Baxter.png', dpi=1000)
 
 
 ###### SAVE MODEL TO BE USED ON DOTHER DATA #########
