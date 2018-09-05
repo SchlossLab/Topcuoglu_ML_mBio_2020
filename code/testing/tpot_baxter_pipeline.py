@@ -24,6 +24,7 @@ from scipy import interp
 from sklearn.metrics import roc_curve, auc
 from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.model_selection import GridSearchCV
+from sklearn.externals import joblib
 
 
 # Make sure that the class is labeled 'target' in the data file
@@ -60,7 +61,6 @@ exported_pipeline = make_pipeline(
     StackingEstimator(estimator=LogisticRegression(C=10.0, dual=True, penalty="l2")),
     BernoulliNB(alpha=0.01, fit_prior=True)
 )
-
 
 tprs_test = []
 aucs_test = []
@@ -129,3 +129,6 @@ plt.ylabel('True Positive Rate')
 plt.title('Tpot Defined Random Forest ROC\n')
 plt.legend(loc="lower right", fontsize=8)
 Tpot_plot.savefig('results/figures/Tpot_pipeline_Baxter.png', dpi=1000)
+
+filename = 'finalized_tpot_model.sav'
+joblib.dump(exported_pipeline, filename)
