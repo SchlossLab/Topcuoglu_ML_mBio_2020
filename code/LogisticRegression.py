@@ -59,7 +59,7 @@ mean_fpr_test = np.linspace(0, 1, 100)
 
 ################## Logistic Regression ###############
 
-## We will select hyper-parameters and an optimal model during trainign with 80% of the data and test that best model on the remanining %20 x100 times.
+## We will select hyper-parameters and an optimal model during training with 80% of the data and test that best model on the remanining %20 x100 times.
 
 # For each epoch, the chosen best model will be tested on the %20 test set that was not seen before during trainig. We will report mean AUC values +/- sd for the testing/predicting.
 
@@ -144,7 +144,7 @@ plt.xlim([-0.05, 1.05])
 plt.ylim([-0.05, 1.05])
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
-plt.title('L2 Logistic Regression ROC\n')
+plt.title('Random Forest ROC\n')
 plt.legend(loc="lower right", fontsize=8)
 #plt.show()
 Logit_plot.savefig('results/figures/Logit_Baxter.png', dpi=1000)
