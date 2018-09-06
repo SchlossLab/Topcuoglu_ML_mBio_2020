@@ -13,3 +13,8 @@ from sklearn.metrics import roc_curve, auc
 from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.model_selection import GridSearchCV
 from sklearn.externals import joblib
+
+
+parameters_svm = {'C':[0.9,0.01],'kernel':['rbf','linear'], 'gamma':[0,0.1,'auto'], 'probability':[True,False], 'random_state':[0,7,16],'decision_function_shape':['ovo','ovr'],'degree':[3,4,10]}
+
+grid = GridSearchCV(estimator = model, param_grid = parameters, cv = 10, scoring = 'accuracy')
