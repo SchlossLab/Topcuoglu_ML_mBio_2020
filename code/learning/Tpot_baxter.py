@@ -137,4 +137,4 @@ tpot.fit(x_train, y_train)
 #TPOTClassifier(config_dict={'sklearn.ensemble.GradientBoostingClassifier': {'max_features': array([0.05, 0.1 , 0.15, 0.2 , 0.25, 0.3 , 0.35, 0.4 , 0.45, 0.5 , 0.55, 0.6 , 0.65, 0.7 , 0.75, 0.8 , 0.85, 0.9 , 0.95, 1.  ]), 'learning_rate': [0.001, 0.01, 0.1, 0.5, 1.0], 'min_samples_leaf': [1, 2, 3, 4, 5, 6, 7...  0.6 , 0.65, 0.7 , 0.75, 0.8 , 0.85, 0.9 , 0.95, 1.  ])}, 'sklearn.preprocessing.RobustScaler': {}}, crossover_rate=0.1, cv=5, disable_update_check=False, early_stop=None, generations=10, max_eval_time_mins=5,max_time_mins=None, memory=None, mutation_rate=0.9, n_jobs=1,offspring_size=50, periodic_checkpoint_folder=None,population_size=50, random_state=None, scoring=None, subsample=1.0,verbosity=2, warm_start=False)
 
 print(tpot.score(x_test, y_test))
-tpot.export('tpot_baxter_pipeline.py')
+tpot.export('testing/tpot_baxter_pipeline.py')
