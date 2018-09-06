@@ -3,6 +3,22 @@ title: "Logistic Regression on Baxter colorectal cancer dataset"
 output: html_document
 
 ---
+### Backgorund
+Colorectal cancer is one of the leading cause of death among cancers in the United States. Early diagnosis highly increases the chance of survival. However the current diagnostic methods are expensive and invasive. As a less invasive tool, numerous studies have used gut microbiome composition to predict disease progression. Each study uses different machine learning pipelines to classify disease progression which negatively impacts the reproducibility, robustness and actionability of this tool.
+
+### Goal of this project
+We want to evaluate the classification success of different machine learning methods. We also want to discuss the reproducibility, robustness, actionability, interpretibility and susceptibility to overfitting of each method. 
+
+### Methods
+We sequenced the 16S rRNA genes from the stool samples of 292 patients, 120 with colorectal cancer
+and 172 with healthy colons. We used the relative abundances of the bacterial populations within each sample to develop a L2-regularized logistic regression, SVM(linear), SVM(non-linear), decision tree, random forest, XGBoost and feed forward neural net(1 hidden layer) classification models that detects colonic lesions using the relative abundance of gut microbiota. 
+
+### Results
+So far, I have used L2 logistic, Random Forest, PyTorch and XGboost to classify. I've also used the TPOT algorithm to see if this can be used by our scientific community when choosing ML pipelines. 
+
+Here I'm sharing my code and my ROC plot for L2 Logistic Regression. It would be great to get feedback on my pipeline for this (the way I split the data, cross-validate and report AUC) so that I can implement that for all the other methods. 
+
+
 
 ```{r setup, include=FALSE, message=FALSE, warning=FALSE}
 library(knitr)
@@ -10,18 +26,6 @@ opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
 library(reticulate)
 use_python("/Library/Frameworks/Python.framework/Versions/3.6/bin/python3", required = TRUE)
 py_config()
-```
-
-#### Let's make sure we are using the Python version we want
-```{python,tidy = TRUE, comment='[Output]', cache=FALSE, message=FALSE, warning=FALSE, engine.path = '/Library/Frameworks/Python.framework/Versions/3.6/bin/python3'}
-import sys
-print(sys.version)
-```
-
-#### Let's make sure we are in our project directory
-```{python,tidy = TRUE,comment='[Output]', cache=FALSE, message=FALSE, warning=FALSE, engine.path = '/Library/Frameworks/Python.framework/Versions/3.6/bin/python3'}
-import os
-print(os.getcwd())
 ```
 
 #### Start by importing modules that will be necessary 
@@ -46,10 +50,10 @@ from sklearn.externals import joblib
 We have 6920 OTUs that are the features we put in.
 We have 292 samples with labels:
 
-  - 120 Cancer colon
-  - 172 Normal colon
+* 120 Cancer colon
+* 172 Normal colon
 
-I would like to do a classification model to predict discrete values (diagnosis 1 or 0)
+We would like to do a classification model to predict discrete values (diagnosis 1 or 0)
 
 ```{python,tidy = TRUE,comment='[Output]', cache=FALSE, message=FALSE, warning=FALSE, engine.path = '/Library/Frameworks/Python.framework/Versions/3.6/bin/python3'}
 ############## PRE-PROCESS DATA ######################
@@ -93,10 +97,11 @@ x.dropna()
 ```
 
 #### Now let's define a L2 regularized logistic regression model
-1. We will select hyper-parameters and an optimal model during training with 80% of the data and test that best model on the remanining %20 x100 times.
-  - The only hyper-parameter in Logit here will be the strength of the L2-regularization
-2. For each epoch, the chosen best model will be tested on the %20 test set that was not seen before during trainig. We will report mean AUC values +/- sd for the testing/predicting.
-3. For each epoch, we will also be splitting the 80% training data 5-fold again, another 100 times and cross validate (inner loop). We will report mean AUC values +/- sd for each cross-validation.
+1. First we split the data 80-20%.  We select hyper-parameters and an optimal model during training with the 80% and test that best model on the 20%. We repeat this(splitting,tuning,learning and testing x100 epochs)
+  * The only hyper-parameter that we tune will be the strength of the L2-regularization (C value).
+  * For each epoch there will be a new C value. (We get a distribution of C values over the 100 epochs)
+2. For each epoch, the chosen best model is being tested on the %20 test set that was not seen before during learning. We report mean AUC values +/- sd for this testing.
+3. For each epoch, we will also be splitting the 80% learning data(that we use to tune hyperparameter) 5-fold again, another 100 times and cross validate (inner loop). We will report mean AUC values +/- sd for each cross-validation.
 
 ```{python,tidy = TRUE,comment='[Output]', cache=FALSE, message=FALSE, warning=FALSE, engine.path = '/Library/Frameworks/Python.framework/Versions/3.6/bin/python3'}
 ## Generate empty lists to fill with AUC values for test-set
@@ -129,8 +134,6 @@ for epoch in range(epochs):
     aucs = []
     mean_fpr = np.linspace(0, 1, 100)
 
-    Logit_plot = plt.figure()
-
     ## Converting to numpy array from pandas
     X=x_train.values
     Y=y_train.values
@@ -144,7 +147,7 @@ for epoch in range(epochs):
     tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
     tprs_test[-1][0] = 0.0
     roc_auc_test = auc(fpr_test, tpr_test)
-
+    aucs_test.append(roc_auc_test)
 
     ## Plot mean ROC curve for cross-validation with n_splits=5 and n_repeats=100 to evaluate the variation of prediction in our training set.
     for train, test in cv.split(X,Y):
@@ -154,8 +157,6 @@ for epoch in range(epochs):
         tprs[-1][0] = 0.0
         roc_auc = auc(fpr, tpr)
         aucs.append(roc_auc)
-
-
 ```
 
 #### Plot ROC curve for cross validation of training set and test set 
@@ -187,6 +188,4 @@ plt.ylabel('True Positive Rate')
 plt.title('L2 Logistic Regression ROC\n')
 plt.legend(loc="lower right", fontsize=8)
 plt.show()
-#Logit_plot.savefig('results/figures/Logit_Baxter.png', dpi=1000)
-
 ```
