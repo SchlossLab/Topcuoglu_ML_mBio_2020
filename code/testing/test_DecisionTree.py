@@ -55,9 +55,11 @@ x.dropna()
 
 cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=100, random_state=200889)
 
+## Define Decision Tree Classifier
+best_model = DecisionTreeClassifier(max_depth=10, min_samples_split=100)
 
 ###################### Best Parameters #######################
-## Best accuracy : 0.694776 (0.070054) with: {'max_depth': 100, 'min_samples_split': 100}
+# Best: 0.651042 using {'max_depth': 10, 'min_samples_split': 100}
 ##############################################################
 
 tprs_test = []
@@ -70,7 +72,6 @@ for epoch in range(epochs):
     ## Split dataset to 80% training 20% test sets.
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
 
-    best_model = DecisionTreeClassifier(C=1.0, kernel='sigmoid', gamma=0.001)
 
 ## Converting to numpy array from pandas
 
@@ -80,7 +81,7 @@ for epoch in range(epochs):
     y_test= y_test.values
 
 
-    y_score = best_model.fit(x_train, y_train).decision_function(x_test)
+    y_score = best_model.fit(x_train, y_train).predict(x_test)
 
     # Compute ROC curve and area the curve
     fpr_test, tpr_test, thresholds_test = roc_curve(y_test, y_score)
@@ -104,11 +105,11 @@ plt.xlim([-0.05, 1.05])
 plt.ylim([-0.05, 1.05])
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
-plt.title('SVM ROC\n')
+plt.title('Decision Tree ROC\n')
 plt.legend(loc="lower right", fontsize=8)
 plt.show()
 #SVM_plot.savefig('results/figures/SVM_Baxter.png', dpi=1000)
 
 ###### SAVE MODEL TO BE USED ON OTHER DATA #########
-filename = 'finalized_SVM_model.sav'
+filename = 'finalized_DecisionTree_model.sav'
 joblib.dump(best_model, filename)
