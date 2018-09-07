@@ -53,10 +53,8 @@ y.dropna()
 x.dropna()
 
 
-cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=100, random_state=200889)
-
-## Define Decision Tree Classifier
-best_model = DecisionTreeClassifier(max_depth=5, min_samples_split=50)
+###### LOAD MODEL AND TEST THE WHOLE DATASET #########
+best_model = joblib.load('finalized_Decision_Tree_model.sav')
 
 ###################### Best Parameters #######################
 # Best: 0.651042 using {'max_depth': 10, 'min_samples_split': 50}
@@ -74,14 +72,11 @@ for epoch in range(epochs):
 
 
 ## Converting to numpy array from pandas
-
-## Converting to numpy array from pandas
-
     x_test= x_test.values
     y_test= y_test.values
 
 
-    y_score = best_model.fit(x_train, y_train).predict(x_test)
+    y_score = best_model.predict(x_test)
 
     # Compute ROC curve and area the curve
     fpr_test, tpr_test, thresholds_test = roc_curve(y_test, y_score)
@@ -109,7 +104,3 @@ plt.title('Decision Tree ROC\n')
 plt.legend(loc="lower right", fontsize=8)
 plt.show()
 #SVM_plot.savefig('results/figures/SVM_Baxter.png', dpi=1000)
-
-###### SAVE MODEL TO BE USED ON OTHER DATA #########
-filename = 'finalized_DecisionTree_model.sav'
-joblib.dump(best_model, filename)
