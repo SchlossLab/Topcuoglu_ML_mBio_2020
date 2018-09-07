@@ -55,9 +55,6 @@ x.dropna()
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
 
-scaler = StandardScaler().fit(x_train)
-x_train = scaler.transform(x_train)
-
 ## Define the n-folds for hyper-parameter optimization on training set.
 cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=100, random_state=200889)
 
@@ -65,7 +62,7 @@ cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=100, random_state=200889)
 model = DecisionTreeClassifier()
 
 ## Define the hyper-parameters optimization on training set.
-params = dict(max_depth=[10, 50, 100, 200, 300, 500, 500], min_samples_split=[50, 100, 120, 150])
+params = dict(max_depth=[10, 50, 100, 500, 1000], min_samples_split=[5, 10, 100, 150, 200])
 
 grid = GridSearchCV(estimator = model, param_grid = params, cv = cv, scoring = 'roc_auc')
 
