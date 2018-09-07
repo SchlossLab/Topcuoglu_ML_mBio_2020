@@ -81,9 +81,9 @@ for mean, stdev, param in zip(means, stds, params):
 best_model = grid_result.best_estimator_
 
 ## Generate empty lists to fill with AUC values for test-set
-tprs_test = []
-aucs_test = []
-mean_fpr_test = np.linspace(0, 1, 100)
+tprs = []
+aucs = []
+mean_fpr = np.linspace(0, 1, 100)
 
 ########################### Random Forest #######################
 
