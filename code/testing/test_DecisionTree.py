@@ -56,10 +56,10 @@ x.dropna()
 cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=100, random_state=200889)
 
 ## Define Decision Tree Classifier
-best_model = DecisionTreeClassifier(max_depth=10, min_samples_split=100)
+best_model = DecisionTreeClassifier(max_depth=5, min_samples_split=50)
 
 ###################### Best Parameters #######################
-# Best: 0.651042 using {'max_depth': 10, 'min_samples_split': 100}
+# Best: 0.651042 using {'max_depth': 10, 'min_samples_split': 50}
 ##############################################################
 
 tprs_test = []
