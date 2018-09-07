@@ -62,7 +62,7 @@ cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=100, random_state=200889)
 model = DecisionTreeClassifier()
 
 ## Define the hyper-parameters optimization on training set.
-params = dict(max_depth=[10, 50, 100, 500, 1000], min_samples_split=[5, 10, 100, 150, 200])
+params = dict(max_depth=[1, 10, 50, 100], min_samples_split=[5, 10, 25, 50, 100])
 
 grid = GridSearchCV(estimator = model, param_grid = params, cv = cv, scoring = 'roc_auc')
 
