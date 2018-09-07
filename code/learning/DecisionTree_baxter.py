@@ -59,13 +59,13 @@ scaler = StandardScaler().fit(x_train)
 x_train = scaler.transform(x_train)
 
 ## Define the n-folds for hyper-parameter optimization on training set.
-cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=20, random_state=200889)
+cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=100, random_state=200889)
 
 ## Define Decision Tree Classifier
 model = DecisionTreeClassifier()
 
 ## Define the hyper-parameters optimization on training set.
-params = dict(max_depth=[1, 3, 5, 10, 50, 100], min_samples_split=[2, 5, 10, 100])
+params = dict(max_depth=[10, 50, 100, 200, 300, 500, 500], min_samples_split=[50, 100, 120, 150])
 
 grid = GridSearchCV(estimator = model, param_grid = params, cv = cv, scoring = 'roc_auc')
 
