@@ -64,9 +64,9 @@ cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=100, random_state=200889)
 tprs_test = []
 aucs_test = []
 mean_fpr_test = np.linspace(0, 1, 100)
-SVM_plot = plt.figure()
+#SVM_plot = plt.figure()
 
-epochs= 1000
+epochs= 100
 for epoch in range(epochs):
     ## Split dataset to 80% training 20% test sets.
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
@@ -108,5 +108,9 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('SVM ROC\n')
 plt.legend(loc="lower right", fontsize=8)
-#plt.show()
-SVM_plot.savefig('results/figures/SVM_Baxter.png', dpi=1000)
+plt.show()
+#SVM_plot.savefig('results/figures/SVM_Baxter.png', dpi=1000)
+
+###### SAVE MODEL TO BE USED ON OTHER DATA #########
+filename = 'finalized_SVM_model.sav'
+joblib.dump(best_model, filename)
