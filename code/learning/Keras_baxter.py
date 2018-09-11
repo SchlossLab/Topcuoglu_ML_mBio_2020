@@ -46,7 +46,7 @@ mean_fpr = np.linspace(0, 1, 100)
 tprs_test = []
 aucs_test = []
 mean_fpr_test = np.linspace(0, 1, 100)
-num_epochs=2
+num_epochs=1
 
 
 
@@ -115,6 +115,6 @@ plt.ylim([-0.05, 1.05])
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('Keras Neural Network ROC\n')
-plt.legend(loc="lower right", fontsize=8)
+plt.legend(loc="lower right", fontsize=5)
 #plt.show()
 Keras_plot.savefig('results/figures/Keras_Baxter.png', dpi=1000)
