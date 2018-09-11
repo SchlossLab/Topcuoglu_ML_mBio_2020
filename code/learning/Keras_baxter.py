@@ -46,7 +46,7 @@ mean_fpr = np.linspace(0, 1, 100)
 tprs_test = []
 aucs_test = []
 mean_fpr_test = np.linspace(0, 1, 100)
-num_epochs=10
+num_epochs=100
 
 
 
