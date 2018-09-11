@@ -52,7 +52,7 @@ num_epochs=1
 
 
 for epoch in range(num_epochs):
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.25, shuffle=True)
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True)
 
     X=x_train.values
     Y=y_train.values
