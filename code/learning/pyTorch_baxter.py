@@ -100,6 +100,7 @@ from sklearn.utils import shuffle
 from torch.autograd import Variable
 from scipy import interp
 from sklearn.metrics import (accuracy_score, confusion_matrix, classification_report, roc_curve, auc)
+from sklearn.utils import shuffle
 
 
 
@@ -127,7 +128,7 @@ y = data["dx"].replace(diagnosis)
 ##drop if NA elements
 y.dropna()
 x.dropna()
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True)
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1, shuffle=True)
 
 
 
@@ -139,6 +140,7 @@ class Net(nn.Module):
     def forward(self, x):
         x = self.fc1(x)
         x = F.dropout(x, p=0.5)
+        x = F.relu(x)
         x = self.fc2(x)
         x = F.sigmoid(x)
         return x
@@ -149,12 +151,12 @@ net = Net()
 
 batch_size = 50
 num_epochs = 100
-learning_rate = 0.0005
+learning_rate = 0.00005
 batch_no = 233//batch_size
 
 
 criterion = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(net.parameters(), lr=learning_rate, weight_decay=1e-2)
+optimizer = torch.optim.Adam(net.parameters(), lr=learning_rate, weight_decay=1e-3)
 
 
 pyTorch_plot = plt.figure()
@@ -167,14 +169,18 @@ mean_fpr_test = np.linspace(0, 1, 100)
 
 for epoch in range(num_epochs):
     # Mini batch learning
+    #x_train, y_train = shuffle(x_train, y_train)
     for i in range(batch_no):
         start = i * batch_size
         end = start + batch_size
         x_var = Variable(torch.FloatTensor(x_train.values[start:end]))
         y_var = Variable(torch.LongTensor(y_train.values[start:end]))
         # Forward + Backward + Optimize
+        optimizer.zero_grad()
         ypred_var = net(x_var)
         loss =criterion(ypred_var, y_var)
+        loss.backward()
+        optimizer.step()
         correct_num = 0
         ## The outputs of the model (ypred_var) are energies for the 10 classes. Higher the energy for a class, the more the network thinks that the image is of the particular class. So, let’s get the index of the highest energy:
         values, labels = torch.max(ypred_var, 1)
@@ -184,16 +190,13 @@ for epoch in range(num_epochs):
         tprs[-1][0] = 0.0
         roc_auc = auc(fpr, tpr)
         aucs.append(roc_auc)
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
         print('Epoch [%d], Loss:%.4f, Accuracy:%.4f' % (epoch, loss.data[0], correct_num/len(labels)))
         #plt.plot(fpr, tpr, lw=1, alpha=0.3, label='ROC fold %d (AUC = %0.2f)' % (epoch, roc_auc))
-    #net.eval()
+
     x_var_test = Variable(torch.FloatTensor(x_test.values))
     y_var_test = Variable(torch.LongTensor(y_test.values))
-    # Forward + Backward + Optimize
-    ypred_var_test = net(x_var_test)
+    with torch.no_grad():
+        ypred_var_test = net(x_var_test)
     correct_num_test = 0
     values_test, labels_test = torch.max(ypred_var_test, 1)
     correct_num_test = np.sum(labels_test.data.numpy() == y_var_test.numpy())
