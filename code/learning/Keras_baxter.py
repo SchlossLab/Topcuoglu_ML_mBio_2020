@@ -46,7 +46,7 @@ mean_fpr = np.linspace(0, 1, 100)
 tprs_test = []
 aucs_test = []
 mean_fpr_test = np.linspace(0, 1, 100)
-num_epochs=50
+num_epochs=100
 
 
 
@@ -73,7 +73,7 @@ for epoch in range(num_epochs):
         # Compiling the ANN
         classifier.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
         # Fitting the ANN to the Training set
-        classifier.fit(X[train], Y[train], epochs=100, batch_size=50, verbose=0)
+        classifier.fit(X[train], Y[train], epochs=100, batch_size=50, verbose=1)
 
         y_pred = classifier.predict(X[test]).ravel()
         fpr, tpr, thresholds = roc_curve(Y[test], y_pred)
