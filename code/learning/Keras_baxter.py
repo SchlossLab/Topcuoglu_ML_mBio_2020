@@ -10,7 +10,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout
 from scipy import interp
 from sklearn.metrics import roc_curve, auc
-from sklearn.model_selection import RepeatedStratifiedKFold
+from sklearn.model_selection import StratifiedKFold
 
 
 
@@ -56,7 +56,7 @@ for epoch in range(num_epochs):
 
     X=x_train.values
     Y=y_train.values
-    cv = RepeatedStratifiedKFold(n_splits=5, random_state=200889)
+    cv = StratifiedKFold(n_splits=5, random_state=200889)
     for train, test in cv.split(X,Y):
         # Initialising the ANN
         classifier = Sequential()
@@ -73,7 +73,7 @@ for epoch in range(num_epochs):
         # Compiling the ANN
         classifier.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
         # Fitting the ANN to the Training set
-        classifier.fit(X[train], Y[train], epochs=100, batch_size=20, verbose=0)
+        classifier.fit(X[train], Y[train], epochs=100, batch_size=50, verbose=0)
 
         y_pred = classifier.predict(X[test]).ravel()
         fpr, tpr, thresholds = roc_curve(Y[test], y_pred)
