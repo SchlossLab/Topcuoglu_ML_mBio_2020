@@ -1,3 +1,6 @@
+## Change backend to tensorflow by editing $HOME/.keras/keras.json
+## "backend": "tensorflow"
+
 ## Add modules that are necessary
 import pandas as pd
 import numpy as np
