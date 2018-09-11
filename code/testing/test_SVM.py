@@ -66,7 +66,7 @@ aucs_test = []
 mean_fpr_test = np.linspace(0, 1, 100)
 SVM_plot = plt.figure()
 
-epochs= 1000
+epochs= 100
 for epoch in range(epochs):
     ## Split dataset to 80% training 20% test sets.
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
@@ -80,8 +80,11 @@ for epoch in range(epochs):
 ## Converting to numpy array from pandas
 
     y_test= y_test.values
-
-
+    X=x_train
+    Y=y_train.values
+    tprs = []
+    aucs = []
+    mean_fpr = np.linspace(0, 1, 100)
     y_score = best_model.fit(x_train, y_train).decision_function(x_test)
 
     # Compute ROC curve and area the curve
@@ -91,6 +94,17 @@ for epoch in range(epochs):
     roc_auc_test = auc(fpr_test, tpr_test)
     aucs_test.append(roc_auc_test)
     print("Test", roc_auc_test)
+
+    for train, test in cv.split(X,Y):
+        y_score = best_model.fit(X[train], Y[train]).decision_function(X[test])
+        fpr, tpr, thresholds = roc_curve(Y[test], y_score)
+        tprs.append(interp(mean_fpr, fpr, tpr))
+        tprs[-1][0] = 0.0
+        roc_auc = auc(fpr, tpr)
+        aucs.append(roc_auc)
+        print("Train", roc_auc)
+        ## Plot mean ROC curve for test set after each fitting of subset training set
+
 
 plt.plot([0, 1], [0, 1], linestyle='--', color='green', label='Luck', alpha=.8)
 mean_tpr_test = np.mean(tprs_test, axis=0)
@@ -102,6 +116,15 @@ std_tpr_test = np.std(tprs_test, axis=0)
 tprs_upper_test = np.minimum(mean_tpr_test + std_tpr_test, 1)
 tprs_lower_test = np.maximum(mean_tpr_test - std_tpr_test, 0)
 plt.fill_between(mean_fpr_test, tprs_lower_test, tprs_upper_test, color='tomato', alpha=.2, label=r'$\pm$ 1 std. dev.')
+mean_tpr = np.mean(tprs, axis=0)
+mean_tpr[-1] = 1.0
+mean_auc = auc(mean_fpr, mean_tpr)
+std_auc = np.std(aucs)
+plt.plot(mean_fpr, mean_tpr, color='b', label=r'Mean cross-val ROC (AUC = %0.2f $\pm$ %0.2f)' % (mean_auc, std_auc), lw=2, alpha=.8)
+std_tpr = np.std(tprs, axis=0)
+tprs_upper = np.minimum(mean_tpr + std_tpr, 1)
+tprs_lower = np.maximum(mean_tpr - std_tpr, 0)
+plt.fill_between(mean_fpr, tprs_lower, tprs_upper, color='dodgerblue', alpha=.2, label=r'$\pm$ 1 std. dev.')
 plt.xlim([-0.05, 1.05])
 plt.ylim([-0.05, 1.05])
 plt.xlabel('False Positive Rate')
@@ -110,3 +133,7 @@ plt.title('SVM ROC\n')
 plt.legend(loc="lower right", fontsize=8)
 #plt.show()
 SVM_plot.savefig('results/figures/SVM_Baxter.png', dpi=1000)
+
+###### SAVE MODEL TO BE USED ON OTHER DATA #########
+filename = 'finalized_SVM_model.sav'
+joblib.dump(best_model, filename)
