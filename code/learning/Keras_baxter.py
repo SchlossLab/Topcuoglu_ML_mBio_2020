@@ -75,13 +75,13 @@ for epoch in range(num_epochs):
         # Fitting the ANN to the Training set
         classifier.fit(X[train], Y[train], epochs=100, batch_size=50, verbose=0)
 
-    y_pred = classifier.predict(X[test]).ravel()
-    fpr, tpr, thresholds = roc_curve(Y[test], y_pred)
-    tprs.append(interp(mean_fpr, fpr, tpr))
-    tprs[-1][0] = 0.0
-    roc_auc = auc(fpr, tpr)
-    aucs.append(roc_auc)
-    #plt.plot(fpr, tpr, lw=1, alpha=0.3, label='ROC fold %d (AUC = %0.2f)' % (epoch, roc_auc))
+        y_pred = classifier.predict(X[test]).ravel()
+        fpr, tpr, thresholds = roc_curve(Y[test], y_pred)
+        tprs.append(interp(mean_fpr, fpr, tpr))
+        tprs[-1][0] = 0.0
+        roc_auc = auc(fpr, tpr)
+        aucs.append(roc_auc)
+        #plt.plot(fpr, tpr, lw=1, alpha=0.3, label='ROC fold %d (AUC = %0.2f)' % (epoch, roc_auc))
 
 
     y_pred_test = classifier.predict(x_test).ravel()
