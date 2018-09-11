@@ -46,11 +46,8 @@ mean_fpr = np.linspace(0, 1, 100)
 tprs_test = []
 aucs_test = []
 mean_fpr_test = np.linspace(0, 1, 100)
-<<<<<<< HEAD
-num_epochs=10
-=======
 num_epochs=1
->>>>>>> Decision_Tree
+
 
 
 
@@ -66,15 +63,11 @@ for epoch in range(num_epochs):
         # Adding the input layer and the first hidden layer
         classifier.add(Dense(output_dim=100, init='uniform', activation='relu', input_dim=6920))
         # Adding dropout to prevent overfitting
-        classifier.add(Dropout(p=0.1))
+        classifier.add(Dropout(p=0.5))
         # Adding the second hidden layer
         classifier.add(Dense(output_dim=100, init='uniform', activation='relu'))
         # Adding dropout to prevent overfitting
-<<<<<<< HEAD
-        classifier.add(Dropout(p=0.1))
-=======
         classifier.add(Dropout(p=0.5))
->>>>>>> Decision_Tree
         # Adding the output layer
         classifier.add(Dense(output_dim=1, init='uniform', activation='sigmoid'))
         # Compiling the ANN
@@ -123,10 +116,6 @@ plt.ylim([-0.05, 1.05])
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('Keras Neural Network ROC\n')
-<<<<<<< HEAD
-plt.legend(loc="lower right", fontsize=8)
-=======
 plt.legend(loc="lower right", fontsize=5)
->>>>>>> Decision_Tree
 #plt.show()
 Keras_plot.savefig('results/figures/Keras_Baxter.png', dpi=1000)
