@@ -75,15 +75,39 @@ for mean, stdev, param in zip(means, stds, params):
     print("%f (%f) with: %r" % (mean, stdev, param))
 
 ###################### Best Parameters #######################
-
+#Best: 0.643323 using {'max_depth': 10, 'min_samples_split': 50}
 ##############################################################
 best_model = grid_result.best_estimator_
 
+
+tprs_test = []
+aucs_test = []
+mean_fpr_test = np.linspace(0, 1, 100)
+
+########################### Random Forest #######################
 tprs = []
 aucs = []
 mean_fpr = np.linspace(0, 1, 100)
+
+DT_plot = plt.figure()
+
+## Converting to numpy array from pandas
 X=x_train.values
 Y=y_train.values
+X_test= x_test.values
+Y_test= y_test.values
+
+## Plot mean ROC curve for never before seen test set.
+probas_ = best_model.predict_proba(x_test)
+# Compute ROC curve and area the curve
+fpr_test, tpr_test, thresholds_test = roc_curve(y_test, probas_[:, 1])
+tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
+tprs_test[-1][0] = 0.0
+roc_auc_test = auc(fpr_test, tpr_test)
+aucs_test.append(roc_auc_test)
+print("Test", roc_auc_test)
+
+## Plot mean ROC curve for cross-validation with n_splits=5 and n_repeats=100 to evaluate the variation of prediction in our training set.
 for train, test in cv.split(X,Y):
     probas_ = best_model.fit(X[train], Y[train]).predict_proba(X[test])
     fpr, tpr, thresholds = roc_curve(Y[test], probas_[:, 1])
@@ -92,28 +116,7 @@ for train, test in cv.split(X,Y):
     roc_auc = auc(fpr, tpr)
     aucs.append(roc_auc)
     print("Train", roc_auc)
-
-
-tprs_test = []
-aucs_test = []
-mean_fpr_test = np.linspace(0, 1, 100)
-epochs= 100
-for epoch in range(epochs):
-
-## Converting to numpy array from pandas
-
-    X_test= x_test.values
-    Y_test= y_test.values
-
-## Plot mean ROC curve for never before seen test set.
-    probas_ = best_model.predict_proba(x_test)
-# Compute ROC curve and area the curve
-    fpr_test, tpr_test, thresholds_test = roc_curve(y_test, probas_[:, 1])
-    tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
-    tprs_test[-1][0] = 0.0
-    roc_auc_test = auc(fpr_test, tpr_test)
-    aucs_test.append(roc_auc_test)
-    print("Test", roc_auc_test)
+    ## Plot mean ROC curve for test set after each fitting of subset training set
 
 
 plt.plot([0, 1], [0, 1], linestyle='--', color='green', label='Luck', alpha=.8)
@@ -141,5 +144,12 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('Decision Tree ROC\n')
 plt.legend(loc="lower right", fontsize=8)
-plt.show()
-#DT.savefig('results/figures/DecisionTree_Baxter.png', dpi=1000)
+#plt.show()
+DT_plot.savefig('results/figures/DecisionTree_Baxter.png', dpi=1000)
+
+
+
+
+###### SAVE MODEL TO BE USED ON DOTHER DATA #########
+filename = 'finalized_DecisionTree_model.sav'
+joblib.dump(best_model, filename)
