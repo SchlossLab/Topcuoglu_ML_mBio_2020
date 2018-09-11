@@ -63,11 +63,11 @@ for epoch in range(num_epochs):
         # Adding the input layer and the first hidden layer
         classifier.add(Dense(output_dim=100, init='uniform', activation='relu', input_dim=6920))
         # Adding dropout to prevent overfitting
-        classifier.add(Dropout(p=0.5))
+        classifier.add(Dropout(p=0.1))
         # Adding the second hidden layer
         classifier.add(Dense(output_dim=100, init='uniform', activation='relu'))
         # Adding dropout to prevent overfitting
-        classifier.add(Dropout(p=0.5))
+        classifier.add(Dropout(p=0.1))
         # Adding the output layer
         classifier.add(Dense(output_dim=1, init='uniform', activation='sigmoid'))
         # Compiling the ANN
