@@ -63,7 +63,7 @@ classifier.add(Dense(output_dim=1, init='uniform', activation='sigmoid'))
 classifier.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
 # Fitting the ANN to the Training set
-classifier.fit(x_train, y_train, validation_data=(x_test,y_test), epochs=150, batch_size=50)
+classifier.fit(x_train, y_train, validation_data=(x_test,y_test), epochs=150, batch_size=75)
 
 y_pred = classifier.predict(x_test).ravel()
 fpr_keras, tpr_keras, thresholds_keras = roc_curve(y_test, y_pred)
