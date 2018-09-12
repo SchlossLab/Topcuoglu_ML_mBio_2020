@@ -14,6 +14,9 @@ from keras.layers import Dense, Dropout
 from scipy import interp
 from sklearn.metrics import roc_curve, auc
 from sklearn.model_selection import StratifiedKFold
+from keras.callbacks import History
+
+
 
 
 
@@ -63,11 +66,32 @@ classifier.add(Dense(output_dim=1, init='uniform', activation='sigmoid'))
 classifier.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
 # Fitting the ANN to the Training set
-classifier.fit(x_train, y_train, validation_data=(x_test,y_test), epochs=150, batch_size=75)
+model = classifier.fit(x_train, y_train, validation_data=(x_test,y_test), epochs=20, batch_size=50)
+
+evaluation = classifier.evaluate(x=x_test, y=y_test, batch_size=10, verbose=1)
+print(evaluation)
+
+plt.figure(0)
+plt.plot(model.history['acc'],'r')
+plt.plot(model.history['val_acc'],'g')
+plt.rcParams['figure.figsize'] = (8, 6)
+plt.xlabel("Num of Epochs")
+plt.ylabel("Accuracy")
+plt.title("Training Accuracy vs Validation Accuracy")
+plt.legend(['train','validation'])
+
+plt.figure(1)
+plt.plot(model.history['loss'],'r')
+plt.plot(model.history['val_loss'],'g')
+plt.rcParams['figure.figsize'] = (8, 6)
+plt.xlabel("Num of Epochs")
+plt.ylabel("Loss")
+plt.title("Training Loss vs Validation Loss")
+plt.legend(['train','validation'])
+plt.show()
 
 y_pred = classifier.predict(x_test).ravel()
 fpr_keras, tpr_keras, thresholds_keras = roc_curve(y_test, y_pred)
-
 auc_keras = auc(fpr_keras, tpr_keras)
 
 plt.figure(1)
