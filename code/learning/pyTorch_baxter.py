@@ -151,7 +151,7 @@ net = Net()
 
 batch_size = 50
 num_epochs = 100
-learning_rate = 0.00005
+learning_rate = 0.001
 batch_no = 233//batch_size
 
 
@@ -168,7 +168,7 @@ aucs_test = []
 mean_fpr_test = np.linspace(0, 1, 100)
 
 for epoch in range(num_epochs):
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True)  
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True)
     for i in range(batch_no):
         start = i * batch_size
         end = start + batch_size
