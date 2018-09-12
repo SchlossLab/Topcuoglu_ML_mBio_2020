@@ -128,7 +128,7 @@ y = data["dx"].replace(diagnosis)
 ##drop if NA elements
 y.dropna()
 x.dropna()
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1, shuffle=True)
+
 
 
 
@@ -168,8 +168,7 @@ aucs_test = []
 mean_fpr_test = np.linspace(0, 1, 100)
 
 for epoch in range(num_epochs):
-    # Mini batch learning
-    #x_train, y_train = shuffle(x_train, y_train)
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.12, shuffle=True)  
     for i in range(batch_no):
         start = i * batch_size
         end = start + batch_size
