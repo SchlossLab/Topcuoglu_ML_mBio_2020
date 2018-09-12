@@ -65,7 +65,7 @@ classifier.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accur
 # Fitting the ANN to the Training set
 classifier.fit(x_train, y_train, validation_data=(x_test,y_test), epochs=150, batch_size=50)
 
-y_pred = classifier.predict(X_test).ravel()
+y_pred = classifier.predict(x_test).ravel()
 fpr_keras, tpr_keras, thresholds_keras = roc_curve(y_test, y_pred)
 
 auc_keras = auc(fpr_keras, tpr_keras)
