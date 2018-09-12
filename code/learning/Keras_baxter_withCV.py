@@ -79,7 +79,7 @@ for epoch in range(num_epochs):
         # Compiling the ANN
         classifier.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
         # Fitting the ANN to the Training set
-        classifier.fit(X[train], Y[train], epochs=20, batch_size=50, verbose=1)
+        classifier.fit(X[train], Y[train], epochs=20, validation_data=(x_test,y_test) batch_size=50, verbose=1)
 
         y_pred = classifier.predict(X[test]).ravel()
         fpr, tpr, thresholds = roc_curve(Y[test], y_pred)
