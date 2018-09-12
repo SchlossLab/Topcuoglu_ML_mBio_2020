@@ -150,7 +150,7 @@ class Net(nn.Module):
 net = Net()
 
 batch_size = 50
-num_epochs = 100
+num_epochs = 20
 learning_rate = 0.001
 batch_no = 233//batch_size
 
