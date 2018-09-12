@@ -90,7 +90,7 @@ for epoch in range(num_epochs):
         #plt.plot(fpr, tpr, lw=1, alpha=0.3, label='ROC fold %d (AUC = %0.2f)' % (epoch, roc_auc))
 
 
-    y_pred_test = classifier.predict(x_test).ravel()
+    y_pred_test = classifier.predict(x_test, verbose = 1).ravel()
     fpr_test, tpr_test, thresholds_test = roc_curve(y_test, y_pred_test)
     roc_auc_test = auc(fpr_test, tpr_test)
     tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
