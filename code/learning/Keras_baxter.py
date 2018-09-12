@@ -15,8 +15,8 @@ from scipy import interp
 from sklearn.metrics import roc_curve, auc
 from sklearn.model_selection import StratifiedKFold
 from keras.callbacks import History
-
-
+from keras import optimizers
+from sklearn.preprocessing import StandardScaler
 
 
 
@@ -46,29 +46,31 @@ y.dropna()
 x.dropna()
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True)
-
-
+sc = StandardScaler()
+x_train = sc.fit_transform(x_train)
+x_test = sc.transform(x_test)
 
 # Initialising the ANN
 classifier = Sequential()
 # Adding the input layer and the first hidden layer
-classifier.add(Dense(output_dim=100, init='uniform', activation='relu', input_dim=6920))
+classifier.add(Dense(output_dim=100,init='uniform',activation='relu', input_dim=6920))
 # Adding dropout to prevent overfitting
 classifier.add(Dropout(p=0.5))
 # Adding the second hidden layer
-classifier.add(Dense(output_dim=100, init='uniform', activation='relu'))
+classifier.add(Dense(output_dim=100,init='uniform', activation='relu'))
 # Adding dropout to prevent overfitting
 classifier.add(Dropout(p=0.5))
 # Adding the output layer
 classifier.add(Dense(output_dim=1, init='uniform', activation='sigmoid'))
 
+
 # Compiling the ANN
-classifier.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+classifier.compile(optimizer='Adam', loss='binary_crossentropy', metrics=['accuracy'])
 
 # Fitting the ANN to the Training set
 model = classifier.fit(x_train, y_train, validation_data=(x_test,y_test), epochs=20, batch_size=50)
 
-evaluation = classifier.evaluate(x=x_test, y=y_test, batch_size=10, verbose=1)
+evaluation = classifier.evaluate(x=x_test, y=y_test, batch_size=50, verbose=1)
 print(evaluation)
 
 plt.figure(0)
