@@ -14,6 +14,7 @@ from keras.layers import Dense, Dropout
 from scipy import interp
 from sklearn.metrics import roc_curve, auc
 from sklearn.model_selection import StratifiedKFold
+from sklearn.preprocessing import StandardScaler
 
 
 
@@ -56,8 +57,10 @@ num_epochs=100
 
 for epoch in range(num_epochs):
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True)
+    sc = StandardScaler()
+    X = sc.fit_transform(x_train)
+    x_test = sc.transform(x_test)
 
-    X=x_train.values
     Y=y_train.values
     cv = StratifiedKFold(n_splits=5, random_state=200889)
     for train, test in cv.split(X,Y):
@@ -76,7 +79,7 @@ for epoch in range(num_epochs):
         # Compiling the ANN
         classifier.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
         # Fitting the ANN to the Training set
-        classifier.fit(X[train], Y[train], epochs=100, batch_size=50, verbose=1)
+        classifier.fit(X[train], Y[train], epochs=20, batch_size=50, verbose=1)
 
         y_pred = classifier.predict(X[test]).ravel()
         fpr, tpr, thresholds = roc_curve(Y[test], y_pred)
@@ -109,7 +112,7 @@ mean_tpr = np.mean(tprs, axis=0)
 mean_tpr[-1] = 1.0
 mean_auc = auc(mean_fpr, mean_tpr)
 std_auc = np.std(aucs)
-plt.plot(mean_fpr, mean_tpr, color='b', label=r'Mean ROC (AUC = %0.2f $\pm$ %0.2f)' % (mean_auc, std_auc), lw=2, alpha=.8)
+plt.plot(mean_fpr, mean_tpr, color='b', label=r'Mean cross validation ROC (AUC = %0.2f $\pm$ %0.2f)' % (mean_auc, std_auc), lw=2, alpha=.8)
 std_tpr = np.std(tprs, axis=0)
 tprs_upper = np.minimum(mean_tpr + std_tpr, 1)
 tprs_lower = np.maximum(mean_tpr - std_tpr, 0)
