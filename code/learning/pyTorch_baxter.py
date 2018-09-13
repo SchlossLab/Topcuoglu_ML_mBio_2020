@@ -150,9 +150,8 @@ class Net(nn.Module):
 net = Net()
 
 batch_size = 50
-num_epochs = 50
+num_epochs = 15
 learning_rate = 0.001
-batch_no = 233//batch_size
 
 
 criterion = nn.CrossEntropyLoss()
@@ -167,24 +166,31 @@ tprs_test = []
 aucs_test = []
 mean_fpr_test = np.linspace(0, 1, 100)
 
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True)
+sc = StandardScaler()
+x_train = sc.fit_transform(x_train)
+x_test = sc.transform(x_test)
+x_test = torch.from_numpy(x_test).float()
+y_test = torch.from_numpy(y_test.as_matrix()).float()
+train = data_utils.TensorDataset(torch.from_numpy(x_train).float(),
+                                 torch.from_numpy(y_train.as_matrix()).float())
+dataloader = data_utils.DataLoader(train, batch_size=50, shuffle=False)
+
 for epoch in range(num_epochs):
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True)
-    for i in range(batch_no):
-        start = i * batch_size
-        end = start + batch_size
-        x_var = Variable(torch.FloatTensor(x_train.values[start:end]))
-        y_var = Variable(torch.LongTensor(y_train.values[start:end]))
+
+
+    for idx, (minibatch, target) in enumerate(dataloader):
+        ypred_var = net(Variable(minibatch))
+        loss =criterion(ypred_var, Variable(target.long()))
         # Forward + Backward + Optimize
         optimizer.zero_grad()
-        ypred_var = net(x_var)
-        loss =criterion(ypred_var, y_var)
         loss.backward()
         optimizer.step()
         correct_num = 0
         ## The outputs of the model (ypred_var) are energies for the 10 classes. Higher the energy for a class, the more the network thinks that the image is of the particular class. So, let’s get the index of the highest energy:
         values, labels = torch.max(ypred_var, 1)
-        correct_num = np.sum(labels.data.numpy() == y_var.numpy())
-        fpr, tpr, thresholds = roc_curve(y_var.numpy(), labels.data.numpy())
+        correct_num = np.sum(labels.data.numpy() == target.numpy())
+        fpr, tpr, thresholds = roc_curve(target.numpy(), labels.data.numpy())
         tprs.append(interp(mean_fpr, fpr, tpr))
         tprs[-1][0] = 0.0
         roc_auc = auc(fpr, tpr)
@@ -192,14 +198,12 @@ for epoch in range(num_epochs):
         print('Epoch [%d], Loss:%.4f, Accuracy:%.4f' % (epoch, loss.data[0], correct_num/len(labels)))
         #plt.plot(fpr, tpr, lw=1, alpha=0.3, label='ROC fold %d (AUC = %0.2f)' % (epoch, roc_auc))
 
-    x_var_test = Variable(torch.FloatTensor(x_test.values))
-    y_var_test = Variable(torch.LongTensor(y_test.values))
     with torch.no_grad():
-        ypred_var_test = net(x_var_test)
+        ypred_var_test = net(x_test)
     correct_num_test = 0
     values_test, labels_test = torch.max(ypred_var_test, 1)
-    correct_num_test = np.sum(labels_test.data.numpy() == y_var_test.numpy())
-    fpr_test, tpr_test, thresholds_test = roc_curve(y_var_test.numpy(), labels_test.data.numpy())
+    correct_num_test = np.sum(labels_test.data.numpy() == ypred_var_test.numpy())
+    fpr_test, tpr_test, thresholds_test = roc_curve(y_test.numpy(), labels_test.data.numpy())
     tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
     tprs_test[-1][0] = 0.0
     roc_auc_test = auc(fpr_test, tpr_test)
@@ -233,11 +237,3 @@ plt.title('PyTorch Neural Network ROC\n')
 plt.legend(loc="lower right", fontsize=8)
 #plt.show()
 pyTorch_plot.savefig('results/figures/pyTorch_Baxter.png', dpi=1000)
-
-net.eval()
-pred = net(torch.from_numpy(x_test.values).float())
-pred = torch.max(pred,1)[1]
-len(pred)
-pred = pred.data.numpy()
-print(accuracy_score(y_test, pred))
-print(confusion_matrix(y_test, pred))
