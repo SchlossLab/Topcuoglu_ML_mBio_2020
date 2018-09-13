@@ -81,7 +81,7 @@ for epoch in range(num_epochs):
         # Fitting the ANN to the Training set
         classifier.fit(X[train], Y[train], epochs=20, validation_data=(x_test,y_test), batch_size=50, verbose=1)
 
-        y_pred = classifier.predict(X[test]).ravel()
+        y_pred = classifier.predict(X[test], verbose=1).ravel()
         fpr, tpr, thresholds = roc_curve(Y[test], y_pred)
         tprs.append(interp(mean_fpr, fpr, tpr))
         tprs[-1][0] = 0.0
@@ -89,7 +89,7 @@ for epoch in range(num_epochs):
         aucs.append(roc_auc)
         #plt.plot(fpr, tpr, lw=1, alpha=0.3, label='ROC fold %d (AUC = %0.2f)' % (epoch, roc_auc))
 
-
+    classifier.fit(x_train, y_train, epochs=20, batch_size=50, verbose=1)
     y_pred_test = classifier.predict(x_test, verbose = 1).ravel()
     fpr_test, tpr_test, thresholds_test = roc_curve(y_test, y_pred_test)
     roc_auc_test = auc(fpr_test, tpr_test)
