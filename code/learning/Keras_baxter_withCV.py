@@ -60,7 +60,6 @@ for epoch in range(num_epochs):
     sc = StandardScaler()
     X = sc.fit_transform(x_train)
     x_test = sc.transform(x_test)
-
     Y=y_train.values
     cv = StratifiedKFold(n_splits=5, random_state=200889)
     for train, test in cv.split(X,Y):
