@@ -70,6 +70,10 @@ for epoch in range(epochs):
     Logit_plot = plt.figure()
     ## Split dataset to 80% training 20% test sets.
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
+    sc = StandardScaler()
+    X = sc.fit_transform(x_train)
+    x_test = sc.transform(x_test)
+    Y=y_train.values
 ## Define L2 regularized logistic classifier
     logreg = linear_model.LogisticRegression()
 ## Define the n-folds for hyper-parameter optimization on training set.
