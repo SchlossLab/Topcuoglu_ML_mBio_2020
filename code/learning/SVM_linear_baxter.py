@@ -9,7 +9,7 @@ import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 from sympy import *
 import matplotlib as mpl
 mpl.use('TkAgg')
-import matplotlib as plt
+import matplotlib.pyplot as plt
 from scipy import interp
 from sklearn.metrics import roc_curve, auc
 from sklearn.model_selection import RepeatedStratifiedKFold
