@@ -10,3 +10,4 @@ results/*.DS_Store
 *.Ruserdata
 .Rproj.user
 .Rprofile
+.jpg
