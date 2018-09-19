@@ -111,7 +111,7 @@ for epoch in range(epochs):
         print("Train", roc_auc)
 
 
-    probas_ = best_model.fit(x_train, y_train).predict_proba(x_test)
+    probas_ = best_model.predict_proba(x_test)
     # Compute ROC curve and area the curve
     fpr_test, tpr_test, thresholds_test = roc_curve(y_test, probas_[:, 1])
     tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
