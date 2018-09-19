@@ -75,7 +75,7 @@ for epoch in range(epochs):
     c_values = [0.1, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0]
     #gamma = ['auto', 0.0001, 0.001, 0.01, 0.1]
     param_grid = dict(C=c_values)
-    grid = GridSearchCV(estimator = model, param_grid = param_grid, cv = cv, scoring = 'roc_auc'n_jobs=-1)
+    grid = GridSearchCV(estimator = model, param_grid = param_grid, cv = cv, scoring = 'roc_auc', n_jobs=-1)
     grid_result = grid.fit(x_train, y_train)
     print('Best C:', grid_result.best_estimator_.get_params()['C'])
     print('Best model:', grid_result.best_estimator_)
