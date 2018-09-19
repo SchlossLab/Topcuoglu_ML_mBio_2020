@@ -61,10 +61,10 @@ mean_fpr_test = np.linspace(0, 1, 100)
 epochs= 100
 for epoch in range(epochs):
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
-
-    scaler = StandardScaler().fit(x_train)
-    x_train = scaler.transform(x_train)
-
+    sc = StandardScaler()
+    X = sc.fit_transform(x_train)
+    x_test = sc.transform(x_test)
+    Y=y_train.values
     ## Define the n-folds for hyper-parameter optimization on training set.
     cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=100, random_state=200889)
 
@@ -94,7 +94,7 @@ for epoch in range(epochs):
     aucs = []
     mean_fpr = np.linspace(0, 1, 100)
 ## Converting to numpy array from pandas
-    X=x_train.values
+    X=x_train
     Y=y_train.values
     for train, test in cv.split(X,Y):
         probas_ = best_model.fit(X[train], Y[train]).predict_proba(X[test])
