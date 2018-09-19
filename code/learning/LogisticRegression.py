@@ -11,7 +11,7 @@ from sklearn.metrics import roc_curve, auc
 from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.model_selection import GridSearchCV
 from sklearn.externals import joblib
-
+from sklearn.preprocessing import StandardScaler
 
 ############## PRE-PROCESS DATA ######################
 
@@ -81,7 +81,7 @@ for epoch in range(epochs):
 ## We will try these regularization strength coefficients to optimize our model
     C = {"C": [0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01]}
 ## Define the best model:
-    grid = GridSearchCV(logreg, C, cv=cv, verbose=1, scoring='roc_auc')
+    grid = GridSearchCV(logreg, C, cv=cv, verbose=1, scoring='roc_auc', n_jobs=-1)
     grid_result = grid.fit(x_train, y_train)
     print('Best C:', grid_result.best_estimator_.get_params()['C'])
     print('Best model:', grid_result.best_estimator_)
