@@ -57,10 +57,9 @@ x.dropna()
 tprs_test = []
 aucs_test = []
 mean_fpr_test = np.linspace(0, 1, 100)
-
+SVM_plot = plt.figure()
 epochs= 100
 for epoch in range(epochs):
-    SVM_plot = plt.figure()
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
 
     scaler = StandardScaler().fit(x_train)
