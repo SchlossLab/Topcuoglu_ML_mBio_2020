@@ -149,7 +149,3 @@ plt.title('L2 Logistic Regression ROC\n')
 plt.legend(loc="lower right", fontsize=8)
 #plt.show()
 Logit_plot.savefig('results/figures/Logit_Baxter.png', dpi=1000)
-
-###### SAVE MODEL TO BE USED ON DOTHER DATA #########
-filename = 'finalized_logistic_model.sav'
-joblib.dump(best_model, filename)
