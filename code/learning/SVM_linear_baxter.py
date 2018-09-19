@@ -94,8 +94,6 @@ for epoch in range(epochs):
     aucs = []
     mean_fpr = np.linspace(0, 1, 100)
 ## Converting to numpy array from pandas
-    X=x_train
-    Y=y_train.values
     for train, test in cv.split(X,Y):
         probas_ = best_model.fit(X[train], Y[train]).predict_proba(X[test])
         fpr, tpr, thresholds = roc_curve(Y[test], probas_[:, 1])
