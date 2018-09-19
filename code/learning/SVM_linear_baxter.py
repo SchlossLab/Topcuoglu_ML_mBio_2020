@@ -64,13 +64,12 @@ x_train = scaler.transform(x_train)
 cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=20, random_state=200889)
 
 ## Define L2 regularized logistic classifier
-model = SVC()
+model = LinearSVC(penalty='l1',verbose1=1)
 
 ## Define the hyper-parameters optimization on training set.
-c_values = [1.0, 1.5, 2.0]
-kernel_values = ['linear', 'poly', 'rbf', 'sigmoid']
-gamma = ['auto', 0.0001, 0.001, 0.01, 0.1]
-param_grid = dict(C=c_values, kernel=kernel_values, gamma=gamma)
+c_values = [0.01, 0.1, 1.0, 1.5, 2.0]
+#gamma = ['auto', 0.0001, 0.001, 0.01, 0.1]
+param_grid = dict(C=c_values)
 
 grid = GridSearchCV(estimator = model, param_grid = param_grid, cv = cv, scoring = 'roc_auc')
 
@@ -82,9 +81,3 @@ stds = grid_result.cv_results_['std_test_score']
 params = grid_result.cv_results_['params']
 for mean, stdev, param in zip(means, stds, params):
     print("%f (%f) with: %r" % (mean, stdev, param))
-
-
-
-###################### Best Parameters #######################
-#  Best: 0.747897 using {'C': 1.0, 'gamma': 0.001, 'kernel': 'sigmoid'}
-##############################################################
