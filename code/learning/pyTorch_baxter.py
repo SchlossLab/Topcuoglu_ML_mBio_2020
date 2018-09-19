@@ -198,16 +198,16 @@ for epoch in range(num_epochs):
         print('Epoch [%d], Loss:%.4f, Accuracy:%.4f' % (epoch, loss.data[0], correct_num/len(labels)))
         #plt.plot(fpr, tpr, lw=1, alpha=0.3, label='ROC fold %d (AUC = %0.2f)' % (epoch, roc_auc))
 
-    with torch.no_grad():
-        ypred_var_test = net(x_test)
-    correct_num_test = 0
-    values_test, labels_test = torch.max(ypred_var_test, 1)
-    correct_num_test = np.sum(labels_test.data.numpy() == ypred_var_test.numpy())
-    fpr_test, tpr_test, thresholds_test = roc_curve(y_test.numpy(), labels_test.data.numpy())
-    tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
-    tprs_test[-1][0] = 0.0
-    roc_auc_test = auc(fpr_test, tpr_test)
-    aucs_test.append(roc_auc_test)
+        with torch.no_grad():
+            ypred_var_test = net(x_test)
+            correct_num_test = 0
+            values_test, labels_test = torch.max(ypred_var_test, 1)
+            correct_num_test = np.sum(labels_test.data.numpy() == ypred_var_test.numpy())
+            fpr_test, tpr_test, thresholds_test = roc_curve(y_test.numpy(), labels_test.data.numpy())
+            tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
+            tprs_test[-1][0] = 0.0
+            roc_auc_test = auc(fpr_test, tpr_test)
+            aucs_test.append(roc_auc_test)
 
 
 plt.plot([0, 1], [0, 1], linestyle='--', color='green', label='Luck', alpha=.8)
