@@ -95,8 +95,8 @@ for epoch in range(epochs):
     mean_fpr = np.linspace(0, 1, 100)
 ## Converting to numpy array from pandas
     for train, test in cv.split(X,Y):
-        probas_ = best_model.fit(X[train], Y[train]).predict_proba(X[test])
-        fpr, tpr, thresholds = roc_curve(Y[test], probas_[:, 1])
+        y_score = best_model.fit(X[train], Y[train]).decision_function(X[test])
+        fpr, tpr, thresholds = roc_curve(Y[test], y_score)
         tprs.append(interp(mean_fpr, fpr, tpr))
         tprs[-1][0] = 0.0
         roc_auc = auc(fpr, tpr)
@@ -104,9 +104,9 @@ for epoch in range(epochs):
         print("Train", roc_auc)
 
 
-    probas_ = best_model.fit(x_train, y_train).predict_proba(x_test)
+    y_score_test = best_model.fit(x_train, y_train).decision_function(x_test)
     # Compute ROC curve and area the curve
-    fpr_test, tpr_test, thresholds_test = roc_curve(y_test, probas_[:, 1])
+    fpr_test, tpr_test, thresholds_test = roc_curve(y_test, y_score_test)
     tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
     tprs_test[-1][0] = 0.0
     roc_auc_test = auc(fpr_test, tpr_test)
