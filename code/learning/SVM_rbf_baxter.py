@@ -58,6 +58,18 @@ tprs_test = []
 aucs_test = []
 mean_fpr_test = np.linspace(0, 1, 100)
 
+
+################## RBF Kernel SVM ###############
+
+## We will split the dataset 80%-20% and tune hyper-parameter on the 80% training. This will be done 100 times wth 5 folds and an optimal hyper-parameter/optimal model will be chosen.
+
+## The chosen best model and hyper-parameter will be tested on the %20 test set that was not seen before during training. This will give a TEST AUC.
+
+## We will split and redo previous steps 100 epochs. Which means we have 100 models that we test on the 20%. We will report the mean TEST AUC +/- sd.
+
+# For each epoch, we will also report mean AUC values +/- sd for each cross-validation during training.
+
+
 i=0
 epochs= 100
 for epoch in range(epochs):
@@ -90,14 +102,13 @@ for epoch in range(epochs):
     params = grid_result.cv_results_['params']
     for mean, stdev, param in zip(means, stds, params):
         print("%f (%f) with: %r" % (mean, stdev, param))
-        ## The best model we pick here will be used for predicting test set.
+    ## The best model we pick here will be used for predicting test set.
     best_model = grid_result.best_estimator_
-# AUC calculation for cross validation
-## Generate empty lists to fill with AUC values for train-set cv
+    ## Generate empty lists to fill with AUC values for train-set cv
     tprs = []
     aucs = []
     mean_fpr = np.linspace(0, 1, 100)
-## Converting to numpy array from pandas
+    #n_splits=5 and n_repeats=100 to evaluate the variation of prediction in our training set.
     for train, test in cv.split(X,Y):
         y_score = best_model.fit(X[train], Y[train]).decision_function(X[test])
         fpr, tpr, thresholds = roc_curve(Y[test], y_score)
@@ -107,6 +118,7 @@ for epoch in range(epochs):
         aucs.append(roc_auc)
         print("Train", roc_auc)
 
+    ## Plot mean ROC curve for cross-validation with n_splits=5 and n_repeats=100 to evaluate the variation of prediction in our training set.
 
     y_score_test = best_model.fit(x_train, y_train).decision_function(x_test)
     # Compute ROC curve and area the curve
@@ -116,12 +128,6 @@ for epoch in range(epochs):
     roc_auc_test = auc(fpr_test, tpr_test)
     aucs_test.append(roc_auc_test)
     print("Test", roc_auc_test)
-
-
-## Plot mean ROC curve for cross-validation with n_splits=5 and n_repeats=100 to evaluate the variation of prediction in our training set.
-
-    ## Plot mean ROC curve for test set after each fitting of subset training set
-
 
 plt.plot([0, 1], [0, 1], linestyle='--', color='green', label='Luck', alpha=.8)
 mean_tpr_test = np.mean(tprs_test, axis=0)
