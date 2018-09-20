@@ -59,28 +59,30 @@ mean_fpr_test = np.linspace(0, 1, 100)
 
 ################## Logistic Regression ###############
 
-## We will select hyper-parameters and an optimal model during training with 80% of the data and test that best model on the remanining %20 x100 times.
+## We will split the dataset 80%-20% and tune hyper-parameter on the 80% training. This will be done 100 times wth 5 folds and an optimal hyper-parameter/optimal model will be chosen.
 
-# For each epoch, the chosen best model will be tested on the %20 test set that was not seen before during trainig. We will report mean AUC values +/- sd for the testing/predicting.
+## The chosen best model and hyper-parameter will be tested on the %20 test set that was not seen before during training. This will give a TEST AUC.
 
-# For each epoch, we will also be splitting the 80% training data 5-fold again, another 100 times and cross validate (inner loop). We will report mean AUC values +/- sd for each cross-validation.
+## We will split and redo previous steps 100 epochs. Which means we have 100 models that we test on the 20%. We will report the mean TEST AUC +/- sd.
 
+# For each epoch, we will also report mean AUC values +/- sd for each cross-validation during training.
+
+Logit_plot = plt.figure()
 epochs= 100
 for epoch in range(epochs):
-    Logit_plot = plt.figure()
     ## Split dataset to 80% training 20% test sets.
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
     sc = StandardScaler()
     X = sc.fit_transform(x_train)
     x_test = sc.transform(x_test)
     Y=y_train.values
-## Define L2 regularized logistic classifier
+    ## Define L2 regularized logistic classifier
     logreg = linear_model.LogisticRegression()
-## Define the n-folds for hyper-parameter optimization on training set.
+    ## Define the n-folds for hyper-parameter optimization on training set.
     cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=100, random_state=200889)
-## We will try these regularization strength coefficients to optimize our model
+    ## We will try these regularization strength coefficients to optimize our model
     C = {"C": [0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01]}
-## Define the best model:
+    ## Define the best model:
     grid = GridSearchCV(logreg, C, cv=cv, verbose=1, scoring='roc_auc', n_jobs=-1)
     grid_result = grid.fit(x_train, y_train)
     print('Best C:', grid_result.best_estimator_.get_params()['C'])
@@ -93,14 +95,18 @@ for epoch in range(epochs):
         print("%f (%f) with: %r" % (mean, stdev, param))
 ## The best model we pick here will be used for predicting test set.
     best_model = grid_result.best_estimator_
-## AUC calculation for cross validation
-## Generate empty lists to fill with AUC values for train-set cv
+    ## AUC calculation for cross validation
+    ## Generate empty lists to fill with AUC values for train-set cv
     tprs = []
     aucs = []
     mean_fpr = np.linspace(0, 1, 100)
-## Converting to numpy array from pandas
+    ## Converting to numpy array from pandas
     X=x_train.values
     Y=y_train.values
+
+
+    ## Plot mean ROC curve for cross-validation with n_splits=5 and n_repeats=100 to evaluate the variation of prediction in our training set.
+
     for train, test in cv.split(X,Y):
         probas_ = best_model.fit(X[train], Y[train]).predict_proba(X[test])
         fpr, tpr, thresholds = roc_curve(Y[test], probas_[:, 1])
@@ -110,7 +116,7 @@ for epoch in range(epochs):
         aucs.append(roc_auc)
         print("Train", roc_auc)
 
-
+    ## Plot mean ROC curve for 100 epochs test set evaulation.
     probas_ = best_model.predict_proba(x_test)
     # Compute ROC curve and area the curve
     fpr_test, tpr_test, thresholds_test = roc_curve(y_test, probas_[:, 1])
@@ -119,12 +125,6 @@ for epoch in range(epochs):
     roc_auc_test = auc(fpr_test, tpr_test)
     aucs_test.append(roc_auc_test)
     print("Test", roc_auc_test)
-
-
-## Plot mean ROC curve for cross-validation with n_splits=5 and n_repeats=100 to evaluate the variation of prediction in our training set.
-
-    ## Plot mean ROC curve for test set after each fitting of subset training set
-
 
 plt.plot([0, 1], [0, 1], linestyle='--', color='green', label='Luck', alpha=.8)
 mean_tpr_test = np.mean(tprs_test, axis=0)
