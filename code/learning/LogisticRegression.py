@@ -93,9 +93,8 @@ for epoch in range(epochs):
     params = grid_result.cv_results_['params']
     for mean, stdev, param in zip(means, stds, params):
         print("%f (%f) with: %r" % (mean, stdev, param))
-## The best model we pick here will be used for predicting test set.
+    ## The best model we pick here will be used for predicting test set.
     best_model = grid_result.best_estimator_
-    ## AUC calculation for cross validation
     ## Generate empty lists to fill with AUC values for train-set cv
     tprs = []
     aucs = []
