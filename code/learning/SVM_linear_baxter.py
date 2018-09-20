@@ -58,7 +58,7 @@ tprs_test = []
 aucs_test = []
 mean_fpr_test = np.linspace(0, 1, 100)
 
-################## Linear Kernel SVM ###############
+################## Linear Kernel L1 SVM ###############
 
 ## We will split the dataset 80%-20% and tune hyper-parameter on the 80% training. This will be done 100 times wth 5 folds and an optimal hyper-parameter/optimal model will be chosen.
 
