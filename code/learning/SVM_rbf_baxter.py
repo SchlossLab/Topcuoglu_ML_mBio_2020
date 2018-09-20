@@ -87,8 +87,8 @@ for epoch in range(epochs):
     model = SVC(kernel='rbf')
 
     ## Define the hyper-parameters optimization on training set.
-    c_values = [0.001, 0.01, 0.1, 1.0, 10]
-    gamma = [0.0000001, 0.000001, 0.00001]
+    c_values = [0.01, 0.1, 1.0, 10]
+    gamma = [0.00000001, 0.0000001, 0.000001]
     param_grid = dict(C=c_values, gamma=gamma)
     grid = GridSearchCV(estimator = model, param_grid = param_grid, cv = cv, scoring = 'roc_auc', n_jobs=-1)
     grid_result = grid.fit(x_train, y_train)
