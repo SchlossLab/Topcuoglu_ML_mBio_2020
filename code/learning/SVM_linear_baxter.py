@@ -72,7 +72,7 @@ for epoch in range(epochs):
     model = LinearSVC(penalty='l1', loss='squared_hinge', dual=False)
 
     ## Define the hyper-parameters optimization on training set.
-    c_values = [1, 5, 10, 20, 25]
+    c_values = [5, 10, 20, 25, 30, 50, 100]
     #gamma = ['auto', 0.0001, 0.001, 0.01, 0.1]
     param_grid = dict(C=c_values)
     grid = GridSearchCV(estimator = model, param_grid = param_grid, cv = cv, scoring = 'roc_auc', n_jobs=-1)
