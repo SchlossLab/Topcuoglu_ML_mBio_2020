@@ -11,3 +11,4 @@ results/*.DS_Store
 .Rproj.user
 .Rprofile
 *.jpg
+*.sav
