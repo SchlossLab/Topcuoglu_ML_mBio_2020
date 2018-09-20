@@ -73,8 +73,8 @@ for epoch in range(epochs):
 
     ## Define the hyper-parameters optimization on training set.
     c_values = [0.001, 0.01, 0.1, 1.0, 10, 20]
-    #gamma = ['auto', 0.0001, 0.001, 0.01, 0.1]
-    param_grid = dict(C=c_values)
+    gamma = ['auto', 0.00001, 0.0001, 0.001, 0.01]
+    param_grid = dict(C=c_values, gamma=gamma)
     grid = GridSearchCV(estimator = model, param_grid = param_grid, cv = cv, scoring = 'roc_auc', n_jobs=-1)
     grid_result = grid.fit(x_train, y_train)
     print('Best C:', grid_result.best_estimator_.get_params()['C'])
