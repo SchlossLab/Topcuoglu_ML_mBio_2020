@@ -71,7 +71,7 @@ mean_fpr_test = np.linspace(0, 1, 100)
 
 
 i=0
-epochs= 100
+epochs= 50
 for epoch in range(epochs):
     i=i+1
     print(i)
@@ -81,14 +81,14 @@ for epoch in range(epochs):
     x_test = sc.transform(x_test)
     Y=y_train.values
     ## Define the n-folds for hyper-parameter optimization on training set.
-    cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=100, random_state=200889)
+    cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=50, random_state=200889)
 
     ## Define L2 regularized logistic classifier
     model = SVC(kernel='rbf')
 
     ## Define the hyper-parameters optimization on training set.
     c_values = [0.001, 0.01, 0.1, 1.0, 10, 20]
-    gamma = ['auto', 0.00001, 0.0001, 0.001, 0.01]
+    gamma = [0.0000001, 0.000001, 0.00001]
     param_grid = dict(C=c_values, gamma=gamma)
     grid = GridSearchCV(estimator = model, param_grid = param_grid, cv = cv, scoring = 'roc_auc', n_jobs=-1)
     grid_result = grid.fit(x_train, y_train)
