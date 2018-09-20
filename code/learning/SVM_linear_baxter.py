@@ -68,8 +68,11 @@ mean_fpr_test = np.linspace(0, 1, 100)
 
 # For each epoch, we will also report mean AUC values +/- sd for each cross-validation during training.
 
+i=0
 epochs= 100
 for epoch in range(epochs):
+    i=i+1
+    print(i)
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
     sc = StandardScaler()
     X = sc.fit_transform(x_train)
