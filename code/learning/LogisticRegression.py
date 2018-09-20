@@ -71,7 +71,8 @@ Logit_plot = plt.figure()
 i=0
 epochs= 100
 for epoch in range(epochs):
-    print(i+1)
+    i=i+1
+    print(i)
     ## Split dataset to 80% training 20% test sets.
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
     sc = StandardScaler()
