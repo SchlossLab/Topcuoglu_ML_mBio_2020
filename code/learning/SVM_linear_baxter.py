@@ -58,6 +58,16 @@ tprs_test = []
 aucs_test = []
 mean_fpr_test = np.linspace(0, 1, 100)
 
+################## Linear Kernel SVM ###############
+
+## We will split the dataset 80%-20% and tune hyper-parameter on the 80% training. This will be done 100 times wth 5 folds and an optimal hyper-parameter/optimal model will be chosen.
+
+## The chosen best model and hyper-parameter will be tested on the %20 test set that was not seen before during training. This will give a TEST AUC.
+
+## We will split and redo previous steps 100 epochs. Which means we have 100 models that we test on the 20%. We will report the mean TEST AUC +/- sd.
+
+# For each epoch, we will also report mean AUC values +/- sd for each cross-validation during training.
+
 epochs= 100
 for epoch in range(epochs):
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
@@ -68,12 +78,11 @@ for epoch in range(epochs):
     ## Define the n-folds for hyper-parameter optimization on training set.
     cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=100, random_state=200889)
 
-    ## Define L2 regularized logistic classifier
+    ## Define L1 support vector classifier
     model = LinearSVC(penalty='l1', loss='squared_hinge', dual=False)
 
     ## Define the hyper-parameters optimization on training set.
     c_values = [5, 10, 20, 25, 30, 50, 100]
-    #gamma = ['auto', 0.0001, 0.001, 0.01, 0.1]
     param_grid = dict(C=c_values)
     grid = GridSearchCV(estimator = model, param_grid = param_grid, cv = cv, scoring = 'roc_auc', n_jobs=-1)
     grid_result = grid.fit(x_train, y_train)
@@ -86,14 +95,13 @@ for epoch in range(epochs):
     params = grid_result.cv_results_['params']
     for mean, stdev, param in zip(means, stds, params):
         print("%f (%f) with: %r" % (mean, stdev, param))
-        ## The best model we pick here will be used for predicting test set.
+    ## The best model we pick here will be used for predicting test set.
     best_model = grid_result.best_estimator_
-# AUC calculation for cross validation
-## Generate empty lists to fill with AUC values for train-set cv
+    ## Generate empty lists to fill with AUC values for train-set cv
     tprs = []
     aucs = []
     mean_fpr = np.linspace(0, 1, 100)
-## Converting to numpy array from pandas
+    ## Plot mean ROC curve for cross-validation with n_splits=5 and n_repeats=100 to evaluate the variation of prediction in our training set.
     for train, test in cv.split(X,Y):
         y_score = best_model.fit(X[train], Y[train]).decision_function(X[test])
         fpr, tpr, thresholds = roc_curve(Y[test], y_score)
@@ -103,7 +111,7 @@ for epoch in range(epochs):
         aucs.append(roc_auc)
         print("Train", roc_auc)
 
-
+    ## Plot mean ROC curve for 100 epochs test set evaulation.
     y_score_test = best_model.fit(x_train, y_train).decision_function(x_test)
     # Compute ROC curve and area the curve
     fpr_test, tpr_test, thresholds_test = roc_curve(y_test, y_score_test)
@@ -112,12 +120,6 @@ for epoch in range(epochs):
     roc_auc_test = auc(fpr_test, tpr_test)
     aucs_test.append(roc_auc_test)
     print("Test", roc_auc_test)
-
-
-## Plot mean ROC curve for cross-validation with n_splits=5 and n_repeats=100 to evaluate the variation of prediction in our training set.
-
-    ## Plot mean ROC curve for test set after each fitting of subset training set
-
 
 plt.plot([0, 1], [0, 1], linestyle='--', color='green', label='Luck', alpha=.8)
 mean_tpr_test = np.mean(tprs_test, axis=0)
