@@ -32,6 +32,7 @@
 * Python 3.6.5
 * Latest PyTorch 
 * Latest Sklearn
+* Latest Keras with Theano backend
 #### Run the python code you choose
 ```
 git clone https://github.com/BTopcuoglu/DeepLearning
