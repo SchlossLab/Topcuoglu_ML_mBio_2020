@@ -76,9 +76,9 @@ for epoch in range(epochs):
     ## Split dataset to 80% training 20% test sets.
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
     sc = StandardScaler()
-    X = sc.fit_transform(x_train)
+    x_train = sc.fit_transform(x_train)
     x_test = sc.transform(x_test)
-    Y=y_train.values
+    y_train=y_train.values
     ## Define L2 regularized logistic classifier
     logreg = linear_model.LogisticRegression()
     ## Define the n-folds for hyper-parameter optimization on training set.
@@ -102,11 +102,9 @@ for epoch in range(epochs):
     tprs = []
     aucs = []
     mean_fpr = np.linspace(0, 1, 100)
-    ## Converting to numpy array from pandas
-    X=x_train.values
-    Y=y_train.values
-
-
+    ## variable assignment to make it easier to read.
+    X=x_train
+    Y=y_train
     ## Plot mean ROC curve for cross-validation with n_splits=5 and n_repeats=100 to evaluate the variation of prediction in our training set.
 
     for train, test in cv.split(X,Y):
