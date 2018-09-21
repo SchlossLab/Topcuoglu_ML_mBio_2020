@@ -125,7 +125,7 @@ for epoch in range(epochs):
     aucs_test.append(roc_auc_test)
     print("Test", roc_auc_test)
 
-plt.plot([0, 1], [0, 1], linestyle='--', color='green', label='Luck', alpha=.8)
+plt.plot([0, 1], [0, 1], linestyle='--', color='green', label='Random', alpha=.8)
 mean_tpr_test = np.mean(tprs_test, axis=0)
 mean_tpr_test[-1] = 1.0
 mean_auc_test = auc(mean_fpr_test, mean_tpr_test)
