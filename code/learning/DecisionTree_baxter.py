@@ -1,4 +1,5 @@
 ############## IMPORT MODULES ######################
+## Keep the matplotlib import at the top and specify backend
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
