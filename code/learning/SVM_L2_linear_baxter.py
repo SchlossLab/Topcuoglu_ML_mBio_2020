@@ -9,7 +9,7 @@ import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 from sympy import *
 import matplotlib
 matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
+import matplotlib as plt
 from scipy import interp
 from sklearn.metrics import roc_curve, auc
 from sklearn.model_selection import RepeatedStratifiedKFold
@@ -68,7 +68,7 @@ mean_fpr_test = np.linspace(0, 1, 100)
 ## We will split and redo previous steps 100 epochs. Which means we have 100 models that we test on the 20%. We will report the mean TEST AUC +/- sd.
 
 # For each epoch, we will also report mean AUC values +/- sd for each cross-validation during training.
-
+SVM_plot = plt.figure()
 i=0
 epochs= 1
 for epoch in range(epochs):
@@ -148,7 +148,7 @@ plt.xlim([-0.05, 1.05])
 plt.ylim([-0.05, 1.05])
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
-plt.title('SVM Linear Kernel ROC\n')
+plt.title('SVM L2 Linear Kernel ROC\n')
 plt.legend(loc="lower right", fontsize=8)
 #plt.show()
-plt.savefig('results/figures/SVM_Linear_Baxter.png', dpi=1000)
+SVM_plot.savefig('results/figures/SVM_L2_Linear_Baxter.png', dpi=1000)
