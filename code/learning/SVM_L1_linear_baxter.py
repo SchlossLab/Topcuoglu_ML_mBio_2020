@@ -76,9 +76,9 @@ for epoch in range(epochs):
     print(i)
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
     sc = StandardScaler()
-    X = sc.fit_transform(x_train)
+    x_train = sc.fit_transform(x_train)
     x_test = sc.transform(x_test)
-    Y=y_train.values
+    y_train=y_train.values
     ## Define the n-folds for hyper-parameter optimization on training set.
     cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=50, random_state=200889)
 
@@ -106,6 +106,9 @@ for epoch in range(epochs):
     aucs = []
     mean_fpr = np.linspace(0, 1, 100)
     ## Plot mean ROC curve for cross-validation with n_splits=5 and n_repeats=100 to evaluate the variation of prediction in our training set.
+    ## variable assignment to make it easier to read.
+    X=x_train
+    Y=y_train
     for train, test in cv.split(X,Y):
         y_score = best_model.fit(X[train], Y[train]).decision_function(X[test])
         fpr, tpr, thresholds = roc_curve(Y[test], y_score)
