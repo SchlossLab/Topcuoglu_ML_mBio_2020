@@ -1,4 +1,7 @@
 ############## IMPORT MODULES ######################
+import matplotlib
+matplotlib.use('TkAgg')
+import matplotlib.pyplot as plt
 from sklearn.neighbors.nearest_centroid import NearestCentroid
 from sklearn.svm import SVC, LinearSVC
 from sklearn.model_selection import cross_val_score
@@ -6,10 +9,7 @@ from sklearn import linear_model
 from sklearn.model_selection import train_test_split
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
-from sympy import *
-import matplotlib
-matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
+from sympy import
 from scipy import interp
 from sklearn.metrics import roc_curve, auc
 from sklearn.model_selection import RepeatedStratifiedKFold
@@ -72,7 +72,7 @@ mean_fpr_test = np.linspace(0, 1, 100)
 
 
 i=0
-epochs= 50
+epochs= 1
 for epoch in range(epochs):
     i=i+1
     print(i)
@@ -82,7 +82,7 @@ for epoch in range(epochs):
     x_test = sc.transform(x_test)
     Y=y_train.values
     ## Define the n-folds for hyper-parameter optimization on training set.
-    cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=50, random_state=200889)
+    cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=1, random_state=200889)
 
     ## Define L2 regularized logistic classifier
     model = SVC(kernel='rbf')
