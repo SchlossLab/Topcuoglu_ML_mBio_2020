@@ -7,8 +7,9 @@ from sklearn.model_selection import train_test_split
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 from sympy import *
-import matplotlib as plt
-plt.use('TkAgg')
+import matplotlib
+matplotlib.use('TkAgg')
+import matplotlib.pyplot as plt
 from scipy import interp
 from sklearn.metrics import roc_curve, auc
 from sklearn.model_selection import RepeatedStratifiedKFold
