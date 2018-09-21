@@ -1,6 +1,6 @@
 ############## IMPORT MODULES ######################
 import matplotlib
-matplotlib.use('TkAgg')
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from sklearn.neighbors.nearest_centroid import NearestCentroid
 from sklearn.svm import SVC, LinearSVC
@@ -70,7 +70,7 @@ mean_fpr_test = np.linspace(0, 1, 100)
 
 # For each epoch, we will also report mean AUC values +/- sd for each cross-validation during training.
 
-
+SVM_plot = plt.figure()
 i=0
 epochs= 1
 for epoch in range(epochs):
@@ -156,4 +156,4 @@ plt.ylabel('True Positive Rate')
 plt.title('SVM RBF Kernel; ROC\n')
 plt.legend(loc="lower right", fontsize=8)
 #plt.show()
-plt.savefig('results/figures/SVM_RBF_Baxter.png', dpi=1000)
+SVM_plot.savefig('results/figures/SVM_RBF_Baxter.png', dpi=1000)

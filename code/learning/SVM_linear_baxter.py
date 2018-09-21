@@ -1,7 +1,7 @@
 ############## IMPORT MODULES ######################
 import matplotlib
-matplotlib.use('TkAgg')
-import matplotlib as plt
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 from sklearn.neighbors.nearest_centroid import NearestCentroid
 from sklearn.svm import SVC, LinearSVC
 from sklearn.model_selection import cross_val_score
