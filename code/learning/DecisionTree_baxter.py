@@ -63,9 +63,9 @@ x.dropna()
 ## We will split and redo previous steps 100 epochs. Which means we have 100 models that we test on the 20%. We will report the mean TEST AUC +/- sd.
 
 # For each epoch, we will also report mean AUC values +/- sd for each cross-validation during training.
-
+DT_plot = plt.figure()
 i=0
-epochs= 100
+epochs= 50
 for epoch in range(epochs):
     i=i+1
     print(i)
@@ -76,7 +76,7 @@ for epoch in range(epochs):
     Y=y_train.values
 
     ## Define the n-folds for hyper-parameter optimization on training set.
-    cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=100, random_state=200889)
+    cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=50, random_state=200889)
 
     ## Define Decision Tree Classifier
     model = DecisionTreeClassifier()
@@ -147,4 +147,4 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('Decision Tree ROC\n')
 plt.legend(loc="lower right", fontsize=8)
-plt.savefig('results/figures/Decision_Tree_Baxter.png', dpi=1000)
+DT_plot.savefig('results/figures/Decision_Tree_Baxter.png', dpi=1000)
