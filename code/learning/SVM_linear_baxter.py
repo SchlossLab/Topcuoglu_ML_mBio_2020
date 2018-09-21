@@ -67,7 +67,7 @@ mean_fpr_test = np.linspace(0, 1, 100)
 ## We will split and redo previous steps 100 epochs. Which means we have 100 models that we test on the 20%. We will report the mean TEST AUC +/- sd.
 
 # For each epoch, we will also report mean AUC values +/- sd for each cross-validation during training.
-
+SVM_plot = plt.figure()
 i=0
 epochs= 100
 for epoch in range(epochs):
@@ -150,4 +150,4 @@ plt.ylabel('True Positive Rate')
 plt.title('SVM Linear Kernel ROC\n')
 plt.legend(loc="lower right", fontsize=8)
 #plt.show()
-plt.savefig('results/figures/SVM_Linear_Baxter.png', dpi=1000)
+SVM_plot.savefig('results/figures/SVM_Linear_Baxter.png', dpi=1000)
