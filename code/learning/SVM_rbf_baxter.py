@@ -72,7 +72,7 @@ mean_fpr_test = np.linspace(0, 1, 100)
 
 SVM_plot = plt.figure()
 i=0
-epochs= 1
+epochs= 50
 for epoch in range(epochs):
     i=i+1
     print(i)
@@ -82,7 +82,7 @@ for epoch in range(epochs):
     x_test = sc.transform(x_test)
     Y=y_train.values
     ## Define the n-folds for hyper-parameter optimization on training set.
-    cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=1, random_state=200889)
+    cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=50, random_state=200889)
 
     ## Define L2 regularized logistic classifier
     model = SVC(kernel='rbf')
