@@ -1,3 +1,5 @@
+*core*
+demo/*
 code/*.DS_Store
 results/*.DS_Store
 *.DS_Store
