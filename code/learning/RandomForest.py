@@ -75,6 +75,7 @@ i=0
 epochs= 50
 for epoch in range(epochs):
     i=i+1
+    print(i)
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
     sc = StandardScaler()
     x_train = sc.fit_transform(x_train)
@@ -114,7 +115,10 @@ for epoch in range(epochs):
     ## variable assignment to make it easier to read.
     X=x_train
     Y=y_train
+    j=0
     for train, test in cv.split(X,Y):
+        j=j+1
+        print(j)
         y_score = best_model.fit(X[train], Y[train]).predict(X[test])
         fpr, tpr, thresholds = roc_curve(Y[test], y_score)
         tprs.append(interp(mean_fpr, fpr, tpr))
