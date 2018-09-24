@@ -119,8 +119,8 @@ for epoch in range(epochs):
     for train, test in cv.split(X,Y):
         j=j+1
         print(j)
-        y_score = best_model.fit(X[train], Y[train]).predict(X[test])
-        fpr, tpr, thresholds = roc_curve(Y[test], y_score)
+        probas_ = best_model.fit(X[train], Y[train]).predict_proba(X[test])
+        fpr, tpr, thresholds = roc_curve(Y[test], probas_[:, 1])
         tprs.append(interp(mean_fpr, fpr, tpr))
         tprs[-1][0] = 0.0
         roc_auc = auc(fpr, tpr)
@@ -128,9 +128,9 @@ for epoch in range(epochs):
         print("Train", roc_auc)
 
     ## Plot mean ROC curve for 100 epochs test set evaulation.
-    y_score_test = best_model.fit(x_train, y_train).predict(x_test)
+    probas_test = best_model.fit(x_train, y_train).predict_proba(x_test)
     # Compute ROC curve and area the curve
-    fpr_test, tpr_test, thresholds_test = roc_curve(y_test, y_score_test)
+    fpr_test, tpr_test, thresholds_test = roc_curve(y_test, probas_test[:, 1])
     tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
     tprs_test[-1][0] = 0.0
     roc_auc_test = auc(fpr_test, tpr_test)
