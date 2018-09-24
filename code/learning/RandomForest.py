@@ -84,7 +84,7 @@ for epoch in range(epochs):
 # Decide on the number of decision trees
     #param_grid = {'n_estimators': [ 25, 50, 100, 120, 150, 300, 500, 800, 1000], "max_depth": [ 5, 8, 15, 25, 30, None],'max_features': ['auto', 'sqrt', 'log2', None, 0.8], 'criterion': ["entropy", "gini"]
      #}
-    n_estimators = [5, 10, 20, 25, 30, 50, 100]
+    n_estimators = [25, 30, 50, 100, 150, 200, 250, 300, 400, 500]
     param_grid = dict(n_estimators=n_estimators)
      ## Define the n-folds for hyper-parameter optimization on training set.
     cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=50, random_state=200889)
@@ -115,7 +115,7 @@ for epoch in range(epochs):
     X=x_train
     Y=y_train
     for train, test in cv.split(X,Y):
-        y_score = best_model.fit(X[train], Y[train]).decision_function(X[test])
+        y_score = best_model.fit(X[train], Y[train]).predict(X[test])
         fpr, tpr, thresholds = roc_curve(Y[test], y_score)
         tprs.append(interp(mean_fpr, fpr, tpr))
         tprs[-1][0] = 0.0
@@ -124,7 +124,7 @@ for epoch in range(epochs):
         print("Train", roc_auc)
 
     ## Plot mean ROC curve for 100 epochs test set evaulation.
-    y_score_test = best_model.fit(x_train, y_train).decision_function(x_test)
+    y_score_test = best_model.fit(x_train, y_train).predict(x_test)
     # Compute ROC curve and area the curve
     fpr_test, tpr_test, thresholds_test = roc_curve(y_test, y_score_test)
     tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
