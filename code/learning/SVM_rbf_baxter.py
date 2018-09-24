@@ -88,13 +88,11 @@ for epoch in range(epochs):
     model = SVC(kernel='rbf')
 
     ## Define the hyper-parameters optimization on training set.
-    c_values = [0.01, 0.1, 1.0, 10]
+    c_values = [0.0001, 0.001, 0.01, 0.1, 1.0, 10]
     gamma = [0.00000001, 0.0000001, 0.000001]
     param_grid = dict(C=c_values, gamma=gamma)
     grid = GridSearchCV(estimator = model, param_grid = param_grid, cv = cv, scoring = 'roc_auc', n_jobs=-1)
     grid_result = grid.fit(x_train, y_train)
-    print('Best C:', grid_result.best_estimator_.get_params()['C'])
-    print('Best gamma:', grid_result.best_estimator_.get_params()['gamma'])
     print('Best model:', grid_result.best_estimator_)
     print("Best: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
     print("Best: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
@@ -121,6 +119,8 @@ for epoch in range(epochs):
         roc_auc = auc(fpr, tpr)
         aucs.append(roc_auc)
         print("Train", roc_auc)
+        print('Best C:', grid_result.best_estimator_.get_params()['C'])
+        print('Best gamma:', grid_result.best_estimator_.get_params()['gamma'])
 
     ## Plot mean ROC curve for cross-validation with n_splits=5 and n_repeats=100 to evaluate the variation of prediction in our training set.
 
