@@ -95,7 +95,7 @@ for epoch in range(epochs):
     #initiate the grid
     grid = GridSearchCV(estimator = model, param_grid = param_grid, cv = cv, scoring = 'roc_auc', n_jobs=-1)
     grid_result = grid.fit(x_train, y_train)
-    print('Best C:', grid_result.best_estimator_.get_params()['C'])
+    print('Best # of trees:', grid_result.best_estimator_.get_params()['n_estimators'])
     print('Best model:', grid_result.best_estimator_)
     print("Best: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
     print("Best: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
