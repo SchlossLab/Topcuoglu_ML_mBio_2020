@@ -104,16 +104,16 @@ for epoch in range(epochs):
     params = grid_result.cv_results_['params']
     for mean, stdev, param in zip(means, stds, params):
         print("%f (%f) with: %r" % (mean, stdev, param))
-        ## The best model we pick here will be used for predicting test set.
-        best_model = grid_result.best_estimator_
-        ## Generate empty lists to fill with AUC values for train-set cv
+    ## The best model we pick here will be used for predicting test set.
+    best_model = grid_result.best_estimator_
+    ## Generate empty lists to fill with AUC values for train-set cv
     tprs = []
     aucs = []
     mean_fpr = np.linspace(0, 1, 100)
     ## Plot mean ROC curve for cross-validation with n_splits=5 and n_repeats=100 to evaluate the variation of prediction in our training set.
     ## variable assignment to make it easier to read.
     X=x_train
-    Y=y_train    
+    Y=y_train
     for train, test in cv.split(X,Y):
         y_score = best_model.fit(X[train], Y[train]).decision_function(X[test])
         fpr, tpr, thresholds = roc_curve(Y[test], y_score)
