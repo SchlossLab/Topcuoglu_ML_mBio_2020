@@ -85,7 +85,7 @@ for epoch in range(epochs):
 # Decide on the number of decision trees
     #param_grid = {'n_estimators': [ 25, 50, 100, 120, 150, 300, 500, 800, 1000], "max_depth": [ 5, 8, 15, 25, 30, None],'max_features': ['auto', 'sqrt', 'log2', None, 0.8], 'criterion': ["entropy", "gini"]
      #}
-    n_estimators = [100, 150, 200, 250, 300, 400, 450, 500, 1000]
+    n_estimators = [500, 550, 600, 650, 700, 750, 800, 1000, 1250, 1500]
     param_grid = dict(n_estimators=n_estimators)
      ## Define the n-folds for hyper-parameter optimization on training set.
     cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=50, random_state=200889)
