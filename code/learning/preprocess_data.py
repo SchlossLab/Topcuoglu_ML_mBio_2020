@@ -10,10 +10,7 @@ import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 ############## PRE-PROCESS DATA ######################
 
 ## Read in the data
-def process_data(data, meta):
-    ## Check and visualize the data
-    meta.head()
-    shared.head()
+def process_data(shared, meta):
     ## Remove unnecessary columns from meta and only keep label for classification(diagnosis) and the sample name
     meta = meta[['sample','dx']]
     ## Rename the column name "Group" to match the "sample" in meta
