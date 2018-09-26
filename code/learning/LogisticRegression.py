@@ -33,7 +33,7 @@ from sklearn.preprocessing import StandardScaler
 from preprocess_data import process_data
 shared = pd.read_table("data/baxter.0.03.subsample.shared")
 meta = pd.read_table("data/metadata.tsv")
-process_data()
+process_data(shared, meta)
 ################## Logistic Regression ###############
 
 ## We will split the dataset 80%-20% and tune hyper-parameter on the 80% training. This will be done 100 times wth 5 folds and an optimal hyper-parameter/optimal model will be chosen.
