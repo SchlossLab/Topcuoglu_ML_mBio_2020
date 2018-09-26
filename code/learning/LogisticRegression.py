@@ -30,8 +30,6 @@ x, y = process_data(shared, meta)
 ################## MODEL SELECTION ###############
 from model_selection import select_model
 
-
-
 ## We will split the dataset 80%-20% and tune hyper-parameter on the 80% training. This will be done 100 times wth 5 folds and an optimal hyper-parameter/optimal model will be chosen.
 
 ## The chosen best model and hyper-parameter will be tested on the %20 test set that was not seen before during training. This will give a TEST AUC.
@@ -52,12 +50,16 @@ for epoch in range(epochs):
     print(i)
     ## Split dataset to 80% training 20% test sets.
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
+    ## Scale the dataset by removing mean and scaling to unit variance
     sc = StandardScaler()
     x_train = sc.fit_transform(x_train)
     x_test = sc.transform(x_test)
     y_train=y_train.values
+    ## Define which model, parameters we want to tune and their range, and also the cross validation method(n_splits, n_repeats)
     model, param_grid, cv = select_model("logreg")
+    ## Based on the chosen model, create a grid to search for the optimal model
     grid = GridSearchCV(estimator = model, param_grid = param_grid, cv = cv, scoring = 'roc_auc', n_jobs=-1)
+    ## Get the grid results and fit to training set
     grid_result = grid.fit(x_train, y_train)
     print('Best C:', grid_result.best_estimator_.get_params()['C'])
     print('Best model:', grid_result.best_estimator_)
