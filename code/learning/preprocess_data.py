@@ -5,6 +5,8 @@
 #
 # This script prepares the Baxter Dataset before training the model
 #
+############## IMPORT MODULES ######################
+import load_modules
 ############## PRE-PROCESS DATA ######################
 
 ## Read in the data
