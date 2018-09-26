@@ -22,7 +22,7 @@ import preprocess_data
 
 Logit_plot = plt.figure()
 i=0
-epochs= 100
+epochs= 1
 for epoch in range(epochs):
     i=i+1
     print(i)
@@ -35,7 +35,7 @@ for epoch in range(epochs):
     ## Define L2 regularized logistic classifier
     logreg = linear_model.LogisticRegression()
     ## Define the n-folds for hyper-parameter optimization on training set.
-    cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=100, random_state=200889)
+    cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=1, random_state=200889)
     ## We will try these regularization strength coefficients to optimize our model
     C = {"C": [0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01]}
     ## Define the best model:
