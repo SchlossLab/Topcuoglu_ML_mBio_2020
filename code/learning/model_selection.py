@@ -27,4 +27,21 @@ def select_model(net):
         ## We will try these regularization strength coefficients to optimize our model
         c_values = [0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01]
         param_grid = dict(C=c_values)
+    if net="svm_l1_linear"
+        model= LinearSVC(penalty='l1', loss='squared_hinge', dual=False)
+        c_values = [5, 10, 20, 25, 30, 50, 100]
+        param_grid = dict(C=c_values)
+    if net="svm_l2_linear"
+        model = SVC(kernel='linear')
+        c_values = [5, 10, 20, 25, 30, 50, 100]
+        param_grid = dict(C=c_values)
+    if net="svm_rbf"
+        model = SVC(kernel='rbf')
+        c_values = [0.000001, 0.00001, 0.0001, 0.001, 0.01]
+        gamma = [0.00000001, 0.0000001, 0.000001]
+        param_grid = dict(C=c_values, gamma=gamma)
+    if net="rf"
+        model = RandomForestClassifier(bootstrap= True)
+        n_estimators = [500, 1000, 1250, 1500, 2000, 2500, 3000, 3500]
+        param_grid = dict(n_estimators=n_estimators)
     return model, param_grid, cv
