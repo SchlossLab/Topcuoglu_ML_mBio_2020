@@ -8,7 +8,7 @@
 
 ############## IMPORT MODULES ######################
 import matplotlib
-matplotlib.use('Agg')
+#matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 import numpy as np # linear algebra
@@ -42,7 +42,7 @@ from model_selection import select_model
 tprs_test = []
 aucs_test = []
 mean_fpr_test = np.linspace(0, 1, 100)
-Logit_plot = plt.figure()
+#Logit_plot = plt.figure()
 i=0
 epochs= 1
 for epoch in range(epochs):
