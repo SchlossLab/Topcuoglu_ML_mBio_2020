@@ -40,8 +40,8 @@ models = ["logreg", "svm_l1_linear", "svm_l2_linear", "svm_rbf", "rf"]
 
 # For each epoch, we will also report mean AUC values +/- sd for each cross-validation during training.
 
-for methods in models:
-    print(methods)
+for models in models:
+    print(models)
     ## Generate empty lists to fill with AUC values for test-set
     tprs_test = []
     aucs_test = []
@@ -60,7 +60,7 @@ for methods in models:
         x_test = sc.transform(x_test)
         y_train=y_train.values
         ## Define which model, parameters we want to tune and their range, and also the cross validation method(n_splits, n_repeats)
-        model, param_grid, cv = select_model(methods)
+        model, param_grid, cv = select_model(models)
         ## Based on the chosen model, create a grid to search for the optimal model
         grid = GridSearchCV(estimator = model, param_grid = param_grid, cv = cv, scoring = 'roc_auc', n_jobs=-1)
         ## Get the grid results and fit to training set
