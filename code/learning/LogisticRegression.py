@@ -30,8 +30,8 @@ from sklearn.preprocessing import StandardScaler
 
 
 ############## PRE-PROCESS DATA ######################
-from preprocess_data import process_data
-process_data()
+import preprocess_data 
+
 ################## Logistic Regression ###############
 
 ## We will split the dataset 80%-20% and tune hyper-parameter on the 80% training. This will be done 100 times wth 5 folds and an optimal hyper-parameter/optimal model will be chosen.
