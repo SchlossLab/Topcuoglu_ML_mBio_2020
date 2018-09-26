@@ -5,7 +5,8 @@
 #
 # This script prepares the Baxter Dataset before training the model
 #
-
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 ############## PRE-PROCESS DATA ######################
 
 ## Read in the data
