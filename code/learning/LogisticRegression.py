@@ -1,18 +1,13 @@
-############## IMPORT MODULES ######################
-from sklearn.linear_model import LogisticRegression
-from sklearn import linear_model
-from sklearn.model_selection import train_test_split
-import numpy as np # linear algebra
-import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
-from sympy import *
-import matplotlib.pyplot as plt
-from scipy import interp
-from sklearn.metrics import roc_curve, auc
-from sklearn.model_selection import RepeatedStratifiedKFold
-from sklearn.model_selection import GridSearchCV
-from sklearn.externals import joblib
-from sklearn.preprocessing import StandardScaler
+#!/usr/bin/python
+#
+# Author: Begum Topcuoglu
+# Date: 2018-09-26
+#
+# This script runs Logistic Regression analysis on Baxter Dataset subset of onlt cancer and normal samples to predict diagnosis based on OTU data only. This script only evaluates generalization performance of the model.
+#
 
+############## IMPORT MODULES ######################
+import load_modules
 ############## PRE-PROCESS DATA ######################
 
 ## Read in the data
