@@ -9,7 +9,8 @@ import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 ############## PRE-PROCESS DATA ######################
 
-## Read in the data
+# shared dataset contains the OTUs and meta dataset contains the labels
+#user defines their own datasets in the main.py using this function
 def process_data(shared, meta):
     ## Remove unnecessary columns from meta and only keep label for classification(diagnosis) and the sample name
     meta = meta[['sample','dx']]
