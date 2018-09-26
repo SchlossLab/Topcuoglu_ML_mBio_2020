@@ -31,6 +31,8 @@ from sklearn.preprocessing import StandardScaler
 
 ############## PRE-PROCESS DATA ######################
 from preprocess_data import process_data
+shared = pd.read_table("data/baxter.0.03.subsample.shared")
+meta = pd.read_table("data/metadata.tsv")
 process_data()
 ################## Logistic Regression ###############
 
@@ -42,6 +44,10 @@ process_data()
 
 # For each epoch, we will also report mean AUC values +/- sd for each cross-validation during training.
 
+## Generate empty lists to fill with AUC values for test-set
+tprs_test = []
+aucs_test = []
+mean_fpr_test = np.linspace(0, 1, 100)
 Logit_plot = plt.figure()
 i=0
 epochs= 1
