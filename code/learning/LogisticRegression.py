@@ -8,7 +8,7 @@
 
 ############## IMPORT MODULES ######################
 import load_modules
-load_modules()
+import_modules()
 ############## PRE-PROCESS DATA ######################
 import preprocess_data
 process_data()
