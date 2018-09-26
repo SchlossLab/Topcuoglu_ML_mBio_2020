@@ -10,20 +10,12 @@
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from sklearn.linear_model import LogisticRegression
-from sklearn import linear_model
-from sklearn.svm import SVC, LinearSVC
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
-import xgboost
-import xgboost as xgb
 from sklearn.model_selection import train_test_split
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 import sympy
 from scipy import interp
 from sklearn.metrics import roc_curve, auc
-from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.model_selection import GridSearchCV
 from sklearn.externals import joblib
 from sklearn.preprocessing import StandardScaler
@@ -35,7 +27,10 @@ shared = pd.read_table("data/baxter.0.03.subsample.shared")
 meta = pd.read_table("data/metadata.tsv")
 # Define x (features) and y (labels)
 x, y = process_data(shared, meta)
-################## Logistic Regression ###############
+################## MODEL SELECTION ###############
+from model_selection import select_model
+
+
 
 ## We will split the dataset 80%-20% and tune hyper-parameter on the 80% training. This will be done 100 times wth 5 folds and an optimal hyper-parameter/optimal model will be chosen.
 
@@ -51,7 +46,7 @@ aucs_test = []
 mean_fpr_test = np.linspace(0, 1, 100)
 Logit_plot = plt.figure()
 i=0
-epochs= 100
+epochs= 1
 for epoch in range(epochs):
     i=i+1
     print(i)
@@ -61,14 +56,8 @@ for epoch in range(epochs):
     x_train = sc.fit_transform(x_train)
     x_test = sc.transform(x_test)
     y_train=y_train.values
-    ## Define L2 regularized logistic classifier
-    logreg = linear_model.LogisticRegression()
-    ## Define the n-folds for hyper-parameter optimization on training set.
-    cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=100, random_state=200889)
-    ## We will try these regularization strength coefficients to optimize our model
-    C = {"C": [0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01]}
-    ## Define the best model:
-    grid = GridSearchCV(logreg, C, cv=cv, verbose=1, scoring='roc_auc', n_jobs=-1)
+    model, param_grid, cv = select_model("logreg")
+    grid = GridSearchCV(estimator = model, param_grid = param_grid, cv = cv, scoring = 'roc_auc', n_jobs=-1)
     grid_result = grid.fit(x_train, y_train)
     print('Best C:', grid_result.best_estimator_.get_params()['C'])
     print('Best model:', grid_result.best_estimator_)
