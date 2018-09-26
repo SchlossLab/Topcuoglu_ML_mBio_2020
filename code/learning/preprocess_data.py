@@ -7,11 +7,11 @@
 #
 ############## IMPORT MODULES ######################
 import load_modules
-load_modules()
+import_modules()
 ############## PRE-PROCESS DATA ######################
 
 ## Read in the data
-def preprocess_data():
+def process_data():
     ## shared has our input features(OTUs)
     shared = pd.read_table("data/baxter.0.03.subsample.shared")
     ## meta has the labels(diagnosis)

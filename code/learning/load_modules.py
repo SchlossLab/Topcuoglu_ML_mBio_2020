@@ -7,7 +7,7 @@
 #
 
 ############## IMPORT MODULES ######################
-def load_modules():
+def import_modules():
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt

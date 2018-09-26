@@ -11,7 +11,7 @@ import load_modules
 load_modules()
 ############## PRE-PROCESS DATA ######################
 import preprocess_data
-preprocess_data()
+process_data()
 ################## Logistic Regression ###############
 
 ## We will split the dataset 80%-20% and tune hyper-parameter on the 80% training. This will be done 100 times wth 5 folds and an optimal hyper-parameter/optimal model will be chosen.
