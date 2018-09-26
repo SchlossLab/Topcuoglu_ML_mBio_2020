@@ -7,10 +7,10 @@
 #
 
 ############## IMPORT MODULES ######################
-from load_modules import import_modules()
+from load_modules import import_modules
 import_modules()
 ############## PRE-PROCESS DATA ######################
-from preprocess_data import process_data()
+from preprocess_data import process_data
 process_data()
 ################## Logistic Regression ###############
 
