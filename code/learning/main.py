@@ -97,10 +97,15 @@ for models in models:
                 print("Train", roc_auc)
 
         ## Plot mean ROC curve for 100 epochs test set evaulation.
-        
-        probas_ = best_model.predict_proba(x_test)
-        # Compute ROC curve and area the curve
-        fpr_test, tpr_test, thresholds_test = roc_curve(y_test, probas_[:, 1])
+        if models=="logreg" and models=="rf":
+            y_score = best_model.fit(x_train, y_train).predict_proba(x_test)
+            # Compute ROC curve and area the curve
+            fpr_test, tpr_test, thresholds_test = roc_curve(y_test, probas_[:, 1])
+        else:
+            y_score = best_model.fit(x_train, y_train).decision_function(x_test)
+            # Compute ROC curve and area the curve
+            fpr_test, tpr_test, thresholds_test = roc_curve(y_test, y_score)
+            
         tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
         tprs_test[-1][0] = 0.0
         roc_auc_test = auc(fpr_test, tpr_test)
