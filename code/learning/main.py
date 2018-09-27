@@ -29,7 +29,7 @@ meta = pd.read_table("data/metadata.tsv")
 x, y = process_data(shared, meta)
 ################## MODEL SELECTION ###############
 from model_selection import select_model
-models = ["logreg", "svm_l1_linear", "svm_l2_linear", "svm_rbf", "rf"]
+models = ["L2 Logistic Regression", "L1 SVM Linear Kernel", "L2 SVM Linear Kernel", "SVM RBF", "Random Forest"]
 
 
 ## We will split the dataset 80%-20% and tune hyper-parameter on the 80% training. This will be done 100 times wth 5 folds and an optimal hyper-parameter/optimal model will be chosen.
@@ -84,7 +84,7 @@ for models in models:
             ## Plot mean ROC curve for cross-validation with n_splits=5 and n_repeats=100 to evaluate the variation of prediction in our training set.
 
             for train, test in cv.split(X,Y):
-                if models=="logreg" or models=="rf":
+                if models=="L2 Logistic Regression" or models=="Random Forest":
                     y_score = best_model.fit(X[train], Y[train]).predict_proba(X[test])
                     fpr, tpr, thresholds = roc_curve(Y[test], y_score[:, 1])
                 else:
@@ -97,7 +97,7 @@ for models in models:
                 print("Train", roc_auc)
 
         ## Plot mean ROC curve for 100 epochs test set evaulation.
-        if models=="logreg" or models=="rf":
+        if models=="L2 Logistic Regression" or models=="Random Forest":
             y_score = best_model.fit(x_train, y_train).predict_proba(x_test)
             # Compute ROC curve and area the curve
             fpr_test, tpr_test, thresholds_test = roc_curve(y_test, y_score[:, 1])
@@ -135,7 +135,7 @@ for models in models:
         plt.ylim([-0.05, 1.05])
         plt.xlabel('False Positive Rate')
         plt.ylabel('True Positive Rate')
-        plt.title('L2 Logistic Regression ROC\n')
+        plt.title(r'ROC for %0.2s' % models)
         plt.legend(loc="lower right", fontsize=8)
         plt.show()
-#Logit_plot.savefig('results/figures/Logit_Baxter.png', dpi=1000)
+        #Logit_plot.savefig('results/figures/Logit_Baxter.png', dpi=1000)
