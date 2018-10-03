@@ -48,7 +48,7 @@ for models in models:
     mean_fpr_test = np.linspace(0, 1, 100)
     #Logit_plot = plt.figure()
     i=0
-    epochs= 1
+    epochs= 100
     for epoch in range(epochs):
         i=i+1
         print(i)
@@ -112,7 +112,7 @@ for models in models:
         aucs_test.append(roc_auc_test)
         print("Test", roc_auc_test)
 
-        plt.plot([0, 1], [0, 1], linestyle='--', color='green', label='Luck', alpha=.8)
+        plt.plot([0, 1], [0, 1], linestyle='--', color='green', label='Random', alpha=.8)
         mean_tpr_test = np.mean(tprs_test, axis=0)
         mean_tpr_test[-1] = 1.0
         mean_auc_test = auc(mean_fpr_test, mean_tpr_test)
@@ -135,7 +135,7 @@ for models in models:
         plt.ylim([-0.05, 1.05])
         plt.xlabel('False Positive Rate')
         plt.ylabel('True Positive Rate')
-        plt.title(r'ROC for %0.2s' % models)
+        plt.title('ROC for %s' % models)
         plt.legend(loc="lower right", fontsize=8)
-        plt.show()
-        #Logit_plot.savefig('results/figures/Logit_Baxter.png', dpi=1000)
+        save_results_to = 'results/figures/'
+        plt.savefig(save_results_to + str(models) + ".png", format="PNG", dpi=1000)
