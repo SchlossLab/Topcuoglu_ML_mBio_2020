@@ -106,11 +106,11 @@ for models in models:
             # Compute ROC curve and area the curve
             fpr_test, tpr_test, thresholds_test = roc_curve(y_test, y_score)
 
-    tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
-    tprs_test[-1][0] = 0.0
-    roc_auc_test = auc(fpr_test, tpr_test)
-    aucs_test.append(roc_auc_test)
-    print("Test", roc_auc_test)
+        tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
+        tprs_test[-1][0] = 0.0
+        roc_auc_test = auc(fpr_test, tpr_test)
+        aucs_test.append(roc_auc_test)
+        print("Test", roc_auc_test)
 
     plt.plot([0, 1], [0, 1], linestyle='--', color='green', label='Random', alpha=.8)
     mean_tpr_test = np.mean(tprs_test, axis=0)
