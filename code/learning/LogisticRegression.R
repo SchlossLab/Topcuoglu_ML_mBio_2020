@@ -27,7 +27,7 @@ y_train <- as.factor(y_train)
 fitControl <- trainControl(method = "repeatedcv",number = 5,repeats = 1)
 
 set.seed(825)
-model <- train(x=x_train, y=y_train,method = "glm", trControl = fitControl)
+model <- train(x=x_train, y=y_train,method = "glm", trControl = fitControl, verbose=TRUE, warnings())
 
   
 set.seed(20081989) 
