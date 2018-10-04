@@ -139,3 +139,4 @@ for models in models:
     plt.legend(loc="lower right", fontsize=8)
     save_results_to = 'results/figures/'
     plt.savefig(save_results_to + str(models) + ".png", format="PNG", dpi=1000)
+    plt.clf()
