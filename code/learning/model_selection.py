@@ -42,6 +42,6 @@ def select_model(net):
         param_grid = dict(C=c_values, gamma=gamma)
     if net=="Random Forest":
         model = RandomForestClassifier(bootstrap= True)
-        n_estimators = [500, 1000, 1250, 1500, 2000, 2500, 3000, 3500]
+        n_estimators = [500, 1000, 1250, 1500, 2000, 2500, 3000, 3500, 4000]
         param_grid = dict(n_estimators=n_estimators)
     return model, param_grid, cv
