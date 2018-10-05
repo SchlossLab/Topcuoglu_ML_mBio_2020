@@ -33,7 +33,7 @@ def select_model(net):
         param_grid = dict(C=c_values)
     if net=="L2 SVM Linear Kernel":
         model = SVC(kernel='linear')
-        c_values = [0.1, 1, 5, 10, 20, 25, 30, 50, 100]
+        c_values = [0.0001, 0.001, 0.01, 0.1, 1, 10]
         param_grid = dict(C=c_values)
     if net=="SVM RBF":
         model = SVC(kernel='rbf')
