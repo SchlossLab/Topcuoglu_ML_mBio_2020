@@ -1,4 +1,4 @@
-deps = c("caret","knitr","rmarkdown","vegan","gtools", "tidyverse");
+deps = c("pROC", "caret","knitr","rmarkdown","vegan","gtools", "tidyverse");
 for (dep in deps){
   if (dep %in% installed.packages()[,"Package"] == FALSE){
     install.packages(as.character(dep), quiet=TRUE);
@@ -16,10 +16,10 @@ data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
   select(-sample) 
   
 data$dx <- factor(data$dx, labels=c("normal", "cancer"))
-test_auc_list = list()
-cv_auc_list = list()
-for (i in 1:10) {
-  set.seed(20081989)
+
+all.test.response <- all.test.predictor <- test_aucs <- c()
+all.cv.response <- all.cv.predictor <- cv_aucs <- c()
+for (i in 1:50) {
   inTraining <- createDataPartition(data$dx, p = .80, list = FALSE)
   training <- data[ inTraining,] 
   testing  <- data[-inTraining,]
@@ -27,7 +27,7 @@ for (i in 1:10) {
   y_train <- training$dx 
   y_train <- as.factor(y_train)
   grid <-  expand.grid(alpha=1, lambda = seq(0.01, 0.1, length = 100))
-  cv <- trainControl(method="repeatedcv",repeats = 10, number=5, returnResamp="all",classProbs=TRUE,summaryFunction=twoClassSummary, indexFinal=NULL, savePredictions = TRUE)
+  cv <- trainControl(method="repeatedcv",repeats = 50, number=5, returnResamp="final",classProbs=TRUE,summaryFunction=twoClassSummary, indexFinal=NULL, savePredictions = TRUE)
   L2LogicalRegression <- train(x_train, y_train, method = "glmnet", trControl = cv, metric = "ROC",  tuneGrid = grid, family = "binomial")
   cv_auc <- getTrainPerf(L2LogicalRegression)$TrainROC
   # best parameter
@@ -40,10 +40,37 @@ for (i in 1:10) {
   rpartProbs <- predict(L2LogicalRegression, testing, type="prob")
   test_roc <- roc(ifelse(testing$dx == "cancer", 1, 0), rpartProbs[[2]])
   test_auc <- test_roc$auc
-  cv_auc_list[[i]] <- cv_auc
-  test_auc_list[[i]] <- test_auc
+  test_aucs <- c(test_aucs, test_auc)
+  cv_auc <- getTrainPerf(L2LogicalRegression)$TrainROC
+  cv_aucs <- c(cv_aucs, cv_auc)
+  all.test.response <- c(all.test.response, ifelse(testing$dx == "cancer", 1, 0))
+  all.test.predictor <- c(all.test.predictor, rpartProbs[[2]])
+  all.cv.response <- c(all.cv.response, L2LogicalRegression$pred$obs)
+  all.cv.predictor <- c(all.cv.predictor, L2LogicalRegression$pred$normal)
 }
-test_auc_list = do.call(rbind, test_auc_list)
-cv_auc_list = do.call(rbind, cv_auc_list)
+otu_canc_roc <- roc(all.test.response, all.test.predictor)
+otu_canc_cv_roc <- roc(all.cv.response, all.cv.predictor)
+
+par(mar=c(4,4,1,1))
+plot(c(1,0),c(0,1), type='l', lty=3, xlim=c(1.01,0), ylim=c(-0.01,1.01), xaxs='i', yaxs='i', ylab='', xlab='')
+plot(otu_canc_roc, col='red', lwd=2, add=T, lty=1)
+plot(otu_canc_cv_roc, col='blue', lwd=2, add=T, lty=1)
+mtext(side=2, text="Sensitivity", line=2.5, 
+      cex=2)
+mtext(side=1, text="Specificity", line=2.5, 
+      cex=2)
+legend(0.9,0.2, legend=c(sprintf('Cross Validation - AUC: %.3g', otu_canc_cv_roc$auc), sprintf('Test - AUC: %.3g', otu_canc_roc$auc)), bty='n', xjust=0, lty=c(1,1), col=c("blue", "red"),  text.col=c('blue', 'red'))
+
+
+dev.copy(png,'LogReg_inR.png', width = 500, height = 500,  res=96)
+dev.off()
+
+
+
+
+
+
+
+
 
 
