@@ -1,5 +1,7 @@
 
 library(plotROC)
+selectedIndices <- L2LogicalRegression$pred$lambda == L2LogicalRegression$bestTune$lambda
+
 g1 <- ggplot() +
   geom_roc(n.cuts=0,data=L2LogicalRegression$pred[selectedIndices, ], mapping=aes(m=normal, d=factor(obs, levels = c("normal", "cancer")))) +
   coord_equal() +
