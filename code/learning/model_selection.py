@@ -33,15 +33,15 @@ def select_model(net):
         param_grid = dict(C=c_values)
     if net=="L2 SVM Linear Kernel":
         model = SVC(kernel='linear')
-        c_values = [0.0001, 0.001, 0.01, 0.1, 1, 10]
+        c_values = [0.0001, 0.001, 0.01, 0.1, 1]
         param_grid = dict(C=c_values)
     if net=="SVM RBF":
         model = SVC(kernel='rbf')
         c_values = [0.000001, 0.00001, 0.0001, 0.001, 0.01]
-        gamma = [0.00000001, 0.0000001, 0.000001]
+        gamma = [0.000000001, 0.00000001, 0.0000001]
         param_grid = dict(C=c_values, gamma=gamma)
     if net=="Random Forest":
         model = RandomForestClassifier(bootstrap= True)
-        n_estimators = [500, 1000, 1250, 1500, 2000, 2500, 3000, 3500, 4000]
+        n_estimators = [1000, 2000, 3000, 4000, 5000, 6000]
         param_grid = dict(n_estimators=n_estimators)
     return model, param_grid, cv
