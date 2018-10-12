@@ -43,7 +43,7 @@ for (i in 1:5) {
   y_train <- training$dx 
   y_train <- as.factor(y_train)
   
-  grid <-  expand.grid(mtry = seq(500, 6920, length = 5))
+  grid <-  expand.grid(mtry = c(500, 1000, 1500))
                        
   
   cv <- trainControl(method="repeatedcv",
@@ -59,7 +59,7 @@ for (i in 1:5) {
                                method = "rf", 
                                trControl = cv, 
                                metric = "ROC",  
-                               tuneGrid = grid 
+                               tuneGrid = grid, ntree=1000 
                                )
   
   # Mean AUC value of the best lambda parameter training over repeats
@@ -125,7 +125,7 @@ mtext(side=1,
       cex=1.5)
 # Add legends for both lines
 legend(x=0.7,y=0.2, 
-       legend=(sprintf('Test - AUC: %.3g', test_roc$auc)), 
+       legend=(sprintf('Random Forest - AUC: %.3g', test_roc$auc)), 
        bty='n', 
        xjust=0, 
        lty=c(1,1), 

@@ -72,7 +72,7 @@ mean_fpr_test = np.linspace(0, 1, 100)
 
 RF_plot = plt.figure()
 i=0
-epochs= 50
+epochs= 10
 for epoch in range(epochs):
     i=i+1
     print(i)
@@ -85,10 +85,11 @@ for epoch in range(epochs):
 # Decide on the number of decision trees
     #param_grid = {'n_estimators': [ 25, 50, 100, 120, 150, 300, 500, 800, 1000], "max_depth": [ 5, 8, 15, 25, 30, None],'max_features': ['auto', 'sqrt', 'log2', None, 0.8], 'criterion': ["entropy", "gini"]
      #}
-    n_estimators = [500, 1000, 1250, 1500, 2000, 2500, 3000, 3500]
-    param_grid = dict(n_estimators=n_estimators)
+    n_estimators = [500, 1000, 1500]
+    max_features= [500, 1000, 1500]
+    param_grid = dict(n_estimators=n_estimators, max_features=max_features)
      ## Define the n-folds for hyper-parameter optimization on training set.
-    cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=50, random_state=200889)
+    cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=200889)
     #use out-of-bag samples ("oob_score= True") to estimate the generalization accuracy.
     model = RandomForestClassifier(bootstrap= True)
     #let's use cv=10 in the GridSearchCV call
