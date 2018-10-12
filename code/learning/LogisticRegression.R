@@ -35,7 +35,7 @@ data$dx <- factor(data$dx, labels=c("normal", "cancer"))
 # Create 
 all.test.response <- all.test.predictor <- test_aucs <- c()
 all.cv.response <- all.cv.predictor <- cv_aucs <- c()
-for (i in 1:5) {
+for (i in 1:50) {
   inTraining <- createDataPartition(data$dx, p = .80, list = FALSE)
   training <- data[ inTraining,] 
   testing  <- data[-inTraining,]
@@ -44,7 +44,7 @@ for (i in 1:5) {
   y_train <- as.factor(y_train)
   grid <-  expand.grid(alpha=1, lambda = seq(0.01, 0.1, length = 100))
   cv <- trainControl(method="repeatedcv",
-                     repeats = 5, 
+                     repeats = 50, 
                      number=5, 
                      returnResamp="final",
                      classProbs=TRUE,
