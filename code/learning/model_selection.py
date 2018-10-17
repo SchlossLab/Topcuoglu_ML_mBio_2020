@@ -27,6 +27,12 @@ def select_model(net):
         ## We will try these regularization strength coefficients to optimize our model
         c_values = [0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01]
         param_grid = dict(C=c_values)
+    if net=="L2 MultiClass Logistic Regression":
+        model = linear_model.LogisticRegression(multi_class='multinomial', solver="lbfgs")
+        ## We will try these regularization strength coefficients to optimize our model
+        ## We will try these regularization strength coefficients to optimize our model
+        c_values = [0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01]
+        param_grid = dict(C=c_values)
     if net=="L1 SVM Linear Kernel":
         model= LinearSVC(penalty='l1', loss='squared_hinge', dual=False)
         c_values = [0.1 ,1, 5, 10, 20, 25, 30, 50, 100]
