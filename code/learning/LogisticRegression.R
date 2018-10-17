@@ -34,7 +34,7 @@ data$dx <- factor(data$dx, labels=c("normal", "cancer"))
 
 # Create 
 all.test.response <- all.test.predictor <- test_aucs <- c()
-all.cv.response <- all.cv.predictor <- cv_aucs <- c()
+#all.cv.response <- all.cv.predictor <- cv_aucs <- c()
 for (i in 1:50) {
   inTraining <- createDataPartition(data$dx, p = .80, list = FALSE)
   training <- data[ inTraining,] 
@@ -42,7 +42,7 @@ for (i in 1:50) {
   x_train <- training %>% select(-dx)
   y_train <- training$dx 
   y_train <- as.factor(y_train)
-  grid <-  expand.grid(alpha=1, lambda = seq(0.01, 0.1, length = 100))
+  grid <-  expand.grid(alpha=1, lambda = seq(0.01, 0.1, length = 10))
   cv <- trainControl(method="repeatedcv",
                      repeats = 50, 
                      number=5, 
@@ -89,7 +89,7 @@ for (i in 1:50) {
 
 # Get the ROC of both test and cv from all the iterations
 test_roc <- roc(all.test.response, all.test.predictor, auc=TRUE, ci=TRUE)
-cv_roc <- roc(all.cv.response, all.cv.predictor, auc=TRUE, ci=TRUE)
+#cv_roc <- roc(all.cv.response, all.cv.predictor, auc=TRUE, ci=TRUE)
 
 par(mar=c(4,4,1,1))
 # Plot random line on ROC curve
@@ -105,12 +105,12 @@ plot(test_roc,
      lwd=2, 
      add=T, 
      lty=1)
-# Plot Test ROC in blue line
-plot(cv_roc, 
-     col='blue', 
-     lwd=2, 
-     add=T, 
-     lty=1)
+# Plot CV ROC in blue line
+#plot(cv_roc, 
+#     col='blue', 
+#     lwd=2, 
+#     add=T, 
+#     lty=1)
 # Label the axes
 mtext(side=2, 
       text="Sensitivity", 
