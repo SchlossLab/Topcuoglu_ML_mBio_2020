@@ -44,7 +44,9 @@ for (i in 1:50) {
   x_train <- training %>% select(-dx)
   y_train <- training$dx
   y_train <- as.factor(y_train)
-  grid <-  expand.grid(alpha=1, lambda = seq(0.01, 0.1, length = 10))
+  grid <-  expand.grid(cost = c(0.0000001, 0.000001, 0.00001, 0.0001),
+                       loss = "L2_dual",
+                       epsilon = 0.1)
   cv <- trainControl(method="repeatedcv",
                      repeats = 50,
                      number=5,
@@ -52,31 +54,32 @@ for (i in 1:50) {
                      classProbs=TRUE,
                      summaryFunction=twoClassSummary,
                      indexFinal=NULL,
+                     preProc = "scale",
                      savePredictions = TRUE)
 
-  L2LogicalRegression <- train(x_train, y_train,
-                               method = "glmnet",
+  L2Logit <- train(x_train, y_train,
+                               method = "regLogistic",
                                trControl = cv,
                                metric = "ROC",
                                tuneGrid = grid,
                                family = "binomial")
 
   # Mean AUC value of the best lambda parameter training over repeats
-  cv_auc <- getTrainPerf(L2LogicalRegression)$TrainROC
+  cv_auc <- getTrainPerf(L2Logit)$TrainROC
   # Best lambda parameter
-  print(L2LogicalRegression$bestTune)
+  print(L2Logit$bestTune)
   # Plot parameter performane
   #trellis.par.set(caretTheme())
   #plot(L2LogicalRegression)
   # Predict on the test set and get predicted probabilities
-  rpartProbs <- predict(L2LogicalRegression, testing, type="prob")
+  rpartProbs <- predict(L2Logit, testing, type="prob")
   # Test AUC calculation
   test_roc <- roc(ifelse(testing$dx == "cancer", 1, 0), rpartProbs[[2]])
   test_auc <- test_roc$auc
   # Save all the test AUCs over iterations in test_aucs
   test_aucs <- c(test_aucs, test_auc)
   # Cross-validation mean AUC value
-  #cv_auc <- getTrainPerf(L2LogicalRegression)$TrainROC
+  #cv_auc <- getTrainPerf(L2Logit)$TrainROC
   # Save all the test AUCs over iterations in cv_aucs
   #cv_aucs <- c(cv_aucs, cv_auc)
   # Save the test set labels in all.test.response. Labels converted to 0 for normal and 1 for cancer
@@ -84,9 +87,9 @@ for (i in 1:50) {
   # Save the test set predicted probabilities of highest class in all.test.predictor
   all.test.predictor <- c(all.test.predictor, rpartProbs[[2]])
   # Save the training set labels in all.test.response. Labels are in the obs column in the training object
-  #all.cv.response <- c(all.cv.response, L2LogicalRegression$pred$obs)
+  #all.cv.response <- c(all.cv.response, L2Logit$pred$obs)
   # Save the training set labels
-  #all.cv.predictor <- c(all.cv.predictor, L2LogicalRegression$pred$normal)
+  #all.cv.predictor <- c(all.cv.predictor, L2Logit$pred$normal)
 }
 stopCluster(cl)
 # Get the ROC of both test and cv from all the iterations
@@ -136,8 +139,7 @@ plot(sens.ci, type="shape", col="gray88")
 
 
 # Save the figure
-dev.copy(png,'LogReg_inR.png',
-         width = 500,
-         height = 500,
-         res=96)
+dev.copy(png,'results/figures/LogReg_inR.png', width = 500, height = 500, res=96)
+
+dev.off()
 dev.off()
