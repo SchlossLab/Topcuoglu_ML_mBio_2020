@@ -7,7 +7,8 @@
 #### To be able to run this script we need to be in our project directory.
 
 #### The dependinces for this script are consolidated in the first part 
-deps = c("pROC", "caret","knitr","rmarkdown","vegan","gtools", "tidyverse");
+chooseCRANmirror(graphics=FALSE, ind=1)
+deps = c("doParallel", "pROC", "caret","knitr","rmarkdown","vegan","gtools", "tidyverse");
 for (dep in deps){
   if (dep %in% installed.packages()[,"Package"] == FALSE){
     install.packages(as.character(dep), quiet=TRUE);
@@ -35,6 +36,9 @@ data$dx <- factor(data$dx, labels=c("normal", "cancer"))
 # Create 
 all.test.response <- all.test.predictor <- test_aucs <- c()
 all.cv.response <- all.cv.predictor <- cv_aucs <- c()
+library(doParallel)
+cl <- makePSOCKcluster(4)
+registerDoParallel(cl)
 for (i in 1:5) {
   inTraining <- createDataPartition(data$dx, p = .80, list = FALSE)
   training <- data[ inTraining,] 
@@ -59,7 +63,8 @@ for (i in 1:5) {
                                method = "rf", 
                                trControl = cv, 
                                metric = "ROC",  
-                               tuneGrid = grid, ntree=1000 
+                               tuneGrid = grid, ntree=1000, 
+                               verbose=TRUE 
                                )
   
   # Mean AUC value of the best lambda parameter training over repeats
@@ -89,7 +94,7 @@ for (i in 1:5) {
   # Save the training set labels 
   #all.cv.predictor <- c(all.cv.predictor, L2LogicalRegression$pred$normal)
 }
-
+stopCluster(cl)
 # Get the ROC of both test and cv from all the iterations
 test_roc <- roc(all.test.response, all.test.predictor, auc=TRUE, ci=TRUE)
 cv_roc <- roc(all.cv.response, all.cv.predictor, auc=TRUE, ci=TRUE)
