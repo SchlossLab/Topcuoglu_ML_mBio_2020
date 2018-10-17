@@ -27,7 +27,7 @@ from preprocess_data import process_multidata
 shared = pd.read_table("data/baxter.0.03.subsample.shared")
 meta = pd.read_table("data/metadata.tsv")
 # Define x (features) and y (labels)
-x, y = process_multidata(shared, meta)
+x, y = process_data(shared, meta)
 ################## MODEL SELECTION ###############
 from model_selection import select_model
 
@@ -56,9 +56,9 @@ for epoch in range(epochs):
     x_train = sc.fit_transform(x_train)
     x_test = sc.transform(x_test)
     ## Define which model, parameters we want to tune and their range, and also the cross validation method(n_splits, n_repeats)
-    model, param_grid, cv = select_model("L2 MultiClass Logistic Regression")
+    model, param_grid, cv = select_model("L2 Logistic Regression")
     ## Based on the chosen model, create a grid to search for the optimal model
-    grid = GridSearchCV(estimator = model, param_grid = param_grid, cv = cv, n_jobs=-1)
+    grid = GridSearchCV(estimator = model, param_grid = param_grid, cv = cv, scoring="roc_auc", n_jobs=-1)
     ## Get the grid results and fit to training set
     grid_result = grid.fit(x_train, y_train)
     print('Best C:', grid_result.best_estimator_.get_params()['C'])
@@ -122,7 +122,7 @@ plt.xlim([-0.05, 1.05])
 plt.ylim([-0.05, 1.05])
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
-plt.title('MultiClass L2 Logistic Regression ROC\n')
+plt.title('L2 Logistic Regression ROC\n')
 plt.legend(loc="lower right", fontsize=8)
 #plt.show()
-Logit_plot.savefig('results/figures/Logit_Multiclass_Baxter.png', dpi=1000)
+Logit_plot.savefig('results/figures/Logit_Baxter.png', dpi=1000)
