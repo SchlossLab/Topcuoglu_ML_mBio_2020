@@ -7,7 +7,7 @@
 #
 import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
-from sklearn.preprocessing import label_binarize
+from sklearn import preprocessing
 ############## PRE-PROCESS DATA ######################
 
 # shared dataset contains the OTUs and meta dataset contains the labels
@@ -31,6 +31,7 @@ def process_data(shared, meta):
     ## Drop if NA elements
     y = y.dropna()
     x = x.dropna()
+    y= y.values
     return x, y
 
 def process_multidata(shared, meta):
@@ -49,5 +50,6 @@ def process_multidata(shared, meta):
     # y = np.eye(2, dtype='uint8')[y]
     ## Drop if NA elements
     y = y.dropna()
+    y= y.values
     x = x.dropna()
     return x, y
