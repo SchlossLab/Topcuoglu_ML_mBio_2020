@@ -1,0 +1,239 @@
+---
+title: "**NAME OF THIS STUDY**"
+bibliography: references.bib
+output:
+  pdf_document:
+    keep_tex: true
+    includes:
+      in_header: header.tex
+csl: mbio.csl #Get themes at https://github.com/citation-style-language/styles
+fontsize: 11pt
+geometry: margin=1.0in
+---
+
+
+```{r knitr_settings, eval=TRUE, echo=FALSE, cache=FALSE,  warning=FALSE, message=FALSE}
+# Load useful functions
+source('../code/learning/functions.R')
+# Read in necessary libraries
+deps = c("doParallel","pROC", "caret","knitr","rmarkdown","vegan","gtools", "tidyverse");
+for (dep in deps){
+  if (dep %in% installed.packages()[,"Package"] == FALSE){
+    install.packages(as.character(dep), quiet=TRUE);
+  }
+  library(dep, verbose=FALSE, character.only=TRUE)
+}
+opts_chunk$set("tidy" = TRUE)
+opts_chunk$set("echo" = FALSE)
+opts_chunk$set("eval" = TRUE)
+opts_chunk$set("warning" = FALSE)
+opts_chunk$set("cache" = FALSE)
+
+inline_hook <- function(x){
+	print(x)
+
+	if(is.list(x)){
+		x <- unlist(x)
+	}
+
+	if(is.numeric(x)){
+		if(abs(x - round(x)) < .Machine$double.eps^0.5){
+			paste(format(x,big.mark=',', digits=0, scientific=FALSE))
+		} else {
+			paste(format(x,big.mark=',', digits=1, nsmall=1, scientific=FALSE))
+		}
+	} else {
+    	paste(x)      
+	}
+}
+knitr::knit_hooks$set(inline=inline_hook)
+```
+
+```{r LoadData, eval=TRUE, echo=FALSE, cache=FALSE, warning=FALSE, message=FALSE}
+# Read in metadata and select only sample Id and diagnosis columns
+meta <- read.delim('../data/metadata.tsv', header=T, sep='\t') %>%
+  select(sample, dx)
+
+# Read in OTU table and remove label and numOtus columns
+shared <- read.delim('../data/baxter.0.03.subsample.shared', header=T, sep='\t') %>%
+   select(-label, -numOtus)
+```
+
+```{r BinaryPreProcess, eval=TRUE, echo=FALSE, cache=FALSE}
+# Merge metadata and OTU table and remove all the samples that are diagnosed with adenomas. Keep only cancer and normal.
+# Then remove the sample ID column
+data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
+  filter(dx != 'adenoma') %>%
+  select(-sample)
+
+# We want the diagnosis column to a factor
+data$dx <- factor(data$dx, labels=c("normal", "cancer"))
+```
+
+```{r BinaryClassification, eval=TRUE, echo=FALSE, cache=FALSE, warning=FALSE, message=FALSE}
+cl <- makePSOCKcluster(4)
+registerDoParallel(cl)
+# Create
+all.test.response <- all.test.predictor <- test_aucs <- c()
+for (i in 1:50) {
+  inTraining <- createDataPartition(data$dx, p = .80, list = FALSE)
+  training <- data[ inTraining,]
+  testing  <- data[-inTraining,]
+  x_train <- training %>% select(-dx)
+  y_train <- training$dx
+  y_train <- as.factor(y_train)
+  # L2 regularization is used for Logistic regression
+  # cost is the inverse of penalty and we provide a grid
+  grid <-  expand.grid(cost = c(0.0000001, 0.000001, 0.00001, 0.0001),
+                       loss = "L2_dual",
+                       epsilon = 0.1)
+  cv <- trainControl(method="repeatedcv",
+                     repeats = 50,
+                     number=5,
+                     returnResamp="final",
+                     classProbs=TRUE,
+                     summaryFunction=twoClassSummary,
+                     indexFinal=NULL,
+                     preProc = "scale",
+                     savePredictions = TRUE)
+
+  L2Logit <- train(x_train, y_train,
+                               method = "regLogistic",
+                               trControl = cv,
+                               metric = "ROC",
+                               tuneGrid = grid,
+                               preProcess = c("center", "scale"), 
+                               family = "binomial")
+  # Mean AUC value of the best lambda parameter training over repeats
+  cv_auc <- getTrainPerf(L2Logit)$TrainROC
+  # Predict on the test set and get predicted probabilities
+  probs <- predict(L2Logit, testing, type="prob")
+  # Test AUC calculation
+  test_roc <- roc(ifelse(testing$dx == "cancer", 1, 0), probs[[2]])
+  test_auc <- test_roc$auc
+  # Save all the test AUCs over iterations in test_aucs
+  test_aucs <- c(test_aucs, test_auc)
+  # Save the test set labels in all.test.response. Labels converted to 0 for normal and 1 for cancer
+  all.test.response <- c(all.test.response, ifelse(testing$dx == "cancer", 1, 0))
+  # Save the test set predicted probabilities of highest class in all.test.predictor
+  all.test.predictor <- c(all.test.predictor, probs[[2]])
+}
+stopCluster(cl)
+# Get the ROC curve and AUC values for all the iterations 
+test_roc <- roc(all.test.response, all.test.predictor, auc=TRUE, ci=TRUE)
+```
+
+```{r LogitROCplot, eval=TRUE, echo=FALSE, warning=FALSE, message=FALSE}
+
+pdf("../results/figures/LogReg_inR.pdf")
+par(mar=c(4,4,1,1))
+# Plot random line on ROC curve
+plot(c(1,0),c(0,1),
+     type='l',
+     lty=3,
+     xlim=c(1.01,0), ylim=c(-0.01,1.01),
+     xaxs='i', yaxs='i',
+     ylab='', xlab='')
+# Plot Test ROC in red line
+plot(test_roc,
+     col='black',
+     lwd=2,
+     add=T,
+     lty=1)
+#Calculate Confidence Interval sensitivities at given specificities
+sens.ci <- ci.se(test_roc)
+# Compute the CI of the AUC
+auc.ci <- ci.auc(test_roc)
+# Plot CV ROC in blue line
+#plot(cv_roc,
+#     col='blue',
+#     lwd=2,
+#     add=T,
+#     lty=1)
+# Label the axes
+mtext(side=2,
+      text="Sensitivity",
+      line=2.5,
+      cex=1.5)
+mtext(side=1,
+      text="Specificity",
+      line=2.5,
+      cex=1.5)
+# Add legends for both lines
+legend(x=0.7,y=0.2,
+       legend=(sprintf('Test AUC: %.3g, CI: %.3g', test_roc$auc, auc.ci)),
+       bty='n',
+       xjust=0,
+       lty=c(1,1),
+       col='black',
+       text.col='black')
+
+plot(sens.ci, type="shape", col="gray88")
+
+# Save the figure
+dev.off()
+```
+
+\vspace{35mm}
+
+Running title: INSERT RUNNING TITLE HERE
+
+\vspace{35mm}
+
+
+Begüm D. Topçuoğlu^1, Jenna Wiens^2, Patrick D. Schloss^1$\dagger$^
+
+\vspace{40mm}
+
+$\dagger$ To whom correspondence should be addressed: pschloss@umich.edu
+
+1\. Department of Microbiology and Immunology, University of Michigan, Ann Arbor, MI 48109
+
+2\. Department of Computer Science and Engineering, University or Michigan, Ann Arbor, MI 49109
+
+
+\newpage
+\linenumbers
+
+
+## Abstract
+
+
+\newpage
+
+## Introduction
+
+As gut microbiome field continues to grow, there will be an ever-increasing demand for reproducible machine learning  methods to analyze microbiome sequence read count data and to determine association with a continuous or categorical phenotype of interest.
+
+Colorectal cancer is one of the leading cause of death among cancers in the United States. Early diagnosis increases the chance of survival. However the current diagnostic methods are expensive and invasive. As a less invasive tool, numerous studies use relative abundances of the gut bacteria populations to predict disease progression. Most microbial communities are pretty patchy and the likelihood of a single feature that explains the differences in health is pretty small. It is likely that many biomarkers are needed to account for the patchiness as well as the context dependency of the features.
+
+
+ML use in microbiome literature is a bit like the wild west with lack of clarity over methods, testing, validation, etc. There is a need for guidance on how to properly implement these different methods. We need to emphasize good machine learning practices and pipelines and discuss the reproducibility, robustness and actionability of models. 
+
+
+We established a non-leaky pipeline. We performed L1 and L2-regularized logistic regression, Linear SVM, Non-Linear SVM, Decision tree, Random forest, XGBoost and Feed Forward Neural Net classification models. We evaluated the classification performance of different machine learning methods. We also want to discuss the reproducibility, robustness, actionability, interpretibility and susceptibility to overfitting of each method. 
+
+Generalisation Perfomance of each model. 
+Is there a maximum threshold of prediction with all these methods?
+Does an increase in model complexity improve predictibility?
+Synthesis statement regarding modeling 16S microbiome data
+
+## Results and Discussion
+
+
+## Conclusions
+
+
+## Materials and Methods
+
+
+\newpage
+
+Insert figure legends with the first sentence in bold, for example:
+
+**Figure 1. Number of OTUs sampled among bacterial and archaeal 16S rRNA gene sequences for different OTU definitions and level of sequencing effort.** Rarefaction curves for different OTU definitions of Bacteria (A) and Archaea (B). Rarefaction curves for the coarse environments in Table 1 for Bacteria (C) and Archaea (D).
+
+
+\newpage
+
+## References
