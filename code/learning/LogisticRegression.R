@@ -96,6 +96,7 @@ stopCluster(cl)
 test_roc <- roc(all.test.response, all.test.predictor, auc=TRUE, ci=TRUE)
 #cv_roc <- roc(all.cv.response, all.cv.predictor, auc=TRUE, ci=TRUE)
 
+pdf("results/figures/LogReg_inR.pdf")
 par(mar=c(4,4,1,1))
 # Plot random line on ROC curve
 plot(c(1,0),c(0,1),
@@ -139,7 +140,4 @@ plot(sens.ci, type="shape", col="gray88")
 
 
 # Save the figure
-dev.copy(png,'results/figures/LogReg_inR.png', width = 500, height = 500, res=96)
-
-dev.off()
 dev.off()
