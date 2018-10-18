@@ -7,6 +7,7 @@ from tpot import TPOTClassifier
 
 
 
+
 shared = pd.read_table("data/baxter.0.03.subsample.shared")
 shared.head()
 meta = pd.read_table("data/metadata.tsv")
@@ -28,8 +29,9 @@ y = data["class"].replace(diagnosis)
 y.dropna()
 x.dropna()
 
+scorer = make_scorer(f1_score)
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
-tpot = TPOTClassifier(generations=50, population_size=50, verbosity=2, cv=5, scoring='roc_auc')
+tpot = TPOTClassifier(generations=50, population_size=50, verbosity=2, cv=5, scoring='f1_macro')
 
 tpot.fit(x_train, y_train)
 
