@@ -47,7 +47,7 @@ for (i in 1:50) {
   y_train <- training$dx
   y_train <- as.factor(y_train)
 
-  grid <-  expand.grid(mtry = c(500, 1000, 1500))
+  grid <-  expand.grid(mtry = c(80, 500, 1000, 1500))
 
 
   cv <- trainControl(method="repeatedcv",
