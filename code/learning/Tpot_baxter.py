@@ -3,6 +3,8 @@
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
+from tpot import TPOTClassifier
+
 
 
 shared = pd.read_table("data/baxter.0.03.subsample.shared")
