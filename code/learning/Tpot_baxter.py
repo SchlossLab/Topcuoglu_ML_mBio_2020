@@ -119,22 +119,18 @@ shared = shared.rename(index=str, columns={"Group":"sample"})
 ##merge the 2 datasets on sample
 data=pd.merge(meta,shared,on=['sample'])
 ##remove adenoma samples
-data= data[data.dx.str.contains("adenoma") == False]
+#data= data[data.dx.str.contains("adenoma") == False]
 data.rename(columns={'dx': 'class'}, inplace=True)
 x = data.drop(["sample", "class", "numOtus", "label"], axis=1)
-diagnosis = { "cancer":1, "normal":0}
+diagnosis = {"adenoma":1, "cancer":2, "normal":0}
 y = data["class"].replace(diagnosis)
 y.dropna()
 x.dropna()
 
-
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
 tpot = TPOTClassifier(generations=50, population_size=50, verbosity=2, cv=5, n_jobs=1, scoring='roc_auc')
 
 tpot.fit(x_train, y_train)
-
-#Best pipeline: GradientBoostingClassifier(OneHotEncoder(MinMaxScaler(input_matrix), minimum_fraction=0.25, sparse=False), learning_rate=0.001, max_depth=10, max_features=0.45, min_samples_leaf=11, min_samples_split=2, n_estimators=100, subsample=0.8)
-
-#TPOTClassifier(config_dict={'sklearn.ensemble.GradientBoostingClassifier': {'max_features': array([0.05, 0.1 , 0.15, 0.2 , 0.25, 0.3 , 0.35, 0.4 , 0.45, 0.5 , 0.55, 0.6 , 0.65, 0.7 , 0.75, 0.8 , 0.85, 0.9 , 0.95, 1.  ]), 'learning_rate': [0.001, 0.01, 0.1, 0.5, 1.0], 'min_samples_leaf': [1, 2, 3, 4, 5, 6, 7...  0.6 , 0.65, 0.7 , 0.75, 0.8 , 0.85, 0.9 , 0.95, 1.  ])}, 'sklearn.preprocessing.RobustScaler': {}}, crossover_rate=0.1, cv=5, disable_update_check=False, early_stop=None, generations=10, max_eval_time_mins=5,max_time_mins=None, memory=None, mutation_rate=0.9, n_jobs=1,offspring_size=50, periodic_checkpoint_folder=None,population_size=50, random_state=None, scoring=None, subsample=1.0,verbosity=2, warm_start=False)
 
 print(tpot.score(x_test, y_test))
 tpot.export('testing/tpot_baxter_pipeline.py')
