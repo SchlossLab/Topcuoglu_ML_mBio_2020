@@ -50,11 +50,6 @@ y= y.values
 x = x.dropna()
 x = x.values
 
-y = label_binarize(y, classes=[0, 1, 2])
-
-
-
-
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
 ## Scale the dataset by removing mean and scaling to unit variance
 sc = StandardScaler()
@@ -65,7 +60,7 @@ x_test = sc.transform(x_test)
 c_values = [0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01]
 param_grid = dict(C=c_values)
 cv = RepeatedKFold(n_splits=5, n_repeats=5, random_state=200889)
-model = OneVsOneClassifier(linear_model.LogisticRegression())
+model = linear_model.LogisticRegression(solver="lbfgs", multi_class="multinomial")
 
 ## Based on the chosen model, create a grid to search for the optimal model
 grid = GridSearchCV(estimator = model, param_grid = param_grid, cv = cv, scoring="accuracy", n_jobs=-1)
@@ -79,5 +74,3 @@ stds = grid_result.cv_results_['std_test_score']
 params = grid_result.cv_results_['params']
 for mean, stdev, param in zip(means, stds, params):
     print("%f (%f) with: %r" % (mean, stdev, param))
-
-model = linear_model.LogisticRegression(solver="lbfgs", multi_class="multinomial")
