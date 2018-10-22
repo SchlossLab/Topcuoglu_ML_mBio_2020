@@ -111,6 +111,10 @@ plot(test_roc,
      lwd=2,
      add=T,
      lty=1)
+#Calculate Confidence Interval sensitivities at given specificities
+sens.ci <- ci.se(test_roc)
+# Compute the CI of the AUC
+auc.ci <- ci.auc(test_roc)
 # Plot CV ROC in blue line
 #plot(cv_roc,
 #     col='blue',
@@ -128,14 +132,13 @@ mtext(side=1,
       cex=1.5)
 # Add legends for both lines
 legend(x=0.7,y=0.2,
-       legend=(sprintf('Test - AUC: %.3g', test_roc$auc)),
+       legend=(sprintf('Test - AUC: %.3g, CI: %.3g', test_roc$auc, sens.ci)),
        bty='n',
        xjust=0,
        lty=c(1,1),
        col='black',
        text.col='black')
 
-sens.ci <- ci.se(test_roc)
 plot(sens.ci, type="shape", col="gray88")
 
 

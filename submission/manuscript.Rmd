@@ -68,14 +68,26 @@ data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
 
 # We want the diagnosis column to a factor
 data$dx <- factor(data$dx, labels=c("normal", "cancer"))
+# calculate the pre-process parameters from the dataset
+# in python we use StandardScaler, here we center and scale to get the same effect
+preprocessParams <- preProcess(data[,-1], method=c("center", "scale"))
+# transform the dataset using the parameters
+data[,-1] <- predict(preprocessParams, data[,-1])
 ```
 
 ```{r BinaryClassification, eval=TRUE, echo=FALSE, cache=FALSE, warning=FALSE, message=FALSE}
-cl <- makePSOCKcluster(4)
-registerDoParallel(cl)
-# Create
+# Create lists to store the predicted labels and actuals labels at each iteration 
 all.test.response <- all.test.predictor <- test_aucs <- c()
+
+## We will split the dataset 80%-20% and tune hyper-parameter on the 80% training. This tuning step on training data will be done 50 times with 5 folds on the training set and an optimal hyper-parameter/optimal model will be chosen.
+
+## The chosen best model and hyper-parameter will be tested on the %20 test set that was not seen before during training. This will give a TEST AUC.
+
+## We will do the previous steps 50 iterations. Each iteration will have a unique hyper-parameter and optimal model. For each of these models we will have a TEST AUC. We will report the TEST AUC with 95 %CI.
+
+# For each epoch, we can also keep track of AUC values with CI for each cross-validation during training.But these code lines are not included in this Rmd file. I will have those commented out in the main.R code file. 
 for (i in 1:50) {
+  # Partition the data 80-20. This function in caret keeps it stratified if I remember correctly.
   inTraining <- createDataPartition(data$dx, p = .80, list = FALSE)
   training <- data[ inTraining,]
   testing  <- data[-inTraining,]
@@ -83,10 +95,11 @@ for (i in 1:50) {
   y_train <- training$dx
   y_train <- as.factor(y_train)
   # L2 regularization is used for Logistic regression
-  # cost is the inverse of penalty and we provide a grid
+  # Cost is our regularization parameter which here is the inverse of penalty and we provide a grid to tune the best one. 
   grid <-  expand.grid(cost = c(0.0000001, 0.000001, 0.00001, 0.0001),
                        loss = "L2_dual",
                        epsilon = 0.1)
+  
   cv <- trainControl(method="repeatedcv",
                      repeats = 50,
                      number=5,
@@ -94,16 +107,15 @@ for (i in 1:50) {
                      classProbs=TRUE,
                      summaryFunction=twoClassSummary,
                      indexFinal=NULL,
-                     preProc = "scale",
                      savePredictions = TRUE)
-
-  L2Logit <- train(x_train, y_train,
-                               method = "regLogistic",
-                               trControl = cv,
-                               metric = "ROC",
-                               tuneGrid = grid,
-                               preProcess = c("center", "scale"), 
-                               family = "binomial")
+  
+  L2Logit <- train(x_train, 
+                   y_train,
+                   method = "regLogistic",
+                   trControl = cv, 
+                   metric = "ROC",
+                   tuneGrid = grid,
+                   family = "binomial")
   # Mean AUC value of the best lambda parameter training over repeats
   cv_auc <- getTrainPerf(L2Logit)$TrainROC
   # Predict on the test set and get predicted probabilities
@@ -118,12 +130,13 @@ for (i in 1:50) {
   # Save the test set predicted probabilities of highest class in all.test.predictor
   all.test.predictor <- c(all.test.predictor, probs[[2]])
 }
-stopCluster(cl)
-# Get the ROC curve and AUC values for all the iterations 
+# Get the ROC curve and AUC values for all the iterations
+# auc= TRUE and ci=TRUE will keep track of the auc and 95 CI for all the sensitivities and specificities. 
 test_roc <- roc(all.test.response, all.test.predictor, auc=TRUE, ci=TRUE)
 ```
 
-```{r LogitROCplot, eval=TRUE, echo=FALSE, warning=FALSE, message=FALSE}
+```{r LogitROCplot, eval=TRUE, echo=FALSE, cache=FALSE, warning=FALSE, message=FALSE}
+# Here we plot the test AUC and 95%CI for logistic regression.
 
 pdf("../results/figures/LogReg_inR.pdf")
 par(mar=c(4,4,1,1))
@@ -134,7 +147,7 @@ plot(c(1,0),c(0,1),
      xlim=c(1.01,0), ylim=c(-0.01,1.01),
      xaxs='i', yaxs='i',
      ylab='', xlab='')
-# Plot Test ROC in red line
+# Plot Test ROC in black line
 plot(test_roc,
      col='black',
      lwd=2,
@@ -142,8 +155,9 @@ plot(test_roc,
      lty=1)
 #Calculate Confidence Interval sensitivities at given specificities
 sens.ci <- ci.se(test_roc)
-# Compute the CI of the AUC
-auc.ci <- ci.auc(test_roc)
+# Calculate CI for AUC values
+auc_ci <- test_roc$ci[3]-test_roc$ci[2]
+
 # Plot CV ROC in blue line
 #plot(cv_roc,
 #     col='blue',
@@ -161,7 +175,7 @@ mtext(side=1,
       cex=1.5)
 # Add legends for both lines
 legend(x=0.7,y=0.2,
-       legend=(sprintf('Test AUC: %.3g, CI: %.3g', test_roc$auc, auc.ci)),
+       legend=(sprintf('Test AUC: %.3g, %s CI: %0.3g', test_roc$auc, '%95', auc_ci)),
        bty='n',
        xjust=0,
        lty=c(1,1),
