@@ -126,13 +126,18 @@ for (i in 1:50) {
   # Save all the test AUCs over iterations in test_aucs
   test_aucs <- c(test_aucs, test_auc)
   # Save the test set labels in all.test.response. Labels converted to 0 for normal and 1 for cancer
-  all.test.response <- c(all.test.response, ifelse(testing$dx == "cancer", 1, 0))
+  all.test.response <- c(all.test.response, 
+                         ifelse(testing$dx == "cancer", 1, 0))
   # Save the test set predicted probabilities of highest class in all.test.predictor
-  all.test.predictor <- c(all.test.predictor, probs[[2]])
+  all.test.predictor <- c(all.test.predictor, 
+                          probs[[2]])
 }
 # Get the ROC curve and AUC values for all the iterations
 # auc= TRUE and ci=TRUE will keep track of the auc and 95 CI for all the sensitivities and specificities. 
-test_roc <- roc(all.test.response, all.test.predictor, auc=TRUE, ci=TRUE)
+test_roc <- roc(all.test.response, 
+                all.test.predictor, 
+                auc=TRUE, 
+                ci=TRUE)
 ```
 
 ```{r LogitROCplot, eval=TRUE, echo=FALSE, cache=FALSE, warning=FALSE, message=FALSE}
@@ -154,7 +159,9 @@ plot(test_roc,
      add=T,
      lty=1)
 #Calculate Confidence Interval sensitivities at given specificities
-sens.ci <- ci.se(test_roc)
+sens.ci <- ci.se(test_roc, 
+          specificities=seq(0, 100, 5)) # over a select set of specificities
+
 # Calculate CI for AUC values
 auc_ci <- test_roc$ci[3]-test_roc$ci[2]
 
@@ -175,7 +182,10 @@ mtext(side=1,
       cex=1.5)
 # Add legends for both lines
 legend(x=0.7,y=0.2,
-       legend=(sprintf('Test AUC: %.3g, %s CI: %0.3g', test_roc$auc, '%95', auc_ci)),
+       legend=(sprintf('Test AUC: %.3g, %s CI: %0.3g', 
+                       test_roc$auc, 
+                       '%95', 
+                       auc_ci)),
        bty='n',
        xjust=0,
        lty=c(1,1),
