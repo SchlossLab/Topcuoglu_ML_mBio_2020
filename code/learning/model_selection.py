@@ -58,7 +58,7 @@ def select_model(net):
         param_grid = dict(max_depth=max_depth, min_samples_split=min_samples_split)
     if net=="XGBoost":
         model = xgb.XGBClassifier()
-        learning rate=[0.0001, 0.001, 0.01, 0.1]
+        learning_rate=[0.0001, 0.001, 0.01, 0.1]
         reg_lambda=[0, 0.001, 0.01, 0.10, 0.50, 1]
         max_depth=[2,5,10]
         n_estimators=[500, 1000]

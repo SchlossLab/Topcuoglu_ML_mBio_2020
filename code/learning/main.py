@@ -58,7 +58,7 @@ for models in models:
         sc = StandardScaler()
         x_train = sc.fit_transform(x_train)
         x_test = sc.transform(x_test)
-        y_train=y_train.values
+        #y_train=y_train.values
         ## Define which model, parameters we want to tune and their range, and also the cross validation method(n_splits, n_repeats)
         model, param_grid, cv = select_model(models)
         ## Based on the chosen model, create a grid to search for the optimal model
