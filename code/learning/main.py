@@ -26,10 +26,10 @@ from preprocess_data import process_data
 shared = pd.read_table("data/baxter.0.03.subsample.shared")
 meta = pd.read_table("data/metadata.tsv")
 # Define x (features) and y (labels)
-x, y = process_data(shared, meta)
+x, y = process_multidata(shared, meta)
 ################## MODEL SELECTION ###############
 from model_selection import select_model
-models = ["L2 Logistic Regression", "L1 SVM Linear Kernel", "L2 SVM Linear Kernel", "SVM RBF", "Random Forest"]
+models = ["L2_Logistic_Regression", "L1_SVM_Linear_Kernel", "L2_SVM_Linear_Kernel", "SVM_RBF", "Random_Forest"]
 
 
 ## We will split the dataset 80%-20% and tune hyper-parameter on the 80% training. This will be done 100 times wth 5 folds and an optimal hyper-parameter/optimal model will be chosen.
