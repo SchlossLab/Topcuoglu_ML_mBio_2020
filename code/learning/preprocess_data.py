@@ -44,7 +44,7 @@ def process_multidata(shared, meta):
     ## Drop all except OTU columns for x
     x = data.drop(["sample", "dx", "numOtus", "label"], axis=1)
     ## Cancer =1 Normal =0
-    diagnosis = {"adenoma":1, "cancer":2, "normal":0}
+    diagnosis = {"adenoma":1, "cancer":1, "normal":0}
     ## Generate y which had diagnosis 0, 1, 2
     y = data["dx"].replace(diagnosis)
     # y = np.eye(2, dtype='uint8')[y]
