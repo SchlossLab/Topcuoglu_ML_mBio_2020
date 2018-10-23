@@ -36,4 +36,4 @@ tpot = TPOTClassifier(generations=50, population_size=50, verbosity=2, cv=5, sco
 tpot.fit(x_train, y_train)
 
 print(tpot.score(x_test, y_test))
-tpot.export('testing/tpot_baxter_pipeline.py')
+tpot.export('tpot_baxter_pipeline.py')
