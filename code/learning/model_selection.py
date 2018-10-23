@@ -51,4 +51,9 @@ def select_model(net):
         n_estimators = [1000]
         max_features= [10, 80, 500, 1000, 1500]
         param_grid = dict(n_estimators=n_estimators, max_features=max_features)
+    if net=="Decision_Tree":
+        model = RandomForestClassifier(bootstrap= True)
+        max_depth=[5, 10, 50]
+        min_samples_split=[10, 25, 50]
+        param_grid = dict(max_depth=max_depth, min_samples_split=min_samples_split)
     return model, param_grid, cv
