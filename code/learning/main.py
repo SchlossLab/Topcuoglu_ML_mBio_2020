@@ -47,7 +47,7 @@ for models in models:
     mean_fpr_test = np.linspace(0, 1, 100)
     #Logit_plot = plt.figure()
     i=0
-    epochs= 100
+    epochs= 25
     for epoch in range(epochs):
         i=i+1
         print(i)
