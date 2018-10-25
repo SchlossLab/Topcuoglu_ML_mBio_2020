@@ -21,7 +21,7 @@ from sklearn.model_selection import RepeatedStratifiedKFold
 def select_model(net):
     ## Define the n-folds for hyper-parameter optimization on training set.
     cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=100, random_state=200889)
-    if net=="L2_Logistic _Regression":
+    if net=="L2_Logistic_Regression":
         model = linear_model.LogisticRegression()
         ## We will try these regularization strength coefficients to optimize our model
         ## We will try these regularization strength coefficients to optimize our model
@@ -37,7 +37,7 @@ def select_model(net):
         model= LinearSVC(penalty='l1', loss='squared_hinge', dual=False)
         c_values = [0.1 ,1, 5, 10, 20, 25, 30, 50, 100]
         param_grid = dict(C=c_values)
-    if net=="L2_SVM Linear_Kernel":
+    if net=="L2_SVM_Linear_Kernel":
         model = SVC(kernel='linear')
         c_values = [0.0001, 0.001, 0.01, 0.1, 1]
         param_grid = dict(C=c_values)

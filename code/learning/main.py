@@ -39,7 +39,6 @@ models = ["L2_Logistic_Regression", "L1_SVM_Linear_Kernel", "L2_SVM_Linear_Kerne
 ## We will split and redo previous steps 100 epochs. Which means we have 100 models that we test on the 20%. We will report the mean TEST AUC +/- sd.
 
 # For each epoch, we will also report mean AUC values +/- sd for each cross-validation during training.
-
 for models in models:
     print(models)
     ## Generate empty lists to fill with AUC values for test-set
