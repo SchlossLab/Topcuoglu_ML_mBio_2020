@@ -22,7 +22,7 @@ from sklearn.preprocessing import StandardScaler
 
 
 ############## PRE-PROCESS DATA ######################
-from preprocess_data import process_data
+from preprocess_data import process_multidata
 shared = pd.read_table("data/baxter.0.03.subsample.shared")
 meta = pd.read_table("data/metadata.tsv")
 # Define x (features) and y (labels)
