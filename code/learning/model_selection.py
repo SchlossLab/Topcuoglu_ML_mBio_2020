@@ -57,10 +57,16 @@ def select_model(net):
         min_samples_split=[10, 25, 50]
         param_grid = dict(max_depth=max_depth, min_samples_split=min_samples_split)
     if net=="XGBoost":
-        model = xgb.XGBClassifier()
-        learning_rate=[0.0001, 0.001, 0.01, 0.1]
-        #reg_lambda=[0, 0.001, 0.01, 0.10, 0.50, 1]
-        #max_depth=[2,5,10]
-        n_estimators=[1000]
-        param_grid = dict(learning_rate=learning_rate, reg_lambda=reg_lambda, n_estimators=n_estimators, max_depth=max_depth)
+        ind_params={
+        'n_estimators':1000,
+        'colsample_bytree': 0.8,
+        'objective': 'binary:logistic'
+        }
+        model = xgb.XGBClassifier(**ind_params)
+        param_grid = {
+        'learning_rate':[0.001, 0.01, 0.1],
+        'subsample': [0.7,0.8,0.9],
+        'max_depth':[6,7,8],
+        'min_child_weight':[1,2,3]
+        }
     return model, param_grid, cv
