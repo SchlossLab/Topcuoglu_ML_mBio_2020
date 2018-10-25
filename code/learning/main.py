@@ -83,7 +83,7 @@ for models in models:
         ## Plot mean ROC curve for cross-validation with n_splits=5 and n_repeats=100 to evaluate the variation of prediction in our training set.
 
         for train, test in cv.split(X,Y):
-            if models=="L2 Logistic Regression" or models=="Random Forest" or models=="XGBoost":
+            if models=="L2_Logistic_Regression" or models=="Random_Forest" or models=="XGBoost":
                 y_score = best_model.fit(X[train], Y[train]).predict_proba(X[test])
                 fpr, tpr, thresholds = roc_curve(Y[test], y_score[:, 1])
             else:
@@ -96,7 +96,7 @@ for models in models:
             print("Train", roc_auc)
 
         ## Plot mean ROC curve for 100 epochs test set evaulation.
-        if models=="L2 Logistic Regression" or models=="Random Forest" or models=="XGBoost":
+        if models=="L2_Logistic_Regression" or models=="Random_Forest" or models=="XGBoost":
             y_score = best_model.fit(x_train, y_train).predict_proba(x_test)
             # Compute ROC curve and area the curve
             fpr_test, tpr_test, thresholds_test = roc_curve(y_test, y_score[:, 1])
