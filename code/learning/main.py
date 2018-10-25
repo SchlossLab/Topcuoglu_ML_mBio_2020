@@ -7,8 +7,8 @@
 #
 
 ############## IMPORT MODULES ######################
-import matplotlib
-#matplotlib.use('Agg')
+#import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 import numpy as np # linear algebra
