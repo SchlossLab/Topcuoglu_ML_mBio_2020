@@ -14,8 +14,8 @@ from sklearn import linear_model
 from sklearn.svm import SVC, LinearSVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
-import xgboost
 import xgboost as xgb
+from xgboost.sklearn import XGBClassifier
 from sklearn.model_selection import RepeatedStratifiedKFold
 
 def select_model(net):
