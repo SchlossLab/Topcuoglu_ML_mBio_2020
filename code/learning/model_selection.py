@@ -25,7 +25,7 @@ def select_model(net):
         model = linear_model.LogisticRegression()
         ## We will try these regularization strength coefficients to optimize our model
         ## We will try these regularization strength coefficients to optimize our model
-        c_values = [0.00000001, 0.0000001, 0.000001, 0.00001, 0.0001]
+        c_values = [0.000000001,0.00000001, 0.0000001, 0.000001, 0.00001, 0.0001]
         param_grid = dict(C=c_values)
     if net=="L2_MultiClass_Logistic_Regression":
         model = linear_model.LogisticRegression(multi_class='multinomial', solver="lbfgs")
