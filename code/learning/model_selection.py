@@ -20,7 +20,7 @@ from sklearn.model_selection import RepeatedStratifiedKFold
 
 def select_model(net):
     ## Define the n-folds for hyper-parameter optimization on training set.
-    cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=100, random_state=200889)
+    cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=25, random_state=200889)
     if net=="L2_Logistic_Regression":
         model = linear_model.LogisticRegression()
         ## We will try these regularization strength coefficients to optimize our model
