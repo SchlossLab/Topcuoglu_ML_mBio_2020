@@ -45,6 +45,10 @@ for models in models:
     tprs_test = []
     aucs_test = []
     mean_fpr_test = np.linspace(0, 1, 100)
+    ## Generate empty lists to fill with AUC values for train-set cv
+    tprs = []
+    aucs = []
+    mean_fpr = np.linspace(0, 1, 100)
     #Logit_plot = plt.figure()
     i=0
     epochs= 25
