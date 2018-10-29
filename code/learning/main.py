@@ -89,11 +89,12 @@ for models in models:
             else:
                 y_score = best_model.fit(X[train], Y[train]).decision_function(X[test])
                 fpr, tpr, thresholds = roc_curve(Y[test], y_score)
-            tprs.append(interp(mean_fpr, fpr, tpr))
-            tprs[-1][0] = 0.0
-            roc_auc = auc(fpr, tpr)
-            aucs.append(roc_auc)
             print("Train", roc_auc)
+        tprs.append(interp(mean_fpr, fpr, tpr))
+        tprs[-1][0] = 0.0
+        roc_auc = auc(fpr, tpr)
+        aucs.append(roc_auc)
+
 
         ## Plot mean ROC curve for 100 epochs test set evaulation.
         if models=="L2_Logistic_Regression" or models=="Random_Forest" or models=="XGBoost" or models=="Decision_Tree":
