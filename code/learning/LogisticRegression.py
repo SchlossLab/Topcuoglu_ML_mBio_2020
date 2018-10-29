@@ -49,7 +49,7 @@ tprs = []
 aucs = []
 mean_fpr = np.linspace(0, 1, 100)
 i=0
-epochs= 3
+epochs= 25
 for epoch in range(epochs):
     i=i+1
     print(i)
