@@ -62,7 +62,7 @@ for epoch in range(epochs):
     ## Define which model, parameters we want to tune and their range, and also the cross validation method(n_splits, n_repeats)
     model, param_grid, cv = select_model("L2_Logistic_Regression")
     ## Based on the chosen model, create a grid to search for the optimal model
-    grid = GridSearchCV(estimator = model, param_grid = param_grid, cv = cv, scoring="roc_auc", n_jobs=-1)
+    grid = GridSearchCV(estimator = model, param_grid = param_grid, cv = cv, scoring="roc_auc", n_jobs=1)
     ## Get the grid results and fit to training set
     grid_result = grid.fit(x_train, y_train)
     print('Best C:', grid_result.best_estimator_.get_params()['C'])
@@ -97,30 +97,16 @@ for epoch in range(epochs):
     aucs_test.append(roc_auc_test)
     print("Test", roc_auc_test)
 
-plt.plot([0, 1], [0, 1], linestyle='--', color='green', label='Luck', alpha=.8)
-mean_tpr_test = np.mean(tprs_test, axis=0)
-mean_tpr_test[-1] = 1.0
-mean_auc_test = auc(mean_fpr_test, mean_tpr_test)
-std_auc_test = np.std(aucs_test)
-plt.plot(mean_fpr_test, mean_tpr_test, color='r', label=r'Never-before-seen test set ROC (AUC = %0.2f $\pm$ %0.2f)' % (mean_auc_test, std_auc_test), lw=2, alpha=.8)
-std_tpr_test = np.std(tprs_test, axis=0)
-tprs_upper_test = np.minimum(mean_tpr_test + std_tpr_test, 1)
-tprs_lower_test = np.maximum(mean_tpr_test - std_tpr_test, 0)
-plt.fill_between(mean_fpr_test, tprs_lower_test, tprs_upper_test, color='tomato', alpha=.2, label=r'$\pm$ 1 std. dev.')
-mean_tpr = np.mean(tprs, axis=0)
-mean_tpr[-1] = 1.0
-mean_auc = auc(mean_fpr, mean_tpr)
-std_auc = np.std(aucs)
-plt.plot(mean_fpr, mean_tpr, color='b', label=r'Mean cross-val ROC (AUC = %0.2f $\pm$ %0.2f)' % (mean_auc, std_auc), lw=2, alpha=.8)
-std_tpr = np.std(tprs, axis=0)
-tprs_upper = np.minimum(mean_tpr + std_tpr, 1)
-tprs_lower = np.maximum(mean_tpr - std_tpr, 0)
-plt.fill_between(mean_fpr, tprs_lower, tprs_upper, color='dodgerblue', alpha=.2, label=r'$\pm$ 1 std. dev.')
-plt.xlim([-0.05, 1.05])
-plt.ylim([-0.05, 1.05])
-plt.xlabel('False Positive Rate')
-plt.ylabel('True Positive Rate')
-plt.title('L2 Logistic Regression ROC\n')
-plt.legend(loc="lower right", fontsize=8)
-#plt.show()
-Logit_plot.savefig('results/figures/Logit_Baxter.png', dpi=1000)
+d1= {'AUC':aucs}
+df1= pd.DataFrame(d1)
+
+d2= {'AUC':aucs_test}
+df2= pd.DataFrame(d2)
+
+df3 = pd.concat([df1,df2], axis=1, keys=['Cross-validation','Testing']).stack(0)
+df3 = df3.reset_index(level=1)
+import seaborn as sns
+
+dots= sns.swarmplot(x='level_1',y='AUC', data=df3)
+sns.boxplot(x='level_1', y='AUC', data=df3, ax=dots, showcaps=False,boxprops={'facecolor':'None'})
+plt.show()
