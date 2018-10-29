@@ -77,10 +77,6 @@ for models in models:
             print("%f (%f) with: %r" % (mean, stdev, param))
         ## The best model we pick here will be used for predicting test set.
         best_model = grid_result.best_estimator_
-        ## Generate empty lists to fill with AUC values for train-set cv
-        tprs = []
-        aucs = []
-        mean_fpr = np.linspace(0, 1, 100)
         ## variable assignment to make it easier to read.
         X=x_train
         Y=y_train
