@@ -140,11 +140,17 @@ for models in models:
     plt.savefig(save_results_to + str(models) + ".png", format="PNG", dpi=1000)
     plt.clf()
 
+# Plot swarm -plot for AUC values
 d1= {'AUC':aucs}
 df1= pd.DataFrame(d1)
 
 d2= {'AUC':aucs_test}
 df2= pd.DataFrame(d2)
 
-df3 = pd.concat([df1,df2], axis=1, keys=['df1','df2']).stack(0)
+df3 = pd.concat([df1,df2], axis=1, keys=['Cross-validation','Testing']).stack(0)
 df3 = df3.reset_index(level=1)
+import seaborn as sns
+
+dots= sns.swarmplot(x='level_1',y='AUC', data=df3)
+sns.boxplot(x='level_1', y='AUC', data=df3, ax=dots, showcaps=False,boxprops={'facecolor':'None'})
+plt.show()
