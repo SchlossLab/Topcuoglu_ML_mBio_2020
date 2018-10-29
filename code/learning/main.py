@@ -140,17 +140,13 @@ for models in models:
     plt.savefig(save_results_to + str(models) + ".png", format="PNG", dpi=1000)
     plt.clf()
 
-# Plot swarm -plot for AUC values
-d1= {'AUC':aucs}
-df1= pd.DataFrame(d1)
 
-d2= {'AUC':aucs_test}
-df2= pd.DataFrame(d2)
-
-df3 = pd.concat([df1,df2], axis=1, keys=['Cross-validation','Testing']).stack(0)
-df3 = df3.reset_index(level=1)
-import seaborn as sns
-
-dots= sns.swarmplot(x='level_1',y='AUC', data=df3)
-sns.boxplot(x='level_1', y='AUC', data=df3, ax=dots, showcaps=False,boxprops={'facecolor':'None'})
-plt.show()
+    # Save the CV-auc and Test-auc lists to a dataframe and then to a tab-delimited file
+    cv_aucs= {'AUC':aucs}
+    cv_aucs_df= pd.DataFrame(cv_aucs)
+    test_aucs = {'AUC':aucs_test}
+    test_aucs_df = pd.DataFrame(test_aucs)
+    concat_aucs_df = pd.concat([cv_aucs_df,test_aucs_df], axis=1, keys=['Cross-validation','Testing']).stack(0)
+    concat_aucs_df = concat_aucs_df.reset_index(level=1)
+    save_results_to = 'data/process/'
+    concat_aucs_df.to_csv(save_results_to + str(models) + ".tsv", sep='\t')
