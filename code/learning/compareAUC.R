@@ -18,13 +18,19 @@ logit$Performance <- factor(logit$Performance,
 l1svm <- read.delim('data/process/L1_SVM_Linear_Kernel.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>% 
   rename(Performance = level_1) %>% 
-  mutate(model="L1-SVM Linear Kernel") %>% 
-  bind_rows(logit) %>% 
+  mutate(model="L1-SVM Linear Kernel") 
+
+
+l2svm <- read.delim('data/process/L2_SVM_Linear_Kernel.tsv', header=T, sep='\t') %>%
+  select(level_1, AUC) %>% 
+  rename(Performance = level_1) %>% 
+  mutate(model="L2-SVM Linear Kernel")%>% 
+  bind_rows(logit, l1svm) %>% 
   group_by(model)
 
 
 
-ggplot(l1svm, aes(x = model, y = AUC, fill = Performance)) +
+ggplot(l2svm, aes(x = model, y = AUC, fill = Performance)) +
   geom_boxplot(alpha=0.7) +
   scale_y_continuous(name = "AUC",
                      breaks = seq(0.4, 1, 0.05),
