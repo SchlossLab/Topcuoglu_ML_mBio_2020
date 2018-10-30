@@ -41,5 +41,6 @@ ggplot(l1svm, aes(x = model, y = AUC, fill = Performance)) +
         axis.title.x=element_text(size = 20)) +
   scale_fill_brewer(palette = "Paired")
 
+ggsave("AUC_comparison.pdf", plot = last_plot(), device = 'pdf', path = 'results/figures', width = 8, height = 8)
 
   
