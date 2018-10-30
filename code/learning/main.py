@@ -19,6 +19,8 @@ from sklearn.metrics import roc_curve, auc
 from sklearn.model_selection import GridSearchCV
 from sklearn.externals import joblib
 from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
+
 
 
 ############## PRE-PROCESS DATA ######################
@@ -81,7 +83,6 @@ for models in models:
         X=x_train
         Y=y_train
         ## Plot mean ROC curve for cross-validation with n_splits=5 and n_repeats=100 to evaluate the variation of prediction in our training set.
-
         for train, test in cv.split(X,Y):
             if models=="L2_Logistic_Regression" or models=="Random_Forest" or models=="XGBoost" or models=="Decision_Tree":
                 y_score = best_model.fit(X[train], Y[train]).predict_proba(X[test])
@@ -94,7 +95,6 @@ for models in models:
             roc_auc = auc(fpr, tpr)
             aucs.append(roc_auc)
             print("Train", roc_auc)
-
         ## Plot mean ROC curve for 100 epochs test set evaulation.
         if models=="L2_Logistic_Regression" or models=="Random_Forest" or models=="XGBoost" or models=="Decision_Tree":
             y_score = best_model.fit(x_train, y_train).predict_proba(x_test)
