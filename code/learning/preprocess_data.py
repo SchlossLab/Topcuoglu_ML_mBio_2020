@@ -14,7 +14,7 @@ from sklearn import preprocessing
 #user defines their own datasets in the main.py using this function
 def process_data(shared, meta):
     ## Remove unnecessary columns from meta and only keep label for classification(diagnosis) and the sample name
-    meta = meta[['sample','dx']]
+    meta = meta[['sample','dx', 'fit_result']]
     ## Rename the column name "Group" to match the "sample" in meta
     shared = shared.rename(index=str, columns={"Group":"sample"})
     ## Merge the 2 datasets on sample
@@ -36,7 +36,7 @@ def process_data(shared, meta):
 
 def process_multidata(shared, meta):
     ## Remove unnecessary columns from meta and only keep label for classification(diagnosis) and the sample name
-    meta = meta[['sample','dx']]
+    meta = meta[['sample','dx', 'fit_result']]
     ## Rename the column name "Group" to match the "sample" in meta
     shared = shared.rename(index=str, columns={"Group":"sample"})
     ## Merge the 2 datasets on sample
