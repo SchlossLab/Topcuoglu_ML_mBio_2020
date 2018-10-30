@@ -1,4 +1,4 @@
-deps = c("beeswarm", "ggplot2","pROC", "caret","knitr","rmarkdown","vegan","gtools", "tidyverse");
+deps = c("ggplot2","knitr","rmarkdown","vegan","gtools", "tidyverse");
 for (dep in deps){
   if (dep %in% installed.packages()[,"Package"] == FALSE){
     install.packages(as.character(dep), quiet=TRUE);
@@ -47,6 +47,6 @@ ggplot(l2svm, aes(x = model, y = AUC, fill = Performance)) +
         axis.title.x=element_text(size = 20)) +
   scale_fill_brewer(palette = "Paired")
 
-ggsave("AUC_comparison.pdf", plot = last_plot(), device = 'pdf', path = 'results/figures', width = 8, height = 8)
+ggsave("AUC_comparison.pdf", plot = last_plot(), device = 'pdf', path = 'results/figures', width = 10, height = 10)
 
   
