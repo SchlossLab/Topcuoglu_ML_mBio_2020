@@ -34,9 +34,16 @@ svmRBF <- read.delim('data/process/SVM_RBF.tsv', header=T, sep='\t') %>%
   bind_rows(logit, l1svm, l2svm) %>% 
   group_by(model)
 
+rf <- read.delim('data/process/Random_Forest.tsv', header=T, sep='\t') %>%
+  select(level_1, AUC) %>% 
+  rename(Performance = level_1) %>% 
+  mutate(model="Random Forest")%>% 
+  bind_rows(logit, l1svm, l2svm, svmRBF) %>% 
+  group_by(model)
 
 
-ggplot(svmRBF, aes(x = model, y = AUC, fill = Performance)) +
+
+ggplot(rf, aes(x = model, y = AUC, fill = Performance)) +
   geom_boxplot(alpha=0.7) +
   scale_y_continuous(name = "AUC",
                      breaks = seq(0.3, 1, 0.05),
