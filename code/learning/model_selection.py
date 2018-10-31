@@ -57,15 +57,16 @@ def select_model(net):
         min_samples_split=[10, 25, 50]
         param_grid = dict(max_depth=max_depth, min_samples_split=min_samples_split)
     if net=="XGBoost":
+        # https://jessesw.com/XG-Boost/
         cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=1, random_state=200889)
         ind_params={
-        'n_estimators':500,
+        'n_estimators':100,
         'colsample_bytree': 0.8,
         'objective': 'binary:logistic'
         }
         model = xgb.XGBClassifier(**ind_params)
         param_grid = {
-        'learning_rate':[0.1],
+        'learning_rate':[0.01, 0.1],
         'subsample': [0.7,0.8,0.9],
         'max_depth':[6,7,8],
         'min_child_weight':[1,2,3]
