@@ -59,7 +59,7 @@ def select_model(net):
     if net=="XGBoost":
         cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=1, random_state=200889)
         ind_params={
-        'n_estimators':100,
+        'n_estimators':500,
         'colsample_bytree': 0.8,
         'objective': 'binary:logistic'
         }
