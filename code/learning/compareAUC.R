@@ -51,7 +51,9 @@ ggplot(svmRBF, aes(x = model, y = AUC, fill = Performance)) +
         axis.text.y=element_text(size = 12, colour='black'), 
         axis.title.y=element_text(size = 20), 
         axis.title.x=element_text(size = 20)) +
-  scale_fill_brewer(palette = "Paired")
+  scale_fill_brewer(palette = "Paired") +
+  geom_hline(yintercept = 0.5, linetype="dashed") 
+
 
 ggsave("AUC_comparison.pdf", plot = last_plot(), device = 'pdf', path = 'results/figures', width = 12, height = 10)
 
