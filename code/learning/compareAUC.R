@@ -30,20 +30,23 @@ l2svm <- read.delim('data/process/L2_SVM_Linear_Kernel.tsv', header=T, sep='\t')
 svmRBF <- read.delim('data/process/SVM_RBF.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>% 
   rename(Performance = level_1) %>% 
-  mutate(model="SVM RBF")%>% 
-  bind_rows(logit, l1svm, l2svm) %>% 
-  group_by(model)
+  mutate(model="SVM RBF")
+
+xgboost <- read.delim('data/process/XGBoost.tsv', header=T, sep='\t') %>%
+  select(level_1, AUC) %>% 
+  rename(Performance = level_1) %>% 
+  mutate(model="XGBoost")
 
 rf <- read.delim('data/process/Random_Forest.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>% 
   rename(Performance = level_1) %>% 
-  mutate(model="Random Forest")%>% 
-  bind_rows(logit, l1svm, l2svm, svmRBF) %>% 
+  mutate(model="Random Forest ")%>% 
+  bind_rows(logit, l1svm, l2svm, svmRBF, xgboost) %>% 
   group_by(model)
 
 
 
-ggplot(rf, aes(x = model, y = AUC, fill = Performance)) +
+ggplot(xgboost, aes(x = model, y = AUC, fill = Performance)) +
   geom_boxplot(alpha=0.7) +
   scale_y_continuous(name = "AUC",
                      breaks = seq(0.3, 1, 0.05),
@@ -62,6 +65,6 @@ ggplot(rf, aes(x = model, y = AUC, fill = Performance)) +
   geom_hline(yintercept = 0.5, linetype="dashed") 
 
 
-ggsave("AUC_comparison.pdf", plot = last_plot(), device = 'pdf', path = 'results/figures', width = 12, height = 10)
+ggsave("AUC_comparison.pdf", plot = last_plot(), device = 'pdf', path = 'results/figures', width = 15, height = 10)
 
   
