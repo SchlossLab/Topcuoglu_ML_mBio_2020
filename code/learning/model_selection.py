@@ -53,7 +53,7 @@ def select_model(net):
         param_grid = dict(n_estimators=n_estimators, max_features=max_features)
     if net=="Decision_Tree":
         model = DecisionTreeClassifier()
-        max_depth=[5, 6, 7, 8, 10]
+        max_depth=[6, 8, 10, 50]
         min_samples_split=[10, 25, 50]
         param_grid = dict(max_depth=max_depth, min_samples_split=min_samples_split)
     if net=="XGBoost":
