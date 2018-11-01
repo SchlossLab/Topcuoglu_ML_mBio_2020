@@ -18,13 +18,13 @@ logit$Performance <- factor(logit$Performance,
 l1svm <- read.delim('data/process/L1_SVM_Linear_Kernel.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>% 
   rename(Performance = level_1) %>% 
-  mutate(model="L1-SVM Linear Kernel") 
+  mutate(model="L1-SVM Linear") 
 
 
 l2svm <- read.delim('data/process/L2_SVM_Linear_Kernel.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>% 
   rename(Performance = level_1) %>% 
-  mutate(model="L2-SVM Linear Kernel")
+  mutate(model="L2-SVM Linear")
 
 
 svmRBF <- read.delim('data/process/SVM_RBF.tsv', header=T, sep='\t') %>%
@@ -50,25 +50,29 @@ dt <- read.delim('data/process/Decision_Tree.tsv', header=T, sep='\t') %>%
   group_by(model)
 
 
-ggplot(dt, aes(x = model, y = AUC, fill = Performance)) +
+ggplot(dt, aes(x = fct_reorder(model, AUC, fun = median, .asc =TRUE), y = AUC, fill = Performance)) +
   geom_boxplot(alpha=0.7) +
   scale_y_continuous(name = "AUC",
                      breaks = seq(0.3, 1, 0.05),
-                     limits=c(0.3, 1)) +
+                     limits=c(0.3, 1), expand=c(0,0)) +
   scale_x_discrete(name = "") +
   theme_bw() +
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         text = element_text(size = 12),
-        axis.text.x=element_text(size = 16, colour='black'),
+        axis.text.x=element_text(size = 12, colour='black'),
         axis.text.y=element_text(size = 12, colour='black'), 
         axis.title.y=element_text(size = 20), 
         axis.title.x=element_text(size = 20)) +
   scale_fill_brewer(palette = "Paired") +
-  geom_hline(yintercept = 0.5, linetype="dashed") 
+  geom_hline(yintercept = 0.5, linetype="dashed") +
+  annotate(geom="segment", y=seq(0.3,1,0.01), yend = seq(0.3,1,0.01),
+           x=0, xend=0.03)
 
 
-ggsave("AUC_comparison.pdf", plot = last_plot(), device = 'pdf', path = 'results/figures', width = 20, height = 10)
+
+
+ggsave("AUC_comparison.pdf", plot = last_plot(), device = 'pdf', path = 'results/figures', width = 15, height = 10)
 
   
