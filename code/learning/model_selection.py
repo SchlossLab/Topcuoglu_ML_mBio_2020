@@ -34,11 +34,11 @@ def select_model(net):
         c_values = [0.0000001, 0.000001, 0.00001, 0.0001, 0.001]
         param_grid = dict(C=c_values)
     if net=="L1_SVM_Linear_Kernel":
-        model= LinearSVC(penalty='l1', loss='squared_hinge', dual=False)
+        model= LinearSVC(penalty='l1', loss='hinge', dual=True)
         c_values = [0.001, 0.01, 0.1 ,1]
         param_grid = dict(C=c_values)
     if net=="L2_SVM_Linear_Kernel":
-        model= LinearSVC(penalty='l2', loss='squared_hinge', dual=False)
+        model= LinearSVC(penalty='l2', loss='squared_hinge', dual=True)
         c_values = [0.01, 0.1, 1]
         param_grid = dict(C=c_values)
     if net=="SVM_RBF":
