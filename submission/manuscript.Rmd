@@ -127,9 +127,10 @@ all <- bind_rows(logit, l1svm, l2svm, svmRBF, xgboost, rf, dt) %>%
 ```
 
 ```{r model_parameters, echo=FALSE, results='asis'}
-model_param <- read.table('../data/process/model_parameters.txt', header=T, sep='\t')
+model_param <- read.table('../data/process/model_parameters.txt', header=T, sep='\t') %>% 
+  select(-Value)
 kable(model_param, caption = "Table 1 Parameters and software implementation of the classification algorithms") %>%
-  kable_styling("striped", full_width = F)
+  kable_styling("striped", full_width = F, font_size=10)
 ```
 \vspace{35mm}
 
