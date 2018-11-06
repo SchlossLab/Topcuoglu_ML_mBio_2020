@@ -23,7 +23,8 @@ print-%:
 #
 ################################################################################
 
-data/baxter.0.03.subsample.shared	data/metadata.tsv	:	code/learning/load_datasets.batch
+data/baxter.0.03.subsample.shared\
+data/metadata.tsv	:	code/learning/load_datasets.batch
 	bash code/learning/load_datasets.batch
 
 ################################################################################
@@ -35,7 +36,13 @@ data/baxter.0.03.subsample.shared	data/metadata.tsv	:	code/learning/load_dataset
 ################################################################################
 
 
-$(PROC)/L2_Logistic_Regression.tsv	$(PROC)/L1_SVM_Linear_Kernel.tsv	$(PROC)/SVM_RBF.tsv	$(PROC)/L2_SVM_Linear_Kernel.tsv	$(PROC)/Random_Forest.tsv	$(PROC)/Decision_Tree.tsv	$(PROC)/XGBoost.tsv	:	data/baxter.0.03.subsample.shared\
+$(PROC)/L2_Logistic_Regression.tsv\
+$(PROC)/L1_SVM_Linear_Kernel.tsv\
+$(PROC)/SVM_RBF.tsv\
+$(PROC)/L2_SVM_Linear_Kernel.tsv\
+$(PROC)/Random_Forest.tsv\
+$(PROC)/Decision_Tree.tsv\
+$(PROC)/XGBoost.tsv	:	data/baxter.0.03.subsample.shared\
 						data/metadata.tsv\
 						code/learning/main.py\
 						code/learning/preprocess_data.py\
