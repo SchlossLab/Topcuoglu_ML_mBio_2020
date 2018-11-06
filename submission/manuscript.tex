@@ -28,6 +28,7 @@
             pdfborder={0 0 0},
             breaklinks=true}
 \urlstyle{same}  % don't use monospace font for urls
+\usepackage{longtable,booktabs}
 \usepackage{graphicx,grffile}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -98,12 +99,55 @@
 \begin{document}
 \maketitle
 
-\begin{verbatim}
-## pdf 
-##   2
-\end{verbatim}
-
-\vspace{35mm}
+\begin{longtable}[]{@{}lllllrl@{}}
+\caption{Table 1 Parameters and software implementation of the
+classification algorithms}\tabularnewline
+\toprule
+Method & Parameter & Value & Cross.Validation & Scaler & Epochs &
+Sofware.Implementation\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+Method & Parameter & Value & Cross.Validation & Scaler & Epochs &
+Sofware.Implementation\tabularnewline
+\midrule
+\endhead
+Logistic Regression & C & {[}0.01, 0.1, 1, 10{]} & 5-fold 100 repeats &
+MinMaxScaler & 100 & Sklearn-LogisticRegression\tabularnewline
+L1 SVM Linear Kernel & C & {[}0.001, 0.01, 0.1 ,1{]} & 5-fold 100
+repeats & StandardScaler & 100 & Sklearn-LinearSVC\tabularnewline
+L2 SVM Linear Kernel & C & {[}0.01, 0.1, 1{]} & 5-fold 100 repeats &
+StandardScaler & 100 & Sklearn-LinearSVC\tabularnewline
+SVM RBF Kernel & C, gamma & {[}0.000001, 0.00001, 0.0001, 0.001,
+0.01{]}, {[}0.000000001, 0.00000001, 0.0000001{]} & 5-fold 100 repeats &
+StandardScaler & 100 & Sklearn-SVC\tabularnewline
+Decision Tree & max\_depth, min\_samples\_split & {[}6, 8, 10, 50{]},
+{[}10, 25, 50{]} & 5-fold 100 repeats & MinMaxScaler & 100 &
+DecisionTreeClassifier\tabularnewline
+Random Forest & n\_estimators, max\_features & 1000, {[}10, 80, 500,
+1000, 1500{]} & 5-fold 100 repeats & MinMaxScaler & 100 &
+RandomForestClassifier\tabularnewline
+XGBoost & n\_estimators, colsample\_bytree, learning\_rate, subsample,
+max\_depth, min\_child\_weight & 100, 0.8, {[}0.01, 0.1, 1{]},
+{[}0.7,0.8,0.9{]}, {[}6,7,8{]}, {[}1,2,3{]} & 5-fold 100 repeats &
+MinMaxScaler & 100 & XGBClassifier\tabularnewline
+\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\vspace{35mm}\strut
+\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\strut
+\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\strut
+\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\strut
+\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\strut
+\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedleft\strut
+\strut
+\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
+\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
 
 Running title: INSERT RUNNING TITLE HERE
 
