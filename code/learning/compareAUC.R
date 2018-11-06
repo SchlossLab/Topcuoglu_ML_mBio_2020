@@ -1,3 +1,11 @@
+# Author: Begum Topcuoglu
+# Date: 2018-11-06
+#
+# 
+# 1. This script loads the .tsv files generated from python code main.py for all the models. The .tsv files have AUC values for cross validation (for each repeat and n-fold) and for testing for each iteration over different splits of the training-testing data. 
+# 2. This script then binds all the models together and makes a boxplot for AUC for all the models. 
+
+
 deps = c("ggplot2","knitr","rmarkdown","vegan","gtools", "tidyverse");
 for (dep in deps){
   if (dep %in% installed.packages()[,"Package"] == FALSE){
@@ -6,51 +14,75 @@ for (dep in deps){
   library(dep, verbose=FALSE, character.only=TRUE)
 }
 
-
+# Read in AUCs table generated from l2 logistic regression model for all samples
+# Carcinomas + Adenomas are 1 and Normal is 0 for binary predictive model
+# FIT is a feature
+# The scaler is MinMax scaler
 logit <- read.delim('data/process/L2_Logistic_Regression.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>% 
   rename(Performance = level_1) %>% 
   mutate(model="L2-Logistic Regression")
 
-logit$Performance <- factor(logit$Performance,
-                           labels = c("Cross-validation", "Testing"))
-
+# Read in AUCs table generated from l1 SVM linear kernel for all samples
+# Carcinomas + Adenomas are 1 and Normal is 0 for binary predictive model
+# FIT is a feature
+# The scaler is StandardScaler
 l1svm <- read.delim('data/process/L1_SVM_Linear_Kernel.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>% 
   rename(Performance = level_1) %>% 
   mutate(model="L1-SVM Linear") 
 
-
+# Read in AUCs table generated from l2 SVM linear kernel for all samples
+# Carcinomas + Adenomas are 1 and Normal is 0 for binary predictive model
+# FIT is a feature
+# The scaler is StandardScaler
 l2svm <- read.delim('data/process/L2_SVM_Linear_Kernel.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>% 
   rename(Performance = level_1) %>% 
   mutate(model="L2-SVM Linear")
 
-
+# Read in AUCs table generated from  SVM RBF kernel for all samples
+# Carcinomas + Adenomas are 1 and Normal is 0 for binary predictive model
+# FIT is a feature
+# The scaler is StandardScaler
 svmRBF <- read.delim('data/process/SVM_RBF.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>% 
   rename(Performance = level_1) %>% 
   mutate(model="SVM RBF")
 
+# Read in AUCs table generated from xgboost for all samples
+# Carcinomas + Adenomas are 1 and Normal is 0 for binary predictive model
+# FIT is a feature
+# The scaler is MinMaxScaler
 xgboost <- read.delim('data/process/XGBoost.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>% 
   rename(Performance = level_1) %>% 
   mutate(model="XGBoost")
 
+# Read in AUCs table generated from random forest for all samples
+# Carcinomas + Adenomas are 1 and Normal is 0 for binary predictive model
+# FIT is a feature
+# The scaler is MinMaxScaler
 rf <- read.delim('data/process/Random_Forest.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>% 
   rename(Performance = level_1) %>% 
   mutate(model="Random Forest ")
 
+# Read in AUCs table generated from decision tree for all samples
+# Carcinomas + Adenomas are 1 and Normal is 0 for binary predictive model
+# FIT is a feature
+# The scaler is MinMaxScaler
 dt <- read.delim('data/process/Decision_Tree.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>% 
   rename(Performance = level_1) %>% 
-  mutate(model="Decision Tree")%>% 
-  bind_rows(logit, l1svm, l2svm, svmRBF, xgboost, rf) %>% 
+  mutate(model="Decision Tree")
+
+# Put  all the AUCs for all the models together and group by model
+all <- bind_rows(logit, l1svm, l2svm, svmRBF, xgboost, rf, dt) %>% 
   group_by(model)
 
-
-ggplot(dt, aes(x = fct_reorder(model, AUC, fun = median, .asc =TRUE), y = AUC, fill = Performance)) +
+# Plot the AUC values for cross validation and testing for each model
+ggplot(all, aes(x = fct_reorder(model, AUC, fun = median, .asc =TRUE), y = AUC, fill = Performance)) +
   geom_boxplot(alpha=0.7) +
   scale_y_continuous(name = "AUC",
                      breaks = seq(0.3, 1, 0.05),
@@ -69,10 +101,7 @@ ggplot(dt, aes(x = fct_reorder(model, AUC, fun = median, .asc =TRUE), y = AUC, f
   geom_hline(yintercept = 0.5, linetype="dashed") +
   annotate(geom="segment", y=seq(0.3,1,0.01), yend = seq(0.3,1,0.01),
            x=0, xend=0.03)
-
-
-
-
+# Save the figure as a pdf
 ggsave("AUC_comparison.pdf", plot = last_plot(), device = 'pdf', path = 'results/figures', width = 15, height = 10)
 
   

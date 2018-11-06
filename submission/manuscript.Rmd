@@ -57,147 +57,79 @@ meta <- read.delim('../data/metadata.tsv', header=T, sep='\t') %>%
 # Read in OTU table and remove label and numOtus columns
 shared <- read.delim('../data/baxter.0.03.subsample.shared', header=T, sep='\t') %>%
    select(-label, -numOtus)
+
+# Read in AUCs table generated from l2 logistic regression model for all samples
+  # Carcinomas + Adenomas are 1 and Normal is 0 for binary predictive model
+  # FIT is a feature
+  # The scaler is MinMax scaler
+logit <- read.delim('../data/process/L2_Logistic_Regression.tsv', header=T, sep='\t') %>%
+  select(level_1, AUC) %>% 
+  rename(Performance = level_1) %>% 
+  mutate(model="L2-Logistic Regression")
+
+# Read in AUCs table generated from l1 SVM linear kernel for all samples
+  # Carcinomas + Adenomas are 1 and Normal is 0 for binary predictive model
+  # FIT is a feature
+  # The scaler is StandardScaler
+l1svm <- read.delim('../data/process/L1_SVM_Linear_Kernel.tsv', header=T, sep='\t') %>%
+  select(level_1, AUC) %>% 
+  rename(Performance = level_1) %>% 
+  mutate(model="L1-SVM Linear") 
+
+# Read in AUCs table generated from l2 SVM linear kernel for all samples
+  # Carcinomas + Adenomas are 1 and Normal is 0 for binary predictive model
+  # FIT is a feature
+  # The scaler is StandardScaler
+l2svm <- read.delim('../data/process/L2_SVM_Linear_Kernel.tsv', header=T, sep='\t') %>%
+  select(level_1, AUC) %>% 
+  rename(Performance = level_1) %>% 
+  mutate(model="L2-SVM Linear")
+
+# Read in AUCs table generated from  SVM RBF kernel for all samples
+  # Carcinomas + Adenomas are 1 and Normal is 0 for binary predictive model
+  # FIT is a feature
+  # The scaler is StandardScaler
+svmRBF <- read.delim('../data/process/SVM_RBF.tsv', header=T, sep='\t') %>%
+  select(level_1, AUC) %>% 
+  rename(Performance = level_1) %>% 
+  mutate(model="SVM RBF")
+
+# Read in AUCs table generated from xgboost for all samples
+  # Carcinomas + Adenomas are 1 and Normal is 0 for binary predictive model
+  # FIT is a feature
+  # The scaler is MinMaxScaler
+xgboost <- read.delim('../data/process/XGBoost.tsv', header=T, sep='\t') %>%
+  select(level_1, AUC) %>% 
+  rename(Performance = level_1) %>% 
+  mutate(model="XGBoost")
+
+# Read in AUCs table generated from random forest for all samples
+  # Carcinomas + Adenomas are 1 and Normal is 0 for binary predictive model
+  # FIT is a feature
+  # The scaler is MinMaxScaler
+rf <- read.delim('../data/process/Random_Forest.tsv', header=T, sep='\t') %>%
+  select(level_1, AUC) %>% 
+  rename(Performance = level_1) %>% 
+  mutate(model="Random Forest ")
+
+# Read in AUCs table generated from decision tree for all samples
+  # Carcinomas + Adenomas are 1 and Normal is 0 for binary predictive model
+  # FIT is a feature
+  # The scaler is MinMaxScaler
+dt <- read.delim('../data/process/Decision_Tree.tsv', header=T, sep='\t') %>%
+  select(level_1, AUC) %>% 
+  rename(Performance = level_1) %>% 
+  mutate(model="Decision Tree")
+
+# Put  all the AUCs for all the models together and group by model
+all <- bind_rows(logit, l1svm, l2svm, svmRBF, xgboost, rf, dt) %>% 
+  group_by(model)
 ```
 
-```{r BinaryPreProcess, eval=TRUE, echo=FALSE, cache=FALSE}
-# Merge metadata and OTU table and remove all the samples that are diagnosed with adenomas. Keep only cancer and normal.
-# Then remove the sample ID column
-data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
-  filter(dx != 'adenoma') %>%
-  select(-sample)
-
-# We want the diagnosis column to a factor
-data$dx <- factor(data$dx, labels=c("normal", "cancer"))
-# calculate the pre-process parameters from the dataset
-# in python we use StandardScaler, here we center and scale to get the same effect
-preprocessParams <- preProcess(data[,-1], method=c("center", "scale"))
-# transform the dataset using the parameters
-data[,-1] <- predict(preprocessParams, data[,-1])
+```{r model_parameters, echo=FALSE, results='asis'}
+model_param <- read.table('../data/process/model_parameters.txt', header=T, sep='\t')
+kable(model_param, caption = "Table 1 Parameters and software implementation of the classification algorithms")
 ```
-
-```{r BinaryClassification, eval=TRUE, echo=FALSE, cache=FALSE, warning=FALSE, message=FALSE}
-# Create lists to store the predicted labels and actuals labels at each iteration 
-all.test.response <- all.test.predictor <- test_aucs <- c()
-
-## We will split the dataset 80%-20% and tune hyper-parameter on the 80% training. This tuning step on training data will be done 50 times with 5 folds on the training set and an optimal hyper-parameter/optimal model will be chosen.
-
-## The chosen best model and hyper-parameter will be tested on the %20 test set that was not seen before during training. This will give a TEST AUC.
-
-## We will do the previous steps 50 iterations. Each iteration will have a unique hyper-parameter and optimal model. For each of these models we will have a TEST AUC. We will report the TEST AUC with 95 %CI.
-
-# For each epoch, we can also keep track of AUC values with CI for each cross-validation during training.But these code lines are not included in this Rmd file. I will have those commented out in the main.R code file. 
-for (i in 1:50) {
-  # Partition the data 80-20. This function in caret keeps it stratified if I remember correctly.
-  inTraining <- createDataPartition(data$dx, p = .80, list = FALSE)
-  training <- data[ inTraining,]
-  testing  <- data[-inTraining,]
-  x_train <- training %>% select(-dx)
-  y_train <- training$dx
-  y_train <- as.factor(y_train)
-  # L2 regularization is used for Logistic regression
-  # Cost is our regularization parameter which here is the inverse of penalty and we provide a grid to tune the best one. 
-  grid <-  expand.grid(cost = c(0.0000001, 0.000001, 0.00001, 0.0001),
-                       loss = "L2_dual",
-                       epsilon = 0.1)
-  
-  cv <- trainControl(method="repeatedcv",
-                     repeats = 50,
-                     number=5,
-                     returnResamp="final",
-                     classProbs=TRUE,
-                     summaryFunction=twoClassSummary,
-                     indexFinal=NULL,
-                     savePredictions = TRUE)
-  
-  L2Logit <- train(x_train, 
-                   y_train,
-                   method = "regLogistic",
-                   trControl = cv, 
-                   metric = "ROC",
-                   tuneGrid = grid,
-                   family = "binomial")
-  # Mean AUC value of the best lambda parameter training over repeats
-  cv_auc <- getTrainPerf(L2Logit)$TrainROC
-  # Predict on the test set and get predicted probabilities
-  probs <- predict(L2Logit, testing, type="prob")
-  # Test AUC calculation
-  test_roc <- roc(ifelse(testing$dx == "cancer", 1, 0), probs[[2]])
-  test_auc <- test_roc$auc
-  # Save all the test AUCs over iterations in test_aucs
-  test_aucs <- c(test_aucs, test_auc)
-  # Save the test set labels in all.test.response. Labels converted to 0 for normal and 1 for cancer
-  all.test.response <- c(all.test.response, 
-                         ifelse(testing$dx == "cancer", 1, 0))
-  # Save the test set predicted probabilities of highest class in all.test.predictor
-  all.test.predictor <- c(all.test.predictor, 
-                          probs[[2]])
-}
-# Get the ROC curve and AUC values for all the iterations
-# auc= TRUE and ci=TRUE will keep track of the auc and 95 CI for all the sensitivities and specificities. 
-test_roc <- roc(all.test.response, 
-                all.test.predictor, 
-                auc=TRUE, 
-                ci=TRUE)
-```
-
-```{r LogitROCplot, eval=TRUE, echo=FALSE, cache=FALSE, warning=FALSE, message=FALSE}
-# Here we plot the test AUC and 95%CI for logistic regression.
-
-pdf("../results/figures/LogReg_inR.pdf")
-par(mar=c(4,4,1,1))
-# Plot random line on ROC curve
-plot(c(1,0),c(0,1),
-     type='l',
-     lty=3,
-     xlim=c(1.01,0), ylim=c(-0.01,1.01),
-     xaxs='i', yaxs='i',
-     ylab='', xlab='')
-# Plot Test ROC in black line
-plot(test_roc,
-     col='black',
-     lwd=2,
-     add=T,
-     lty=1)
-#Calculate Confidence Interval sensitivities at given specificities
-sens.ci <- ci.se(test_roc, 
-          specificities=seq(0, 100, 5)) # over a select set of specificities
-
-# Calculate CI for AUC values
-auc_ci <- test_roc$ci[3]-test_roc$ci[2]
-
-# Plot CV ROC in blue line
-#plot(cv_roc,
-#     col='blue',
-#     lwd=2,
-#     add=T,
-#     lty=1)
-# Label the axes
-mtext(side=2,
-      text="Sensitivity",
-      line=2.5,
-      cex=1.5)
-mtext(side=1,
-      text="Specificity",
-      line=2.5,
-      cex=1.5)
-# Add legends for both lines
-legend(x=0.7,y=0.2,
-       legend=(sprintf('Test AUC: %.3g, %s CI: %0.3g', 
-                       test_roc$auc, 
-                       '%95', 
-                       auc_ci)),
-       bty='n',
-       xjust=0,
-       lty=c(1,1),
-       col='black',
-       text.col='black')
-
-plot(sens.ci, type="shape", col="gray88")
-
-# Save the figure
-dev.off()
-```
-
 \vspace{35mm}
 
 Running title: INSERT RUNNING TITLE HERE
