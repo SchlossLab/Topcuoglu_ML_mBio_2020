@@ -28,7 +28,6 @@
             pdfborder={0 0 0},
             breaklinks=true}
 \urlstyle{same}  % don't use monospace font for urls
-\usepackage{longtable,booktabs}
 \usepackage{graphicx,grffile}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -82,6 +81,21 @@
     \date{}
     \predate{}\postdate{}
   
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage[table]{xcolor}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+
 \usepackage{helvet} % Helvetica font
 \renewcommand*\familydefault{\sfdefault} % Use the sans serif version of the font
 \usepackage[T1]{fontenc}
@@ -99,55 +113,7 @@
 \begin{document}
 \maketitle
 
-\begin{longtable}[]{@{}lllllrl@{}}
-\caption{Table 1 Parameters and software implementation of the
-classification algorithms}\tabularnewline
-\toprule
-Method & Parameter & Value & Cross.Validation & Scaler & Epochs &
-Sofware.Implementation\tabularnewline
-\midrule
-\endfirsthead
-\toprule
-Method & Parameter & Value & Cross.Validation & Scaler & Epochs &
-Sofware.Implementation\tabularnewline
-\midrule
-\endhead
-Logistic Regression & C & {[}0.01, 0.1, 1, 10{]} & 5-fold 100 repeats &
-MinMaxScaler & 100 & Sklearn-LogisticRegression\tabularnewline
-L1 SVM Linear Kernel & C & {[}0.001, 0.01, 0.1 ,1{]} & 5-fold 100
-repeats & StandardScaler & 100 & Sklearn-LinearSVC\tabularnewline
-L2 SVM Linear Kernel & C & {[}0.01, 0.1, 1{]} & 5-fold 100 repeats &
-StandardScaler & 100 & Sklearn-LinearSVC\tabularnewline
-SVM RBF Kernel & C, gamma & {[}0.000001, 0.00001, 0.0001, 0.001,
-0.01{]}, {[}0.000000001, 0.00000001, 0.0000001{]} & 5-fold 100 repeats &
-StandardScaler & 100 & Sklearn-SVC\tabularnewline
-Decision Tree & max\_depth, min\_samples\_split & {[}6, 8, 10, 50{]},
-{[}10, 25, 50{]} & 5-fold 100 repeats & MinMaxScaler & 100 &
-DecisionTreeClassifier\tabularnewline
-Random Forest & n\_estimators, max\_features & 1000, {[}10, 80, 500,
-1000, 1500{]} & 5-fold 100 repeats & MinMaxScaler & 100 &
-RandomForestClassifier\tabularnewline
-XGBoost & n\_estimators, colsample\_bytree, learning\_rate, subsample,
-max\_depth, min\_child\_weight & 100, 0.8, {[}0.01, 0.1, 1{]},
-{[}0.7,0.8,0.9{]}, {[}6,7,8{]}, {[}1,2,3{]} & 5-fold 100 repeats &
-MinMaxScaler & 100 & XGBClassifier\tabularnewline
-\begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
-\vspace{35mm}\strut
-\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
-\strut
-\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
-\strut
-\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
-\strut
-\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
-\strut
-\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedleft\strut
-\strut
-\end{minipage} & \begin{minipage}[t]{0.14\columnwidth}\raggedright\strut
-\strut
-\end{minipage}\tabularnewline
-\bottomrule
-\end{longtable}
+\vspace{35mm}
 
 Running title: INSERT RUNNING TITLE HERE
 
@@ -221,13 +187,36 @@ microbiome data
 
 Insert figure legends with the first sentence in bold, for example:
 
-\textbf{Figure 1. Number of OTUs sampled among bacterial and archaeal
-16S rRNA gene sequences for different OTU definitions and level of
-sequencing effort.} Rarefaction curves for different OTU definitions of
-Bacteria (A) and Archaea (B). Rarefaction curves for the coarse
-environments in Table 1 for Bacteria (C) and Archaea (D).
+\textbf{Figure 1. Generalization and classification performance of
+modeling methods } AUC values of all cross validation and testing
+performances.
+\includegraphics{manuscript_files/figure-latex/unnamed-chunk-1-1.pdf}
 
-\newpage
+\rowcolors{2}{gray!6}{white}
+
+\begin{table}
+
+\caption{\label{tab:model_parameters}Optimized hyper-parameters, pre-processing and cross-validation methods and software implementation of the classification algorithms}
+\resizebox{\linewidth}{!}{
+\begin{tabular}[t]{>{\raggedright\arraybackslash}p{10em}>{\raggedright\arraybackslash}p{8em}>{\raggedright\arraybackslash}p{9em}r>{\raggedright\arraybackslash}p{5em}l}
+\hiderowcolors
+\toprule
+\textbf{Method} & \textbf{Parameter} & \textbf{Cross Validation} & \textbf{Epoch} & \textbf{Scaler} & \textbf{Sklearn Function}\\
+\midrule
+\showrowcolors
+\multicolumn{1}{>{\raggedright\arraybackslash}p{10em}}{Logistic Regression} & \multicolumn{1}{>{\raggedright\arraybackslash}p{8em}}{C} & \multicolumn{1}{>{\raggedright\arraybackslash}p{9em}}{5-fold, 100-repeats} & \multicolumn{1}{l}{100} & \multicolumn{1}{>{\raggedright\arraybackslash}p{5em}}{MinMax} & \multicolumn{1}{l}{LogisticRegression}\\
+\multicolumn{1}{>{\raggedright\arraybackslash}p{10em}}{L1 SVM Linear Kernel} & \multicolumn{1}{>{\raggedright\arraybackslash}p{8em}}{C} & \multicolumn{1}{>{\raggedright\arraybackslash}p{9em}}{5-fold, 100-repeats} & \multicolumn{1}{l}{100} & \multicolumn{1}{>{\raggedright\arraybackslash}p{5em}}{Standard} & \multicolumn{1}{l}{LinearSVC}\\
+\multicolumn{1}{>{\raggedright\arraybackslash}p{10em}}{L2 SVM Linear Kernel} & \multicolumn{1}{>{\raggedright\arraybackslash}p{8em}}{C} & \multicolumn{1}{>{\raggedright\arraybackslash}p{9em}}{5-fold, 100-repeats} & \multicolumn{1}{l}{100} & \multicolumn{1}{>{\raggedright\arraybackslash}p{5em}}{Standard} & \multicolumn{1}{l}{LinearSVC}\\
+\multicolumn{1}{>{\raggedright\arraybackslash}p{10em}}{SVM RBF Kernel} & \multicolumn{1}{>{\raggedright\arraybackslash}p{8em}}{C, gamma} & \multicolumn{1}{>{\raggedright\arraybackslash}p{9em}}{5-fold, 100-repeats} & \multicolumn{1}{l}{100} & \multicolumn{1}{>{\raggedright\arraybackslash}p{5em}}{Standard} & \multicolumn{1}{l}{SVC}\\
+\multicolumn{1}{>{\raggedright\arraybackslash}p{10em}}{Decision Tree} & \multicolumn{1}{>{\raggedright\arraybackslash}p{8em}}{max\_depth, min\_samples\_split} & \multicolumn{1}{>{\raggedright\arraybackslash}p{9em}}{5-fold, 100-repeats} & \multicolumn{1}{l}{100} & \multicolumn{1}{>{\raggedright\arraybackslash}p{5em}}{MinMax} & \multicolumn{1}{l}{DecisionTreeClassifier}\\
+\addlinespace
+\multicolumn{1}{>{\raggedright\arraybackslash}p{10em}}{Random Forest} & \multicolumn{1}{>{\raggedright\arraybackslash}p{8em}}{n\_estimators, max\_features} & \multicolumn{1}{>{\raggedright\arraybackslash}p{9em}}{5-fold, 100-repeats} & \multicolumn{1}{l}{100} & \multicolumn{1}{>{\raggedright\arraybackslash}p{5em}}{MinMax} & \multicolumn{1}{l}{RandomForestClassifier}\\
+\multicolumn{1}{>{\raggedright\arraybackslash}p{10em}}{XGBoost} & \multicolumn{1}{>{\raggedright\arraybackslash}p{8em}}{n\_estimators, colsample\_bytree, learning\_rate, subsample, max\_depth, min\_child\_weight} & \multicolumn{1}{>{\raggedright\arraybackslash}p{9em}}{5-fold, 100-repeats} & \multicolumn{1}{l}{100} & \multicolumn{1}{>{\raggedright\arraybackslash}p{5em}}{MinMax} & \multicolumn{1}{l}{XGBClassifier}\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\rowcolors{2}{white}{white} \newpage
 
 \subsection{References}\label{references}
 
