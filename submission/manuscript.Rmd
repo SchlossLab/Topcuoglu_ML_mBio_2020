@@ -1,5 +1,5 @@
 ---
-title: "**NAME OF THIS STUDY**"
+title: "**Evalution of binary classification pipelines and methods for 16S rRNA gene data**"
 bibliography: references.bib
 output:
   pdf_document:
