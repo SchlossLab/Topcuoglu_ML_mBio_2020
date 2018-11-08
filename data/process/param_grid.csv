@@ -1,4 +1,4 @@
-,0,1,2,3,0,1,2,3,0,1,2,0,1,2,3,4,0,1,2,3,4,0,1,2,3,0,1,2
+,L2_Logistic_Regression1,L2_Logistic_Regression2,L2_Logistic_Regression3,L2_Logistic_Regression4,L1_SVM_Linear_Kernel1,L1_SVM_Linear_Kernel2,L1_SVM_Linear_Kernel3,L1_SVM_Linear_Kernel4,L2_SVM_Linear_Kernel1,L2_SVM_Linear_Kernel2,L2_SVM_Linear_Kernel3,SVM_RBF1,SVM_RBF2,SVM_RBF3,SVM_RBF4,SVM_RBF5,Random_Forest1,Random_Forest2,Random_Forest3,Random_Forest4,Random_Forest5,Decision_Tree1,Decision_Tree2,Decision_Tree3,Decision_Tree4,XGBoost1,XGBoost2,XGBoost3
 C,0.01,0.1,1.0,10.0,0.001,0.01,0.1,1.0,0.01,0.1,1.0,1e-06,1e-05,0.0001,0.001,0.01,,,,,,,,,,,,
 gamma,,,,,,,,,,,,1e-09,1e-08,1e-07,,,,,,,,,,,,,,
 learning_rate,,,,,,,,,,,,,,,,,,,,,,,,,,0.01,0.1,1.0

@@ -17,6 +17,7 @@ from sklearn.ensemble import RandomForestClassifier
 import xgboost as xgb
 from xgboost.sklearn import XGBClassifier
 from sklearn.model_selection import RepeatedStratifiedKFold
+import pandas as pd
 
 def select_model(net):
     ## Define the n-folds for hyper-parameter optimization on training set.
@@ -74,12 +75,15 @@ def select_model(net):
     return model, param_grid, cv
 
 models = ["L2_Logistic_Regression", "L1_SVM_Linear_Kernel", "L2_SVM_Linear_Kernel", "SVM_RBF", "Random_Forest", "Decision_Tree", "XGBoost"]
-
 params = []
 for models in models:
     model, param_grid, cv = select_model(models)
     param_grid = pd.DataFrame.from_dict(data=param_grid, orient='index')
+    num= len(param_grid.columns)
+    rng = range(1, num + 1)
+    new_cols = [models + str(i) for i in rng]
+    param_grid.columns = new_cols[:num]
     params.append(param_grid)
-appended_params = pd.concat(params, axis=1)
 
-appended_params.to_csv('param_grid.csv')
+appended_params = pd.concat(params, axis=1)
+appended_params.to_csv('data/process/param_grid.csv')
