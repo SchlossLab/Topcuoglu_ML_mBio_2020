@@ -160,8 +160,12 @@ model_param <- read.table('../data/process/model_parameters.txt', header=T, sep=
 
 #------------------------Table 1 generation------------------------#
 
-Table1 <- kable(model_param, "latex", caption = "Optimized hyper-parameters, pre-processing and cross-validation methods and software implementation of the classification algorithms.", booktabs = T, linesep = "") %>%
-kable_styling(latex_options = c("striped", "scale_down"), position = "left") %>%  
+Table1 <- kable(model_param, "latex", 
+                caption = "Optimized hyper-parameters, pre-processing and cross-validation methods and software implementation of the classification algorithms.", 
+                booktabs = T, 
+                linesep = "") %>%
+kable_styling(latex_options = c("striped", "scale_down"), 
+              position = "left") %>%  
  column_spec(1, width="10em") %>%
   column_spec(2, width="8em") %>% 
   column_spec(3, width="9em") %>%
@@ -191,10 +195,15 @@ linear_param_range <- read.table('../data/process/param_grid.csv', header=T, sep
    slice(1:2) 
 
 #------------------------Table 2 generation------------------------#
-Table2 <- kable(linear_param_range, "latex", caption = "The range of optimized hyper-parameters for logistic regression and support vector machines.", booktabs = T, col.names = NULL, linesep = "") %>%
+Table2 <- kable(linear_param_range, "latex", 
+                caption = "The range of optimized hyper-parameters for logistic regression and support vector machines.", 
+                booktabs = T, 
+                col.names = NULL, 
+                linesep = "") %>%
   # latex options make table to be condensed
   # table itseld if left aligned
-  kable_styling(latex_options = c("striped", "scale_down"), position = "left") %>% 
+  kable_styling(latex_options = c("striped", "scale_down"), 
+                position = "left") %>% 
   # the column names are removed when the file is read so I put headers above the grouped/replicated modeling method for
   add_header_above(c("Parameter", "L2 Logistic" = 4, "L1 SVM Linear" = 4, "L2 SVM Linear " = 3, "SVM RBF"=5), bold=TRUE) %>% 
   # Put a left border to seperate above header lines
@@ -212,8 +221,13 @@ tree_param_range <- read.table('../data/process/param_grid.csv', header=T, sep='
   slice(3:9)
 
 #------------------------Table 3 generation------------------------#
-Table3 <- kable(tree_param_range, "latex", caption = "The range of optimized hyper-parameters for tree based classification algorithms.", booktabs = T, col.names = NULL, linesep = "") %>%
-kable_styling(latex_options = c("striped", "scale_down"), position = "left", font_size=6) %>% 
+Table3 <- kable(tree_param_range, "latex", 
+                caption = "The range of optimized hyper-parameters for tree based classification algorithms.", 
+                booktabs = T, 
+                col.names = NULL, 
+                linesep = "") %>%
+kable_styling(latex_options = c("striped", "scale_down"), 
+              position = "left", font_size=6) %>% 
   add_header_above(c("Parameter", "Random Forest"=5, "Decision Tree"= 4, "XGBoost"=3 ), bold=TRUE) %>% 
   column_spec(2, border_left = T) %>% 
   column_spec(7, border_left = T)%>% 
