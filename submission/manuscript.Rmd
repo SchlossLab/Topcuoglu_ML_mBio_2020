@@ -238,7 +238,7 @@ kable_styling(latex_options = c("striped", "scale_down"),
 ```
 \vspace{35mm}
 
-Running title: INSERT RUNNING TITLE HERE
+Running title: Machine learning methods in microbiome studies
 
 \vspace{35mm}
 
