@@ -67,7 +67,7 @@ def select_model(net):
         }
         model = xgb.XGBClassifier(**ind_params)
         param_grid = {
-        'n_estimators':[100]
+        'n_estimators':[100],
         'learning_rate':[0.01, 0.1, 1],
         'subsample': [0.7,0.8,0.9],
         'max_depth':[6,7,8],
