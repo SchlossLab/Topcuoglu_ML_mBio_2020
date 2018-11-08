@@ -89,7 +89,9 @@ ggplot(all, aes(x = fct_reorder(model, AUC, fun = median, .asc =TRUE), y = AUC, 
                      limits=c(0.3, 1), expand=c(0,0)) +
   scale_x_discrete(name = "") +
   theme_bw() +
-  theme(panel.grid.major = element_blank(), 
+  theme(legend.text=element_text(size=18),
+        legend.title=element_text(size=22),
+        panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         text = element_text(size = 12),

@@ -151,7 +151,7 @@ kable_styling(latex_options = c("striped", "scale_down"), position = "left") %>%
   row_spec(0,bold=TRUE)
 ```
 
-```{r table_2_3_params echo=FALSE, results='asis'}
+```{r table_2_3_params, echo=FALSE, results='asis'}
 # We load a param_grid.scv file to make our Table 2 and 3. This file has the information of the ranges of the optimized hyper-parameters for each model.
 
 # This file is generated from model_selection.py that is used to define model parameters for main.py. Therefore any changes to those files would allow us to represent them in the tables automatically.  
@@ -159,21 +159,30 @@ kable_styling(latex_options = c("striped", "scale_down"), position = "left") %>%
 ################ Non-tree based model parameters ##############
 linear_param_range <- read.table('../data/process/param_grid.csv', header=T, sep=',', na.strings="", stringsAsFactors = FALSE) %>% 
   replace(is.na(.), "-")  %>% 
+  ## only select Logistic Regression and SVM model columns
   select(1:17) %>% 
+  ## only select C (penalty) and gamma rows as parameters
    slice(1:2) 
 
               ## Table 2 generation ##
 Table2 <- kable(linear_param_range, "latex", caption = "The range of optimized hyper-parameters for logistic regression and support vector machines.", booktabs = T, col.names = NULL, linesep = "") %>%
-kable_styling(latex_options = c("striped", "scale_down"), position = "left") %>% 
+  # latex options make table to be condensed
+  # table itseld if left aligned
+  kable_styling(latex_options = c("striped", "scale_down"), position = "left") %>% 
+  # the column names are removed when the file is read so I put headers above the grouped/replicated modeling method for
   add_header_above(c("Parameter", "L2 Logistic" = 4, "L1 SVM Linear" = 4, "L2 SVM Linear " = 3, "SVM RBF"=5), bold=TRUE) %>% 
+  # Put a left border to seperate above header lines
   column_spec(2, border_left = T) %>%
   column_spec(6, border_left = T) %>% 
   column_spec(10, border_left = T) %>% 
   column_spec(13, border_left = T)
+
 ################ Tree based model parameters ##############
 tree_param_range <- read.table('../data/process/param_grid.csv', header=T, sep=',', na.strings="", stringsAsFactors = FALSE) %>% 
   replace(is.na(.), "-")  %>% 
+  ## only select Logistic Regression and SVM model columns
   select(1, 18:29) %>% 
+  ## select all rows except C (penalty) and gamma for parameters
   slice(3:9)
 
                   ## Table 3 generation ##
