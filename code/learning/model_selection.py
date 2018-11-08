@@ -72,3 +72,14 @@ def select_model(net):
         'min_child_weight':[1,2,3]
         }
     return model, param_grid, cv
+
+models = ["L2_Logistic_Regression", "L1_SVM_Linear_Kernel", "L2_SVM_Linear_Kernel", "SVM_RBF", "Random_Forest", "Decision_Tree", "XGBoost"]
+
+params = []
+for models in models:
+    model, param_grid, cv = select_model(models)
+    param_grid = pd.DataFrame.from_dict(data=param_grid, orient='index')
+    params.append(param_grid)
+appended_params = pd.concat(params, axis=1)
+
+appended_params.to_csv('param_grid.csv')
