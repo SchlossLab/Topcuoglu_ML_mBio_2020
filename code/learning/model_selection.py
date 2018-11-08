@@ -74,6 +74,7 @@ def select_model(net):
         }
     return model, param_grid, cv
 
+## Print out the parameters that are being optimized for each model as a dataframe and export as .csv.
 models = ["L2_Logistic_Regression", "L1_SVM_Linear_Kernel", "L2_SVM_Linear_Kernel", "SVM_RBF", "Random_Forest", "Decision_Tree", "XGBoost"]
 params = []
 for models in models:
