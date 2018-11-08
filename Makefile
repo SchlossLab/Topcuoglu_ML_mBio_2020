@@ -59,12 +59,24 @@ $(PROC)/XGBoost.tsv	:	data/baxter.0.03.subsample.shared\
 #
 ################################################################################
 
+$(TABLES)/Table1.pdf :	$(PROC)/model_parameters.txt\
+						$(FINAL)/manuscript.Rmd\
+						$(FINAL)/manuscript.tex\
+						$(FINAL)/mbio.csl\
+						$(FINAL)/header.tex
+	R -e "rmarkdown::render('$(FINAL)/manuscript.Rmd', clean=TRUE)"
 
 $(FIGS)/Figure1.pdf :	$(PROC)/L2_Logistic_Regression.tsv\
 						$(PROC)/L1_SVM_Linear_Kernel.tsv\
 						$(PROC)/L2_SVM_Linear_Kernel.tsv\
 						code/learning/compareAUC.R
 	R -e "source('code/learning/compareAUC.R')"
+
+
+
+
+
+
 
 
 ################################################################################
