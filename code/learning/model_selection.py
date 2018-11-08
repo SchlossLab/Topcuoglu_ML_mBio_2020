@@ -67,12 +67,16 @@ def select_model(net):
         }
         model = xgb.XGBClassifier(**ind_params)
         param_grid = {
+        'n_estimators':[100]
         'learning_rate':[0.01, 0.1, 1],
         'subsample': [0.7,0.8,0.9],
         'max_depth':[6,7,8],
         'min_child_weight':[1,2,3]
         }
     return model, param_grid, cv
+
+
+
 
 ## Print out the parameters that are being optimized for each model as a dataframe and export as .csv.
 models = ["L2_Logistic_Regression", "L1_SVM_Linear_Kernel", "L2_SVM_Linear_Kernel", "SVM_RBF", "Random_Forest", "Decision_Tree", "XGBoost"]
