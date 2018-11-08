@@ -128,14 +128,20 @@ all <- bind_rows(logit, l1svm, l2svm, svmRBF, xgboost, rf, dt) %>%
   group_by(model)
 ```
 
-```{r model_parameters, echo=FALSE, results='asis'}
+```{r table_1_models, echo=FALSE, results='asis'}
+# We load a model parameters file to make our Table 1. Model parameters file has the information of optimized hyper-parameters, pre-processing and cross-validation methods and software implementation for all the classification algorithms.
+
+# This file is hand-made. Therefore needs to be changed manually if new information wants to be added or information needs to be changed. 
+
 model_param <- read.table('../data/process/model_parameters.txt', header=T, sep='\t') %>% 
    select(Method, Parameter, Cross.Validation, Epochs, Scaler, Sklearn.Function) %>% 
   rename("Cross Validation"="Cross.Validation") %>%
   rename("Epoch"="Epochs") %>%
   rename("Sklearn Function"="Sklearn.Function")
 
-Table1 <- kable(model_param, "latex", caption = "Optimized hyper-parameters, pre-processing and cross-validation methods and software implementation of the classification algorithms", booktabs = T) %>%
+             ### Table 1 generation ###
+
+Table1 <- kable(model_param, "latex", caption = "Optimized hyper-parameters, pre-processing and cross-validation methods and software implementation of the classification algorithms.", booktabs = T, linesep = "") %>%
 kable_styling(latex_options = c("striped", "scale_down"), position = "left") %>%  
  column_spec(1, width="10em") %>%
   column_spec(2, width="8em") %>% 
@@ -143,17 +149,40 @@ kable_styling(latex_options = c("striped", "scale_down"), position = "left") %>%
   column_spec(5, width="5em") %>% 
   row_spec(1:7, align="l") %>% 
   row_spec(0,bold=TRUE)
+```
 
+```{r table_2_3_params echo=FALSE, results='asis'}
+# We load a param_grid.scv file to make our Table 2 and 3. This file has the information of the ranges of the optimized hyper-parameters for each model.
 
+# This file is generated from model_selection.py that is used to define model parameters for main.py. Therefore any changes to those files would allow us to represent them in the tables automatically.  
 
-param_range <- read.table('../data/process/model_parameters.txt', header=T, sep='\t', na.strings="", stringsAsFactors = FALSE) %>% 
-  replace(is.na(.), "-") %>%  
-  select(-Value, -Parameter, -Cross.Validation, -Epochs, -Scaler, -Sklearn.Function) 
-  
-Table2 <- kable(param_range, "latex", caption = "The range of optimized hyper-parameters for each of the classification algorithms", booktabs = T) %>%
-kable_styling(latex_options = c("striped", "scale_down"), position = "left")%>%
- column_spec(2:3, width="5em") 
+################ Non-tree based model parameters ##############
+linear_param_range <- read.table('../data/process/param_grid.csv', header=T, sep=',', na.strings="", stringsAsFactors = FALSE) %>% 
+  replace(is.na(.), "-")  %>% 
+  select(1:17) %>% 
+   slice(1:2) 
 
+              ## Table 2 generation ##
+Table2 <- kable(linear_param_range, "latex", caption = "The range of optimized hyper-parameters for logistic regression and support vector machines.", booktabs = T, col.names = NULL, linesep = "") %>%
+kable_styling(latex_options = c("striped", "scale_down"), position = "left") %>% 
+  add_header_above(c("Parameter", "L2 Logistic" = 4, "L1 SVM Linear" = 4, "L2 SVM Linear " = 3, "SVM RBF"=5), bold=TRUE) %>% 
+  column_spec(2, border_left = T) %>%
+  column_spec(6, border_left = T) %>% 
+  column_spec(10, border_left = T) %>% 
+  column_spec(13, border_left = T)
+################ Tree based model parameters ##############
+tree_param_range <- read.table('../data/process/param_grid.csv', header=T, sep=',', na.strings="", stringsAsFactors = FALSE) %>% 
+  replace(is.na(.), "-")  %>% 
+  select(1, 18:29) %>% 
+  slice(3:9)
+
+                  ## Table 3 generation ##
+Table3 <- kable(tree_param_range, "latex", caption = "The range of optimized hyper-parameters for tree based classification algorithms.", booktabs = T, col.names = NULL, linesep = "") %>%
+kable_styling(latex_options = c("striped", "scale_down"), position = "left", font_size=6) %>% 
+  add_header_above(c("Parameter", "Random Forest"=5, "Decision Tree"= 4, "XGBoost"=3 ), bold=TRUE) %>% 
+  column_spec(2, border_left = T) %>% 
+  column_spec(7, border_left = T)%>% 
+  column_spec(11, border_left = T)
 ```
 \vspace{35mm}
 
@@ -210,15 +239,16 @@ Synthesis statement regarding modeling 16S microbiome data
 
 \newpage
 
-Insert figure legends with the first sentence in bold, for example:
-
 **Figure 1. Generalization and classification performance of modeling methods ** AUC values of all cross validation and testing performances.
-```{r}
-```
+\begin{center}
+\includegraphics[width=7in]{../results/figures/AUC_comparison.pdf}
+\end{center}
 
 ```{r}
 Table1
+Table2
+Table3
 ```
-\newpage
 
-## References
+
+

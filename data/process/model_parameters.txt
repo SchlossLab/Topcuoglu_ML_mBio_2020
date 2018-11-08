@@ -1,8 +1,8 @@
-Method	Parameter	Value	Cross-Validation	Scaler	Epochs	Sklearn Function	C	gamma	max_depth 	min_samples_split 	n_estimators 	max_features	colsample_bytree	 learning_rate	subsample	min_child_weight
-Logistic Regression	C	"[0.01, 0.1, 1, 10]"	"5-fold, 100-repeats"	MinMax	100	LogisticRegression	"[0.01, 0.1, 1, 10]"									
-L1 SVM Linear Kernel	C	"[0.001, 0.01, 0.1 ,1] "	"5-fold, 100-repeats"	Standard	100	LinearSVC	"[0.001, 0.01, 0.1 ,1] "									
-L2 SVM Linear Kernel	C	"[0.01, 0.1, 1]"	"5-fold, 100-repeats"	Standard	100	LinearSVC	"[0.01, 0.1, 1]"									
-SVM RBF Kernel	"C, gamma"	"[0.000001, 0.00001, 0.0001, 0.001, 0.01], [0.000000001, 0.00000001, 0.0000001]"	"5-fold, 100-repeats"	Standard	100	SVC	"[0.000001, 0.00001, 0.0001, 0.001, 0.01]"	"[0.000000001, 0.00000001, 0.0000001]"								
-Decision Tree	"max_depth, min_samples_split"	"[6, 8, 10, 50], [10, 25, 50]"	"5-fold, 100-repeats"	MinMax	100	DecisionTreeClassifier			"[6, 8, 10, 50]"	"[10, 25, 50]"						
-Random Forest	"n_estimators, max_features"	"1000, [10, 80, 500, 1000, 1500]"	"5-fold, 100-repeats"	MinMax	100	RandomForestClassifier					[1000]	"[10, 80, 500, 1000, 1500]"				
-XGBoost	"n_estimators, colsample_bytree, learning_rate, subsample, max_depth, min_child_weight"	"100, 0.8, [0.01, 0.1, 1], [0.7,0.8,0.9], [6,7,8], [1,2,3]"	"5-fold, 100-repeats"	MinMax	100	XGBClassifier			" [6,7,8]"		[100]		[0.8]	"[0.01, 0.1, 1]"	"[0.7,0.8,0.9]"	"[1,2,3]"
+Method	Parameter	Cross-Validation	Scaler	Epochs	Sklearn Function
+Logistic Regression	C	"5-fold, 100-repeats"	MinMax	100	LogisticRegression
+L1 SVM Linear Kernel	C	"5-fold, 100-repeats"	Standard	100	LinearSVC
+L2 SVM Linear Kernel	C	"5-fold, 100-repeats"	Standard	100	LinearSVC
+SVM RBF Kernel	"C, gamma"	"5-fold, 100-repeats"	Standard	100	SVC
+Decision Tree	"max_depth, min_samples_split"	"5-fold, 100-repeats"	MinMax	100	DecisionTreeClassifier
+Random Forest	"n_estimators, max_features"	"5-fold, 100-repeats"	MinMax	100	RandomForestClassifier
+XGBoost	"n_estimators, colsample_bytree, learning_rate, subsample, max_depth, min_child_weight"	"5-fold, 100-repeats"	MinMax	100	XGBClassifier

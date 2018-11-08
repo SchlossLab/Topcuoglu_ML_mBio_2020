@@ -185,18 +185,19 @@ microbiome data
 
 \newpage
 
-Insert figure legends with the first sentence in bold, for example:
-
 \textbf{Figure 1. Generalization and classification performance of
 modeling methods } AUC values of all cross validation and testing
 performances.
-\includegraphics{manuscript_files/figure-latex/unnamed-chunk-1-1.pdf}
+
+\begin{center}
+\includegraphics[width=7in]{../results/figures/AUC_comparison.pdf}
+\end{center}
 
 \rowcolors{2}{gray!6}{white}
 
 \begin{table}
 
-\caption{\label{tab:model_parameters}Optimized hyper-parameters, pre-processing and cross-validation methods and software implementation of the classification algorithms}
+\caption{\label{tab:model_parameters}Optimized hyper-parameters, pre-processing and cross-validation methods and software implementation of the classification algorithms.}
 \resizebox{\linewidth}{!}{
 \begin{tabular}[t]{>{\raggedright\arraybackslash}p{10em}>{\raggedright\arraybackslash}p{8em}>{\raggedright\arraybackslash}p{9em}r>{\raggedright\arraybackslash}p{5em}l}
 \hiderowcolors
@@ -209,16 +210,59 @@ performances.
 \multicolumn{1}{>{\raggedright\arraybackslash}p{10em}}{L2 SVM Linear Kernel} & \multicolumn{1}{>{\raggedright\arraybackslash}p{8em}}{C} & \multicolumn{1}{>{\raggedright\arraybackslash}p{9em}}{5-fold, 100-repeats} & \multicolumn{1}{l}{100} & \multicolumn{1}{>{\raggedright\arraybackslash}p{5em}}{Standard} & \multicolumn{1}{l}{LinearSVC}\\
 \multicolumn{1}{>{\raggedright\arraybackslash}p{10em}}{SVM RBF Kernel} & \multicolumn{1}{>{\raggedright\arraybackslash}p{8em}}{C, gamma} & \multicolumn{1}{>{\raggedright\arraybackslash}p{9em}}{5-fold, 100-repeats} & \multicolumn{1}{l}{100} & \multicolumn{1}{>{\raggedright\arraybackslash}p{5em}}{Standard} & \multicolumn{1}{l}{SVC}\\
 \multicolumn{1}{>{\raggedright\arraybackslash}p{10em}}{Decision Tree} & \multicolumn{1}{>{\raggedright\arraybackslash}p{8em}}{max\_depth, min\_samples\_split} & \multicolumn{1}{>{\raggedright\arraybackslash}p{9em}}{5-fold, 100-repeats} & \multicolumn{1}{l}{100} & \multicolumn{1}{>{\raggedright\arraybackslash}p{5em}}{MinMax} & \multicolumn{1}{l}{DecisionTreeClassifier}\\
-\addlinespace
 \multicolumn{1}{>{\raggedright\arraybackslash}p{10em}}{Random Forest} & \multicolumn{1}{>{\raggedright\arraybackslash}p{8em}}{n\_estimators, max\_features} & \multicolumn{1}{>{\raggedright\arraybackslash}p{9em}}{5-fold, 100-repeats} & \multicolumn{1}{l}{100} & \multicolumn{1}{>{\raggedright\arraybackslash}p{5em}}{MinMax} & \multicolumn{1}{l}{RandomForestClassifier}\\
 \multicolumn{1}{>{\raggedright\arraybackslash}p{10em}}{XGBoost} & \multicolumn{1}{>{\raggedright\arraybackslash}p{8em}}{n\_estimators, colsample\_bytree, learning\_rate, subsample, max\_depth, min\_child\_weight} & \multicolumn{1}{>{\raggedright\arraybackslash}p{9em}}{5-fold, 100-repeats} & \multicolumn{1}{l}{100} & \multicolumn{1}{>{\raggedright\arraybackslash}p{5em}}{MinMax} & \multicolumn{1}{l}{XGBClassifier}\\
 \bottomrule
 \end{tabular}}
 \end{table}
 
-\rowcolors{2}{white}{white} \newpage
+\rowcolors{2}{white}{white}
 
-\subsection{References}\label{references}
+\rowcolors{1}{white}{gray!6}
+
+\begin{table}
+
+\caption{\label{tab:model_parameters}The range of optimized hyper-parameters for logistic regression and support vector machines.}
+\resizebox{\linewidth}{!}{
+\begin{tabular}[t]{l|>{}llll|>{}llll|>{}lll|>{}lllll}
+\hiderowcolors
+\toprule
+\multicolumn{1}{c}{\bfseries Parameter} & \multicolumn{4}{c}{\bfseries L2 Logistic} & \multicolumn{4}{c}{\bfseries L1 SVM Linear} & \multicolumn{3}{c}{\bfseries L2 SVM Linear } & \multicolumn{5}{c}{\bfseries SVM RBF} \\
+\cmidrule(l{2pt}r{2pt}){1-1} \cmidrule(l{2pt}r{2pt}){2-5} \cmidrule(l{2pt}r{2pt}){6-9} \cmidrule(l{2pt}r{2pt}){10-12} \cmidrule(l{2pt}r{2pt}){13-17}
+\showrowcolors
+C & 0.01 & 0.1 & 1 & 10 & 0.001 & 0.01 & 0.1 & 1 & 0.01 & 0.1 & 1 & 1e-06 & 1e-05 & 1e-04 & 0.001 & 0.01\\
+gamma & - & - & - & - & - & - & - & - & - & - & - & 1e-09 & 1e-08 & 1e-07 & - & -\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\rowcolors{2}{white}{white}
+
+\rowcolors{1}{white}{gray!6}
+
+\begin{table}
+
+\caption{\label{tab:model_parameters}The range of optimized hyper-parameters for tree based classification algorithms.}
+\resizebox{\linewidth}{!}{
+\fontsize{6}{8}\selectfont
+\begin{tabular}[t]{l|>{}lllll|>{}llll|>{}lll}
+\hiderowcolors
+\toprule
+\multicolumn{1}{c}{\bfseries Parameter} & \multicolumn{5}{c}{\bfseries Random Forest} & \multicolumn{4}{c}{\bfseries Decision Tree} & \multicolumn{3}{c}{\bfseries XGBoost} \\
+\cmidrule(l{2pt}r{2pt}){1-1} \cmidrule(l{2pt}r{2pt}){2-6} \cmidrule(l{2pt}r{2pt}){7-10} \cmidrule(l{2pt}r{2pt}){11-13}
+\showrowcolors
+learning\_rate & - & - & - & - & - & - & - & - & - & 0.01 & 0.1 & 1\\
+max\_depth & - & - & - & - & - & 6 & 8 & 10 & 50 & 6 & 7 & 8\\
+max\_features & 10 & 80 & 500 & 1000 & 1500 & - & - & - & - & - & - & -\\
+min\_child\_weight & - & - & - & - & - & - & - & - & - & 1 & 2 & 3\\
+min\_samples\_split & - & - & - & - & - & 10 & 25 & 50 & - & - & - & -\\
+n\_estimators & 1000 & - & - & - & - & - & - & - & - & 100 & - & -\\
+subsample & - & - & - & - & - & - & - & - & - & 0.7 & 0.8 & 0.9\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\rowcolors{2}{white}{white}
 
 
 \end{document}
