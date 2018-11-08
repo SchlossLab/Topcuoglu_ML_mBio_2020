@@ -13,7 +13,9 @@ geometry: margin=1.0in
 
 
 ```{r knitr_settings, eval=TRUE, echo=FALSE, cache=FALSE,  warning=FALSE, message=FALSE}
-# Read in necessary libraries
+######################################################################
+#----------------- Read in necessary libraries -------------------#
+######################################################################
 deps = c("doParallel","pROC", "caret","knitr","rmarkdown","vegan","gtools", "tidyverse");
 for (dep in deps){
   if (dep %in% installed.packages()[,"Package"] == FALSE){
@@ -21,6 +23,9 @@ for (dep in deps){
   }
   library(dep, verbose=FALSE, character.only=TRUE)
 }
+######################################################################
+#-------------- Define the chunk options ----------------#
+######################################################################
 opts_chunk$set("tidy" = TRUE)
 opts_chunk$set("echo" = FALSE)
 opts_chunk$set("eval" = TRUE)
@@ -44,6 +49,9 @@ inline_hook <- function(x){
     	paste(x)      
 	}
 }
+######################################################################
+#-------------- Define knitr options to allow kable ----------------#
+######################################################################
 knitr::knit_hooks$set(inline=inline_hook)
 options(kableExtra.latex.load_packages = FALSE)
 options(kableExtra.auto_format = FALSE)
@@ -52,6 +60,10 @@ library(kableExtra)
 ```
 
 ```{r LoadData, eval=TRUE, echo=FALSE, cache=FALSE, warning=FALSE, message=FALSE}
+######################################################################
+#----------------- Load OTU table and MetaData -----------------#
+######################################################################
+
 # Read in metadata and select only sample Id and diagnosis columns
 meta <- read.delim('../data/metadata.tsv', header=T, sep='\t') %>%
   select(sample, dx)
@@ -60,86 +72,93 @@ meta <- read.delim('../data/metadata.tsv', header=T, sep='\t') %>%
 shared <- read.delim('../data/baxter.0.03.subsample.shared', header=T, sep='\t') %>%
    select(-label, -numOtus)
 
-# Read in AUCs table generated from l2 logistic regression model for all samples
-  # Carcinomas + Adenomas are 1 and Normal is 0 for binary predictive model
-  # FIT is a feature
-  # The scaler is MinMax scaler
+######################################################################
+#------------ Load .tsv data generated in Python -----------------#
+######################################################################
+
+# Read in AUCs table generated from L2 logistic regression model for all samples:
+#       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
+#       FIT is a feature
+#       The scaler is MinMax scaler
 logit <- read.delim('../data/process/L2_Logistic_Regression.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>% 
   rename(Performance = level_1) %>% 
   mutate(model="L2-Logistic Regression")
 
 # Read in AUCs table generated from l1 SVM linear kernel for all samples
-  # Carcinomas + Adenomas are 1 and Normal is 0 for binary predictive model
-  # FIT is a feature
-  # The scaler is StandardScaler
+#       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
+#       FIT is a feature
+#       The scaler is Standard scaler
 l1svm <- read.delim('../data/process/L1_SVM_Linear_Kernel.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>% 
   rename(Performance = level_1) %>% 
   mutate(model="L1-SVM Linear") 
 
 # Read in AUCs table generated from l2 SVM linear kernel for all samples
-  # Carcinomas + Adenomas are 1 and Normal is 0 for binary predictive model
-  # FIT is a feature
-  # The scaler is StandardScaler
+#       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
+#       FIT is a feature
+#       The scaler is Standard scaler
 l2svm <- read.delim('../data/process/L2_SVM_Linear_Kernel.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>% 
   rename(Performance = level_1) %>% 
   mutate(model="L2-SVM Linear")
 
 # Read in AUCs table generated from  SVM RBF kernel for all samples
-  # Carcinomas + Adenomas are 1 and Normal is 0 for binary predictive model
-  # FIT is a feature
-  # The scaler is StandardScaler
+#       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
+#       FIT is a feature
+#       The scaler is Standard scaler
 svmRBF <- read.delim('../data/process/SVM_RBF.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>% 
   rename(Performance = level_1) %>% 
   mutate(model="SVM RBF")
 
 # Read in AUCs table generated from xgboost for all samples
-  # Carcinomas + Adenomas are 1 and Normal is 0 for binary predictive model
-  # FIT is a feature
-  # The scaler is MinMaxScaler
+#       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
+#       FIT is a feature
+#       The scaler is MinMax (0-1) scaler
 xgboost <- read.delim('../data/process/XGBoost.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>% 
   rename(Performance = level_1) %>% 
   mutate(model="XGBoost")
 
 # Read in AUCs table generated from random forest for all samples
-  # Carcinomas + Adenomas are 1 and Normal is 0 for binary predictive model
-  # FIT is a feature
-  # The scaler is MinMaxScaler
+#       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
+#       FIT is a feature
+#       The scaler is MinMax (0-1) scaler
 rf <- read.delim('../data/process/Random_Forest.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>% 
   rename(Performance = level_1) %>% 
   mutate(model="Random Forest ")
 
 # Read in AUCs table generated from decision tree for all samples
-  # Carcinomas + Adenomas are 1 and Normal is 0 for binary predictive model
-  # FIT is a feature
-  # The scaler is MinMaxScaler
+#       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
+#       FIT is a feature
+#       The scaler is MinMax (0-1) scaler
 dt <- read.delim('../data/process/Decision_Tree.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>% 
   rename(Performance = level_1) %>% 
   mutate(model="Decision Tree")
 
-# Put  all the AUCs for all the models together and group by model
+######################################################################
+#------------ Put all the loaded AUC tables together -----------------#
+######################################################################
 all <- bind_rows(logit, l1svm, l2svm, svmRBF, xgboost, rf, dt) %>% 
   group_by(model)
 ```
 
 ```{r table_1_models, echo=FALSE, results='asis'}
+######################################################################
 # We load a model parameters file to make our Table 1. Model parameters file has the information of optimized hyper-parameters, pre-processing and cross-validation methods and software implementation for all the classification algorithms.
 
 # This file is hand-made. Therefore needs to be changed manually if new information wants to be added or information needs to be changed. 
-
+######################################################################
 model_param <- read.table('../data/process/model_parameters.txt', header=T, sep='\t') %>% 
    select(Method, Parameter, Cross.Validation, Epochs, Scaler, Sklearn.Function) %>% 
   rename("Cross Validation"="Cross.Validation") %>%
   rename("Epoch"="Epochs") %>%
   rename("Sklearn Function"="Sklearn.Function")
 
-             ### Table 1 generation ###
+#------------------------Table 1 generation------------------------#
 
 Table1 <- kable(model_param, "latex", caption = "Optimized hyper-parameters, pre-processing and cross-validation methods and software implementation of the classification algorithms.", booktabs = T, linesep = "") %>%
 kable_styling(latex_options = c("striped", "scale_down"), position = "left") %>%  
@@ -152,9 +171,16 @@ kable_styling(latex_options = c("striped", "scale_down"), position = "left") %>%
 ```
 
 ```{r table_2_3_params, echo=FALSE, results='asis'}
+######################################################################
 # We load a param_grid.scv file to make our Table 2 and 3. This file has the information of the ranges of the optimized hyper-parameters for each model.
 
 # This file is generated from model_selection.py that is used to define model parameters for main.py. Therefore any changes to those files would allow us to represent them in the tables automatically.  
+
+# 1) First we will generate a Table for non-tree based models that shows C(penalty) and gamma hyperparameters.
+
+# 2) Second we will generate a Table for tree based models that show all the hyperparameters used for it. 
+######################################################################
+
 
 ################ Non-tree based model parameters ##############
 linear_param_range <- read.table('../data/process/param_grid.csv', header=T, sep=',', na.strings="", stringsAsFactors = FALSE) %>% 
@@ -164,7 +190,7 @@ linear_param_range <- read.table('../data/process/param_grid.csv', header=T, sep
   ## only select C (penalty) and gamma rows as parameters
    slice(1:2) 
 
-              ## Table 2 generation ##
+#------------------------Table 2 generation------------------------#
 Table2 <- kable(linear_param_range, "latex", caption = "The range of optimized hyper-parameters for logistic regression and support vector machines.", booktabs = T, col.names = NULL, linesep = "") %>%
   # latex options make table to be condensed
   # table itseld if left aligned
@@ -185,7 +211,7 @@ tree_param_range <- read.table('../data/process/param_grid.csv', header=T, sep='
   ## select all rows except C (penalty) and gamma for parameters
   slice(3:9)
 
-                  ## Table 3 generation ##
+#------------------------Table 3 generation------------------------#
 Table3 <- kable(tree_param_range, "latex", caption = "The range of optimized hyper-parameters for tree based classification algorithms.", booktabs = T, col.names = NULL, linesep = "") %>%
 kable_styling(latex_options = c("striped", "scale_down"), position = "left", font_size=6) %>% 
   add_header_above(c("Parameter", "Random Forest"=5, "Decision Tree"= 4, "XGBoost"=3 ), bold=TRUE) %>% 
