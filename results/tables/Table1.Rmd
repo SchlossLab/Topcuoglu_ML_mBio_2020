@@ -8,10 +8,9 @@ output:
 geometry: margin=1.0in
 ---
 ```{r knitr_settings, eval=TRUE, echo=FALSE, cache=FALSE,  warning=FALSE, message=FALSE}
-######################################################################
-#----------------- Read in necessary libraries -------------------#
-######################################################################
-deps = c("knitr","rmarkdown","vegan","gtools", "tidyverse");
+####################################################################################################
+#------------------------------- Read in necessary libraries --------------------------------------#
+####################################################################################################deps = c("knitr","rmarkdown","vegan","gtools", "tidyverse");
 for (dep in deps){
   if (dep %in% installed.packages()[,"Package"] == FALSE){
     install.packages(as.character(dep), quiet=TRUE);
@@ -19,45 +18,40 @@ for (dep in deps){
   library(dep, verbose=FALSE, character.only=TRUE)
 }
 
-######################################################################
-#-------------- Define knitr options to allow kable ----------------#
-######################################################################
-options(kableExtra.latex.load_packages = FALSE)
+#####################################################################################################------------------------------- Define knitr options to allow kable ------------------------------#
+####################################################################################################options(kableExtra.latex.load_packages = FALSE)
 options(kableExtra.auto_format = FALSE)
 options(knitr.table.format = "latex")
 library(kableExtra)
 ```
 
 ```{r table_1_models, echo=FALSE, results='asis'}
-######################################################################
-# We load a model parameters file to make our Table 1. Model parameters file has the information of optimized hyper-parameters, pre-processing and cross-validation methods and software implementation for all the classification algorithms.
+##################################################################################################### We load a model parameters file to make our Table 1. Model parameters file has the information of optimized hyper-parameters, pre-processing and cross-validation methods and software implementation for all the classification algorithms.
 
-# This file is hand-made. Therefore needs to be changed manually if new information wants to be added or information needs to be changed. 
-######################################################################
-model_param <- read.table('../../data/process/model_parameters.txt', header=T, sep='\t') %>% 
-   select(Method, Parameter, Cross.Validation, Epochs, Scaler, Sklearn.Function) %>% 
+# This file is hand-made. Therefore needs to be changed manually if new information wants to be added or information needs to be changed.
+####################################################################################################model_param <- read.table('../../data/process/model_parameters.txt', header=T, sep='\t') %>%
+   select(Method, Parameter, Cross.Validation, Epochs, Scaler, Sklearn.Function) %>%
   rename("Inner CV"="Cross.Validation") %>%
   rename("Outer CV"="Epochs") %>%
-  rename("Function"="Sklearn.Function") %>% 
-  rename("Scaling"="Scaler") %>% 
+  rename("Function"="Sklearn.Function") %>%
+  rename("Scaling"="Scaler") %>%
   rename("Hyper-Parameter"="Parameter")
 
-#------------------------Table 1 generation------------------------#
+#--------------------------------------- Table 1 generation ---------------------------------------#
 
-Table1 <- kable(model_param, 
-                "latex", 
-                caption = "Table 1. Optimized hyper-parameters, pre-processing and inner and outer cross-validation (CV) methods and software implementation of the classification algorithms.", 
-                booktabs = T, 
+Table1 <- kable(model_param,
+                "latex",
+                caption = "Table 1. Optimized hyper-parameters, pre-processing and inner and outer cross-validation (CV) methods and software implementation of the classification algorithms.",
+                booktabs = T,
                 linesep = "") %>%
-kable_styling(latex_options = c("striped", "scale_down", "hold_position"), 
-              position = "left") %>%  
+kable_styling(latex_options = c("striped", "scale_down", "hold_position"),
+              position = "left") %>%
  column_spec(1, width="10em") %>%
-  column_spec(2, width="8em") %>% 
+  column_spec(2, width="8em") %>%
   column_spec(3, width="9em") %>%
-  column_spec(5, width="5em") %>% 
-  row_spec(1:7, align="l") %>% 
-  row_spec(0,bold=TRUE) 
+  column_spec(5, width="5em") %>%
+  row_spec(1:7, align="l") %>%
+  row_spec(0,bold=TRUE)
 
 Table1
 ```
-
