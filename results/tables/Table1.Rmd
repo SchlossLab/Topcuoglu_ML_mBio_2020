@@ -7,7 +7,14 @@ output:
       in_header: header.tex
 geometry: margin=1.0in
 ---
+
+
+
+
 ```{r knitr_settings, eval=TRUE, echo=FALSE, cache=FALSE,  warning=FALSE, message=FALSE}
+
+
+
 ####################################################################################################
 #------------------------------- Read in necessary libraries --------------------------------------#
 ####################################################################################################deps = c("knitr","rmarkdown","vegan","gtools", "tidyverse");
@@ -25,12 +32,17 @@ options(knitr.table.format = "latex")
 library(kableExtra)
 ```
 
+
+
 ```{r table_1_models, echo=FALSE, results='asis'}
+
 ##################################################################################################### We load a model parameters file to make our Table 1. Model parameters file has the information of optimized hyper-parameters, pre-processing and cross-validation methods and software implementation for all the classification algorithms.
 
 # This file is hand-made. Therefore needs to be changed manually if new information wants to be added or information needs to be changed.
-####################################################################################################model_param <- read.table('../../data/process/model_parameters.txt', header=T, sep='\t') %>%
-   select(Method, Parameter, Cross.Validation, Epochs, Scaler, Sklearn.Function) %>%
+##################################################################################################
+
+model_param <- read.table('../../data/process/model_parameters.txt', header=T, sep='\t') %>%
+  select(Method, Parameter, Cross.Validation, Epochs, Scaler, Sklearn.Function) %>%
   rename("Inner CV"="Cross.Validation") %>%
   rename("Outer CV"="Epochs") %>%
   rename("Function"="Sklearn.Function") %>%
