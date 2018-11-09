@@ -26,7 +26,7 @@ def select_model(net):
         model = linear_model.LogisticRegression()
         ## We will try these regularization strength coefficients to optimize our model
         ## We will try these regularization strength coefficients to optimize our model
-        c_values = [0.01, 0.1, 1, 10]
+        c_values = [0.01, 0.1, 0.25, 0.5, 0.8, 0.9, 1, 10]
         param_grid = dict(C=c_values)
     if net=="L2_MultiClass_Logistic_Regression":
         model = linear_model.LogisticRegression(multi_class='multinomial', solver="lbfgs")
@@ -35,17 +35,17 @@ def select_model(net):
         c_values = [0.0000001, 0.000001, 0.00001, 0.0001, 0.001]
         param_grid = dict(C=c_values)
     if net=="L1_SVM_Linear_Kernel":
-        model= LinearSVC(penalty='l1', loss='squared_hinge', dual=False)
-        c_values = [0.001, 0.01, 0.1 ,1]
+        model= LinearSVC(penalty='l1', loss='hinge', dual=False)
+        c_values = [0.00001, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1 ,1]
         param_grid = dict(C=c_values)
     if net=="L2_SVM_Linear_Kernel":
-        model= LinearSVC(penalty='l2', loss='squared_hinge', dual=True)
-        c_values = [0.01, 0.1, 1]
+        model= LinearSVC(penalty='l2', loss='hinge', dual=False)
+        c_values = [0.00001, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1 ,1]
         param_grid = dict(C=c_values)
     if net=="SVM_RBF":
         model = SVC(kernel='rbf')
-        c_values = [0.000001, 0.00001, 0.0001, 0.001, 0.01]
-        gamma = [0.000000001, 0.00000001, 0.0000001]
+        c_values = [0.00001, 0.0001, 0.001, 0.01]
+        gamma = [0.00000000001, 0.0000000001, 0.000000001]
         param_grid = dict(C=c_values, gamma=gamma)
     if net=="Random_Forest":
         model = RandomForestClassifier(bootstrap= True)
