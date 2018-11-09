@@ -59,6 +59,12 @@ $(PROC)/XGBoost.tsv	:	data/baxter.0.03.subsample.shared\
 #
 ################################################################################
 
+$(FIGS)/Figure1.pdf :	$(PROC)/L2_Logistic_Regression.tsv\
+						$(PROC)/L1_SVM_Linear_Kernel.tsv\
+						$(PROC)/L2_SVM_Linear_Kernel.tsv\
+						code/learning/compareAUC.R
+	R -e "source('code/learning/compareAUC.R')"
+
 $(TABLES)/Table1.pdf :	$(PROC)/model_parameters.txt\
 						$(TABLES)/Table1.Rmd\
 						$(TABLES)/header.tex
@@ -77,11 +83,6 @@ $(TABLES)/Table3.pdf :	$(PROC)/param_grid.csv\
 	R -e "rmarkdown::render('$(TABLES)/Table3.Rmd', clean=TRUE)"
 	rm $(TABLES)/Table3.tex
 
-$(FIGS)/Figure1.pdf :	$(PROC)/L2_Logistic_Regression.tsv\
-						$(PROC)/L1_SVM_Linear_Kernel.tsv\
-						$(PROC)/L2_SVM_Linear_Kernel.tsv\
-						code/learning/compareAUC.R
-	R -e "source('code/learning/compareAUC.R')"
 
 
 

@@ -28,12 +28,6 @@ def select_model(net):
         ## We will try these regularization strength coefficients to optimize our model
         c_values = [0.01, 0.1, 0.25, 0.5, 0.8, 0.9, 1, 10]
         param_grid = dict(C=c_values)
-    if net=="L2_MultiClass_Logistic_Regression":
-        model = linear_model.LogisticRegression(multi_class='multinomial', solver="lbfgs")
-        ## We will try these regularization strength coefficients to optimize our model
-        ## We will try these regularization strength coefficients to optimize our model
-        c_values = [0.0000001, 0.000001, 0.00001, 0.0001, 0.001]
-        param_grid = dict(C=c_values)
     if net=="L1_SVM_Linear_Kernel":
         model= LinearSVC(penalty='l1', loss='hinge', dual=False)
         c_values = [0.00001, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1 ,1]
@@ -50,7 +44,7 @@ def select_model(net):
     if net=="Random_Forest":
         model = RandomForestClassifier(bootstrap= True)
         n_estimators = [1000]
-        max_features= [10, 80, 500, 1000, 1500]
+        max_features= [10, 80, 500, 1000, 1500, 2000, 3000]
         param_grid = dict(n_estimators=n_estimators, max_features=max_features)
     if net=="Decision_Tree":
         model = DecisionTreeClassifier()
