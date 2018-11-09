@@ -1,0 +1,63 @@
+---
+title: ""
+output:
+  pdf_document:
+    keep_tex: false
+    includes:
+      in_header: header.tex
+geometry: margin=1.0in
+---
+```{r knitr_settings, eval=TRUE, echo=FALSE, cache=FALSE,  warning=FALSE, message=FALSE}
+######################################################################
+#----------------- Read in necessary libraries -------------------#
+######################################################################
+deps = c("knitr","rmarkdown","vegan","gtools", "tidyverse");
+for (dep in deps){
+  if (dep %in% installed.packages()[,"Package"] == FALSE){
+    install.packages(as.character(dep), quiet=TRUE);
+  }
+  library(dep, verbose=FALSE, character.only=TRUE)
+}
+
+######################################################################
+#-------------- Define knitr options to allow kable ----------------#
+######################################################################
+options(kableExtra.latex.load_packages = FALSE)
+options(kableExtra.auto_format = FALSE)
+options(knitr.table.format = "latex")
+library(kableExtra)
+```
+
+```{r table_3, echo=FALSE, results='asis'}
+######################################################################
+# We load a param_grid.scv file to make our Table 2 and 3. This file has the information of the ranges of the optimized hyper-parameters for each model.
+
+# This file is generated from model_selection.py that is used to define model parameters for main.py. Therefore any changes to those files would allow us to represent them in the tables automatically.  
+
+# We will generate a Table for tree based models that show all the hyperparameters used for it. 
+######################################################################
+
+################ Tree based model parameters ##############
+tree_param_range <- read.table('../../data/process/param_grid.csv', header=T, sep=',', na.strings="", stringsAsFactors = FALSE) %>% 
+  replace(is.na(.), "-")  %>% 
+  ## only select Logistic Regression and SVM model columns
+  select(1, 18:29) %>% 
+  ## select all rows except C (penalty) and gamma for parameters
+  slice(3:9)
+
+#------------------------Table 3 generation------------------------#
+Table3 <- kable(tree_param_range, 
+                "latex", 
+                caption = "Table 3. The range of optimized hyper-parameters for tree based classification algorithms.", 
+                booktabs = T, 
+                col.names = NULL, 
+                linesep = "") %>%
+kable_styling(latex_options = c("striped", "scale_down", "hold_position"), 
+              position = "left", font_size=6) %>% 
+  add_header_above(c("Parameter", "Random Forest"=5, "Decision Tree"= 4, "XGBoost"=3 ), bold=TRUE) %>% 
+  column_spec(2, border_left = T) %>% 
+  column_spec(7, border_left = T)%>% 
+  column_spec(11, border_left = T)
+
+Table3
+```

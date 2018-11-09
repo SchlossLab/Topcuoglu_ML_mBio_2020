@@ -60,11 +60,22 @@ $(PROC)/XGBoost.tsv	:	data/baxter.0.03.subsample.shared\
 ################################################################################
 
 $(TABLES)/Table1.pdf :	$(PROC)/model_parameters.txt\
-						$(FINAL)/manuscript.Rmd\
-						$(FINAL)/manuscript.tex\
-						$(FINAL)/mbio.csl\
-						$(FINAL)/header.tex
-	R -e "rmarkdown::render('$(FINAL)/manuscript.Rmd', clean=TRUE)"
+						$(TABLES)/Table1.Rmd\
+						$(TABLES)/header.tex
+	R -e "rmarkdown::render('$(TABLES)/Table1.Rmd', clean=TRUE)"
+	rm $(TABLES)/Table1.tex
+
+$(TABLES)/Table2.pdf :	$(PROC)/param_grid.csv\
+						$(TABLES)/Table2.Rmd\
+						$(TABLES)/header.tex
+	R -e "rmarkdown::render('$(TABLES)/Table2.Rmd', clean=TRUE)"
+	rm $(TABLES)/Table2.tex
+
+$(TABLES)/Table3.pdf :	$(PROC)/param_grid.csv\
+						$(TABLES)/Table3.Rmd\
+						$(TABLES)/header.tex
+	R -e "rmarkdown::render('$(TABLES)/Table3.Rmd', clean=TRUE)"
+	rm $(TABLES)/Table3.tex
 
 $(FIGS)/Figure1.pdf :	$(PROC)/L2_Logistic_Regression.tsv\
 						$(PROC)/L1_SVM_Linear_Kernel.tsv\
