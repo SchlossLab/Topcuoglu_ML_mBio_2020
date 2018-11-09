@@ -59,14 +59,9 @@ for models in models:
         print(i)
         ## Split dataset to 80% training 20% test sets.
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,shuffle=True)
-        if models=="L2_Logistic_Regression" or "Random_Forest" or "Decision_Tree" or "XGBoost": 
-            sc = MinMaxScaler(feature_range=(0, 1))
-            x_train = sc.fit_transform(x_train)
-            x_test = sc.transform(x_test)
-        else:
-            sc = StandardScaler()
-            x_train = sc.fit_transform(x_train)
-            x_test = sc.transform(x_test)
+        sc = MinMaxScaler(feature_range=(0, 1))
+        x_train = sc.fit_transform(x_train)
+        x_test = sc.transform(x_test)
         #y_train=y_train.values
         ## Define which model, parameters we want to tune and their range, and also the cross validation method(n_splits, n_repeats)
         model, param_grid, cv = select_model(models)
