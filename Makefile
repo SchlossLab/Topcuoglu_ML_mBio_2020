@@ -47,7 +47,7 @@ $(PROC)/XGBoost.tsv	:	data/baxter.0.03.subsample.shared\
 						code/learning/main.py\
 						code/learning/preprocess_data.py\
 						code/learning/model_selection.py
-	python code/learning/main.py
+	python3 code/learning/main.py
 
 
 
