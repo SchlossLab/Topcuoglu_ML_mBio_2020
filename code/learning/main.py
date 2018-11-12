@@ -31,7 +31,7 @@ meta = pd.read_table("data/metadata.tsv")
 x, y = process_multidata(shared, meta)
 ################## MODEL SELECTION ###############
 from model_selection import select_model
-models = ["L2_Logistic_Regression", "L1_SVM_Linear_Kernel", "L2_SVM_Linear_Kernel", "SVM_RBF", "Random_Forest", "Decision_Tree", "XGBoost"]
+models = ["Random_Forest", "Decision_Tree", "XGBoost"]
 
 
 ## We will split the dataset 80%-20% and tune hyper-parameter on the 80% training. This will be done 100 times wth 5 folds and an optimal hyper-parameter/optimal model will be chosen.
