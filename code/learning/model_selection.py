@@ -42,9 +42,10 @@ def select_model(net):
         gamma = [0.00000000001, 0.0000000001, 0.000000001]
         param_grid = dict(C=c_values, gamma=gamma)
     if net=="Random_Forest":
+        cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=25, random_state=200889)
         model = RandomForestClassifier(bootstrap= True)
         n_estimators = [1000]
-        max_features= [10, 80, 500, 1000, 1500, 2000, 3000]
+        max_features= [1000, 1500, 2000, 3000]
         param_grid = dict(n_estimators=n_estimators, max_features=max_features)
     if net=="Decision_Tree":
         model = DecisionTreeClassifier()
@@ -53,7 +54,7 @@ def select_model(net):
         param_grid = dict(max_depth=max_depth, min_samples_split=min_samples_split)
     if net=="XGBoost":
         # https://jessesw.com/XG-Boost/
-        cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=200889)
+        cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=25, random_state=200889)
         ind_params={
         'n_estimators':100,
         'colsample_bytree': 0.8,
