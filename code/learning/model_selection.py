@@ -45,7 +45,7 @@ def select_model(net):
         cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=25, random_state=200889)
         model = RandomForestClassifier(bootstrap= True)
         n_estimators = [1000]
-        max_features= [1000, 1500, 2000, 3000]
+        max_features= [10, 80, 500, 1000, 1500, 2000, 3000]
         param_grid = dict(n_estimators=n_estimators, max_features=max_features)
     if net=="Decision_Tree":
         model = DecisionTreeClassifier()
