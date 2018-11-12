@@ -52,6 +52,9 @@ for models in models:
     aucs = []
     mean_fpr = np.linspace(0, 1, 100)
     #Logit_plot = plt.figure()
+    ## Generate empty lists to fill with hyper-parameter and mean AUC
+    scores = []
+    names = []
     i=0
     epochs= 100
     for epoch in range(epochs):
@@ -76,6 +79,11 @@ for models in models:
         params = grid_result.cv_results_['params']
         for mean, stdev, param in zip(means, stds, params):
             print("%f (%f) with: %r" % (mean, stdev, param))
+        # Save the AUC means for each tested hyper-parameter tuning
+        # We want to plot this to see our hyper-parameter tuning performance and budget
+        scores.append(means)
+        names.append(i)
+        parameters=pd.DataFrame(params)
         ## The best model we pick here will be used for predicting test set.
         best_model = grid_result.best_estimator_
         ## variable assignment to make it easier to read.
@@ -149,3 +157,8 @@ for models in models:
     concat_aucs_df = concat_aucs_df.reset_index(level=1)
     save_results_to = 'data/process/'
     concat_aucs_df.to_csv(save_results_to + str(models) + ".tsv", sep='\t')
+
+    # Save the hyper-parameter tuning performance
+    full=pd.DataFrame.from_items(zip(names,scores))
+    full=parameters.join(full)
+    full.to_csv(save_results_to + str(models) + "_parameters.tsv", sep='\t')
