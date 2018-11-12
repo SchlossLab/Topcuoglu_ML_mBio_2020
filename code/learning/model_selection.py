@@ -39,7 +39,7 @@ def select_model(net):
     if net=="SVM_RBF":
         model = SVC(kernel='rbf')
         c_values = [0.00001, 0.0001, 0.001, 0.01]
-        gamma = [0.00000000001, 0.0000000001, 0.000000001]
+        gamma = [0.000000000001, 0.00000000001, 0.0000000001, 0.000000001]
         param_grid = dict(C=c_values, gamma=gamma)
     if net=="Random_Forest":
         cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=25, random_state=200889)
