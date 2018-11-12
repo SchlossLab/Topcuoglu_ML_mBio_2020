@@ -32,37 +32,37 @@ library(kableExtra)
 ######################################################################
 # We load a param_grid.scv file to make our Table 2 and 3. This file has the information of the ranges of the optimized hyper-parameters for each model.
 
-# This file is generated from model_selection.py that is used to define model parameters for main.py. Therefore any changes to those files would allow us to represent them in the tables automatically.  
+# This file is generated from model_selection.py that is used to define model parameters for main.py. Therefore any changes to those files would allow us to represent them in the tables automatically.
 
 # We will generate a Table for non-tree based models that shows C(penalty) and gamma hyperparameters.
 ######################################################################
 
 
 ################ Non-tree based model parameters ##############
-linear_param_range <- read.table('../../data/process/param_grid.csv', header=T, sep=',', na.strings="", stringsAsFactors = FALSE) %>% 
-  replace(is.na(.), "-")  %>% 
+linear_param_range <- read.table('../../data/process/param_grid.csv', header=T, sep=',', na.strings="", stringsAsFactors = FALSE) %>%
+  replace(is.na(.), "-")  %>%
   ## only select Logistic Regression and SVM model columns
-  select(1:17) %>% 
+  select(1:17) %>%
   ## only select C (penalty) and gamma rows as parameters
-   slice(1:2) 
+   slice(1:2)
 
 #------------------------Table 2 generation------------------------#
-Table2 <- kable(linear_param_range, 
-                "latex", 
-                caption = "Table 2. The range of optimized hyper-parameters for logistic regression and support vector machines.", 
+Table2 <- kable(linear_param_range,
+                "latex",
+                caption = "Table 2. The range of optimized hyper-parameters for logistic regression and support vector machines.",
                 booktabs = T, 
-                col.names = NULL, 
+                col.names = NULL,
                 linesep = "") %>%
   # latex options make table to be condensed
   # table itseld if left aligned
-  kable_styling(latex_options = c("striped", "scale_down", "hold_position"), 
-                position = "left") %>% 
+  kable_styling(latex_options = c("striped", "scale_down", "hold_position"),
+                position = "left") %>%
   # the column names are removed when the file is read so I put headers above the grouped/replicated modeling method for
-  add_header_above(c("Parameter", "L2 Logistic" = 4, "L1 SVM Linear" = 4, "L2 SVM Linear " = 3, "SVM RBF"=5), bold=TRUE) %>% 
+  add_header_above(c("Parameter", "L2 Logistic" = 4, "L1 SVM Linear" = 4, "L2 SVM Linear " = 3, "SVM RBF"=5), bold=TRUE) %>%
   # Put a left border to seperate above header lines
   column_spec(2, border_left = T) %>%
-  column_spec(6, border_left = T) %>% 
-  column_spec(10, border_left = T) %>% 
+  column_spec(6, border_left = T) %>%
+  column_spec(10, border_left = T) %>%
   column_spec(13, border_left = T)
 
 Table2
