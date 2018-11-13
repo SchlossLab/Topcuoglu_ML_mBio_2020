@@ -23,24 +23,48 @@ from sklearn.preprocessing import MinMaxScaler
 
 
 
-############## PRE-PROCESS DATA ######################
+############################# PRE-PROCESS DATA ##################################
+# Import the module I wrote preprocess_data
+
+# In this case we will only need the function process_multidata which preprocesses shared and subsampled mothur generated OTU table and the metadata.This function will give us OTUs and FIT as features, diagnosis as labels.
+
+# If we wanted to use only OTUs and not FIT as a feature, import the function process_data and use that.
+#################################################################################
+
 from preprocess_data import process_multidata
 shared = pd.read_table("data/baxter.0.03.subsample.shared")
 meta = pd.read_table("data/metadata.tsv")
+
 # Define x (features) and y (labels)
 x, y = process_multidata(shared, meta)
-################## MODEL SELECTION ###############
+
+# When we use process_multidata:
+# x: all the OTUs and FIT as features
+# y: labels which are diagnosis of patient (0 is for normal colon and 1 is for adenomas+carcinomas)
+
+
+
+############################ MODEL SELECTION ####################################
+# Import the module I wrote model_selection and function select_model
+
+# This function will define the cross-validation method, hyper-parameters to tune and the modeling method based on which models we want to use here.
+#################################################################################
+
 from model_selection import select_model
+
+# Define the models you want to use
 models = ["L2_Logistic_Regression", "L1_SVM_Linear_Kernel", "L2_SVM_Linear_Kernel", "SVM_RBF", "Random_Forest", "Decision_Tree", "XGBoost"]
 
 
-## We will split the dataset 80%-20% and tune hyper-parameter on the 80% training. This will be done 100 times wth 5 folds and an optimal hyper-parameter/optimal model will be chosen.
 
-## The chosen best model and hyper-parameter will be tested on the %20 test set that was not seen before during training. This will give a TEST AUC.
+############################ TRAINING THE MODEL ###############################
+## We will split the dataset 80%-20% and tune hyper-parameter on the 80% training and choose a best model and best hyper-parameters. The chosen best model and hyper-parameters will be tested on the %20 test set that was not seen before during training. This will give a TEST AUC. This is repeated 100 times anf will give 100 TEST AUCs. We call this the outer cross validation/testing.
 
-## We will split and redo previous steps 100 epochs. Which means we have 100 models that we test on the 20%. We will report the mean TEST AUC +/- sd.
+## To tune the hyper-parameter we also use an inner cross validation that splits to 80-20 and repeats for 100 times. We report Cross-Validation AUC for this inner cross-validation.
 
-# For each epoch, we will also report mean AUC values +/- sd for each cross-validation during training.
+## Here we use a for loop to iterate each model method.
+#################################################################################
+
 for models in models:
     print(models)
     ## Generate empty lists to fill with AUC values for test-set
