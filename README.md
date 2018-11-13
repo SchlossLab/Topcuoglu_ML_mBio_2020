@@ -29,11 +29,26 @@
 ### How to regenerate this repository
 
 #### Dependencies and locations
-* Python 3.6.5
-* Latest PyTorch 
-* Latest Sklearn
-* Latest Keras with Theano backend
-#### Run the python code you choose
+* Python 3.6.5 or Python 2.7, Matplotlib, Numpy, Scipy, Sympy, Pandas, Sklearn and XGBoost to run Shallow Learning code. 
+* If running Deep Learning code you need to have Python 3 and Latest PyTorch and Latest Keras with Theano backend.
+* Run everything from project directory.
+
+#### Run the following code
 ```
 git clone https://github.com/BTopcuoglu/DeepLearning
 ```
+#### To run L2 Logistic Regression, L1 and L2 Linear SVM, RBF SVM, Decision Tree, Random Forest and XGBoost
+1. Generate tab-delimited files: Cross-validation and testing AUC scores of each model.
+2. Generate tab-delimited files: The AUC scores of each hyper-parameter tested for each model.
+3. Generate a comma-seperated file: The hyper-parameters tuned for each model in one file.
+4. Generate ROC curve figures: The cross-validation and testing ROC curves for each model. 
+
+```
+python code/learning/main.py
+```
+#### The Makefile will reproduce all the other figures and tables used in the manuscript.
+```
+make submission/manuscript.pdf
+```
+
+
