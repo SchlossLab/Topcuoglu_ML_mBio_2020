@@ -14,7 +14,7 @@ from sklearn import preprocessing
 #user defines their own datasets in the main.py using this function
 def process_data(shared, meta):
     ## Remove unnecessary columns from meta and only keep label for classification(diagnosis) and the sample name
-    meta = meta[['sample','dx', 'fit_result']]
+    meta = meta[['sample','dx']]
     ## Rename the column name "Group" to match the "sample" in meta
     shared = shared.rename(index=str, columns={"Group":"sample"})
     ## Merge the 2 datasets on sample
@@ -23,8 +23,8 @@ def process_data(shared, meta):
     data= data[data.dx.str.contains("adenoma") == False]
     ## Drop all except OTU columns for x
     x = data.drop(["sample", "dx", "numOtus", "label"], axis=1)
-    ## Cancer =1 Normal =0
-    diagnosis = { "cancer":1, "normal":0}
+    ## Cancer+adenoma =1 Normal =0
+    diagnosis = {"adenoma":1, "cancer":1, "normal":0}
     ## Generate y which only has diagnosis as 0 and 1
     y = data["dx"].replace(diagnosis)
     # y = np.eye(2, dtype='uint8')[y]
@@ -35,7 +35,7 @@ def process_data(shared, meta):
     return x, y
 
 def process_multidata(shared, meta):
-    ## Remove unnecessary columns from meta and only keep label for classification(diagnosis) and the sample name
+    ## Remove unnecessary columns from meta and only keep label for classification(diagnosis), FIT result and the sample name
     meta = meta[['sample','dx', 'fit_result']]
     ## Rename the column name "Group" to match the "sample" in meta
     shared = shared.rename(index=str, columns={"Group":"sample"})
@@ -43,7 +43,7 @@ def process_multidata(shared, meta):
     data=pd.merge(meta,shared,on=['sample'])
     ## Drop all except OTU columns for x
     x = data.drop(["sample", "dx", "numOtus", "label"], axis=1)
-    ## Cancer =1 Normal =0
+    ## Cancer+adenoma =1 Normal =0
     diagnosis = {"adenoma":1, "cancer":1, "normal":0}
     ## Generate y which had diagnosis 0, 1, 2
     y = data["dx"].replace(diagnosis)
