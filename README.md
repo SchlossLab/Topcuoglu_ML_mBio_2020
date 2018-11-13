@@ -5,24 +5,27 @@
 	|- CONTRIBUTING    # instructions for how to contribute to your project
 	|- LICENSE         # the license for this project
 	|
-	|- data           # raw and primary data, are not changed once created
-	|
+	|- data/           # raw and primary data, are not changed once created
+	| |- process/      # .tsv and .csv files generated with main.py that runs the models
+	| |- baxter.0.03.subsample.shared      # subsampled mothur generated file with OTUs from Marc Sze's analysis
+	| |- metadata.tsv      # metadata with clinical information from Marc Sze's analysis 			
 	|- code/          # any programmatic code
-	| |- learning     # generalization performance of model
-	| |- testing      # building final model
+	| |- learning/     # generalization performance of model
+	| |- testing/      # building final model
 	|
-	|- results        # all output from workflows and analyses
-	| |- tables/      # text version of tables to be rendered with kable in R
+	|- results/        # all output from workflows and analyses
+	| |- tables/      # tables and .Rmd code of the tables to be rendered with kable in R
 	| |- figures/     # graphs, likely designated for manuscript figures
 	|
 	|- submission/
-	| |- study.Rmd # executable Rmarkdown for this study, if
-	| |applicable - study.md # Markdown (GitHub) version of the
-	| |*.Rmd file - study.tex # TeX version of *.Rmd file -
-	| |study.pdf # PDF version of *.Rmd file - header.tex # LaTeX
-	| |header file to format pdf version of manuscript -
-	| |references.bib # BibTeX formatted references - XXXX.csl # csl
-	| |file to format references for journal XXX
+	| |- manuscript.Rmd # executable Rmarkdown for this study, if applicable
+	| |- manuscript.md # Markdown (GitHub) version of the *.Rmd file 
+	| |- manuscript.tex # TeX version of *.Rmd file 
+	| |- manuscript.pdf # PDF version of *.Rmd file 
+	| |- header.tex # LaTeX header file to format pdf version of manuscript 
+	| |- references.bib # BibTeX formatted references - XXXX.csl # csl file to format references for journal XXX
+	|
+	|- Makefile	 # Reproduce the manuscript, figures and tables
 
 
 
@@ -32,6 +35,7 @@
 * Python 3.6.5 or Python 2.7, Matplotlib, Numpy, Scipy, Sympy, Pandas, Sklearn and XGBoost to run Shallow Learning code. 
 * If running Deep Learning code you need to have Python 3 and Latest PyTorch and Latest Keras with Theano backend.
 * Run everything from project directory.
+* The files mentioned above at process/ from Marc Sze's analysis: https://github.com/SchlossLab/Sze_CRCMetaAnalysis_mBio_2018
 
 #### Run the following code
 ```
