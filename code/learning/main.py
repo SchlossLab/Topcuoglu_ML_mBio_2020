@@ -75,10 +75,10 @@ for models in models:
     tprs = []
     aucs = []
     mean_fpr = np.linspace(0, 1, 100)
-    #Logit_plot = plt.figure()
     ## Generate empty lists to fill with hyper-parameter and mean AUC
     scores = []
     names = []
+    ## Define how many times we will iterate the outer crossvalidation
     i=0
     epochs= 100
     for epoch in range(epochs):
@@ -89,21 +89,23 @@ for models in models:
         sc = MinMaxScaler(feature_range=(0, 1))
         x_train = sc.fit_transform(x_train)
         x_test = sc.transform(x_test)
-        #y_train=y_train.values
-        ## Define which model, parameters we want to tune and their range, and also the cross validation method(n_splits, n_repeats)
+        ## Define which model, parameters we want to tune and their range, and also the inner cross validation method(n_splits, n_repeats)
         model, param_grid, cv = select_model(models)
         ## Based on the chosen model, create a grid to search for the optimal model
         grid = GridSearchCV(estimator = model, param_grid = param_grid, cv = cv, scoring = 'roc_auc', n_jobs=-1)
         ## Get the grid results and fit to training set
         grid_result = grid.fit(x_train, y_train)
+        ## Print out the best model chosen in the grid
         print('Best model:', grid_result.best_estimator_)
+        ## Print out the best hyper-parameters chosen in the grid
         print("Best: %f using %s" % (grid_result.best_score_, grid_result.best_params_))
+        ## Calculate the AUC means and standard deviation for each hyper-parameters used during tuning. Print this out.
         means = grid_result.cv_results_['mean_test_score']
         stds = grid_result.cv_results_['std_test_score']
         params = grid_result.cv_results_['params']
         for mean, stdev, param in zip(means, stds, params):
             print("%f (%f) with: %r" % (mean, stdev, param))
-        # Save the AUC means for each tested hyper-parameter tuning
+        # Save the AUC means for each tested hyper-parameter tuning. Append for each outer cross validaion (epoch)
         # We want to plot this to see our hyper-parameter tuning performance and budget
         scores.append(means)
         names.append(i)
@@ -113,7 +115,7 @@ for models in models:
         ## variable assignment to make it easier to read.
         X=x_train
         Y=y_train
-        ## Plot mean ROC curve for cross-validation with n_splits=5 and n_repeats=100 to evaluate the variation of prediction in our training set.
+        ## Calculate the FPR and TPR at each inner-cross validation and append these data to plot ROC curve for cross-validation with n_splits=5 and n_repeats=100 to evaluate the variation of prediction in our training set.
         for train, test in cv.split(X,Y):
             if models=="L2_Logistic_Regression" or models=="Random_Forest" or models=="XGBoost" or models=="Decision_Tree":
                 y_score = best_model.fit(X[train], Y[train]).predict_proba(X[test])
@@ -126,7 +128,7 @@ for models in models:
             roc_auc = auc(fpr, tpr)
             aucs.append(roc_auc)
             print("Train", roc_auc)
-        ## Plot mean ROC curve for 100 epochs test set evaulation.
+        ## Calculate the FPR and TPR at each outer-cross validation and append these data to plot ROC curve for testing during 100 repeats(epochs) to evaluate the variation of prediction in our testing set.
         if models=="L2_Logistic_Regression" or models=="Random_Forest" or models=="XGBoost" or models=="Decision_Tree":
             y_score = best_model.fit(x_train, y_train).predict_proba(x_test)
             # Compute ROC curve and area the curve
@@ -135,13 +137,12 @@ for models in models:
             y_score = best_model.fit(x_train, y_train).decision_function(x_test)
             # Compute ROC curve and area the curve
             fpr_test, tpr_test, thresholds_test = roc_curve(y_test, y_score)
-
         tprs_test.append(interp(mean_fpr_test, fpr_test, tpr_test))
         tprs_test[-1][0] = 0.0
         roc_auc_test = auc(fpr_test, tpr_test)
         aucs_test.append(roc_auc_test)
         print("Test", roc_auc_test)
-
+    ## Plot the ROC curve for inner and outer cross-validation
     plt.plot([0, 1], [0, 1], linestyle='--', color='green', label='Random', alpha=.8)
     mean_tpr_test = np.mean(tprs_test, axis=0)
     mean_tpr_test[-1] = 1.0
