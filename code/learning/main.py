@@ -6,7 +6,7 @@
 # This script runs all the models on Baxter Dataset subset of onlt cancer and normal samples to predict diagnosis based on OTU data only. This script only evaluates generalization performance of the model.
 #
 
-############## IMPORT MODULES ######################
+############################# IMPORT MODULES ##################################
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -20,6 +20,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.externals import joblib
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
+#################################################################################
 
 
 

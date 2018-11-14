@@ -9,6 +9,7 @@
 
 
 
+############################# IMPORT MODULES ##################################
 from sklearn.linear_model import LogisticRegression
 from sklearn import linear_model
 from sklearn.svm import SVC, LinearSVC
@@ -18,14 +19,17 @@ import xgboost as xgb
 from xgboost.sklearn import XGBClassifier
 from sklearn.model_selection import RepeatedStratifiedKFold
 import pandas as pd
+#################################################################################
+
+
 
 def select_model(net):
     ## Define the n-folds for hyper-parameter optimization on training set.
     cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=100, random_state=200889)
+    ## With the below if statements, we will define which classifier will be used.
+    ## We will also define the hyper-parameters to be tuned and their budget for each model.
     if net=="L2_Logistic_Regression":
         model = linear_model.LogisticRegression()
-        ## We will try these regularization strength coefficients to optimize our model
-        ## We will try these regularization strength coefficients to optimize our model
         c_values = [0.01, 0.1, 0.25, 0.5, 0.8, 0.9, 1, 10]
         param_grid = dict(C=c_values)
     if net=="L1_SVM_Linear_Kernel":
@@ -74,6 +78,7 @@ def select_model(net):
 
 
 ## Print out the parameters that are being optimized for each model as a dataframe and export as .csv.
+## This file will be used to generate Table 2 in our manuscript. 
 models = ["L2_Logistic_Regression", "L1_SVM_Linear_Kernel", "L2_SVM_Linear_Kernel", "SVM_RBF", "Random_Forest", "Decision_Tree", "XGBoost"]
 params = []
 for models in models:
