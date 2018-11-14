@@ -33,6 +33,7 @@ logit_plot <- ggplot(logit,aes(x=C,y=meanAUC)) +
   scale_y_continuous(name="Logistic Regression cvAUC", 
                      limits = c(0.50, 0.80), 
                      breaks = seq(0.5, 0.8, 0.05)) + 
+  scale_x_continuous(name="C (penalty)") +
   theme_bw() +
   theme(legend.text=element_text(size=18),
         legend.title=element_text(size=22),
@@ -42,9 +43,8 @@ logit_plot <- ggplot(logit,aes(x=C,y=meanAUC)) +
         text = element_text(size = 12),
         axis.text.x=element_text(size = 12, colour='black'),
         axis.text.y=element_text(size = 12, colour='black'),
-        axis.title.y=element_text(size = 15),
-        axis.title.x=element_text(size = 20))
-
+        axis.title.y=element_text(size = 13),
+        axis.title.x=element_text(size = 13))
 
 # Read in AUCs table generated from l1 SVM linear kernel for all samples
 #       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
@@ -61,6 +61,7 @@ l1svm_plot <- ggplot(l1svm,aes(x=C,y=meanAUC)) +
   scale_y_continuous(name="L1 Linear SVM cvAUC", 
                      limits = c(0.50, 0.80), 
                      breaks = seq(0.5, 0.8, 0.05)) + 
+  scale_x_continuous(name="C (penalty)") +
   theme_bw() +
   theme(legend.text=element_text(size=18),
         legend.title=element_text(size=22),
@@ -70,10 +71,10 @@ l1svm_plot <- ggplot(l1svm,aes(x=C,y=meanAUC)) +
         text = element_text(size = 12),
         axis.text.x=element_text(size = 12, colour='black'),
         axis.text.y=element_text(size = 12, colour='black'),
-        axis.title.y=element_text(size = 15),
-        axis.title.x=element_text(size = 20))
+        axis.title.y=element_text(size = 13),
+        axis.title.x=element_text(size = 13))
 
-plot_grid(logit_plot, l1svm_plot, labels = c("A", "B"))
+
 # Read in AUCs table generated from l2 SVM linear kernel for all samples
 #       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
 #       FIT is a feature
@@ -83,7 +84,26 @@ l2svm <- read.delim('data/process/L2_SVM_Linear_Kernel_parameters.tsv', header=T
   mutate(meanAUC=rowMeans(.[, 2:101])) %>% 
   select(C, meanAUC) 
 
-l2svm_plot <- ggplot(l2svm, aes(x=C,y=meanAUC)) + geom_line() 
+l2svm_plot <- ggplot(l2svm,aes(x=C,y=meanAUC)) + 
+  geom_line() + 
+  geom_point() +
+  scale_y_continuous(name="L2 Linear SVM cvAUC", 
+                     limits = c(0.50, 0.80), 
+                     breaks = seq(0.5, 0.8, 0.05)) + 
+  scale_x_continuous(name="C (penalty)") +
+  theme_bw() +
+  theme(legend.text=element_text(size=18),
+        legend.title=element_text(size=22),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        text = element_text(size = 12),
+        axis.text.x=element_text(size = 12, colour='black'),
+        axis.text.y=element_text(size = 12, colour='black'),
+        axis.title.y=element_text(size = 13),
+        axis.title.x=element_text(size = 13))
+
+plot_grid(logit_plot, l1svm_plot, l2svm_plot, labels = c("A", "B", "C"))
 
 
 
