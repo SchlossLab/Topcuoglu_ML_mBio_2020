@@ -17,7 +17,8 @@ geometry: margin=1.0in
 
 ####################################################################################################
 #------------------------------- Read in necessary libraries --------------------------------------#
-####################################################################################################deps = c("knitr","rmarkdown","vegan","gtools", "tidyverse");
+####################################################################################################
+deps = c("knitr","rmarkdown","vegan","gtools", "tidyverse");
 for (dep in deps){
   if (dep %in% installed.packages()[,"Package"] == FALSE){
     install.packages(as.character(dep), quiet=TRUE);
@@ -25,8 +26,10 @@ for (dep in deps){
   library(dep, verbose=FALSE, character.only=TRUE)
 }
 
-#####################################################################################################------------------------------- Define knitr options to allow kable ------------------------------#
-####################################################################################################options(kableExtra.latex.load_packages = FALSE)
+#####################################################################################################
+#------------------------------- Define knitr options to allow kable ------------------------------#
+####################################################################################################
+options(kableExtra.latex.load_packages = FALSE)
 options(kableExtra.auto_format = FALSE)
 options(knitr.table.format = "latex")
 library(kableExtra)
@@ -36,7 +39,9 @@ library(kableExtra)
 
 ```{r table_1_models, echo=FALSE, results='asis'}
 
-##################################################################################################### We load a model parameters file to make our Table 1. Model parameters file has the information of optimized hyper-parameters, pre-processing and cross-validation methods and software implementation for all the classification algorithms.
+#####################################################################################################
+
+# We load a model parameters file to make our Table 1. Model parameters file has the information of optimized hyper-parameters, pre-processing and cross-validation methods and software implementation for all the classification algorithms.
 
 # This file is hand-made. Therefore needs to be changed manually if new information wants to be added or information needs to be changed.
 ##################################################################################################
