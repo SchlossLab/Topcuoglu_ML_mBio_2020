@@ -146,8 +146,7 @@ dt <- read.delim('../../data/process/Decision_Tree.tsv', header=T, sep='\t') %>%
   mutate(model="Decision Tree")
 
 ######################################################################
-#------------ Put all the loaded AUC tables together -----------------#
+#-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 
-all <- bind_rows(logit, l1svm, l2svm, svmRBF, xgboost, rf, dt) %>%
-  group_by(model)
+ggsave("HP_comparison.pdf", plot = last_plot(), device = 'pdf', path = '/Users/btopcuoglu/Documents/DeepLearning/results/figures', width = 15, height = 10)
