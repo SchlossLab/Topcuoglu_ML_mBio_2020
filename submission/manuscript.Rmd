@@ -201,7 +201,8 @@ Synthesis statement regarding modeling 16S microbiome data
 
 \newpage
 
-**Figure 1. Generalization and classification performance of modeling methods ** AUC values of all cross validation and testing performances.
+**Figure 1. Generalization and classification performance of modeling methods ** AUC values of all cross validation and testing performances. The boxplot shows quartiles at the box ends and the statistical median as athe horizontal line in the box. The whiskers show the farthest points that are not outliers. Outliers are data points that are within 3/2 times the interquartile ranges. 
+
 \begin{center}
 \includegraphics[width=7in]{../results/figures/AUC_comparison.pdf}
 \end{center}
