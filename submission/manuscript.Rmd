@@ -66,7 +66,7 @@ shared <- read.delim('../data/baxter.0.03.subsample.shared', header=T, sep='\t')
    select(-label, -numOtus)
 
 ######################################################################
-#------------ Load .tsv data generated in Python -----------------#
+#---Load .tsv data with CV and test AUC data generated in Python ----#
 ######################################################################
 
 # Read in AUCs table generated from L2 logistic regression model for all samples:
@@ -137,6 +137,28 @@ dt <- read.delim('../data/process/Decision_Tree.tsv', header=T, sep='\t') %>%
 ######################################################################
 all <- bind_rows(logit, l1svm, l2svm, svmRBF, xgboost, rf, dt) %>% 
   group_by(model)
+
+
+
+######################################################################
+#---Load .tsv data with cvAUCs for hyper-parameters  ----#
+######################################################################
+# Read in hyper-parameter AUCs generated from L2 logistic regression model for all samples:
+logit <- read.delim('../data/process/L2_Logistic_Regression_parameters.tsv', header=T, sep='\t')%>%
+  select(-X) %>% 
+  mutate(meanAUC=rowMeans(.[, 2:101])) %>% 
+  select(C, meanAUC) 
+# Read in hyper-parameter AUCs generated from L1 Linear SVM model for all samples:
+l1svm <- read.delim('data/process/L1_SVM_Linear_Kernel_parameters.tsv', header=T, sep='\t')%>%
+  select(-X) %>% 
+  mutate(meanAUC=rowMeans(.[, 2:101])) %>% 
+  select(C, meanAUC) 
+# Read in hyper-parameter AUCs generated from L2 Linear SVM model for all samples:
+l2svm <- read.delim('data/process/L2_SVM_Linear_Kernel_parameters.tsv', header=T, sep='\t')%>%
+  select(-X) %>% 
+  mutate(meanAUC=rowMeans(.[, 2:101])) %>% 
+  select(C, meanAUC) 
+
 ```
 
 \vspace{35mm}
