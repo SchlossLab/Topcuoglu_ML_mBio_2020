@@ -54,7 +54,7 @@ x, y = process_multidata(shared, meta)
 from model_selection import select_model
 
 # Define the models you want to use
-models = ["SVM_RBF", "Random_Forest", "Decision_Tree", "XGBoost"]
+models = ["SVM_RBF"]
 
 
 
@@ -81,7 +81,7 @@ for models in models:
     names = []
     ## Define how many times we will iterate the outer crossvalidation
     i=0
-    epochs= 100
+    epochs= 1
     for epoch in range(epochs):
         i=i+1
         print(i)
