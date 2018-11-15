@@ -69,6 +69,16 @@ $(FIGS)/Figure1.pdf :	$(PROC)/L2_Logistic_Regression.tsv\
 						code/learning/compareAUC.R
 	R -e "source('code/learning/compareAUC.R')"
 
+$(FIGS)/Figure2.pdf :	$(PROC)/L2_Logistic_Regression_parameters.tsv\
+						$(PROC)/L1_SVM_Linear_Kernel_parameters.tsv\
+						$(PROC)/SVM_RBF_parameters.tsv\
+						$(PROC)/L2_SVM_Linear_Kernel_parameters.tsv\
+						$(PROC)/Random_Forest_parameters.tsv\
+						$(PROC)/Decision_Tree_parameters.tsv\
+						$(PROC)/XGBoost_parameters.tsv
+						code/learning/compareHP.R
+	R -e "source('code/learning/compareHP.R')"
+
 $(TABLES)/Table1.pdf :	$(PROC)/model_parameters.txt\
 						$(TABLES)/Table1.Rmd\
 						$(TABLES)/header.tex
