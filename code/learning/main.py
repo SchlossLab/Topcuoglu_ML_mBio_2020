@@ -8,7 +8,7 @@
 
 ############################# IMPORT MODULES ##################################
 import matplotlib
-matplotlib.use('Agg')
+matplotlib.use('Agg') #use Agg backend to be able to use Matplotlib in Flux
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 import numpy as np # linear algebra
