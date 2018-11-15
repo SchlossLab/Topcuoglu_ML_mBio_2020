@@ -54,7 +54,7 @@ x, y = process_multidata(shared, meta)
 from model_selection import select_model
 
 # Define the models you want to use
-models = ["L2_Logistic_Regression", "L1_SVM_Linear_Kernel", "L2_SVM_Linear_Kernel", "SVM_RBF", "Random_Forest", "Decision_Tree", "XGBoost"]
+models = ["SVM_RBF", "Random_Forest", "Decision_Tree", "XGBoost"]
 
 
 
