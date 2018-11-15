@@ -59,6 +59,7 @@ $(PROC)/XGBoost.tsv	:	data/baxter.0.03.subsample.shared\
 #
 ################################################################################
 
+# Figure 1 shows the generalization performance of all the models tested.
 $(FIGS)/Figure1.pdf :	$(PROC)/L2_Logistic_Regression.tsv\
 						$(PROC)/L1_SVM_Linear_Kernel.tsv\
 						$(PROC)/SVM_RBF.tsv\
@@ -69,6 +70,7 @@ $(FIGS)/Figure1.pdf :	$(PROC)/L2_Logistic_Regression.tsv\
 						code/learning/compareAUC.R
 	R -e "source('code/learning/compareAUC.R')"
 
+# Figure 2 shows the hyper-parameter tuning of all the models tested.
 $(FIGS)/Figure2.pdf :	$(PROC)/L2_Logistic_Regression_parameters.tsv\
 						$(PROC)/L1_SVM_Linear_Kernel_parameters.tsv\
 						$(PROC)/SVM_RBF_parameters.tsv\
@@ -79,18 +81,21 @@ $(FIGS)/Figure2.pdf :	$(PROC)/L2_Logistic_Regression_parameters.tsv\
 						code/learning/compareHP.R
 	R -e "source('code/learning/compareHP.R')"
 
+# Table 1 is a summary of the properties of all the models tested.
 $(TABLES)/Table1.pdf :	$(PROC)/model_parameters.txt\
 						$(TABLES)/Table1.Rmd\
 						$(TABLES)/header.tex
 	R -e "rmarkdown::render('$(TABLES)/Table1.Rmd', clean=TRUE)"
 	rm $(TABLES)/Table1.tex
 
+# Table 2 shows the hyper-parameter budget of all the non-tree based models tested.
 $(TABLES)/Table2.pdf :	$(PROC)/param_grid.csv\
 						$(TABLES)/Table2.Rmd\
 						$(TABLES)/header.tex
 	R -e "rmarkdown::render('$(TABLES)/Table2.Rmd', clean=TRUE)"
 	rm $(TABLES)/Table2.tex
 
+# Table 3 shows the hyper-parameter budget of all the tree based models tested. 
 $(TABLES)/Table3.pdf :	$(PROC)/param_grid.csv\
 						$(TABLES)/Table3.Rmd\
 						$(TABLES)/header.tex
