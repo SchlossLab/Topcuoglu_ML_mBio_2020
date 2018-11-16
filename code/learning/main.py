@@ -37,7 +37,7 @@ shared = pd.read_table("data/baxter.0.03.subsample.shared")
 meta = pd.read_table("data/metadata.tsv")
 
 # Define x (features) and y (labels)
-x, y = process_multidata(shared, meta)
+x, y = process_SRNdata(shared, meta)
 
 # When we use process_multidata:
 # x: all the OTUs and FIT as features
