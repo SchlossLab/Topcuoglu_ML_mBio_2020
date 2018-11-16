@@ -32,7 +32,7 @@ from sklearn.preprocessing import MinMaxScaler
 # If we wanted to use only OTUs and not FIT as a feature, import the function process_data and use that.
 #################################################################################
 
-from preprocess_data import process_multidata
+from preprocess_data import process_SRNdata
 shared = pd.read_table("data/baxter.0.03.subsample.shared")
 meta = pd.read_table("data/metadata.tsv")
 
