@@ -41,7 +41,7 @@ x, y = process_SRNdata(shared, meta)
 
 # When we use process_multidata:
 # x: all the OTUs and FIT as features
-# y: labels which are diagnosis of patient (0 is for normal colon and 1 is for adenomas+carcinomas)
+# y: labels which are diagnosis of patient (0 is for non-advanced adenomas+normal colon and 1 is for advanced adenomas+carcinomas)
 
 
 
