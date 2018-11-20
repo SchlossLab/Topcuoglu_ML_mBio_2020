@@ -1,5 +1,5 @@
 ---
-title: "**Evalution of binary classification pipelines and methods for 16S rRNA gene data**"
+title: "**Evaluation of binary classification pipelines and methods for 16S rRNA gene data**"
 bibliography: references.bib
 output:
   pdf_document:
@@ -178,7 +178,7 @@ Running title: Machine learning methods in microbiome studies
 \vspace{35mm}
 
 
-Begüm D. Topçuoğlu^1, Jenna Wiens^2, Patrick D. Schloss^1$\dagger$^
+Begüm D. Topçuoğlu${^1}$, Jenna Wiens${^2}$, Patrick D. Schloss^1$\dagger$^
 
 \vspace{40mm}
 
@@ -200,38 +200,66 @@ $\dagger$ To whom correspondence should be addressed: pschloss@umich.edu
 
 ## Introduction
 
-As gut microbiome field continues to grow, there will be an ever-increasing demand for reproducible machine learning  methods to analyze 16S rRNA gene sequence data and to determine association of the microbiome with a continuous or categorical phenotype of interest. The use of machine learning in microbiome literature lack clarity over the learning pipeline which spans the problem formulation, feature selection, feature pre-processing, model learning, and output. There is a need for guidance on how to properly implement good machine learning practices to generate reproducible, robust and actionable models. We also need to generate interpretable models for biomedical researchers to adopt and use regularly. In this study we chose to focus on a binary classification model that predicts if an individual has screen-relevant tumors in their colon or not, to establish a model pipeline. 
+As gut microbiome field continues to grow, there will be an ever-increasing demand for reproducible machine learning  methods to analyze 16S rRNA gene sequence data and to determine association of the microbiome with a continuous or categorical phenotype of interest. The use of machine learning in microbiome literature lack clarity over the learning pipeline which spans the problem formulation, feature selection, feature pre-processing, model learning, and output. There is a need for guidance on how to properly implement good machine learning practices to generate reproducible, robust and actionable models. There is also a clinical need to generate interpretable models for biomedical researchers and clinicans to adopt and use regularly [@wiens_editorial:_2016]. 
 
-Colorectal cancer is one of the leading cause of death among cancers in the United States. Each person in the industrialized world has on average a one-in-twenty chance of developing colorectal cancer (CRC) in their lifetime and once diagnosed, more than one-third will not survive 5 years. Colonoscopy as a screening tool is very effective, however it is very invasive, expensive and have a low rate of patient adherence. Therefore, there is a need for improved non-invasive methods to screen individuals. One proposed non-invasive screening tool is using gut microbiome-based biomarkers. Patients with colorectal cancer have different stool community of microbes compared to adults with normal colons. This difference however cannot be explained by a single or a handful of features in the gut microbiome but by many of them in relation to one another. Therefore, machine learning is a great tool to investigate the differences between the gut microbiomes of CRC patients and healthy individuals. Previous studies have shown that human hemoglobin levels and bacterial population abundances in the stool help us predict screen relevant growth in the colon, however the literature for the problem of classification colorectal cancer diagnosis vary greatly, with areas under the receiver operating characteristic curve (AUC) of 0.7-0.8. The variation in classification performance is based in part on differences in the task definition, in
-part on differences in the study populations, and in part on the evaluation method. The highest
-reported AUCs were from studies of ...  In this study, we have defined classification pipelines with L2-regularized logistic regression, L1 and L2 linear suppor vector machines (SVM), radial basis function SVM , decision tree, random forest and XGBoost. We evaluated the generalization and prediction performance of these methods. We also compared each method based on their reproducibility, robustness, actionability, interpretibility and susceptibility to overfitting.
+Recently, there is an interest on using machine learning to predict colorectal cancer progression with microbiota-assiciated biomarkers. Colorectal cancer is one of the leading cause of death among cancers in the United States. Each person in the industrialized world has on average a one-in-twenty chance of developing colorectal cancer (CRC) in their lifetime and once diagnosed, more than one-third will not survive 5 years [@seer_2016; @street_colorectal_nodate; @weir_past_2015]. Colonoscopy as a screening tool is very effective, however it is very invasive, expensive and have a low rate of patient adherence. Therefore, there is a need for improved non-invasive methods to screen individuals. Gut microbiome-based biomarkers can be used as a non-invasive screening method. 
 
-Generalisation Perfomance of each model. 
-Is there a maximum threshold of prediction with all these methods?
-Does an increase in model complexity improve predictibility?
-Synthesis statement regarding modeling 16S microbiome data
+Patients with colorectal cancer have different stool community of microbes compared to adults with normal colons. This difference however cannot be explained by a single or a handful of candidate taxa in the gut microbiome but by many of them in relation to one another. Therefore, machine learning emerges as a tool to detect the difference between the gut microbiomes of CRC patients and healthy individuals. Previous studies have shown that human hemoglobin levels and bacterial population abundances in the stool help us predict screen relevant growth in the colon, however the literature for the problem of classifying colorectal disease status vary greatly, with areas under the receiver operating characteristic curve (AUC) of 0.7-0.9 [@sze_leveraging_2018; @baxter_microbiota-based_2016; @baxter_dna_2016; @zackular_human_2014]. The variation in classification performance is based in part on differences in the task definition, in part on differences in the study populations, and in part on the learning pipeline. In this study, classification pipelines with L2-regularized logistic regression, L1 and L2 linear suppor vector machines (SVM), radial basis function SVM , decision tree, random forest and XGBoost classifiers are established. The generalization and prediction performance of these classifiers are evaluated and each classifier is examined for its reproducibility, robustness, actionability, interpretibility and susceptibility to overfitting.
+
+Here, colonic disease status is defined as Normal or Screen Relevant Neoplasias (SRN). Stool bacterial population abundances and stool hemoglobin levels of `r paste(sum(sum(meta$dx=="normal")+sum(meta$Dx_Bin=="Adenoma")))` Normal and `r paste(sum(sum(meta$dx=="cancer")+sum(meta$Dx_Bin=="adv Adenoma")))` SRN samples were used to learn binary classifiers and evaluate their performances. The results show that ...... (Is there a maximum threshold of prediction with all these methods? Does an increase in model complexity improve predictibility?)
 
 ## Results and Discussion
 
+##### Results of modeling in text, tables and figures
+
+##### Comparisons among modeling approaches
+
+#### Interpretation of modeling results in terms of reproducibility, robustness, actionability, interpretibility and susceptibility
+
+#### Consideration of possible weaknesses for each model 
+
+The interactions between the biomarkers may be nonlinear. Obviously, the linear models will not incorporate this because they are linear. Tools like linear models (e.g. metastats, lefse, wilcoxon, etc) are likely worthless.
+
+#### Consideration of possible weaknesses for our approach and chosen dataset
+
+#### Relationship of results to previous literature and broader implications of this work
+
+#### Prospects of future progress
 
 ## Conclusions
+
 
 
 ## Materials and Methods
 
 #### Data collection
-We obtained stool OTU abundance data and metadata from the Sze et al. (1). The stool OTU abundance data and metadata were generated from the Great Lakes-New England Early Detection Research Network study which collected stool samples from recruited participants who were undergoing scheduled screening or surveillance colonoscpy. Colonoscopies were performed and fecal samples were collected from adult participants in four locations: Toronto (ON, Canada), Boston (MA, USA), Houston (TX, USA), and Ann Arbor (MI, USA). Patients' colonic disease status was defined by colonoscopy with adequate preparation and tissue histopathology of all resected lesions. Patients with an adenoma greater than 1 cm, more than three adenomas of any size, or an adenoma with villous histology were classified as advanced adenoma. Study had `r paste(sum(meta$dx=="normal"))` patients with normal colonoscopies , `r paste(sum(meta$dx=="adenoma"))` with adenomas and `r paste(sum(meta$dx=="cancer"))` with carcinomas. Of the `r paste(sum(meta$dx=="adenoma"))` adenomas, `r paste(sum(meta$Dx_Bin=="adv Adenoma"))` were identified as advanced adenomas.  Fecal material provided by the patients was used for Fecal Immunological Tests (FIT) which measure human hemoglobin concentrations and for 16S rRNA gene sequencing to measure bacterial population abundances. The OTU abundance data was generated by Sze et al, by processing 16S rRNA sequences in Mothur (v1.39.3) using the default quality filtering methods, identifying and removing chimeric sequences using VSEARCH and assigning to OTUs at 97% similarity using the OptiClust algorithm.
+  The data used for this analysis are stool bacterial abundances, stool hemoglobin levels and clinical information of the patients recruited by Great Lakes-New England Early Detection Research Network study. These data were obtained from Sze et al [@sze_leveraging_2018]. 
+  The stool samples were provided by recruited adult participants who were undergoing scheduled screening or surveillance colonoscpy. Colonoscopies were performed and fecal samples were collected from participants in four locations: Toronto (ON, Canada), Boston (MA, USA), Houston (TX, USA), and Ann Arbor (MI, USA). Patients' colonic disease status was defined by colonoscopy with adequate preparation and tissue histopathology of all resected lesions. Patients with an adenoma greater than 1 cm, more than three adenomas of any size, or an adenoma with villous histology were classified as advanced adenoma. Study had `r paste(sum(meta$dx=="normal"))` patients with normal colonoscopies, `r paste(sum(meta$dx=="adenoma"))` with adenomas and `r paste(sum(meta$dx=="cancer"))` with carcinomas. Of the `r paste(sum(meta$dx=="adenoma"))` adenomas, `r paste(sum(meta$Dx_Bin=="adv Adenoma"))` were identified as advanced adenomas. Stool provided by the patients was used for Fecal Immunological Tests (FIT) which measure human hemoglobin concentrations and for 16S rRNA gene sequencing to measure bacterial population abundances. The bacterial abundance data was generated by Sze et al, by processing 16S rRNA sequences in Mothur (v1.39.3) using the default quality filtering methods, identifying and removing chimeric sequences using VSEARCH and assigning to OTUs at 97% similarity using the OptiClust algorithm [@schloss_introducing_2009; @westcott_opticlust_2017; @rognes_vsearch_2016].
 
 #### Data definitions and pre-processing
-We use FIT results and OTU abundances as features. However these are in different scales. We use python v`r paste(py$python_version)`, module scikit-learn v`r paste(py$sklearn_module)` function MinMaxScaler() to transform features by scaling each feature to a [0-1] range.
 
+  The colonic disease status is re-defined as two encompassing classes; Normal or Screen Relevant Neoplasias (SRNs). Normal class includes patients with non-advanced adenomas or normal colons whereas SRN class includes patients with advanced adenomas or carcinomas. Colonic disease status is the label predicted with each classifier.   The bacterial abundances and FIT results are the features used to predict colonic disease status. Bacterial abundances are discrete data in the form of Operational Taxonomic Unit (OTU) counts. There are 6920 OTUs for each sample. FIT levels are continuous data present for each sample. Because the data are in different scales, Python programming language v`r paste(py$python_version)`, module scikit-learn v`r paste(py$sklearn_module)` is used to transform features by scaling each feature to a [0-1] range (Table 1) [@scikit-learn].
+  
+#### Learning the Classifier
+
+  To train and validate our model, labeled data is randomly split 80/20 into a training set and testing
+set. Then, seven binary class classifiers, L2 logistic regression, L1 and L2 linear suppor vector machines (SVM), radial basis function SVM, decision tree, random forest and XGBoost, are learned. The training set is used for training purposes and validation of hyperparameter selection, and the test set is used for evaluation purposes. Hyperparameters are selected using 5-fold cross-validation with 100-repeats on the training set. Since the colonic disease status are not uniformly represented in the data, 5-fold splits are stratified to maintain the overall label distribution on the training set. Python programming langugae v`r paste(py$python_version)`, module scikit-learn v`r paste(py$sklearn_module)` functions are used to learn the seven classifiers (Table 1). 
+
+#### Classifier Performance
+
+  The classification performance of learned classifier is evaluated on the labeled held-out testing set. The optimal  classifier with optimal hyperparameters selected in the cross-validation step is used to produce a prediction for the testing set. The performance of this prediction is measured in terms of the sensitivity and specificity, in addition to Area Under the Curve (AUC) metrics. This process of splitting the data, learning a classifier with cross-validation, and testing the classifier is repeated on 100 different splits. In the end cross-validation AUC and testing AUC averaged over the 100 different training/test splits are reported. Hyperparameter budget and performance for each split is also reported. 
 
 
 \newpage
 
+
+
 **Figure 1. Generalization and classification performance of modeling methods ** AUC values of all cross validation and testing performances. The boxplot shows quartiles at the box ends and the statistical median as athe horizontal line in the box. The whiskers show the farthest points that are not outliers. Outliers are data points that are not within 3/2 times the interquartile ranges. 
 
+\newpage
 
+## References
 
+<div id="refs"></div>
 
 
