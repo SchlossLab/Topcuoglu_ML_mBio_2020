@@ -98,7 +98,52 @@ l2svm_plot <- ggplot(l2svm,aes(x=C,y=meanAUC)) +
         axis.title.y=element_text(size = 13),
         axis.title.x=element_text(size = 13))
 
-plot_grid(logit_plot, l1svm_plot, l2svm_plot, labels = c("A", "B", "C"))
+# Read in hyper-parameter AUCs generated from SVM RBF model for all samples:
+
+svmRBF <- read.delim('data/process/SVM_RBF_parameters.tsv', header=T, sep='\t')%>%
+  select(-X) %>%
+  mutate(meanAUC=rowMeans(.[, 3:101])) %>%  # Take the mean of the rows for each C
+  select(C, gamma, meanAUC)
+
+svmRBF_plot_C <- ggplot(svmRBF,aes(x=C,y=meanAUC)) +
+  geom_line() +
+  geom_point() +
+  scale_y_continuous(name="RBF SVM cvAUC",
+                     limits = c(0.50, 0.80),
+                     breaks = seq(0.5, 0.8, 0.05)) +
+  scale_x_continuous(name="C (penalty)") +
+  theme_bw() +
+  theme(legend.text=element_text(size=18),
+        legend.title=element_text(size=22),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        text = element_text(size = 12),
+        axis.text.x=element_text(size = 12, colour='black'),
+        axis.text.y=element_text(size = 12, colour='black'),
+        axis.title.y=element_text(size = 13),
+        axis.title.x=element_text(size = 13))
+
+svmRBF_plot_gamma <- ggplot(svmRBF,aes(x=gamma,y=meanAUC)) +
+  geom_line() +
+  geom_point() +
+  scale_y_continuous(name="RBF SVM cvAUC",
+                     limits = c(0.50, 0.80),
+                     breaks = seq(0.5, 0.8, 0.05)) +
+  scale_x_continuous(name="gamma") +
+  theme_bw() +
+  theme(legend.text=element_text(size=18),
+        legend.title=element_text(size=22),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        text = element_text(size = 12),
+        axis.text.x=element_text(size = 12, colour='black'),
+        axis.text.y=element_text(size = 12, colour='black'),
+        axis.title.y=element_text(size = 13),
+        axis.title.x=element_text(size = 13))
+
+plot_grid(logit_plot, l1svm_plot, l2svm_plot, svmRBF_plot_C, svmRBF_plot_gamma, labels = c("A", "B", "C", "D", "E"))
 
 
 
@@ -108,4 +153,4 @@ plot_grid(logit_plot, l1svm_plot, l2svm_plot, labels = c("A", "B", "C"))
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 
-ggsave("HP_comparison.pdf", plot = last_plot(), device = 'pdf', path = '/Users/btopcuoglu/Documents/DeepLearning/results/figures', width = 15, height = 10)
+ggsave("HP_comparison.pdf", plot = last_plot(), device = 'pdf', path = 'results/figures', width = 15, height = 10)
