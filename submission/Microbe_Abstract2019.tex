@@ -1,0 +1,177 @@
+\documentclass[11pt,]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{}
+    \pretitle{\vspace{\droptitle}}
+  \posttitle{}
+    \author{}
+    \preauthor{}\postauthor{}
+    \date{}
+    \predate{}\postdate{}
+  
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage[table]{xcolor}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+
+\usepackage{helvet} % Helvetica font
+\renewcommand*\familydefault{\sfdefault} % Use the sans serif version of the font
+\usepackage[T1]{fontenc}
+
+\usepackage[none]{hyphenat}
+
+\usepackage{setspace}
+\doublespacing
+\setlength{\parskip}{1em}
+
+\usepackage{lineno}
+
+\usepackage{pdfpages}
+
+\begin{document}
+
+\linenumbers
+\textbf{Evaluation of classification pipelines that predict colorectal
+cancer progression with microbiota-associated biomarkers}
+
+Begüm D. Topçuoğlu\({^1}\), Jenna Wiens\({^2}\), Patrick D.
+Schloss\textsuperscript{1\(\dagger\)}
+
+As gut microbiome field continues to grow, there will be an
+ever-increasing demand for reproducible machine learning methods to
+determine association of the microbiome with a continuous or categorical
+phenotype of interest. Currently, the use of machine learning in
+microbiome literature lack clarity over the training, validation and
+testing of the models used. There is a need to properly implement good
+machine learning practices to generate reproducible and robust models.
+
+Recently, there is an interest in using machine learning to predict
+colorectal cancer progression with microbiota-associated biomarkers.
+Colorectal cancer is one of the leading cause of death among cancers in
+the United States. Each person in the industrialized world has on
+average a one-in-twenty chance of developing colorectal cancer (CRC)
+(1--3). Colonoscopy as a screening tool is effective, however it is
+invasive, expensive and have a low rate of patient adherence. Therefore,
+gut microbiome-based biomarkers emerged as a non-invasive screening
+method.
+
+In this study, classification models that use human hemoglobin levels
+and bacterial population abundances in the stool were used to predict
+colorectal disease status as screen-relevant colonic growth or not.
+Training, validation and testing pipelines were established for
+L2-regularized Logistic Regression, L1 and L2 Linear Suppor Vector
+Machines (SVM), Radial Basis Function SVM, Decision Tree, Random Forest
+and XGBoost classifiers. The generalization and prediction performance
+of these classifiers were evaluated and each classifier was examined for
+its reproducibility, robustness and susceptibility to overfitting.
+L2-regularized Logistic Regression had a mean AUC of 0.68 +/- 0.04, L1
+Linear SVM had a mean AUC of 0.76 +/- 0.05, L2 Linear SVM had a mean AUC
+of 0.68 +/- 0.05 and Radial Basis Function SVM had a mean AUC of 0.69
++/- 0.05. Decision Tree had a mean AUC of 0.7 +/- 0.05, Random Forest
+had a mean AUC of 0.76 +/- 0.06 and XGBoost had a mean AUC of 0.76 +/-
+0.04. Tree-based models were less susceptible to overfiting and in
+general had higher sensitivity and specificity for colonic
+screen-relevant growth.
+
+\newpage
+
+\subsection{References}\label{references}
+
+\hypertarget{refs}{}
+\hypertarget{ref-seer_2016}{}
+1. \textbf{Howlader N KM \textnormal{Noone AM}}. SEER cancer statistics
+review, 1975-2013, (national cancer institute. bethesda, md).
+
+\hypertarget{ref-street_colorectal_nodate}{}
+2. \textbf{Street W}. Colorectal cancer facts \& figures 2017-2019 40.
+
+\hypertarget{ref-weir_past_2015}{}
+3. \textbf{Weir HK}, \textbf{Thompson TD}, \textbf{Soman A},
+\textbf{MÃžller B}, \textbf{Leadbetter S}. 2015. The past, present, and
+future of cancer incidence in the united states: 1975 through 2020.
+Cancer \textbf{121}:1827--1837.
+doi:\href{https://doi.org/10.1002/cncr.29258}{10.1002/cncr.29258}.
+
+
+\end{document}

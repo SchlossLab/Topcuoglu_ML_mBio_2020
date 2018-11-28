@@ -1,0 +1,186 @@
+---
+bibliography: references.bib
+output: word_document
+csl: mbio.csl #Get themes at https://github.com/citation-style-language/styles
+fontsize: 11pt
+geometry: margin=1.0in
+---
+
+```{r knitr_settings, eval=TRUE, echo=FALSE, cache=FALSE,  warning=FALSE, message=FALSE}
+######################################################################
+#----------------- Read in necessary libraries -------------------#
+######################################################################
+deps = c("knitr","rmarkdown","vegan","gtools", "tidyverse");
+for (dep in deps){
+  if (dep %in% installed.packages()[,"Package"] == FALSE){
+    install.packages(as.character(dep), quiet=TRUE);
+  }
+  library(dep, verbose=FALSE, character.only=TRUE)
+}
+######################################################################
+#-------------- Define the chunk options ----------------#
+######################################################################
+opts_chunk$set("tidy" = TRUE)
+opts_chunk$set("echo" = FALSE)
+opts_chunk$set("eval" = TRUE)
+opts_chunk$set("warning" = FALSE)
+opts_chunk$set("cache" = FALSE)
+
+inline_hook <- function(x){
+	print(x)
+
+	if(is.list(x)){
+		x <- unlist(x)
+	}
+
+	if(is.numeric(x)){
+		if(abs(x - round(x)) < .Machine$double.eps^0.5){
+			paste(format(x,big.mark=',', digits=0, scientific=FALSE))
+		} else {
+			paste(format(x,big.mark=',', digits=1, nsmall=1, scientific=FALSE))
+		}
+	} else {
+    	paste(x)      
+	}
+}
+knitr::knit_hooks$set(inline=inline_hook)
+library(reticulate)
+use_python("/Library/Frameworks/Python.framework/Versions/3.6/bin/python3", required = TRUE)
+```
+
+```{r LoadData, eval=TRUE, echo=FALSE, cache=FALSE, warning=FALSE, message=FALSE}
+######################################################################
+#----------------- Load OTU table and MetaData -----------------#
+######################################################################
+
+# Read in metadata and select only sample Id and diagnosis columns
+meta <- read.delim('../data/metadata.tsv', header=T, sep='\t') %>%
+  select(sample, dx, Dx_Bin, fit_result)
+
+
+# Read in OTU table and remove label and numOtus columns
+shared <- read.delim('../data/baxter.0.03.subsample.shared', header=T, sep='\t') %>%
+   select(-label, -numOtus)
+
+######################################################################
+#---Load .tsv data with CV and test AUC data generated in Python ----#
+######################################################################
+
+# Read in AUCs table generated from L2 logistic regression model for all samples:
+#       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
+#       FIT is a feature
+#       The scaler is MinMax scaler
+logit <- read.delim('../data/process/L2_Logistic_Regression.tsv', header=T, sep='\t') %>%
+  select(level_1, AUC) %>% 
+  rename(Performance = level_1) %>% 
+  mutate(model="L2-Logistic Regression")
+
+logit_summary <- logit %>%  
+  group_by(Performance) %>% 
+  summarise(meanAUC=mean(AUC), std=sd(AUC)) 
+
+cv_meanAUC <- logit_summary[1,2]
+cv_sdAUC <- logit_summary[1,3]
+test_meanAUC <- logit_summary[2,2]
+test_sdAUC <- logit_summary[2,3]
+
+# Read in AUCs table generated from l1 SVM linear kernel for all samples
+#       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
+#       FIT is a feature
+#       The scaler is Standard scaler
+l1svm <- read.delim('../data/process/L1_SVM_Linear_Kernel.tsv', header=T, sep='\t') %>%
+  select(level_1, AUC) %>% 
+  rename(Performance = level_1) %>% 
+  mutate(model="L1-SVM Linear") 
+
+l1svm_summary <- l1svm %>%  
+  group_by(Performance) %>% 
+  summarise(meanAUC=mean(AUC), std=sd(AUC))
+
+# Read in AUCs table generated from l2 SVM linear kernel for all samples
+#       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
+#       FIT is a feature
+#       The scaler is Standard scaler
+l2svm <- read.delim('../data/process/L2_SVM_Linear_Kernel.tsv', header=T, sep='\t') %>%
+  select(level_1, AUC) %>% 
+  rename(Performance = level_1) %>% 
+  mutate(model="L2-SVM Linear")
+
+l2svm_summary <- l2svm %>%  
+  group_by(Performance) %>% 
+  summarise(meanAUC=mean(AUC), std=sd(AUC))
+
+# Read in AUCs table generated from  SVM RBF kernel for all samples
+#       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
+#       FIT is a feature
+#       The scaler is Standard scaler
+svmRBF <- read.delim('../data/process/SVM_RBF.tsv', header=T, sep='\t') %>%
+  select(level_1, AUC) %>% 
+  rename(Performance = level_1) %>% 
+  mutate(model="SVM RBF")
+
+svmRBF_summary <- svmRBF %>%  
+  group_by(Performance) %>% 
+  summarise(meanAUC=mean(AUC), std=sd(AUC))
+
+# Read in AUCs table generated from xgboost for all samples
+#       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
+#       FIT is a feature
+#       The scaler is MinMax (0-1) scaler
+xgboost <- read.delim('../data/process/XGBoost.tsv', header=T, sep='\t') %>%
+  select(level_1, AUC) %>% 
+  rename(Performance = level_1) %>% 
+  mutate(model="XGBoost")
+
+xgboost_summary <- xgboost %>%  
+  group_by(Performance) %>% 
+  summarise(meanAUC=mean(AUC), std=sd(AUC))
+
+# Read in AUCs table generated from random forest for all samples
+#       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
+#       FIT is a feature
+#       The scaler is MinMax (0-1) scaler
+rf <- read.delim('../data/process/Random_Forest.tsv', header=T, sep='\t') %>%
+  select(level_1, AUC) %>% 
+  rename(Performance = level_1) %>% 
+  mutate(model="Random Forest ")
+
+rf_summary <- rf %>%  
+  group_by(Performance) %>% 
+  summarise(meanAUC=mean(AUC), std=sd(AUC))
+# Read in AUCs table generated from decision tree for all samples
+#       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
+#       FIT is a feature
+#       The scaler is MinMax (0-1) scaler
+dt <- read.delim('../data/process/Decision_Tree.tsv', header=T, sep='\t') %>%
+  select(level_1, AUC) %>% 
+  rename(Performance = level_1) %>% 
+  mutate(model="Decision Tree")
+
+dt_summary <- dt %>%  
+  group_by(Performance) %>% 
+  summarise(meanAUC=mean(AUC), std=sd(AUC))
+```
+
+```{python, cache=FALSE, message=FALSE, warning=FALSE, engine.path = '/Library/Frameworks/Python.framework/Versions/3.6/bin/python3'}
+import platform
+python_version = platform.python_version()
+import sklearn
+sklearn_module = sklearn.__version__
+```
+\linenumbers
+__Evaluation of machine learning methods that predict colorectal cancer progression with microbiota-associated biomarkers__
+
+Begüm D. Topçuoğlu, Jenna Wiens, Mack Ruffin, Patrick D. Schloss
+
+As gut microbiome field continues to grow, there will be an ever-increasing demand for reproducible machine learning methods to determine association of the microbiome with a continuous or categorical phenotype of interest. Currently, the use of machine learning in microbiome research lack clarity and consistency over the training, validation and testing of models. There is a need for guidance on how to properly implement good machine learning practices to generate reproducible and robust models.
+
+Recently, there has been growing interest in using machine learning to predict colorectal cancer progression with microbiota-associated biomarkers. Colorectal cancer is one of the leading cause of death among cancers in the United States. Colonoscopy as a screening tool is effective, however it is invasive, expensive and have a low rate of patient adherence. Previous studies have shown that bacterial population abundances in the stool can predict screen relevant growth in the colon and can be used as a non-invasive screening tool. However, the prediction performance of these models vary greatly, with areas under the receiver operating characteristic curve (AUC) of 0.7-0.9 [@sze_leveraging_2018; @baxter_microbiota-based_2016; @baxter_dna_2016; @zackular_human_2014]. The variation in prediction performance is based in part on differences in the study populations, and in part on the differences in training, validation and testing pipelines. 
+
+In this study, hemoglobin levels and bacterial population abundances in the stool were used to predict colorectal disease status of `r paste(nrow(meta))` patients. The colorectal disease status was defined as showing screen-relevant colonic growth or not. Training, validation and testing pipelines were established for L2-regularized Logistic Regression, L1 and L2 Linear Support Vector Machines (SVM), Radial Basis Function (RBF) SVM, Decision Tree, Random Forest and XGBoost binary classifiers. L2-regularized Logistic Regression, L1 Linear SVM, L2 Linear SVM, and RBF SVM had mean AUCs of `r paste(round(test_meanAUC,2))` ± `r paste(round(test_sdAUC,2))`,  `r paste(round(l1svm_summary[2,2],2))` ± `r paste(round(l1svm_summary[2,3],2))`,  `r paste(round(l2svm_summary[2,2],2))` ± `r paste(round(l2svm_summary[2,3],2))`, and `r paste(round(svmRBF_summary[2,2],2))` ± `r paste(round(svmRBF_summary[2,3],2))`, respectively. Decision Tree, Random Forest and XGBoost had mean AUCs of `r paste(round(dt_summary[2,2],2))` ± `r paste(round(dt_summary[2,3],2))`, `r paste(round(rf_summary[2,2],2))` ± `r paste(round(rf_summary[2,3],2))`, `r paste(round(xgboost_summary[2,2],2))` ± `r paste(round(xgboost_summary[2,3],2))`, respectively. Tree-based models were less susceptible to overfitting and in general had higher sensitivity and specificity for colonic screen-relevant growth. Aside from evaluating generalization and classification performance of each classifier, this study established standards for training, validation and testing of the microbiome-associated machine learning models.  
+
+\newpage
+
+__References__
+
+<div id="refs"></div>
