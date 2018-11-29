@@ -1,9 +1,14 @@
 ---
 bibliography: references.bib
-output: word_document
-csl: mbio.csl #Get themes at https://github.com/citation-style-language/styles
+csl: mbio.csl
 fontsize: 11pt
 geometry: margin=1.0in
+output:
+  word_document: default
+  pdf_document: 
+    includes:
+      in_header: header.tex
+    keep_tex: yes
 ---
 
 ```{r knitr_settings, eval=TRUE, echo=FALSE, cache=FALSE,  warning=FALSE, message=FALSE}
@@ -169,15 +174,15 @@ import sklearn
 sklearn_module = sklearn.__version__
 ```
 \linenumbers
-__Evaluation of machine learning methods that predict colorectal cancer progression with microbiota-associated biomarkers__
+__Evaluation of machine learning methods that identify colorectal tumors with microbiota-associated biomarkers__
 
 Begüm D. Topçuoğlu, Jenna Wiens, Mack Ruffin, Patrick D. Schloss
 
-As gut microbiome field continues to grow, there will be an ever-increasing demand for reproducible machine learning methods to determine association of the microbiome with a continuous or categorical phenotype of interest. Currently, the use of machine learning in microbiome research lack clarity and consistency over the training, validation and testing of models. There is a need for guidance on how to properly implement good machine learning practices to generate reproducible and robust models.
+As gut microbiome field continues to grow, there is an ever-increasing demand for reproducible machine learning methods to determine associations between the microbiome and a phenotype of interest. Currently, the use of machine learning in microbiome research lacks clarity and consistency over the modeling pipeline (training, validation and testing steps). There is a need for guidance on how to implement good machine learning practices to generate reproducible and robust models.
 
-Recently, there has been growing interest in using machine learning to predict colorectal cancer progression with microbiota-associated biomarkers. Colorectal cancer is one of the leading cause of death among cancers in the United States. Colonoscopy as a screening tool is effective, however it is invasive, expensive and have a low rate of patient adherence. Previous studies have shown that bacterial population abundances in the stool can predict screen relevant growth in the colon and can be used as a non-invasive screening tool. However, the prediction performance of these models vary greatly, with areas under the receiver operating characteristic curve (AUC) of 0.7-0.9 [@sze_leveraging_2018; @baxter_microbiota-based_2016; @baxter_dna_2016; @zackular_human_2014]. The variation in prediction performance is based in part on differences in the study populations, and in part on the differences in training, validation and testing pipelines. 
+Recently, there has been growing interest in using machine learning to identify colorectal tumors with microbiota-associated biomarkers. Colorectal cancer is one of the leading cause of death among cancers in the United States. Colonoscopy as a screening tool is effective, however it is invasive and have a low rate of patient adherence. Previous studies have shown that bacterial abundances in the stool can predict colorectal tumors in the colon and can be used as a non-invasive screening tool. However, the prediction performance of these models vary greatly, with areas under the receiver operating characteristic curve (AUC) of 0.7-0.9 [@sze_leveraging_2018; @baxter_microbiota-based_2016; @baxter_dna_2016; @zackular_human_2014]. The variation in prediction performance is based in part on differences in the study populations, and in part on the differences in modeling pipelines. 
 
-In this study, hemoglobin levels and bacterial population abundances in the stool were used to predict colorectal disease status of `r paste(nrow(meta))` patients. The colorectal disease status was defined as showing screen-relevant colonic growth or not. Training, validation and testing pipelines were established for L2-regularized Logistic Regression, L1 and L2 Linear Support Vector Machines (SVM), Radial Basis Function (RBF) SVM, Decision Tree, Random Forest and XGBoost binary classifiers. L2-regularized Logistic Regression, L1 Linear SVM, L2 Linear SVM, and RBF SVM had mean AUCs of `r paste(round(test_meanAUC,2))` ± `r paste(round(test_sdAUC,2))`,  `r paste(round(l1svm_summary[2,2],2))` ± `r paste(round(l1svm_summary[2,3],2))`,  `r paste(round(l2svm_summary[2,2],2))` ± `r paste(round(l2svm_summary[2,3],2))`, and `r paste(round(svmRBF_summary[2,2],2))` ± `r paste(round(svmRBF_summary[2,3],2))`, respectively. Decision Tree, Random Forest and XGBoost had mean AUCs of `r paste(round(dt_summary[2,2],2))` ± `r paste(round(dt_summary[2,3],2))`, `r paste(round(rf_summary[2,2],2))` ± `r paste(round(rf_summary[2,3],2))`, `r paste(round(xgboost_summary[2,2],2))` ± `r paste(round(xgboost_summary[2,3],2))`, respectively. Tree-based models were less susceptible to overfitting and in general had higher sensitivity and specificity for colonic screen-relevant growth. Aside from evaluating generalization and classification performance of each classifier, this study established standards for training, validation and testing of the microbiome-associated machine learning models.  
+In this study, hemoglobin counts and 16S gene sequences in the stool were used to identify colorectal tumors of `r paste(nrow(meta))` patients as advanced tumors or not. Modeling pipelines were established for L2-regularized Logistic Regression, L1 and L2 Linear Support Vector Machines (SVM), Radial Basis Function SVM, Decision Tree, Random Forest and XGBoost binary classification models. The mean AUCs of these models were `r paste(round(test_meanAUC,2))` ± `r paste(round(test_sdAUC,2))`,  `r paste(round(l1svm_summary[2,2],2))` ± `r paste(round(l1svm_summary[2,3],2))`,  `r paste(round(l2svm_summary[2,2],2))` ± `r paste(round(l2svm_summary[2,3],2))`, `r paste(round(svmRBF_summary[2,2],2))` ± `r paste(round(svmRBF_summary[2,3],2))`, `r paste(round(dt_summary[2,2],2))` ± `r paste(round(dt_summary[2,3],2))`, `r paste(round(rf_summary[2,2],2))` ± `r paste(round(rf_summary[2,3],2))`, and `r paste(round(xgboost_summary[2,2],2))` ± `r paste(round(xgboost_summary[2,3],2))`, respectively. Tree-based methods, namely Decision Tree, Random Forest and XGBoost were less susceptible to overfitting and in general had higher sensitivity and specificity for advanced tumors. Aside from evaluating generalization and classification performance of each model, this study established standards for modeling pipelines of microbiome-associated machine learning models.   
 
 \newpage
 

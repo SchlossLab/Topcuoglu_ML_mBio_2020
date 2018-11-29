@@ -112,66 +112,80 @@
 \begin{document}
 
 \linenumbers
-\textbf{Evaluation of classification pipelines that predict colorectal
-cancer progression with microbiota-associated biomarkers}
+\textbf{Evaluation of machine learning methods that identify colorectal
+lesions with microbiota-associated biomarkers}
 
-Begüm D. Topçuoğlu\({^1}\), Jenna Wiens\({^2}\), Patrick D.
-Schloss\textsuperscript{1\(\dagger\)}
+Begüm D. Topçuoğlu, Jenna Wiens, Mack Ruffin, Patrick D. Schloss
 
-As gut microbiome field continues to grow, there will be an
-ever-increasing demand for reproducible machine learning methods to
-determine association of the microbiome with a continuous or categorical
-phenotype of interest. Currently, the use of machine learning in
-microbiome literature lack clarity over the training, validation and
-testing of the models used. There is a need to properly implement good
-machine learning practices to generate reproducible and robust models.
+As gut microbiome field continues to grow, there is an ever-increasing
+demand for reproducible machine learning methods to determine
+associations between the microbiome and a phenotype of interest.
+Currently, the use of machine learning in microbiome research lacks
+clarity and consistency over the modeling pipeline (training, validation
+and testing steps). There is a need for guidance on how to implement
+good machine learning practices to generate reproducible and robust
+models.
 
-Recently, there is an interest in using machine learning to predict
-colorectal cancer progression with microbiota-associated biomarkers.
-Colorectal cancer is one of the leading cause of death among cancers in
-the United States. Each person in the industrialized world has on
-average a one-in-twenty chance of developing colorectal cancer (CRC)
-(1--3). Colonoscopy as a screening tool is effective, however it is
-invasive, expensive and have a low rate of patient adherence. Therefore,
-gut microbiome-based biomarkers emerged as a non-invasive screening
-method.
+Recently, there has been growing interest in using machine learning to
+identify colorectal lesions that are precursors of coloractal cancer,
+with microbiota-associated biomarkers. Colorectal cancer is one of the
+leading cause of death among cancers in the United States. Colonoscopy
+as a screening tool is effective, however it is invasive, expensive and
+have a low rate of patient adherence. Previous studies have shown that
+bacterial population abundances in the stool can predict screen relevant
+lesions in the colon and can be used as a non-invasive screening tool.
+However, the prediction performance of these models vary greatly, with
+areas under the receiver operating characteristic curve (AUC) of 0.7-0.9
+(1--4). The variation in prediction performance is based in part on
+differences in the study populations, and in part on the differences in
+modeling pipelines.
 
-In this study, classification models that use human hemoglobin levels
-and bacterial population abundances in the stool were used to predict
-colorectal disease status as screen-relevant colonic growth or not.
-Training, validation and testing pipelines were established for
-L2-regularized Logistic Regression, L1 and L2 Linear Suppor Vector
-Machines (SVM), Radial Basis Function SVM, Decision Tree, Random Forest
-and XGBoost classifiers. The generalization and prediction performance
-of these classifiers were evaluated and each classifier was examined for
-its reproducibility, robustness and susceptibility to overfitting.
-L2-regularized Logistic Regression had a mean AUC of 0.68 +/- 0.04, L1
-Linear SVM had a mean AUC of 0.76 +/- 0.05, L2 Linear SVM had a mean AUC
-of 0.68 +/- 0.05 and Radial Basis Function SVM had a mean AUC of 0.69
-+/- 0.05. Decision Tree had a mean AUC of 0.7 +/- 0.05, Random Forest
-had a mean AUC of 0.76 +/- 0.06 and XGBoost had a mean AUC of 0.76 +/-
-0.04. Tree-based models were less susceptible to overfiting and in
+In this study, hemoglobin levels and 16S rRNA gene sequences in the
+stool were used to identify colorectal lesions of 490 patients. The
+colorectal disease stage was defined as showing screen-relevant lesions
+or not. Modeling pipelines were established for L2-regularized Logistic
+Regression, L1 and L2 Linear Support Vector Machines (SVM), Radial Basis
+Function SVM, Decision Tree, Random Forest and XGBoost binary
+classification models. The mean AUCs of these models were 0.68 ± 0.04,
+0.76 ± 0.05, 0.68 ± 0.05, 0.69 ± 0.05, 0.71 ± 0.04, 0.82 ± 0.04, and
+0.76 ± 0.04, respectively. Tree-based methods, namely Decision Tree,
+Random Forest and XGBoost were less susceptible to overfitting and in
 general had higher sensitivity and specificity for colonic
-screen-relevant growth.
+screen-relevant lesions. Aside from evaluating generalization and
+classification performance of each model, this study established
+standards for modeling pipeline of the microbiome-associated machine
+learning models.
 
 \newpage
 
-\subsection{References}\label{references}
+\textbf{References}
 
 \hypertarget{refs}{}
-\hypertarget{ref-seer_2016}{}
-1. \textbf{Howlader N KM \textnormal{Noone AM}}. SEER cancer statistics
-review, 1975-2013, (national cancer institute. bethesda, md).
+\hypertarget{ref-sze_leveraging_2018}{}
+1. \textbf{Sze MA}, \textbf{Schloss PD}. 2018. Leveraging existing 16S
+rRNA gene surveys to identify reproducible biomarkers in individuals
+with colorectal tumors. mBio \textbf{9}:e00630--18.
+doi:\href{https://doi.org/10.1128/mBio.00630-18}{10.1128/mBio.00630-18}.
 
-\hypertarget{ref-street_colorectal_nodate}{}
-2. \textbf{Street W}. Colorectal cancer facts \& figures 2017-2019 40.
+\hypertarget{ref-baxter_microbiota-based_2016}{}
+2. \textbf{Baxter NT}, \textbf{Ruffin MT}, \textbf{Rogers MAM},
+\textbf{Schloss PD}. 2016. Microbiota-based model improves the
+sensitivity of fecal immunochemical test for detecting colonic lesions.
+Genome Medicine \textbf{8}:37.
+doi:\href{https://doi.org/10.1186/s13073-016-0290-3}{10.1186/s13073-016-0290-3}.
 
-\hypertarget{ref-weir_past_2015}{}
-3. \textbf{Weir HK}, \textbf{Thompson TD}, \textbf{Soman A},
-\textbf{MÃžller B}, \textbf{Leadbetter S}. 2015. The past, present, and
-future of cancer incidence in the united states: 1975 through 2020.
-Cancer \textbf{121}:1827--1837.
-doi:\href{https://doi.org/10.1002/cncr.29258}{10.1002/cncr.29258}.
+\hypertarget{ref-baxter_dna_2016}{}
+3. \textbf{Baxter NT}, \textbf{Koumpouras CC}, \textbf{Rogers MAM},
+\textbf{Ruffin MT}, \textbf{Schloss PD}. 2016. DNA from fecal
+immunochemical test can replace stool for detection of colonic lesions
+using a microbiota-based model. Microbiome \textbf{4}.
+doi:\href{https://doi.org/10.1186/s40168-016-0205-y}{10.1186/s40168-016-0205-y}.
+
+\hypertarget{ref-zackular_human_2014}{}
+4. \textbf{Zackular JP}, \textbf{Rogers MAM}, \textbf{Ruffin MT},
+\textbf{Schloss PD}. 2014. The human gut microbiome as a screening tool
+for colorectal cancer. Cancer Prev Res \textbf{7}:1112--1121.
+doi:\href{https://doi.org/10.1158/1940-6207.CAPR-14-0129}{10.1158/1940-6207.CAPR-14-0129}.
 
 
 \end{document}
