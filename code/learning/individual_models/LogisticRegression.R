@@ -10,7 +10,7 @@
 deps = c("doParallel","pROC", "caret", "gtools", "tidyverse");
 for (dep in deps){
   if (dep %in% installed.packages()[,"Package"] == FALSE){
-    install.packages(as.character(dep), quiet=TRUE);
+    install.packages(as.character(dep), quiet=TRUE, repos = "http://cran.us.r-project.org");
   }
   library(dep, verbose=FALSE, character.only=TRUE)
 }
