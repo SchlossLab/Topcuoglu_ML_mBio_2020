@@ -1,8 +1,8 @@
 #### Author: Begum Topcuoglu
 #### Date: 2018-10-11
-#### Title: Logistic Regression Pipeline for Baxter GLNE007 Dataset
+#### Title: L1 Linear SVM Pipeline for Baxter GLNE007 Dataset
 
-#### Description: This script will read in 0.03 subsampled OTU dataset and the metadata that has the cancer diagnosis. It generates a L2 regularized logistic regression model. The model is trained on 80% of the data and then tested on 20% of the data. It also plots the cross validation and testing ROC curves to look at generalization performance of the model.
+#### Description: This script will read in 0.03 subsampled OTU dataset and the metadata that has the cancer diagnosis. It generates a L1 support vector machine model. The model is trained on 80% of the data and then tested on 20% of the data. It also plots the cross validation and testing ROC curves to look at generalization performance of the model.
 
 #### To be able to run this script we need to be in our project directory.
 
@@ -21,7 +21,7 @@ meta <- read.delim('data/metadata.tsv', header=T, sep='\t') %>%
 
 # Read in OTU table and remove label and numOtus columns
 shared <- read.delim('data/baxter.0.03.subsample.shared', header=T, sep='\t') %>%
-   select(-label, -numOtus)
+  select(-label, -numOtus)
 
 # Merge metadata and OTU table and remove all the samples that are diagnosed with adenomas. Keep only cancer and normal.
 # Then remove the sample ID column
@@ -41,9 +41,9 @@ for (i in 1:50) {
   inTraining <- createDataPartition(data$dx, p = .80, list = FALSE)
   training <- data[ inTraining,]
   testing  <- data[-inTraining,]
-  preProcValues <- preProcess(training, method = "range")
-  trainTransformed <- predict(preProcValues, training)
-  testTransformed <- predict(preProcValues, testing)
+  x_train <- training %>% select(-dx)
+  y_train <- training$dx
+  y_train <- as.factor(y_train)
   grid <-  expand.grid(cost = c(0.0000001, 0.000001, 0.00001, 0.0001),
                        loss = "L2_dual",
                        epsilon = 0.1)
@@ -54,16 +54,16 @@ for (i in 1:50) {
                      classProbs=TRUE,
                      summaryFunction=twoClassSummary,
                      indexFinal=NULL,
+                     preProc = "scale",
                      savePredictions = TRUE)
-
-  L2Logit <- train(dx ~ .,
-                   data=trainTransformed,
-                               method = "regLogistic",
-                               trControl = cv,
-                               metric = "ROC",
-                               tuneGrid = grid,
-                               family = "binomial")
-
+  
+  L2Logit <- train(x_train, y_train,
+                   method = "",
+                   trControl = cv,
+                   metric = "ROC",
+                   tuneGrid = grid,
+                   family = "binomial")
+  
   # Mean AUC value of the best lambda parameter training over repeats
   cv_auc <- getTrainPerf(L2Logit)$TrainROC
   # Best lambda parameter
@@ -72,9 +72,9 @@ for (i in 1:50) {
   #trellis.par.set(caretTheme())
   #plot(L2LogicalRegression)
   # Predict on the test set and get predicted probabilities
-  rpartProbs <- predict(L2Logit, testTransformed, type="prob")
+  rpartProbs <- predict(L2Logit, testing, type="prob")
   # Test AUC calculation
-  test_roc <- roc(ifelse(testTransformed$dx == "cancer", 1, 0), rpartProbs[[2]])
+  test_roc <- roc(ifelse(testing$dx == "cancer", 1, 0), rpartProbs[[2]])
   test_auc <- test_roc$auc
   # Save all the test AUCs over iterations in test_aucs
   test_aucs <- c(test_aucs, test_auc)
@@ -83,7 +83,7 @@ for (i in 1:50) {
   # Save all the test AUCs over iterations in cv_aucs
   #cv_aucs <- c(cv_aucs, cv_auc)
   # Save the test set labels in all.test.response. Labels converted to 0 for normal and 1 for cancer
-  all.test.response <- c(all.test.response, ifelse(testTransformed$dx == "cancer", 1, 0))
+  all.test.response <- c(all.test.response, ifelse(testing$dx == "cancer", 1, 0))
   # Save the test set predicted probabilities of highest class in all.test.predictor
   all.test.predictor <- c(all.test.predictor, rpartProbs[[2]])
   # Save the training set labels in all.test.response. Labels are in the obs column in the training object

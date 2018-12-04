@@ -1,8 +1,8 @@
 #### Author: Begum Topcuoglu
 #### Date: 2018-10-11
-#### Title: Logistic Regression Pipeline for Baxter GLNE007 Dataset
+#### Title: L1 Linear SVM Pipeline for Baxter GLNE007 Dataset
 
-#### Description: This script will read in 0.03 subsampled OTU dataset and the metadata that has the cancer diagnosis. It generates a L2 regularized logistic regression model. The model is trained on 80% of the data and then tested on 20% of the data. It also plots the cross validation and testing ROC curves to look at generalization performance of the model.
+#### Description: This script will read in 0.03 subsampled OTU dataset and the metadata that has the cancer diagnosis. It generates a L1 support vector machine model. The model is trained on 80% of the data and then tested on 20% of the data. It also plots the cross validation and testing ROC curves to look at generalization performance of the model.
 
 #### To be able to run this script we need to be in our project directory.
 
@@ -19,9 +19,10 @@ for (dep in deps){
 meta <- read.delim('data/metadata.tsv', header=T, sep='\t') %>%
   select(sample, dx)
 
+
 # Read in OTU table and remove label and numOtus columns
 shared <- read.delim('data/baxter.0.03.subsample.shared', header=T, sep='\t') %>%
-   select(-label, -numOtus)
+  select(-label, -numOtus)
 
 # Merge metadata and OTU table and remove all the samples that are diagnosed with adenomas. Keep only cancer and normal.
 # Then remove the sample ID column
@@ -37,42 +38,40 @@ all.test.response <- all.test.predictor <- test_aucs <- c()
 #all.cv.response <- all.cv.predictor <- cv_aucs <- c()
 cl <- makePSOCKcluster(4)
 registerDoParallel(cl)
-for (i in 1:50) {
+for (i in 1:10) {
   inTraining <- createDataPartition(data$dx, p = .80, list = FALSE)
   training <- data[ inTraining,]
   testing  <- data[-inTraining,]
   preProcValues <- preProcess(training, method = "range")
   trainTransformed <- predict(preProcValues, training)
   testTransformed <- predict(preProcValues, testing)
-  grid <-  expand.grid(cost = c(0.0000001, 0.000001, 0.00001, 0.0001),
-                       loss = "L2_dual",
-                       epsilon = 0.1)
+  grid <- expand.grid(C = c(0.01, 0.015, 0.025, 0.05, 0.1))
   cv <- trainControl(method="repeatedcv",
-                     repeats = 50,
+                     repeats = 10,
                      number=5,
                      returnResamp="final",
                      classProbs=TRUE,
                      summaryFunction=twoClassSummary,
                      indexFinal=NULL,
                      savePredictions = TRUE)
-
-  L2Logit <- train(dx ~ .,
-                   data=trainTransformed,
-                               method = "regLogistic",
-                               trControl = cv,
-                               metric = "ROC",
-                               tuneGrid = grid,
-                               family = "binomial")
-
+  
+  L2SVM <- train(dx ~ .,
+                  data=trainTransformed,
+                   method = "svmLinear",
+                   trControl = cv,
+                   metric = "ROC",
+                 tuneGrid = grid)
+  
+  max(L2SVM$results[,"ROC"])
   # Mean AUC value of the best lambda parameter training over repeats
-  cv_auc <- getTrainPerf(L2Logit)$TrainROC
+  cv_auc <- getTrainPerf(L2SVM)$TrainROC
   # Best lambda parameter
-  print(L2Logit$bestTune)
+  print(L2SVM$bestTune)
   # Plot parameter performane
   #trellis.par.set(caretTheme())
   #plot(L2LogicalRegression)
   # Predict on the test set and get predicted probabilities
-  rpartProbs <- predict(L2Logit, testTransformed, type="prob")
+  rpartProbs <- predict(L2SVM, testTransformed, type="prob")
   # Test AUC calculation
   test_roc <- roc(ifelse(testTransformed$dx == "cancer", 1, 0), rpartProbs[[2]])
   test_auc <- test_roc$auc
@@ -91,12 +90,12 @@ for (i in 1:50) {
   # Save the training set labels
   #all.cv.predictor <- c(all.cv.predictor, L2Logit$pred$normal)
 }
-stopCluster(cl)
+on.exit(stopCluster(cl))
 # Get the ROC of both test and cv from all the iterations
 test_roc <- roc(all.test.response, all.test.predictor, auc=TRUE, ci=TRUE)
 #cv_roc <- roc(all.cv.response, all.cv.predictor, auc=TRUE, ci=TRUE)
 
-pdf("results/figures/LogReg_inR.pdf")
+pdf("results/figures/L2SVM_inR.pdf")
 par(mar=c(4,4,1,1))
 # Plot random line on ROC curve
 plot(c(1,0),c(0,1),
@@ -130,7 +129,7 @@ mtext(side=1,
       cex=1.5)
 # Add legends for both lines
 legend(x=0.7,y=0.2,
-       legend=(sprintf('Test - AUC: %.3g, CI: %.3g', test_roc$auc, auc.ci)),
+       legend=(sprintf('Test - AUC: %.3g, CI: %.3g', test_roc$auc, (auc.ci[3]-auc.ci[2]))),
        bty='n',
        xjust=0,
        lty=c(1,1),
