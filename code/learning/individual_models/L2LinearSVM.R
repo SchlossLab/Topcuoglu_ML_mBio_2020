@@ -58,7 +58,7 @@ for (i in 1:100) {
   testTransformed <- predict(preProcValues, testing)
   grid <- expand.grid(C = c(0.015, 0.025, 0.035, 0.05, 0.06))
   cv <- trainControl(method="repeatedcv",
-                     repeats = 50,
+                     repeats = 10,
                      number=5,
                      returnResamp="final",
                      classProbs=TRUE,

@@ -58,7 +58,7 @@ for (i in 1:100) {
                        loss = "L2_dual",
                        epsilon = 0.1)
   cv <- trainControl(method="repeatedcv",
-                     repeats = 50,
+                     repeats = 10,
                      number=5,
                      returnResamp="final",
                      classProbs=TRUE,
