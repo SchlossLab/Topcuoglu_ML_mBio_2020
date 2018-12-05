@@ -53,7 +53,7 @@ for (i in 1:50) {
   preProcValues <- preProcess(training, method = "range")
   trainTransformed <- predict(preProcValues, training)
   testTransformed <- predict(preProcValues, testing)
-  grid <-  expand.grid(cost = c(0.8, 0.9, 0.95, 1),
+  grid <-  expand.grid(cost = c(0.7, 0.8, 0.9, 1),
                        loss = "L2_dual",
                        epsilon = 0.1)
   cv <- trainControl(method="repeatedcv",
@@ -139,7 +139,7 @@ mtext(side=1,
       cex=1.5)
 # Add legends for both lines
 legend(x=0.7,y=0.2,
-       legend=(sprintf('Test - AUC: %.3g, CI: %.3g', test_roc$auc, auc.ci)),
+       legend=(sprintf('Test - AUC: %.3g, CI: %.3g', test_roc$auc, (auc.ci[3]-auc.ci[2]))),
        bty='n',
        xjust=0,
        lty=c(1,1),
@@ -149,3 +149,4 @@ legend(x=0.7,y=0.2,
 
 # Save the figure
 dev.off()
+
