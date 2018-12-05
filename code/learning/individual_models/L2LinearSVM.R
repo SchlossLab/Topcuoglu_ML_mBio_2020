@@ -55,7 +55,7 @@ for (i in 1:50) {
   preProcValues <- preProcess(training, method = "range")
   trainTransformed <- predict(preProcValues, training)
   testTransformed <- predict(preProcValues, testing)
-  grid <- expand.grid(C = c(0.01, 0.015, 0.025, 0.05))
+  grid <- expand.grid(C = c(0.015, 0.025, 0.035, 0.05, 0.06))
   cv <- trainControl(method="repeatedcv",
                      repeats = 50,
                      number=5,
