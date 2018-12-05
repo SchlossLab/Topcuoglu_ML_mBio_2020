@@ -44,11 +44,12 @@ data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
 data$dx <- factor(data$dx, labels=c("normal", "cancer"))
 
 # Create
+best.tunes <- c()
 all.test.response <- all.test.predictor <- test_aucs <- c()
-#all.cv.response <- all.cv.predictor <- cv_aucs <- c()
+all.cv.response <- all.cv.predictor <- cv_aucs <- c()
 cl <- makePSOCKcluster(4)
 registerDoParallel(cl)
-for (i in 1:50) {
+for (i in 1:100) {
   inTraining <- createDataPartition(data$dx, p = .80, list = FALSE)
   training <- data[ inTraining,]
   testing  <- data[-inTraining,]
@@ -72,12 +73,13 @@ for (i in 1:50) {
                    metric = "ROC",
                  tuneGrid = grid)
   
-  print(max(L2SVM$results[,"ROC"]))
-  # Mean AUC value of the best lambda parameter training over repeats
-  cv_auc <- getTrainPerf(L2SVM)$TrainROC
-  print(cv_auc)
   # Best lambda parameter
+  best.tune <- L2SVM$bestTune[1]
+  best.tunes <- c(best.tunes, best.tune)
   print(L2SVM$bestTune)
+  # Mean AUC value of the best lambda parameter training over repeats
+  print(max(L2SVM$results[,"ROC"]))
+  cv_auc <- getTrainPerf(L2SVM)$TrainROC
   # Plot parameter performane
   #trellis.par.set(caretTheme())
   #plot(L2LogicalRegression)
@@ -86,12 +88,12 @@ for (i in 1:50) {
   # Test AUC calculation
   test_roc <- roc(ifelse(testTransformed$dx == "cancer", 1, 0), rpartProbs[[2]])
   test_auc <- test_roc$auc
+  print(test_auc)
   # Save all the test AUCs over iterations in test_aucs
   test_aucs <- c(test_aucs, test_auc)
   # Cross-validation mean AUC value
-  #cv_auc <- getTrainPerf(L2Logit)$TrainROC
   # Save all the test AUCs over iterations in cv_aucs
-  #cv_aucs <- c(cv_aucs, cv_auc)
+  cv_aucs <- c(cv_aucs, cv_auc)
   # Save the test set labels in all.test.response. Labels converted to 0 for normal and 1 for cancer
   all.test.response <- c(all.test.response, ifelse(testTransformed$dx == "cancer", 1, 0))
   # Save the test set predicted probabilities of highest class in all.test.predictor
@@ -105,8 +107,10 @@ on.exit(stopCluster(cl))
 # Get the ROC of both test and cv from all the iterations
 test_roc <- roc(all.test.response, all.test.predictor, auc=TRUE, ci=TRUE)
 #cv_roc <- roc(all.cv.response, all.cv.predictor, auc=TRUE, ci=TRUE)
+full <- matrix(c(cv_aucs, test_aucs, best.tunes), ncol=3)
+write.table(full, file='data/process/L2_Linear_SVM_aucs_hps_R.tsv', quote=FALSE, sep='\t', col.names = c("cv_aucs","test_aucs", "Cost"), row.names = FALSE)
 
-pdf("results/figures/L2SVM_inR.pdf")
+pdf("results/figures/L2_Linear_SVM_inR.pdf")
 par(mar=c(4,4,1,1))
 # Plot random line on ROC curve
 plot(c(1,0),c(0,1),
