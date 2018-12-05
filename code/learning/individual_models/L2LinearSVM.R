@@ -72,9 +72,10 @@ for (i in 1:50) {
                    metric = "ROC",
                  tuneGrid = grid)
   
-  max(L2SVM$results[,"ROC"])
+  print(max(L2SVM$results[,"ROC"]))
   # Mean AUC value of the best lambda parameter training over repeats
   cv_auc <- getTrainPerf(L2SVM)$TrainROC
+  print(cv_auc)
   # Best lambda parameter
   print(L2SVM$bestTune)
   # Plot parameter performane
