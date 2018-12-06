@@ -1,3 +1,10 @@
+# Author: Begum Topcuoglu
+# Date: 2018-12-06
+#
+######################################################################
+# Place to store useful functions that will be used repeatedly throughout
+######################################################################
+
 plot_performance <- function(data) {
   data_melt <- data %>%
     mutate(model="L2 Linear SVM") %>%

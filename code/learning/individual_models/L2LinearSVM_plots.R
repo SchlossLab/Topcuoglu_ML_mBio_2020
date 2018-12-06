@@ -1,5 +1,14 @@
+# Author: Begum Topcuoglu
+# Date: 2018-12-05
+#
 ######################################################################
-#----------------- Read in necessary libraries -------------------#
+# This script plots the cv and test AUC values as a boxplot for L2 Linear SVM classification model. It also plots the cvAUC values for each hyper-parameter that us tuned.
+######################################################################
+
+
+
+######################################################################
+#-----------Read in necessary libraries and functions ---------------#
 ######################################################################
 deps = c("reshape2", "cowplot", "ggplot2","knitr","rmarkdown","vegan","gtools", "tidyverse");
 for (dep in deps){
@@ -9,24 +18,40 @@ for (dep in deps){
   library(dep, verbose=FALSE, character.only=TRUE)
 }
 
-# Load in needed functions and libraries
+# Load in needed functions
 source('code/learning/functions.R')
 
-# Read in hyper-parameter AUCs generated from L2 logistic regression model for all samples:
+######################################################################
+# Load .tsv data generated with modeling pipeline for Logistic Regression
+######################################################################
+
+# Read in the cvAUCs, testAUCs and hyper-parameters from L2 logistic regression model for 100 splits.
 l2svm <- read.delim('data/process/L2_Linear_SVM_aucs_hps_R.tsv', header=T, sep='\t')
 
+# Exploratory look at the numbers
 l2svm %>%
   summarise(cv_mean=mean(cv_aucs), 
             test_mean=mean(test_aucs), 
             cv_sd=sd(cv_aucs), 
             test_sd=sd(test_aucs))
 
-performance <- plot_performance(l2svm)
-parameter <- plot_parameter(l2svm)
+######################################################################
+#Plot the AUC values for cross validation and testing for each model #
+######################################################################
+
+performance <- plot_performance(logit)
+
+######################################################################
+#Plot the cvAUC values for each hyperparameter in the budget #
+######################################################################
+
+parameter <- plot_parameter(logit)
+
+######################################################################
+#-------------------- Put the plots together -----------------#
+######################################################################
 
 plot_grid(performance, parameter, labels = c("A", "B"))
-
-
 
 ######################################################################
 #-----------------------Save figure as .pdf ------------------------ #
