@@ -34,8 +34,8 @@ data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
     Dx_Bin== "High Risk Normal" ~ "normal",
     Dx_Bin== "adv Adenoma" ~ "cancer",
     Dx_Bin== "Cancer" ~ "cancer"
-  )) %>% 
-  select(-sample, -Dx_Bin) %>% 
+  )) %>%
+  select(-sample, -Dx_Bin) %>%
   drop_na()
 
 # We want the diagnosis column to a factor
@@ -56,8 +56,8 @@ for (i in 1:100) {
   preProcValues <- preProcess(training, method = "range")
   trainTransformed <- predict(preProcValues, training)
   testTransformed <- predict(preProcValues, testing)
-  grid <-  expand.grid(sigma = c(0.001, 0.005, 0.01, 0.05),
-                       C = c(0.005, 0.01, 0.05, 0.1))
+  grid <-  expand.grid(sigma = c(0.00001, 0.0001, 0.001, 0.005),
+                       C = c(0.00001,0.0001,0.001, 0.01))
   cv <- trainControl(method="repeatedcv",
                      repeats = 10,
                      number=5,
@@ -66,7 +66,7 @@ for (i in 1:100) {
                      summaryFunction=twoClassSummary,
                      indexFinal=NULL,
                      savePredictions = TRUE)
-  
+
   rbf_SVM <- train(dx ~ .,
                    data=trainTransformed,
                    method = "svmRadial",
@@ -80,7 +80,7 @@ for (i in 1:100) {
   # Save the best C parameter
   best.tunes.sigma <- c(best.tunes.sigma, best.tune.sigma)
   best.tunes.cost <- c(best.tunes.cost, best.tune.cost)
-  # Print the best C parameter 
+  # Print the best C parameter
   print(rbf_SVM$bestTune)
   # Mean AUC value over repeats of the best cost parameter during training
   cv_auc <- getTrainPerf(rbf_SVM)$TrainROC
@@ -161,4 +161,3 @@ legend(x=0.7,y=0.2,
 
 # Save the figure
 dev.off()
-

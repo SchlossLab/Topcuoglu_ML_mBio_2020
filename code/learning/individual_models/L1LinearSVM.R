@@ -7,7 +7,7 @@
 #### To be able to run this script we need to be in our project directory.
 
 #### The dependinces for this script are consolidated in the first part
-deps = c("doParallel","pROC", "caret","knitr","rmarkdown","vegan","gtools", "tidyverse");
+deps = c("LiblineaR", "doParallel","pROC", "caret","knitr","rmarkdown","vegan","gtools", "tidyverse");
 for (dep in deps){
   if (dep %in% installed.packages()[,"Package"] == FALSE){
     install.packages(as.character(dep), quiet=TRUE);
@@ -32,71 +32,61 @@ data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
 # We want the diagnosis column to a factor
 data$dx <- factor(data$dx, labels=c("normal", "cancer"))
 
-# Create
-all.test.response <- all.test.predictor <- test_aucs <- c()
-#all.cv.response <- all.cv.predictor <- cv_aucs <- c()
+all.test.response <- all.test.predictor <- c()
+all.cv.response <- all.cv.predictor <- c()
 cl <- makePSOCKcluster(4)
 registerDoParallel(cl)
-for (i in 1:50) {
+for (i in 1:5) {
   inTraining <- createDataPartition(data$dx, p = .80, list = FALSE)
   training <- data[ inTraining,]
   testing  <- data[-inTraining,]
+  preProcValues <- preProcess(training, method = "range")
+  training <- predict(preProcValues, training)
+  testing <- predict(preProcValues, testing)
   x_train <- training %>% select(-dx)
-  y_train <- training$dx
+  y_train <- ifelse(training$dx == "cancer", 1, 0)
   y_train <- as.factor(y_train)
-  grid <-  expand.grid(cost = c(0.0000001, 0.000001, 0.00001, 0.0001),
-                       loss = "L2_dual",
-                       epsilon = 0.1)
-  cv <- trainControl(method="repeatedcv",
-                     repeats = 50,
-                     number=5,
-                     returnResamp="final",
-                     classProbs=TRUE,
-                     summaryFunction=twoClassSummary,
-                     indexFinal=NULL,
-                     preProc = "scale",
-                     savePredictions = TRUE)
+  x_test <- testing %>% select(-dx)
+  y_test <- testing$dx
+  y_test <- ifelse(testing$dx == "cancer", 1, 0)
+  y_test <- as.factor(y_test)
+  # create LR classification model
+  cParameterValues <- c(0.0002, 0.00025, 0.0003, 0.00035, 0.0004)
+  bestCost=NA
+  bestAcc=0
+  for(co in cParameterValues){
+    acc=LiblineaR(data=x_train,
+                  target=y_train,
+                  type=5,cost=co,
+                  cross=5,
+                  verbose=FALSE)
+    cat("Results for C=",co," : ",acc," accuracy.\n",sep="")
+    if(acc>bestAcc){
+      bestCost=co
+      bestAcc=acc
+    }
+  }
+  cat("Best cost is:",bestCost,"\n")
+  cat("Best accuracy is:",bestAcc,"\n")
+
+  # Re-train best model with best cost value.
+  model=LiblineaR(data=x_train, 
+                  target=y_train, 
+                  type=5, 
+                  cost=bestCost, 
+                  verbose=FALSE)
   
-  L2Logit <- train(x_train, y_train,
-                   method = "",
-                   trControl = cv,
-                   metric = "ROC",
-                   tuneGrid = grid,
-                   family = "binomial")
-  
-  # Mean AUC value of the best lambda parameter training over repeats
-  cv_auc <- getTrainPerf(L2Logit)$TrainROC
-  # Best lambda parameter
-  print(L2Logit$bestTune)
-  # Plot parameter performane
-  #trellis.par.set(caretTheme())
-  #plot(L2LogicalRegression)
-  # Predict on the test set and get predicted probabilities
-  rpartProbs <- predict(L2Logit, testing, type="prob")
-  # Test AUC calculation
-  test_roc <- roc(ifelse(testing$dx == "cancer", 1, 0), rpartProbs[[2]])
-  test_auc <- test_roc$auc
-  # Save all the test AUCs over iterations in test_aucs
-  test_aucs <- c(test_aucs, test_auc)
-  # Cross-validation mean AUC value
-  #cv_auc <- getTrainPerf(L2Logit)$TrainROC
-  # Save all the test AUCs over iterations in cv_aucs
-  #cv_aucs <- c(cv_aucs, cv_auc)
-  # Save the test set labels in all.test.response. Labels converted to 0 for normal and 1 for cancer
-  all.test.response <- c(all.test.response, ifelse(testing$dx == "cancer", 1, 0))
+  classification <- predict(model, x_test, decisionValues = TRUE) 
+  predictedLabels <- classification$predictions
+  all.test.response <- c(all.test.response, y_test)
   # Save the test set predicted probabilities of highest class in all.test.predictor
-  all.test.predictor <- c(all.test.predictor, rpartProbs[[2]])
-  # Save the training set labels in all.test.response. Labels are in the obs column in the training object
-  #all.cv.response <- c(all.cv.response, L2Logit$pred$obs)
-  # Save the training set labels
-  #all.cv.predictor <- c(all.cv.predictor, L2Logit$pred$normal)
+  all.test.predictor <- c(all.test.predictor, classification$decisionValues[[2]])
 }
 stopCluster(cl)
-# Get the ROC of both test and cv from all the iterations
-test_roc <- roc(all.test.response, all.test.predictor, auc=TRUE, ci=TRUE)
-#cv_roc <- roc(all.cv.response, all.cv.predictor, auc=TRUE, ci=TRUE)
 
-pdf("results/figures/LogReg_inR.pdf")
+test_roc <- roc(all.test.response, all.test.predictor, auc=TRUE, ci=TRUE)
+
+pdf("results/figures/L1_Linear_SVM_inR.pdf")
 par(mar=c(4,4,1,1))
 # Plot random line on ROC curve
 plot(c(1,0),c(0,1),
@@ -130,7 +120,7 @@ mtext(side=1,
       cex=1.5)
 # Add legends for both lines
 legend(x=0.7,y=0.2,
-       legend=(sprintf('Test - AUC: %.3g, CI: %.3g', test_roc$auc, auc.ci)),
+       legend=(sprintf('Test - AUC: %.3g, CI: %.3g', test_roc$auc, (auc.ci[3]-auc.ci[2]))),
        bty='n',
        xjust=0,
        lty=c(1,1),
@@ -140,3 +130,4 @@ legend(x=0.7,y=0.2,
 
 # Save the figure
 dev.off()
+
