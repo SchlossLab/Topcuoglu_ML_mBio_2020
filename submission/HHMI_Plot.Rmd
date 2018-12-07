@@ -1,0 +1,55 @@
+---
+title: ""
+output:
+  pdf_document:
+    keep_tex: true
+    includes:
+      in_header: header.tex
+csl: mbio.csl #Get themes at https://github.com/citation-style-language/styles
+fontsize: 11pt
+geometry: margin=1.0in
+---
+
+```{r knitr_settings, eval=TRUE, echo=FALSE, cache=FALSE,  warning=FALSE, message=FALSE}
+######################################################################
+#----------------- Read in necessary libraries -------------------#
+######################################################################
+deps = c("knitr","rmarkdown","vegan","gtools", "tidyverse");
+for (dep in deps){
+  if (dep %in% installed.packages()[,"Package"] == FALSE){
+    install.packages(as.character(dep), quiet=TRUE);
+  }
+  library(dep, verbose=FALSE, character.only=TRUE)
+}
+######################################################################
+#-------------- Define the chunk options ----------------#
+######################################################################
+opts_chunk$set("tidy" = TRUE)
+opts_chunk$set("echo" = FALSE)
+opts_chunk$set("eval" = TRUE)
+opts_chunk$set("warning" = FALSE)
+opts_chunk$set("cache" = FALSE)
+
+inline_hook <- function(x){
+	print(x)
+
+	if(is.list(x)){
+		x <- unlist(x)
+	}
+
+	if(is.numeric(x)){
+		if(abs(x - round(x)) < .Machine$double.eps^0.5){
+			paste(format(x,big.mark=',', digits=0, scientific=FALSE))
+		} else {
+			paste(format(x,big.mark=',', digits=1, nsmall=1, scientific=FALSE))
+		}
+	} else {
+    	paste(x)      
+	}
+}
+knitr::knit_hooks$set(inline=inline_hook)
+library(reticulate)
+use_python("/Library/Frameworks/Python.framework/Versions/3.6/bin/python3", required = TRUE)
+```
+
+![Generalization and classification performance of modeling methods. Tukey box-plots show the cross validation and testing AUC values of the L2-regularized Logistic Regression, L1 and L2 Linear Support Vector Machines (SVM), Radial Basis Function SVM, Decision Tree, Random Forest and XGBoost binary classification models over the 100 different training/test splits.](../results/figures/AUC_comparison.png)
