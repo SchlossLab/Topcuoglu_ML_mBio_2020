@@ -26,7 +26,7 @@ for (dep in deps){
 #       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
 #       FIT is a feature
 #       The scaler is MinMax scaler
-logit <- read.delim('../../data/process/L2_Logistic_Regression.tsv', header=T, sep='\t') %>%
+logit <- read.delim('data/process/L2_Logistic_Regression.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>%
   rename(Performance = level_1) %>%
   mutate(model="L2-Logistic Regression")
@@ -35,7 +35,7 @@ logit <- read.delim('../../data/process/L2_Logistic_Regression.tsv', header=T, s
 #       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
 #       FIT is a feature
 #       The scaler is Standard scaler
-l1svm <- read.delim('../..data/process/L1_SVM_Linear_Kernel.tsv', header=T, sep='\t') %>%
+l1svm <- read.delim('data/process/L1_SVM_Linear_Kernel.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>%
   rename(Performance = level_1) %>%
   mutate(model="L1-SVM Linear")
@@ -44,7 +44,7 @@ l1svm <- read.delim('../..data/process/L1_SVM_Linear_Kernel.tsv', header=T, sep=
 #       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
 #       FIT is a feature
 #       The scaler is Standard scaler
-l2svm <- read.delim('../../data/process/L2_SVM_Linear_Kernel.tsv', header=T, sep='\t') %>%
+l2svm <- read.delim('data/process/L2_SVM_Linear_Kernel.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>%
   rename(Performance = level_1) %>%
   mutate(model="L2-SVM Linear")
@@ -53,7 +53,7 @@ l2svm <- read.delim('../../data/process/L2_SVM_Linear_Kernel.tsv', header=T, sep
 #       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
 #       FIT is a feature
 #       The scaler is Standard scaler
-svmRBF <- read.delim('../../data/process/SVM_RBF.tsv', header=T, sep='\t') %>%
+svmRBF <- read.delim('data/process/SVM_RBF.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>%
   rename(Performance = level_1) %>%
   mutate(model="SVM RBF")
@@ -62,7 +62,7 @@ svmRBF <- read.delim('../../data/process/SVM_RBF.tsv', header=T, sep='\t') %>%
 #       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
 #       FIT is a feature
 #       The scaler is MinMax (0-1) scaler
-xgboost <- read.delim('../../data/process/XGBoost.tsv', header=T, sep='\t') %>%
+xgboost <- read.delim('data/process/XGBoost.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>%
   rename(Performance = level_1) %>%
   mutate(model="XGBoost")
@@ -71,7 +71,7 @@ xgboost <- read.delim('../../data/process/XGBoost.tsv', header=T, sep='\t') %>%
 #       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
 #       FIT is a feature
 #       The scaler is MinMax (0-1) scaler
-rf <- read.delim('../../data/process/Random_Forest.tsv', header=T, sep='\t') %>%
+rf <- read.delim('data/process/Random_Forest.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>%
   rename(Performance = level_1) %>%
   mutate(model="Random Forest ")
@@ -80,7 +80,7 @@ rf <- read.delim('../../data/process/Random_Forest.tsv', header=T, sep='\t') %>%
 #       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
 #       FIT is a feature
 #       The scaler is MinMax (0-1) scaler
-dt <- read.delim('../../data/process/Decision_Tree.tsv', header=T, sep='\t') %>%
+dt <- read.delim('data/process/Decision_Tree.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>%
   rename(Performance = level_1) %>%
   mutate(model="Decision Tree")
@@ -122,4 +122,4 @@ ggplot(all, aes(x = fct_reorder(model, AUC, fun = median, .asc =TRUE), y = AUC, 
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 
-ggsave("AUC_comparison.pdf", plot = last_plot(), device = 'pdf', path = '/Users/btopcuoglu/Documents/DeepLearning/results/figures', width = 15, height = 10)
+ggsave("AUC_comparison.pdf", plot = last_plot(), device = 'pdf', path = 'results/figures', width = 15, height = 10)

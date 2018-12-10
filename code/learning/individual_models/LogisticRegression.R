@@ -7,83 +7,98 @@
 #### To be able to run this script we need to be in our project directory.
 
 #### The dependinces for this script are consolidated in the first part
-deps = c("doParallel","pROC", "caret","knitr","rmarkdown","vegan","gtools", "tidyverse");
+deps = c("kernlab","LiblineaR", "doParallel","pROC", "caret", "gtools", "tidyverse");
 for (dep in deps){
   if (dep %in% installed.packages()[,"Package"] == FALSE){
-    install.packages(as.character(dep), quiet=TRUE);
+    install.packages(as.character(dep), quiet=TRUE, repos = "http://cran.us.r-project.org");
   }
   library(dep, verbose=FALSE, character.only=TRUE)
 }
 
 # Read in metadata and select only sample Id and diagnosis columns
 meta <- read.delim('data/metadata.tsv', header=T, sep='\t') %>%
-  select(sample, dx)
+  select(sample, Dx_Bin, fit_result)
+
 
 # Read in OTU table and remove label and numOtus columns
 shared <- read.delim('data/baxter.0.03.subsample.shared', header=T, sep='\t') %>%
-   select(-label, -numOtus)
+  select(-label, -numOtus)
 
-# Merge metadata and OTU table and remove all the samples that are diagnosed with adenomas. Keep only cancer and normal.
+# Merge metadata and OTU table.
+# Group advanced adenomas and cancers together as cancer and normal, high risk normal and non-advanced adenomas as normal
 # Then remove the sample ID column
 data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
-  filter(dx != 'adenoma') %>%
-  select(-sample)
+  mutate(dx = case_when(
+    Dx_Bin== "Adenoma" ~ "normal",
+    Dx_Bin== "Normal" ~ "normal",
+    Dx_Bin== "High Risk Normal" ~ "normal",
+    Dx_Bin== "adv Adenoma" ~ "cancer",
+    Dx_Bin== "Cancer" ~ "cancer"
+  )) %>% 
+  select(-sample, -Dx_Bin) %>% 
+  drop_na()
 
 # We want the diagnosis column to a factor
 data$dx <- factor(data$dx, labels=c("normal", "cancer"))
 
 # Create
+best.tunes <- c()
 all.test.response <- all.test.predictor <- test_aucs <- c()
-#all.cv.response <- all.cv.predictor <- cv_aucs <- c()
+all.cv.response <- all.cv.predictor <- cv_aucs <- c()
 cl <- makePSOCKcluster(4)
 registerDoParallel(cl)
-for (i in 1:50) {
+for (i in 1:100) {
   inTraining <- createDataPartition(data$dx, p = .80, list = FALSE)
   training <- data[ inTraining,]
   testing  <- data[-inTraining,]
-  x_train <- training %>% select(-dx)
-  y_train <- training$dx
-  y_train <- as.factor(y_train)
-  grid <-  expand.grid(cost = c(0.0000001, 0.000001, 0.00001, 0.0001),
+  preProcValues <- preProcess(training, method = "range")
+  trainTransformed <- predict(preProcValues, training)
+  testTransformed <- predict(preProcValues, testing)
+  grid <-  expand.grid(cost = c(0.5, 0.6, 0.7, 0.8, 0.9, 1),
                        loss = "L2_dual",
                        epsilon = 0.1)
   cv <- trainControl(method="repeatedcv",
-                     repeats = 50,
+                     repeats = 10,
                      number=5,
                      returnResamp="final",
                      classProbs=TRUE,
                      summaryFunction=twoClassSummary,
                      indexFinal=NULL,
-                     preProc = "scale",
                      savePredictions = TRUE)
 
-  L2Logit <- train(x_train, y_train,
+  L2Logit <- train(dx ~ .,
+                   data=trainTransformed,
                                method = "regLogistic",
                                trControl = cv,
                                metric = "ROC",
                                tuneGrid = grid,
                                family = "binomial")
-
-  # Mean AUC value of the best lambda parameter training over repeats
-  cv_auc <- getTrainPerf(L2Logit)$TrainROC
-  # Best lambda parameter
+  # Best C parameter
+  best.tune <- L2Logit$bestTune[1]
+  # Save the best C parameter
+  best.tunes <- c(best.tunes, best.tune)
+  # Print the best C parameter 
   print(L2Logit$bestTune)
+  # Mean AUC value over repeats of the best cost parameter during training
+  cv_auc <- getTrainPerf(L2Logit)$TrainROC
+  # Print the cv mean AUC
+  print(max(L2Logit$results[,"ROC"]))
   # Plot parameter performane
   #trellis.par.set(caretTheme())
-  #plot(L2LogicalRegression)
+  #plot(L2Logit)
   # Predict on the test set and get predicted probabilities
-  rpartProbs <- predict(L2Logit, testing, type="prob")
+  rpartProbs <- predict(L2Logit, testTransformed, type="prob")
   # Test AUC calculation
-  test_roc <- roc(ifelse(testing$dx == "cancer", 1, 0), rpartProbs[[2]])
+  test_roc <- roc(ifelse(testTransformed$dx == "cancer", 1, 0), rpartProbs[[2]])
   test_auc <- test_roc$auc
+  print(test_auc)
   # Save all the test AUCs over iterations in test_aucs
   test_aucs <- c(test_aucs, test_auc)
   # Cross-validation mean AUC value
-  #cv_auc <- getTrainPerf(L2Logit)$TrainROC
-  # Save all the test AUCs over iterations in cv_aucs
-  #cv_aucs <- c(cv_aucs, cv_auc)
+  # Save all the cv AUCs over iterations in cv_aucs
+  cv_aucs <- c(cv_aucs, cv_auc)
   # Save the test set labels in all.test.response. Labels converted to 0 for normal and 1 for cancer
-  all.test.response <- c(all.test.response, ifelse(testing$dx == "cancer", 1, 0))
+  all.test.response <- c(all.test.response, ifelse(testTransformed$dx == "cancer", 1, 0))
   # Save the test set predicted probabilities of highest class in all.test.predictor
   all.test.predictor <- c(all.test.predictor, rpartProbs[[2]])
   # Save the training set labels in all.test.response. Labels are in the obs column in the training object
@@ -96,7 +111,10 @@ stopCluster(cl)
 test_roc <- roc(all.test.response, all.test.predictor, auc=TRUE, ci=TRUE)
 #cv_roc <- roc(all.cv.response, all.cv.predictor, auc=TRUE, ci=TRUE)
 
-pdf("results/figures/LogReg_inR.pdf")
+full <- matrix(c(cv_aucs, test_aucs, best.tunes), ncol=3)
+write.table(full, file='data/process/L2_Logistic_Regression_aucs_hps_R.tsv', quote=FALSE, sep='\t', col.names = c("cv_aucs","test_aucs", "Cost"), row.names = FALSE)
+
+pdf("results/figures/L2_Logistic_Regression_inR.pdf")
 par(mar=c(4,4,1,1))
 # Plot random line on ROC curve
 plot(c(1,0),c(0,1),
@@ -111,8 +129,6 @@ plot(test_roc,
      lwd=2,
      add=T,
      lty=1)
-#Calculate Confidence Interval sensitivities at given specificities
-sens.ci <- ci.se(test_roc)
 # Compute the CI of the AUC
 auc.ci <- ci.auc(test_roc)
 # Plot CV ROC in blue line
@@ -132,15 +148,14 @@ mtext(side=1,
       cex=1.5)
 # Add legends for both lines
 legend(x=0.7,y=0.2,
-       legend=(sprintf('Test - AUC: %.3g, CI: %.3g', test_roc$auc, sens.ci)),
+       legend=(sprintf('Test - AUC: %.3g, CI: %.3g', test_roc$auc, (auc.ci[3]-auc.ci[2]))),
        bty='n',
        xjust=0,
        lty=c(1,1),
        col='black',
        text.col='black')
 
-plot(sens.ci, type="shape", col="gray88")
-
 
 # Save the figure
 dev.off()
+
