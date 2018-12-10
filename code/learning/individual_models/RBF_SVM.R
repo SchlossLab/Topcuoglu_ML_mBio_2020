@@ -56,8 +56,8 @@ for (i in 1:100) {
   preProcValues <- preProcess(training, method = "range")
   trainTransformed <- predict(preProcValues, training)
   testTransformed <- predict(preProcValues, testing)
-  grid <-  expand.grid(sigma = c(0.00001, 0.0001, 0.001, 0.005),
-                       C = c(0.00001,0.0001,0.001, 0.01))
+  grid <-  expand.grid(sigma = c(0.000001, 0.000001, 0.00001, 0.0001),
+                       C = c(0.0000001, 0.000001, 0.00001, 0.0001))
   cv <- trainControl(method="repeatedcv",
                      repeats = 10,
                      number=5,
@@ -115,7 +115,7 @@ test_roc <- roc(all.test.response, all.test.predictor, auc=TRUE, ci=TRUE)
 #cv_roc <- roc(all.cv.response, all.cv.predictor, auc=TRUE, ci=TRUE)
 
 full <- matrix(c(cv_aucs, test_aucs, best.tunes.sigma, best.tunes.cost), ncol=4)
-write.table(full, file='data/process/SVM_RBF_aucs_hps_R.tsv', quote=FALSE, sep='\t', col.names = c("cv_aucs","test_aucs", "sigma", "cost"), row.names = FALSE)
+write.table(full, file='data/process/SVM_RBF_aucs_hps_R.tsv', quote=FALSE, sep='\t', col.names = c("cv_aucs","test_aucs", "Sigma", "Cost"), row.names = FALSE)
 
 pdf("results/figures/SVM_RBF_inR.pdf")
 par(mar=c(4,4,1,1))
