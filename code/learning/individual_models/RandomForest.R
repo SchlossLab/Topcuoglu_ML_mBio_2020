@@ -7,7 +7,7 @@
 #### To be able to run this script we need to be in our project directory.
 
 #### The dependinces for this script are consolidated in the first part
-deps = c("kernlab","LiblineaR", "doParallel","pROC", "caret", "gtools", "tidyverse");
+deps = c("randomForest","LiblineaR", "doParallel","pROC", "caret", "gtools", "tidyverse");
 for (dep in deps){
   if (dep %in% installed.packages()[,"Package"] == FALSE){
     install.packages(as.character(dep), quiet=TRUE, repos = "http://cran.us.r-project.org");
