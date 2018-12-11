@@ -1,57 +1,72 @@
 #### Author: Begum Topcuoglu
 #### Date: 2018-10-11
-#### Title: Logistic Regression Pipeline for Baxter GLNE007 Dataset
+#### Title: Random Forest Pipeline for Baxter GLNE007 Dataset
 
-#### Description: This script will read in 0.03 subsampled OTU dataset and the metadata that has the cancer diagnosis. It generates a Random Forest model. The model is trained on 80% of the data and then tested on 20% of the data. It also plots the cross validation and testing ROC curves to look at generalization performance of the model.
+#### Description: This script will read in 0.03 subsampled OTU dataset and the metadata that has the cancer diagnosis. It generates a Decision Tree model. The model is trained on 80% of the data and then tested on 20% of the data. It also plots the cross validation and testing ROC curves to look at generalization performance of the model.
 
 #### To be able to run this script we need to be in our project directory.
 
 #### The dependinces for this script are consolidated in the first part
-chooseCRANmirror(graphics=FALSE, ind=1)
-deps = c("doParallel", "pROC", "caret","knitr","rmarkdown","vegan","gtools", "tidyverse");
+deps = c("kernlab","LiblineaR", "doParallel","pROC", "caret", "gtools", "tidyverse");
 for (dep in deps){
   if (dep %in% installed.packages()[,"Package"] == FALSE){
-    install.packages(as.character(dep), quiet=TRUE);
+    install.packages(as.character(dep), quiet=TRUE, repos = "http://cran.us.r-project.org");
   }
   library(dep, verbose=FALSE, character.only=TRUE)
 }
 
 # Read in metadata and select only sample Id and diagnosis columns
 meta <- read.delim('data/metadata.tsv', header=T, sep='\t') %>%
-  select(sample, dx)
+  select(sample, Dx_Bin, fit_result)
+
 
 # Read in OTU table and remove label and numOtus columns
 shared <- read.delim('data/baxter.0.03.subsample.shared', header=T, sep='\t') %>%
   select(-label, -numOtus)
 
-# Merge metadata and OTU table and remove all the samples that are diagnosed with adenomas. Keep only cancer and normal.
+# Merge metadata and OTU table.
+# Group advanced adenomas and cancers together as cancer and normal, high risk normal and non-advanced adenomas as normal
 # Then remove the sample ID column
 data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
-  filter(dx != 'adenoma') %>%
-  select(-sample)
+  mutate(dx = case_when(
+    Dx_Bin== "Adenoma" ~ "normal",
+    Dx_Bin== "Normal" ~ "normal",
+    Dx_Bin== "High Risk Normal" ~ "normal",
+    Dx_Bin== "adv Adenoma" ~ "cancer",
+    Dx_Bin== "Cancer" ~ "cancer"
+  )) %>% 
+  select(-sample, -Dx_Bin) %>% 
+  drop_na()
 
 # We want the diagnosis column to a factor
 data$dx <- factor(data$dx, labels=c("normal", "cancer"))
 
 # Create
+best.tunes <- c()
 all.test.response <- all.test.predictor <- test_aucs <- c()
-#all.cv.response <- all.cv.predictor <- cv_aucs <- c()
-library(doParallel)
+all.cv.response <- all.cv.predictor <- cv_aucs <- c()
 cl <- makePSOCKcluster(4)
 registerDoParallel(cl)
-for (i in 1:50) {
+for (i in 1:1) {
+  print(i)
   inTraining <- createDataPartition(data$dx, p = .80, list = FALSE)
   training <- data[ inTraining,]
   testing  <- data[-inTraining,]
-  x_train <- training %>% select(-dx)
-  y_train <- training$dx
-  y_train <- as.factor(y_train)
+  preProcValues <- preProcess(training, method = "range")
+  trainTransformed <- predict(preProcValues, training)
+  testTransformed <- predict(preProcValues, testing)
 
-  grid <-  expand.grid(mtry = c(80, 500, 1000, 1500))
+  grid <-  expand.grid(mtry = c(10, 
+                                80, 
+                                500, 
+                                1000, 
+                                1500, 
+                                2000, 
+                                3000))
 
 
   cv <- trainControl(method="repeatedcv",
-                     repeats = 50,
+                     repeats = 10,
                      number=5,
                      returnResamp="final",
                      classProbs=TRUE,
@@ -59,47 +74,56 @@ for (i in 1:50) {
                      indexFinal=NULL,
                      savePredictions = TRUE)
 
-  RF <- train(x_train, y_train,
-                               method = "rf",
-                               trControl = cv,
-                               metric = "ROC",
-                               tuneGrid = grid, ntree=1000,
-                               verbose=TRUE
-                               )
+  rf <- train(dx ~ .,
+              data=trainTransformed,
+              method = "rf",
+              trControl = cv,
+              metric = "ROC",
+              tuneGrid = grid,
+              ntree=1000)
 
-  # Mean AUC value of the best lambda parameter training over repeats
-  cv_auc <- getTrainPerf(RF)$TrainROC
-  # Best lambda parameter
-  print(RF$bestTune)
+  # Best mtry parameter
+  best.tune <- rf$bestTune[1]
+  # Save the best mtry parameter
+  best.tunes <- c(best.tunes, best.tune)
+  # Print the best mtry parameter 
+  print(rf$bestTune)
+  # Mean AUC value over repeats of the best cost parameter during training
+  cv_auc <- getTrainPerf(rf)$TrainROC
+  # Print the cv mean AUC
+  print(max(rf$results[,"ROC"]))
   # Plot parameter performane
   #trellis.par.set(caretTheme())
-  #plot(L2LogicalRegression)
+  #plot(rf)
   # Predict on the test set and get predicted probabilities
-  rpartProbs <- predict(RF, testing, type="prob")
+  rpartProbs <- predict(rf, testTransformed, type="prob")
   # Test AUC calculation
-  test_roc <- roc(ifelse(testing$dx == "cancer", 1, 0), rpartProbs[[2]])
+  test_roc <- roc(ifelse(testTransformed$dx == "cancer", 1, 0), rpartProbs[[2]])
   test_auc <- test_roc$auc
+  print(test_auc)
   # Save all the test AUCs over iterations in test_aucs
   test_aucs <- c(test_aucs, test_auc)
   # Cross-validation mean AUC value
-  #cv_auc <- getTrainPerf(L2LogicalRegression)$TrainROC
-  # Save all the test AUCs over iterations in cv_aucs
-  #cv_aucs <- c(cv_aucs, cv_auc)
+  # Save all the cv AUCs over iterations in cv_aucs
+  cv_aucs <- c(cv_aucs, cv_auc)
   # Save the test set labels in all.test.response. Labels converted to 0 for normal and 1 for cancer
-  all.test.response <- c(all.test.response, ifelse(testing$dx == "cancer", 1, 0))
+  all.test.response <- c(all.test.response, ifelse(testTransformed$dx == "cancer", 1, 0))
   # Save the test set predicted probabilities of highest class in all.test.predictor
   all.test.predictor <- c(all.test.predictor, rpartProbs[[2]])
   # Save the training set labels in all.test.response. Labels are in the obs column in the training object
-  #all.cv.response <- c(all.cv.response, RF$pred$obs)
+  #all.cv.response <- c(all.cv.response, rf$pred$obs)
   # Save the training set labels
-  #all.cv.predictor <- c(all.cv.predictor, RF$pred$normal)
+  #all.cv.predictor <- c(all.cv.predictor, rf$pred$normal)
 }
 stopCluster(cl)
 # Get the ROC of both test and cv from all the iterations
 test_roc <- roc(all.test.response, all.test.predictor, auc=TRUE, ci=TRUE)
 #cv_roc <- roc(all.cv.response, all.cv.predictor, auc=TRUE, ci=TRUE)
 
-pdf("results/figures/RandomForest_inR.pdf")
+full <- matrix(c(cv_aucs, test_aucs, best.tunes), ncol=3)
+write.table(full, file='data/process/random_forest_aucs_hps_R.tsv', quote=FALSE, sep='\t', col.names = c("cv_aucs","test_aucs", "Max-depth"), row.names = FALSE)
+
+pdf("results/figures/Random_Forest_inR.pdf")
 par(mar=c(4,4,1,1))
 # Plot random line on ROC curve
 plot(c(1,0),c(0,1),
@@ -114,12 +138,14 @@ plot(test_roc,
      lwd=2,
      add=T,
      lty=1)
-# Plot Test ROC in blue line
+# Compute the CI of the AUC
+auc.ci <- ci.auc(test_roc)
+# Plot CV ROC in blue line
 #plot(cv_roc,
-     #col='blue',
-     #lwd=2,
-     #add=T,
-     #lty=1)
+#     col='blue',
+#     lwd=2,
+#     add=T,
+#     lty=1)
 # Label the axes
 mtext(side=2,
       text="Sensitivity",
@@ -131,13 +157,13 @@ mtext(side=1,
       cex=1.5)
 # Add legends for both lines
 legend(x=0.7,y=0.2,
-       legend=(sprintf('Random Forest - AUC: %.3g', test_roc$auc)),
+       legend=(sprintf('Test - AUC: %.3g, CI: %.3g', test_roc$auc, (auc.ci[3]-auc.ci[2]))),
        bty='n',
        xjust=0,
        lty=c(1,1),
        col='black',
        text.col='black')
 
-sens.ci <- ci.se(test_roc)
-plot(sens.ci, type="shape", col="gray88")
+
+# Save the figure
 dev.off()
