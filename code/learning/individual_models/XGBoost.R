@@ -58,7 +58,7 @@ for (i in 1:100) {
   
   grid <-  expand.grid(nrounds=100,
                        gamma=0,
-                       eta=c(0.1, 1),
+                       eta=c(0.01, 0.1),
                        max_depth=c(6,7,8),
                        colsample_bytree= 0.8,
                        min_child_weight=c(1,2,3),
