@@ -2,7 +2,7 @@
 #### Date: 2018-10-11
 #### Title: Random Forest Pipeline for Baxter GLNE007 Dataset
 
-#### Description: This script will read in 0.03 subsampled OTU dataset and the metadata that has the cancer diagnosis. It generates a Decision Tree model. The model is trained on 80% of the data and then tested on 20% of the data. It also plots the cross validation and testing ROC curves to look at generalization performance of the model.
+#### Description: This script will read in 0.03 subsampled OTU dataset and the metadata that has the cancer diagnosis. It generates a Random Forest model. The model is trained on 80% of the data and then tested on 20% of the data. It also plots the cross validation and testing ROC curves to look at generalization performance of the model.
 
 #### To be able to run this script we need to be in our project directory.
 
@@ -121,7 +121,7 @@ test_roc <- roc(all.test.response, all.test.predictor, auc=TRUE, ci=TRUE)
 #cv_roc <- roc(all.cv.response, all.cv.predictor, auc=TRUE, ci=TRUE)
 
 full <- matrix(c(cv_aucs, test_aucs, best.tunes), ncol=3)
-write.table(full, file='data/process/random_forest_aucs_hps_R.tsv', quote=FALSE, sep='\t', col.names = c("cv_aucs","test_aucs", "Max-depth"), row.names = FALSE)
+write.table(full, file='data/process/random_forest_aucs_hps_R.tsv', quote=FALSE, sep='\t', col.names = c("cv_aucs","test_aucs", "mtry"), row.names = FALSE)
 
 pdf("results/figures/Random_Forest_inR.pdf")
 par(mar=c(4,4,1,1))
