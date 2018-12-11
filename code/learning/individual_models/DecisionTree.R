@@ -1,5 +1,5 @@
 #### Author: Begum Topcuoglu
-#### Date: 2018-10-11
+#### Date: 2018-12-11
 #### Title: Decision Tree Pipeline for Baxter GLNE007 Dataset
 
 #### Description: This script will read in 0.03 subsampled OTU dataset and the metadata that has the cancer diagnosis. It generates a Decision Tree model. The model is trained on 80% of the data and then tested on 20% of the data. It also plots the cross validation and testing ROC curves to look at generalization performance of the model.
