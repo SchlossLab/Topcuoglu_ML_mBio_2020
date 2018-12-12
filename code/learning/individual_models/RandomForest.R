@@ -60,9 +60,7 @@ for (i in 1:100) {
                                 80, 
                                 500, 
                                 1000, 
-                                1500, 
-                                2000, 
-                                3000))
+                                1500))
 
 
   cv <- trainControl(method="repeatedcv",
