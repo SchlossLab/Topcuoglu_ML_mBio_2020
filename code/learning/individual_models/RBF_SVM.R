@@ -48,7 +48,7 @@ all.test.response <- all.test.predictor <- test_aucs <- c()
 all.cv.response <- all.cv.predictor <- cv_aucs <- c()
 cl <- makePSOCKcluster(4)
 registerDoParallel(cl)
-for (i in 1:100) {
+for (i in 1:50) {
   print(i+1)
   inTraining <- createDataPartition(data$dx, p = .80, list = FALSE)
   training <- data[ inTraining,]
