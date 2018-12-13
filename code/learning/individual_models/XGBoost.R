@@ -45,8 +45,6 @@ data$dx <- factor(data$dx, labels=c("normal", "cancer"))
 best.tunes <- c()
 all.test.response <- all.test.predictor <- test_aucs <- c()
 all.cv.response <- all.cv.predictor <- cv_aucs <- c()
-cl <- makePSOCKcluster(4)
-registerDoParallel(cl)
 for (i in 1:100) {
   print(i)
   inTraining <- createDataPartition(data$dx, p = .80, list = FALSE)
@@ -116,7 +114,6 @@ for (i in 1:100) {
   # Save the training set labels
   #all.cv.predictor <- c(all.cv.predictor, xgboost$pred$normal)
 }
-stopCluster(cl)
 # Get the ROC of both test and cv from all the iterations
 test_roc <- roc(all.test.response, all.test.predictor, auc=TRUE, ci=TRUE)
 #cv_roc <- roc(all.cv.response, all.cv.predictor, auc=TRUE, ci=TRUE)
