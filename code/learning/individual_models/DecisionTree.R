@@ -52,10 +52,10 @@ for (i in 1:100) {
   preProcValues <- preProcess(training, method = "range")
   trainTransformed <- predict(preProcValues, training)
   testTransformed <- predict(preProcValues, testing)
-  grid <-  expand.grid(maxdepth = c(1,2,3,4,5))
+  grid <-  expand.grid(maxdepth = c(1,2,3,4,5,6,7,8,9,10))
   cv <- trainControl(method="repeatedcv",
                      repeats = 10,
-                     number=5,
+                     number=10,
                      returnResamp="final",
                      classProbs=TRUE,
                      summaryFunction=twoClassSummary,
