@@ -1,13 +1,13 @@
 #### Author: Begum Topcuoglu
 #### Date: 2018-10-11
-#### Title: Random Forest Pipeline for Baxter GLNE007 Dataset
+#### Title: XGBoost Pipeline for Baxter GLNE007 Dataset
 
-#### Description: This script will read in 0.03 subsampled OTU dataset and the metadata that has the cancer diagnosis. It generates a Random Forest model. The model is trained on 80% of the data and then tested on 20% of the data. It also plots the cross validation and testing ROC curves to look at generalization performance of the model.
+#### Description: This script will read in 0.03 subsampled OTU dataset and the metadata that has the cancer diagnosis. It generates a XGBoost model. The model is trained on 80% of the data and then tested on 20% of the data. It also plots the cross validation and testing ROC curves to look at generalization performance of the model.
 
 #### To be able to run this script we need to be in our project directory.
 
 #### The dependinces for this script are consolidated in the first part
-deps = c("randomForest","LiblineaR", "doParallel","pROC", "caret", "gtools", "tidyverse");
+deps = c("xgboost", "doParallel","pROC", "caret", "gtools", "tidyverse");
 for (dep in deps){
   if (dep %in% installed.packages()[,"Package"] == FALSE){
     install.packages(as.character(dep), quiet=TRUE, repos = "http://cran.us.r-project.org");
@@ -53,16 +53,18 @@ for (i in 1:100) {
   preProcValues <- preProcess(training, method = "range")
   trainTransformed <- predict(preProcValues, training)
   testTransformed <- predict(preProcValues, testing)
-
-  grid <-  expand.grid(mtry = c(10, 
-                                80, 
-                                500, 
-                                1000, 
-                                1500, 
-                                2000))
-
-
+  
+  grid <-  expand.grid(nrounds=100,
+                       gamma=0,
+                       eta=c(0.01, 0.1),
+                       max_depth=c(6,7,8),
+                       colsample_bytree= 0.8,
+                       min_child_weight=c(1,2,3),
+                       subsample=c(0.7,0.8,0.9))
+  
+  
   cv <- trainControl(method="repeatedcv",
+                     verboseIter = TRUE,
                      repeats = 1,
                      number=5,
                      returnResamp="final",
@@ -70,30 +72,30 @@ for (i in 1:100) {
                      summaryFunction=twoClassSummary,
                      indexFinal=NULL,
                      savePredictions = TRUE)
-
-  rf <- train(dx ~ .,
+  
+  xgboost <- train(dx ~ .,
               data=trainTransformed,
-              method = "rf",
+              method = "xgbTree",
               trControl = cv,
               metric = "ROC",
               tuneGrid = grid,
-              ntree=1000)
-
+              verbose = TRUE)
+  
   # Best mtry parameter
-  best.tune <- rf$bestTune[1]
+  best.tune <- xgboost$bestTune[1]
   # Save the best mtry parameter
   best.tunes <- c(best.tunes, best.tune)
   # Print the best mtry parameter 
-  print(rf$bestTune)
+  print(xgboost$bestTune)
   # Mean AUC value over repeats of the best cost parameter during training
-  cv_auc <- getTrainPerf(rf)$TrainROC
+  cv_auc <- getTrainPerf(xgboost)$TrainROC
   # Print the cv mean AUC
-  print(max(rf$results[,"ROC"]))
+  print(max(xgboost$results[,"ROC"]))
   # Plot parameter performane
   #trellis.par.set(caretTheme())
-  #plot(rf)
+  #plot(xgboost)
   # Predict on the test set and get predicted probabilities
-  rpartProbs <- predict(rf, testTransformed, type="prob")
+  rpartProbs <- predict(xgboost, testTransformed, type="prob")
   # Test AUC calculation
   test_roc <- roc(ifelse(testTransformed$dx == "cancer", 1, 0), rpartProbs[[2]])
   test_auc <- test_roc$auc
@@ -108,18 +110,18 @@ for (i in 1:100) {
   # Save the test set predicted probabilities of highest class in all.test.predictor
   all.test.predictor <- c(all.test.predictor, rpartProbs[[2]])
   # Save the training set labels in all.test.response. Labels are in the obs column in the training object
-  #all.cv.response <- c(all.cv.response, rf$pred$obs)
+  #all.cv.response <- c(all.cv.response, xgboost$pred$obs)
   # Save the training set labels
-  #all.cv.predictor <- c(all.cv.predictor, rf$pred$normal)
+  #all.cv.predictor <- c(all.cv.predictor, xgboost$pred$normal)
 }
 # Get the ROC of both test and cv from all the iterations
 test_roc <- roc(all.test.response, all.test.predictor, auc=TRUE, ci=TRUE)
 #cv_roc <- roc(all.cv.response, all.cv.predictor, auc=TRUE, ci=TRUE)
 
-full <- matrix(c(cv_aucs, test_aucs, best.tunes), ncol=3)
-write.table(full, file='data/process/random_forest_aucs_hps_R.tsv', quote=FALSE, sep='\t', col.names = c("cv_aucs","test_aucs", "mtry"), row.names = FALSE)
+full <- matrix(c(cv_aucs, test_aucs), ncol=2)
+write.table(full, file='data/process/xgboost_aucs_hps_R.tsv', quote=FALSE, sep='\t', col.names = c("cv_aucs","test_aucs"), row.names = FALSE)
 
-pdf("results/figures/Random_Forest_inR.pdf")
+pdf("results/figures/XGBoost_inR.pdf")
 par(mar=c(4,4,1,1))
 # Plot random line on ROC curve
 plot(c(1,0),c(0,1),

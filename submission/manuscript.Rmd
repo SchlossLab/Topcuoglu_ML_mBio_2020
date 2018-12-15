@@ -82,6 +82,15 @@ logit <- read.delim('../data/process/L2_Logistic_Regression.tsv', header=T, sep=
   rename(Performance = level_1) %>% 
   mutate(model="L2-Logistic Regression")
 
+logit_summary <- logit %>%  
+  group_by(Performance) %>% 
+  summarise(meanAUC=mean(AUC), std=sd(AUC)) 
+
+cv_meanAUC <- logit_summary[1,2]
+cv_sdAUC <- logit_summary[1,3]
+test_meanAUC <- logit_summary[2,2]
+test_sdAUC <- logit_summary[2,3]
+
 # Read in AUCs table generated from l1 SVM linear kernel for all samples
 #       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
 #       FIT is a feature
@@ -90,6 +99,10 @@ l1svm <- read.delim('../data/process/L1_SVM_Linear_Kernel.tsv', header=T, sep='\
   select(level_1, AUC) %>% 
   rename(Performance = level_1) %>% 
   mutate(model="L1-SVM Linear") 
+
+l1svm_summary <- l1svm %>%  
+  group_by(Performance) %>% 
+  summarise(meanAUC=mean(AUC), std=sd(AUC))
 
 # Read in AUCs table generated from l2 SVM linear kernel for all samples
 #       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
@@ -100,6 +113,10 @@ l2svm <- read.delim('../data/process/L2_SVM_Linear_Kernel.tsv', header=T, sep='\
   rename(Performance = level_1) %>% 
   mutate(model="L2-SVM Linear")
 
+l2svm_summary <- l2svm %>%  
+  group_by(Performance) %>% 
+  summarise(meanAUC=mean(AUC), std=sd(AUC))
+
 # Read in AUCs table generated from  SVM RBF kernel for all samples
 #       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
 #       FIT is a feature
@@ -108,6 +125,10 @@ svmRBF <- read.delim('../data/process/SVM_RBF.tsv', header=T, sep='\t') %>%
   select(level_1, AUC) %>% 
   rename(Performance = level_1) %>% 
   mutate(model="SVM RBF")
+
+svmRBF_summary <- svmRBF %>%  
+  group_by(Performance) %>% 
+  summarise(meanAUC=mean(AUC), std=sd(AUC))
 
 # Read in AUCs table generated from xgboost for all samples
 #       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
@@ -118,6 +139,10 @@ xgboost <- read.delim('../data/process/XGBoost.tsv', header=T, sep='\t') %>%
   rename(Performance = level_1) %>% 
   mutate(model="XGBoost")
 
+xgboost_summary <- xgboost %>%  
+  group_by(Performance) %>% 
+  summarise(meanAUC=mean(AUC), std=sd(AUC))
+
 # Read in AUCs table generated from random forest for all samples
 #       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
 #       FIT is a feature
@@ -127,6 +152,9 @@ rf <- read.delim('../data/process/Random_Forest.tsv', header=T, sep='\t') %>%
   rename(Performance = level_1) %>% 
   mutate(model="Random Forest ")
 
+rf_summary <- rf %>%  
+  group_by(Performance) %>% 
+  summarise(meanAUC=mean(AUC), std=sd(AUC))
 # Read in AUCs table generated from decision tree for all samples
 #       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
 #       FIT is a feature
@@ -136,33 +164,9 @@ dt <- read.delim('../data/process/Decision_Tree.tsv', header=T, sep='\t') %>%
   rename(Performance = level_1) %>% 
   mutate(model="Decision Tree")
 
-######################################################################
-#------------ Put all the loaded AUC tables together -----------------#
-######################################################################
-all <- bind_rows(logit, l1svm, l2svm, svmRBF, xgboost, rf, dt) %>% 
-  group_by(model)
-
-
-
-######################################################################
-#---Load .tsv data with cvAUCs for hyper-parameters  ----#
-######################################################################
-# Read in hyper-parameter AUCs generated from L2 logistic regression model for all samples:
-logit <- read.delim('../data/process/L2_Logistic_Regression_parameters.tsv', header=T, sep='\t')%>%
-  select(-X) %>% 
-  mutate(meanAUC=rowMeans(.[, 2:101])) %>% 
-  select(C, meanAUC) 
-# Read in hyper-parameter AUCs generated from L1 Linear SVM model for all samples:
-l1svm <- read.delim('../data/process/L1_SVM_Linear_Kernel_parameters.tsv', header=T, sep='\t')%>%
-  select(-X) %>% 
-  mutate(meanAUC=rowMeans(.[, 2:101])) %>% 
-  select(C, meanAUC) 
-# Read in hyper-parameter AUCs generated from L2 Linear SVM model for all samples:
-l2svm <- read.delim('../data/process/L2_SVM_Linear_Kernel_parameters.tsv', header=T, sep='\t')%>%
-  select(-X) %>% 
-  mutate(meanAUC=rowMeans(.[, 2:101])) %>% 
-  select(C, meanAUC) 
-
+dt_summary <- dt %>%  
+  group_by(Performance) %>% 
+  summarise(meanAUC=mean(AUC), std=sd(AUC))
 ```
 
 ```{python, cache=FALSE, message=FALSE, warning=FALSE, engine.path = '/Library/Frameworks/Python.framework/Versions/3.6/bin/python3'}
@@ -196,18 +200,18 @@ $\dagger$ To whom correspondence should be addressed: pschloss@umich.edu
 
 ## Abstract
 
+As the microbiome field continues to grow, there is an ever-increasing demand for reproducible machine learning methods for identifying associations between members of the microbiome and phenotypes. Currently, the field’s use of machine learning lacks clarity and consistency. There is a need to implement good machine learning practices to generate reproducible and robust models. One application of machine learning to microbiome data has been to classify patients as having colorectal tumors based on microbiota-associated biomarkers. Colorectal cancer is one of the leading cause of death among cancers in the United States. Colonoscopy as a screening tool is effective, however it is invasive and have a low rate of patient adherence. Previous studies have shown that bacterial abundances in the stool can predict colorectal tumors in the colon and can be used as a non-invasive screening tool.  However, the prediction performance of these models vary greatly, with areas under the receiver operating characteristic curve (AUC) of 0.7-0.9 [@sze_leveraging_2018; @baxter_microbiota-based_2016; @baxter_dna_2016; @zackular_human_2014]. We used the fecal hemoglobin concentration and 16S rRNA gene sequences from stool samples to classify `r paste(nrow(meta))` patients as having advanced tumors or not. Modeling pipelines were established for L2-regularized Logistic Regression, L1 and L2 Linear Support Vector Machines (SVM), Radial Basis Function SVM, Decision Tree, Random Forest and Extreme Gradient Boosting (XGBoost) binary classification models. Tree-based methods, namely Decision Tree, Random Forest and XGBoost were less susceptible to overfitting and in general had higher sensitivity and specificity for advanced tumors. Aside from evaluating generalization and classification performance of each model, this study established standards for modeling pipelines of microbiome-associated machine learning models.   
 
 \newpage
 
 ## Introduction
 
-As gut microbiome field continues to grow, there will be an ever-increasing demand for reproducible machine learning  methods to analyze 16S rRNA gene sequence data and to determine association of the microbiome with a continuous or categorical phenotype of interest. The use of machine learning in microbiome literature lack clarity over the learning pipeline which spans the problem formulation, feature selection, feature pre-processing, model learning, and output. There is a need for guidance on how to properly implement good machine learning practices to generate reproducible, robust and actionable models. There is also a clinical need to generate interpretable models for biomedical researchers and clinicans to adopt and use regularly [@wiens_editorial:_2016]. 
 
-Recently, there is an interest on using machine learning to predict colorectal cancer progression with microbiota-assiciated biomarkers. Colorectal cancer is one of the leading cause of death among cancers in the United States. Each person in the industrialized world has on average a one-in-twenty chance of developing colorectal cancer (CRC) in their lifetime and once diagnosed, more than one-third will not survive 5 years [@seer_2016; @street_colorectal_nodate; @weir_past_2015]. Colonoscopy as a screening tool is very effective, however it is very invasive, expensive and have a low rate of patient adherence. Therefore, there is a need for improved non-invasive methods to screen individuals. Gut microbiome-based biomarkers can be used as a non-invasive screening method. 
+Colorectal cancer is the second most commonly occurring cancer in men and third in women, with 1.8 million new cases in 2018 (8). Early detection of screen-relevant neoplasias (SRN) which are cancerous or advanced precancerous lesions, is crucial for treatment of colorectal cancer. Patients whose lesions are detected at an early stage have a greater than 90 % chance of survival, yet a significant proportion of the US population remain unscreened (9). The high cost and invasiveness of screening methods such as colonoscopy and sigmoidoscopy lower patient adherence. There is a need for non-invasive screening tests that have high sensitivity and specificity for SRN. 
 
-Patients with colorectal cancer have different stool community of microbes compared to adults with normal colons. This difference however cannot be explained by a single or a handful of candidate taxa in the gut microbiome but by many of them in relation to one another. Therefore, machine learning emerges as a tool to detect the difference between the gut microbiomes of CRC patients and healthy individuals. Previous studies have shown that human hemoglobin levels and bacterial population abundances in the stool help us predict screen relevant growth in the colon, however the literature for the problem of classifying colorectal disease status vary greatly, with areas under the receiver operating characteristic curve (AUC) of 0.7-0.9 [@sze_leveraging_2018; @baxter_microbiota-based_2016; @baxter_dna_2016; @zackular_human_2014]. The variation in classification performance is based in part on differences in the task definition, in part on differences in the study populations, and in part on the learning pipeline. In this study, classification pipelines with L2-regularized logistic regression, L1 and L2 linear suppor vector machines (SVM), radial basis function SVM , decision tree, random forest and XGBoost classifiers are established. The generalization and prediction performance of these classifiers are evaluated and each classifier is examined for its reproducibility, robustness, actionability, interpretibility and susceptibility to overfitting.
+Patients with colorectal cancer have different stool community of microbes than adults with normal colons (10–15). This difference however cannot be explained by a single species in the gut but by many of them in relation to one another. Therefore, machine learning emerged as a tool to identify the microbial biomarkers of CRC. Previous studies that used cohorts of 90 (30 SRN, 30 adenomas, 30 normal colons) (7) and 490 (229 SRN, 89 adenoma, 172 normal colons) patients (5) suggest that machine learning models can predict SRN. However, the prediction performance of previous models varies greatly. There is a need for implementing consistent and transparent machine learning practices to generate reproducible and replicable CRC biomarker models. This study aims to determine whether a reproducible and replicable classification model that incorporate the relative abundance of fecal bacterial populations can be developed to discriminate between individuals with and without, SRN.
 
-Here, colonic disease status is defined as Normal or Screen Relevant Neoplasias (SRN). Stool bacterial population abundances and stool hemoglobin levels of `r paste(sum(sum(meta$dx=="normal")+sum(meta$Dx_Bin=="Adenoma")))` Normal and `r paste(sum(sum(meta$dx=="cancer")+sum(meta$Dx_Bin=="adv Adenoma")))` SRN samples were used to learn binary classifiers and evaluate their performances. The results show that ...... (Is there a maximum threshold of prediction with all these methods? Does an increase in model complexity improve predictability?)
+Here, colonic disease status is defined as Normal or Screen Relevant Neoplasias (SRN). Stool bacterial population abundances and stool hemoglobin levels of `r paste(sum(sum(meta$dx=="normal")+sum(meta$Dx_Bin=="Adenoma")))` Normal and `r paste(sum(sum(meta$dx=="cancer")+sum(meta$Dx_Bin=="adv Adenoma")))` SRN samples were used to learn binary classifiers and evaluate their performances. Modeling pipelines were established for L2-regularized Logistic Regression, L1 and L2 Linear Support Vector Machines (SVM), Radial Basis Function SVM, Decision Tree, Random Forest and XGBoost binary classification models. The mean AUCs of these models were `r paste(round(test_meanAUC,2))` ± `r paste(round(test_sdAUC,2))`,  `r paste(round(l1svm_summary[2,2],2))` ± `r paste(round(l1svm_summary[2,3],2))`,  `r paste(round(l2svm_summary[2,2],2))` ± `r paste(round(l2svm_summary[2,3],2))`, `r paste(round(svmRBF_summary[2,2],2))` ± `r paste(round(svmRBF_summary[2,3],2))`, `r paste(round(dt_summary[2,2],2))` ± `r paste(round(dt_summary[2,3],2))`, `r paste(round(rf_summary[2,2],2))` ± `r paste(round(rf_summary[2,3],2))`, and `r paste(round(xgboost_summary[2,2],2))` ± `r paste(round(xgboost_summary[2,3],2))`, respectively.
 
 ## Results and Discussion
 
