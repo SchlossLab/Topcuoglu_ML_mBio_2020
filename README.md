@@ -31,17 +31,23 @@
 
 ### How to regenerate this repository
 
-#### Dependencies and locations
+#### Dependencies and locations for Python code
 * Python 3.6.5 or Python 2.7, Matplotlib, Numpy, Scipy, Sympy, Pandas, Sklearn and XGBoost to run Shallow Learning code. 
 * If running Deep Learning code you need to have Python 3 and Latest PyTorch and Latest Keras with Theano backend.
 * Run everything from project directory.
+* The files mentioned above at process/ from Marc Sze's analysis: https://github.com/SchlossLab/Sze_CRCMetaAnalysis_mBio_2018
+
+#### Dependencies and locations for R code
+* R version 3.5.0 
+* Caret package is used as the wrapper for all models
+* Run from project directory.
 * The files mentioned above at process/ from Marc Sze's analysis: https://github.com/SchlossLab/Sze_CRCMetaAnalysis_mBio_2018
 
 #### Run the following code
 ```
 git clone https://github.com/BTopcuoglu/DeepLearning
 ```
-#### To run L2 Logistic Regression, L1 and L2 Linear SVM, RBF SVM, Decision Tree, Random Forest and XGBoost
+#### To run L2 Logistic Regression, L1 and L2 Linear SVM, RBF SVM, Decision Tree, Random Forest and XGBoost in Python
 1. Generate tab-delimited files: Cross-validation and testing AUC scores of each model.
 2. Generate tab-delimited files: The AUC scores of each hyper-parameter tested for each model.
 3. Generate a comma-seperated file: The hyper-parameters tuned for each model in one file.
@@ -49,6 +55,13 @@ git clone https://github.com/BTopcuoglu/DeepLearning
 
 ```
 python code/learning/main.py
+```
+
+#### To run L2 Logistic Regression, L1 and L2 Linear SVM, RBF SVM, Decision Tree, Random Forest and XGBoost in R
+1. Generate tab-delimited files: Cross-validation and testing AUC scores for each data-split and hyper-parameter AUC scores of each model.
+2. Generate ROC curve figures: The testing ROC curves for each model. 
+```
+R CMD BATCH code/learning/main.R
 ```
 #### The Makefile will reproduce all the other figures and tables used in the manuscript.
 ```

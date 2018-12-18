@@ -38,11 +38,15 @@ rbf <- read.delim('data/process/SVM_RBF_aucs_hps_R.tsv', header=T, sep='\t')%>%
   melt_data%>% 
   mutate(model='RBF SVM') 
 
+xgboost <- read.delim('data/process/xgboost_aucs_hps_R.tsv', header=T, sep='\t')%>% 
+  melt_data%>% 
+  mutate(model='XGBoost') 
+
 dt <-  read.delim('data/process/decision_tree_aucs_hps_R.tsv', header=T, sep='\t')%>% 
   melt_data%>% 
   mutate(model='Decision Tree')
 
-all <- bind_rows(logit, l2svm, rbf, dt) %>%
+all <- bind_rows(logit, l2svm, rbf, dt, xgboost) %>%
   group_by(model)
 
 ######################################################################
