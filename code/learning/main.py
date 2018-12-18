@@ -86,7 +86,7 @@ for models in models:
         i=i+1
         print(i)
         ## Split dataset to 80% training 20% test sets.
-        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2,random_state = 200889)
+        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, shuffle=True, stratify = y)
         sc = MinMaxScaler(feature_range=(0, 1))
         x_train = sc.fit_transform(x_train)
         x_test = sc.transform(x_test)
