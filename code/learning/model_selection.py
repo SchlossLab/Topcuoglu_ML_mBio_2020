@@ -64,7 +64,7 @@ def select_model(net):
         'colsample_bytree': 0.8,
         'objective': 'binary:logistic'
         }
-        model = xgb.XGBClassifier(**ind_params, random_state=200889)
+        model = xgb.XGBClassifier(**ind_params)
         param_grid = {
         'n_estimators':[100],
         'learning_rate':[0.05, 0.1, 0.5],
