@@ -122,4 +122,4 @@ ggplot(all, aes(x = fct_reorder(model, AUC, fun = median, .asc =TRUE), y = AUC, 
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 
-ggsave("AUC_comparison.pdf", plot = last_plot(), device = 'pdf', path = 'results/figures', width = 15, height = 10)
+ggsave("AUC_comparison_python.pdf", plot = last_plot(), device = 'pdf', path = 'results/figures', width = 15, height = 10)

@@ -190,5 +190,5 @@ all <- plot_grid(logit_plot, l1svm_plot, l2svm_plot, svmRBF_plot_C_sigma, rf_plo
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 
-ggsave("HP_comparison.pdf", plot = all, device = 'pdf', path = 'results/figures', width = 20, height = 15)
+ggsave("HP_comparison_python.pdf", plot = all, device = 'pdf', path = 'results/figures', width = 20, height = 15)
 
