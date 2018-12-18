@@ -65,7 +65,7 @@ for (i in 1:100) {
   
   cv <- trainControl(method="repeatedcv",
                      verboseIter = TRUE,
-                     repeats = 1,
+                     repeats = 10,
                      number=5,
                      returnResamp="final",
                      classProbs=TRUE,

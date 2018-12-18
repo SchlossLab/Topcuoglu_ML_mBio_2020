@@ -46,9 +46,7 @@ best.tunes.sigma <- c()
 best.tunes.cost <- c()
 all.test.response <- all.test.predictor <- test_aucs <- c()
 all.cv.response <- all.cv.predictor <- cv_aucs <- c()
-cl <- makePSOCKcluster(4)
-registerDoParallel(cl)
-for (i in 1:50) {
+for (i in 1:100) {
   print(i+1)
   inTraining <- createDataPartition(data$dx, p = .80, list = FALSE)
   training <- data[ inTraining,]
@@ -66,7 +64,7 @@ for (i in 1:50) {
                      summaryFunction=twoClassSummary,
                      indexFinal=NULL,
                      savePredictions = TRUE)
-
+  
   rbf_SVM <- train(dx ~ .,
                    data=trainTransformed,
                    method = "svmRadial",
@@ -109,7 +107,7 @@ for (i in 1:50) {
   # Save the training set labels
   #all.cv.predictor <- c(all.cv.predictor, L2Logit$pred$normal)
 }
-stopCluster(cl)
+
 # Get the ROC of both test and cv from all the iterations
 test_roc <- roc(all.test.response, all.test.predictor, auc=TRUE, ci=TRUE)
 #cv_roc <- roc(all.cv.response, all.cv.predictor, auc=TRUE, ci=TRUE)

@@ -25,7 +25,7 @@ import pandas as pd
 
 def select_model(net):
     ## Define the n-folds for hyper-parameter optimization on training set.
-    cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=100, random_state=200889)
+    cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=200889)
     ## With the below if statements, we will define which classifier will be used.
     ## We will also define the hyper-parameters to be tuned and their budget for each model.
     if net=="L2_Logistic_Regression":
@@ -46,7 +46,7 @@ def select_model(net):
         gamma = [0.000000000001, 0.00000000001, 0.0000000001, 0.000000001]
         param_grid = dict(C=c_values, gamma=gamma)
     if net=="Random_Forest":
-        cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=25, random_state=200889)
+        cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=200889)
         model = RandomForestClassifier(bootstrap= True, random_state=200889)
         n_estimators = [1000]
         max_features= [10, 80, 500, 1000, 1500, 2000, 3000]
@@ -54,11 +54,11 @@ def select_model(net):
     if net=="Decision_Tree":
         model = DecisionTreeClassifier(random_state=200889)
         max_depth=[6, 8, 10, 50]
-        min_samples_split=[10, 25, 50]
+        min_samples_split=[10, 25, 50, 75, 100]
         param_grid = dict(max_depth=max_depth, min_samples_split=min_samples_split)
     if net=="XGBoost":
         # https://jessesw.com/XG-Boost/
-        cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=25, random_state=200889)
+        cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=200889)
         ind_params={
         'n_estimators':100,
         'colsample_bytree': 0.8,
@@ -67,8 +67,8 @@ def select_model(net):
         model = xgb.XGBClassifier(**ind_params, random_state=200889)
         param_grid = {
         'n_estimators':[100],
-        'learning_rate':[0.01, 0.1, 1],
-        'subsample': [0.7,0.8,0.9],
+        'learning_rate':[0.05, 0.1, 0.5],
+        'subsample': [0.5, 0.6, 0.7,0.8],
         'max_depth':[6,7,8],
         'min_child_weight':[1,2,3]
         }
