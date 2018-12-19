@@ -46,7 +46,12 @@ dt <-  read.delim('data/process/decision_tree_aucs_hps_R.tsv', header=T, sep='\t
   melt_data%>% 
   mutate(model='Decision Tree')
 
-all <- bind_rows(logit, l2svm, rbf, dt, xgboost) %>%
+rf <-  read.delim('data/process/random_forest_aucs_hps_R.tsv', header=T, sep='\t')%>% 
+  melt_data%>% 
+  mutate(model='Random Forest')
+
+
+all <- bind_rows(logit, l2svm, rbf, dt, xgboost, rf) %>%
   group_by(model)
 
 ######################################################################
