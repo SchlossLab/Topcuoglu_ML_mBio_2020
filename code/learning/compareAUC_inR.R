@@ -84,86 +84,20 @@ ggplot(all, aes(x = fct_reorder(model, AUC, fun = median, .asc =TRUE), y = AUC, 
 ggsave("AUC_comparison_R.pdf", plot = last_plot(), device = 'pdf', path = 'results/figures', width = 10, height = 10)
 
 
-logit %>% 
-  group_by(Performance) 
+######################################################################
+#Plot the mean AUC values for hyper parameters tested #
+######################################################################
 
-logit_parameter <- ggplot(logit,
-                    aes(x = factor(Cost), y = AUC)) +
-  geom_boxplot(aes(fill=Performance)) +
-    theme_bw() +
-    theme(legend.justification=c(0,1), 
-          legend.position=c(0,1),
-          legend.box.margin=margin(c(10,10,10,10)),
-          legend.text=element_text(size=18),
-          legend.title=element_text(size=22),
-          panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank(),
-          panel.background = element_blank(),
-          text = element_text(size = 12),
-          axis.text.x=element_text(size = 10,
-                                   colour='black'),
-          axis.text.y=element_text(size = 10,
-                                   colour='black'),
-          axis.title.y=element_text(size = 15),
-          axis.title.x=element_text(size = 15)) +
-    scale_y_continuous(name = "L2 Logistic Regression AUC",
-                       breaks = seq(0.5, 1, 0.02),
-                       limits=c(0.5, 1), expand=c(0,0)) +
-  scale_x_discrete(name = "Hyper-parameter (Cost) ")
+logit_HP_plot <- plot_parameter_linear(logit) +  scale_y_continuous(name="Logistic Regression mean AUC",
+                                                    limits = c(0.50, 1),
+                                                    breaks = seq(0.5, 1, 0.05))
+
+l2svm_HP_plot <- plot_parameter_linear(l2svm) +   scale_y_continuous(name="L2 Support Vector Machine mean AUC",
+                                                                     limits = c(0.50, 1),
+                                                                     breaks = seq(0.5, 1, 0.05))
+
+l2svm_HP_plot <- plot_parameter_linear(l2svm) +   scale_y_continuous(name="L2 Support Vector Machine mean AUC",
+                                                                     limits = c(0.50, 1),
+                                                                     breaks = seq(0.5, 1, 0.05))
 
 
-l2svm %>% 
-  group_by(Performance) 
-
-l2svm_parameter <- ggplot(l2svm,
-                          aes(x = factor(Cost), y = AUC)) +
-  geom_boxplot(aes(fill=Performance)) +
-  theme_bw() +
-  theme(legend.justification=c(0,1), 
-        legend.position=c(0,1),
-        legend.box.margin=margin(c(10,10,10,10)),
-        legend.text=element_text(size=18),
-        legend.title=element_text(size=22),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        panel.background = element_blank(),
-        text = element_text(size = 12),
-        axis.text.x=element_text(size = 10,
-                                 colour='black'),
-        axis.text.y=element_text(size = 10,
-                                 colour='black'),
-        axis.title.y=element_text(size = 15),
-        axis.title.x=element_text(size = 15)) +
-  scale_y_continuous(name = "L2 Linear SVM AUC",
-                     breaks = seq(0.5, 1, 0.02),
-                     limits=c(0.5, 1), expand=c(0,0)) +
-  scale_x_discrete(name = "Hyper-parameter (Cost) ")
-  
-dt %>% 
-  group_by(Performance) 
-
-dt_parameter <- ggplot(dt,
-                          aes(x = factor(Max.depth), y = AUC)) +
-  geom_boxplot(aes(fill=Performance)) +
-  theme_bw() +
-  theme(legend.justification=c(0,1), 
-        legend.position=c(0,1),
-        legend.box.margin=margin(c(10,10,10,10)),
-        legend.text=element_text(size=18),
-        legend.title=element_text(size=22),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        panel.background = element_blank(),
-        text = element_text(size = 12),
-        axis.text.x=element_text(size = 10,
-                                 colour='black'),
-        axis.text.y=element_text(size = 10,
-                                 colour='black'),
-        axis.title.y=element_text(size = 15),
-        axis.title.x=element_text(size = 15)) +
-  scale_y_continuous(name = "Decision Tree AUC",
-                     breaks = seq(0.5, 1, 0.02),
-                     limits=c(0.5, 1), expand=c(0,0)) +
-  scale_x_discrete(name = "Hyper-parameter (Max-depth) ")
-
-ggsave("DT_cv5.pdf", plot = last_plot(), device = 'pdf', path = 'results/figures', width = 10, height = 10)
