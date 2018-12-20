@@ -41,12 +41,12 @@ data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
 # We want the diagnosis column to a factor
 data$dx <- factor(data$dx, labels=c("normal", "cancer"))
 
+
+
 # Create
 best.tunes <- c()
 all.test.response <- all.test.predictor <- test_aucs <- c()
 all.cv.response <- all.cv.predictor <- cv_aucs <- c()
-cl <- makePSOCKcluster(4)
-registerDoParallel(cl)
 for (i in 1:100) {
   inTraining <- createDataPartition(data$dx, p = .80, list = FALSE)
   training <- data[ inTraining,]
