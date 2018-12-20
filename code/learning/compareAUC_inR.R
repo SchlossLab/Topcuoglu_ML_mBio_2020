@@ -101,8 +101,26 @@ l2svm_HP_plot <- plot_parameter_linear(l2svm) +   scale_y_continuous(name="L2 Su
                                                                      limits = c(0.50, 1),
                                                                      breaks = seq(0.5, 1, 0.05))
 
-l2svm_HP_plot <- plot_parameter_linear(l2svm) +   scale_y_continuous(name="L2 Support Vector Machine mean AUC",
-                                                                     limits = c(0.50, 1),
-                                                                     breaks = seq(0.5, 1, 0.05))
-
+rbf_HP_plot <- rbf %>% 
+  group_by(Cost, Performance, Sigma) %>% 
+  summarise (mean_AUC = mean(AUC)) %>% 
+  group_by(Performance, Sigma) %>% 
+  ggplot(aes(x=Cost,y=mean_AUC, color=Performance)) +
+  facet_grid(~Sigma) + 
+  geom_line() +
+  geom_point() +
+  scale_x_log10(labels = scales::trans_format("log10", scales::math_format(10^.x))) +
+  theme_bw() +
+  theme(legend.position="none",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        text = element_text(size = 12),
+        axis.text.x=element_text(size = 11, colour='black'),
+        axis.text.y=element_text(size = 11, colour='black'),
+        axis.title.y=element_text(size = 13),
+        axis.title.x=element_text(size = 13)) +
+  scale_y_continuous(name="SVM Support Vector Machine mean AUC",
+                     limits = c(0.50, 1),
+                     breaks = seq(0.5, 1, 0.05))
 
