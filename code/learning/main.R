@@ -1,12 +1,14 @@
 #### Author: Begum Topcuoglu
 #### Date: 2018-12-20
-#### Title: Main pipeline for 7 classifiers
+#### Title: Main pipeline for 7 classifiers in R programming language
 
 #### Description: This script will read in 0.03 subsampled OTU dataset and the metadata that has the cancer diagnosis. It will run L2 Logistic Regression, L1 and L2 Linear SVMs, RBF SVM, Decision Tree, Random Forest and XGBoost classifiers
 
 #### To be able to run this script we need to be in our project directory.
 
-#### The outputs are (1) AUC values for cross-validation and testing for each data-split (2) meanAUC values for each hyper-parameter tested during each split. 
+#### The outputs are (1) AUC values for cross-validation and testing for each data-split (2) meanAUC values for each hyper-parameter tested during each split.
+
+# This is awesome
 
 
 ############################# IMPORT LIBRARIES ##################################
@@ -23,7 +25,7 @@ for (dep in deps){
 ##############################################################################
 
 ##############################################################################
-#             
+#
 ##############################################################################
 # Read in metadata and select only sample Id and diagnosis columns
 meta <- read.delim('data/metadata.tsv', header=T, sep='\t') %>%
@@ -44,11 +46,21 @@ data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
     Dx_Bin== "High Risk Normal" ~ "normal",
     Dx_Bin== "adv Adenoma" ~ "cancer",
     Dx_Bin== "Cancer" ~ "cancer"
-  )) %>% 
-  select(-sample, -Dx_Bin) %>% 
+  )) %>%
+  select(-sample, -Dx_Bin) %>%
   drop_na()
 
 # We want the diagnosis column to a factor
 data$dx <- factor(data$dx, labels=c("normal", "cancer"))
 
+# Define the tuning grid for each of the seven classifiers.
 
+tuning_grid <- function(data) {
+    if(model=="Logistic Regression")
+
+# Create emtpy vector to define the seven classifiers.
+models <- c()
+
+best.tunes <- c()
+all.test.response <- all.test.predictor <- test_aucs <- c()
+all.cv.response <- all.cv.predictor <- cv_aucs <- c()
