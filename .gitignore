@@ -1,3 +1,4 @@
+*.pbs
 code/learning/__pycache__/*
 *core*
 demo/*
