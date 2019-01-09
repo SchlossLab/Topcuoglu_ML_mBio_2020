@@ -20,6 +20,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.externals import joblib
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
+from timeit import default_timer as timer
 #################################################################################
 
 
@@ -67,6 +68,7 @@ models = ["L2_Logistic_Regression", "L1_SVM_Linear_Kernel", "L2_SVM_Linear_Kerne
 #################################################################################
 
 for models in models:
+    start = timer()
     print(models)
     ## Generate empty lists to fill with AUC values for test-set
     tprs_test = []
@@ -188,3 +190,6 @@ for models in models:
     full=pd.DataFrame.from_items(zip(names,scores))
     full=parameters.join(full)
     full.to_csv(save_results_to + str(models) + "_parameters.tsv", sep='\t')
+
+    end = timer()
+    print(end - start)
