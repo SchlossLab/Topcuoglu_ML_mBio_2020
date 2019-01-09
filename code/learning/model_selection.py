@@ -60,7 +60,7 @@ def select_model(net):
         # https://jessesw.com/XG-Boost/
         cv = RepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=200889)
         ind_params={
-        'n_estimators':100,
+        'n_estimators':500,
         'colsample_bytree': 0.8,
         'objective': 'binary:logistic'
         }
