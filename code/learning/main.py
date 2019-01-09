@@ -191,5 +191,13 @@ for models in models:
     full=parameters.join(full)
     full.to_csv(save_results_to + str(models) + "_parameters.tsv", sep='\t')
 
+    # Time each model
     end = timer()
     print(end - start)
+    walltime = end - start
+    # Append with loop
+    walltimes.append(walltime)
+
+# Save to a .tsv file 0 -> Logistic 6 -> XGBoost
+print_walltimes = pd.DataFrame(walltimes)
+print_walltimes.to_csv(save_results_to + "walltimes.tsv", sep='\t')
