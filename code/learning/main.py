@@ -66,7 +66,7 @@ models = ["L2_Logistic_Regression", "L1_SVM_Linear_Kernel", "L2_SVM_Linear_Kerne
 
 ## Here we use a for loop to iterate each model method.
 #################################################################################
-
+walltimes = []
 for models in models:
     start = timer()
     print(models)
