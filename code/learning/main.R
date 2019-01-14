@@ -11,8 +11,7 @@
 
 
 ############################# IMPORT LIBRARIES ##################################
-##############################################################################
-#### The dependinces for this script are consolidated in the first part
+# The dependinces for this script are consolidated in the first part
 deps = c("reshape2", "kernlab","LiblineaR", "doParallel","pROC", "caret", "gtools", "tidyverse");
 for (dep in deps){
   if (dep %in% installed.packages()[,"Package"] == FALSE){
@@ -26,11 +25,8 @@ source('code/learning/functions.R')
 source('code/learning/model_selection.R')
 source('code/learning/model_pipeline.R')
 ##############################################################################
-##############################################################################
 
-##############################################################################
-#
-##############################################################################
+
 # Read in metadata and select only sample Id and diagnosis columns
 meta <- read.delim('data/metadata.tsv', header=T, sep='\t') %>%
   select(sample, Dx_Bin, fit_result)
