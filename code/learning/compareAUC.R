@@ -10,7 +10,7 @@
 ######################################################################
 #----------------- Read in necessary libraries -------------------#
 ######################################################################
-deps = c("ggplot2","knitr","rmarkdown","vegan","gtools", "tidyverse");
+deps = c("ggpubr", "ggplot2","knitr","rmarkdown","vegan","gtools", "tidyverse");
 for (dep in deps){
   if (dep %in% installed.packages()[,"Package"] == FALSE){
     install.packages(as.character(dep), quiet=TRUE);
@@ -31,6 +31,17 @@ logit <- read.delim('data/process/L2_Logistic_Regression.tsv', header=T, sep='\t
   rename(Performance = level_1) %>%
   mutate(model="L2-Logistic Regression")
 
+logit_summary <- logit %>%  
+  group_by(Performance) %>% 
+  summarise(meanAUC=mean(AUC), std=sd(AUC)) 
+
+logit_cv_meanAUC <- logit_summary[1,2]
+logit_cv_sdAUC <- logit_summary[1,3]
+logit_test_meanAUC <- logit_summary[2,2]
+logit_test_sdAUC <- logit_summary[2,3]
+
+logit_cv_meanAUC - logit_test_meanAUC
+
 # Read in AUCs table generated from l1 SVM linear kernel for all samples
 #       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
 #       FIT is a feature
@@ -49,6 +60,16 @@ l2svm <- read.delim('data/process/L2_SVM_Linear_Kernel.tsv', header=T, sep='\t')
   rename(Performance = level_1) %>%
   mutate(model="L2-SVM Linear")
 
+l2svm_summary <- l2svm %>%  
+  group_by(Performance) %>% 
+  summarise(meanAUC=mean(AUC), std=sd(AUC))
+
+l2svm_cv_meanAUC <- l2svm_summary[1,2]
+l2svm_cv_sdAUC <- l2svm_summary[1,3]
+l2svm_test_meanAUC <- l2svm_summary[2,2]
+l2svm_test_sdAUC <- l2svm_summary[2,3]
+
+l2svm_cv_meanAUC - l2svm_test_meanAUC
 # Read in AUCs table generated from  SVM RBF kernel for all samples
 #       Carcinomas + Adenomas are 1 and Normal is 0 for binary.
 #       FIT is a feature
@@ -89,14 +110,13 @@ dt <- read.delim('data/process/Decision_Tree.tsv', header=T, sep='\t') %>%
 #------------ Put all the loaded AUC tables together -----------------#
 ######################################################################
 
-all <- bind_rows(logit, l1svm, l2svm, svmRBF, xgboost, rf, dt) %>%
+all <- bind_rows(logit, l1svm, l2svm, svmRBF, rf, dt) %>%
   group_by(model)
 
 ######################################################################
 #Plot the AUC values for cross validation and testing for each model #
 ######################################################################
-
-ggplot(all, aes(x = fct_reorder(model, AUC, fun = median, .asc =TRUE), y = AUC, fill = Performance)) +
+box_plot <- ggplot(all, aes(x = fct_reorder(model, AUC, fun = median, .asc =TRUE), y = AUC, fill = Performance)) +
   geom_boxplot(alpha=0.7) +
   scale_y_continuous(name = "AUC",
                      breaks = seq(0.3, 1, 0.05),
@@ -118,8 +138,31 @@ ggplot(all, aes(x = fct_reorder(model, AUC, fun = median, .asc =TRUE), y = AUC, 
   annotate(geom="segment", y=seq(0.3,1,0.01), yend = seq(0.3,1,0.01),
            x=0, xend=0.03)
 
+
+stat_plot <- ggboxplot(all, x = "model", y = 'AUC', color = "black", palette = "jco", facet.by = "Performance") +
+    stat_compare_means(label = "p.signif", method = "t.test", ref.group = "Random Forest ") +
+    scale_x_discrete(name = "") 
+
+testing_results <- all %>% 
+  filter(Performance=="Testing")
+
+mean_test_logit <- summarise()
+compare_means(AUC ~ model,  data = testing_results, ref.group = "Random Forest ",
+              method = "t.test")
+
+cv_results <- all %>% 
+  filter(Performance=="Cross-validation")
+
+
+
+compare_means(AUC ~ model, group.by = "Performance", data = all, ref.group = "L1-SVM Linear",
+              method = "t.test")
+
+
+
 ######################################################################
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 
-ggsave("AUC_comparison_python.pdf", plot = last_plot(), device = 'pdf', path = 'results/figures', width = 15, height = 10)
+ggsave("AUC_comparison_python.pdf", plot = box_plot, device = 'pdf', path = 'results/figures', width = 15, height = 10)
+ggsave("AUC_stats.pdf", plot = stat_plot, device = 'pdf', path = 'results/figures', width = 20, height = 10)
