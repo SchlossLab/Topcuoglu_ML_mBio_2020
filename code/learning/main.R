@@ -90,14 +90,14 @@ for(ml in models){
   full <- matrix(c(results[[1]], results[[2]]), ncol=2) 
 
   # Convert to dataframe and add a column noting the model name
-  data <- data.frame(full) %>% 
+  dataframe <- data.frame(full) %>% 
   rename(cv_aucs=X1, test_aucs=X2) %>% 
   mutate(model=ml) %>% 
   write.csv(paste0("results_", ml,".csv"), row.names=F)
 }
 
 # Box-plot performance for cross-validation and testing AUCs values
-plot_performance(data)
+plot_performance(dataframe)
 
 ######################################################################
 
