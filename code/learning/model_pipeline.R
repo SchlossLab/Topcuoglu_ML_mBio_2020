@@ -9,13 +9,13 @@
 ######################################################################
 
 
-pipeline <- function(data, model){
+pipeline <- function(dataset, model){
   # Create vectors to save cv and test AUC values for every data-split
   best.tunes <- c()
   test_aucs <- c()
   cv_aucs <- c()
   # Loop to do 100 80-20 data-splits 
-  for (i in 1:100) {
+  for (i in 1:2) {
     # Stratified data partitioning %80 training - %20 testing
     inTraining <- createDataPartition(data$dx, p = .80, list = FALSE)
     training <- data[ inTraining,]

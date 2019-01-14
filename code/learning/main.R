@@ -53,42 +53,48 @@ source('code/learning/model_pipeline.R')
 # Labels: - Colorectal lesions of 490 patients. 
 #         - Defined as cancer or not.(Cancer here means: SRN)
 
-# Read in metadata and select only sample Id and diagnosis columns
-meta <- read.delim('data/metadata.tsv', header=T, sep='\t') %>%
-  select(sample, Dx_Bin, fit_result)
+models = c("L2_Logistic_Regression", "L2_Linear_SVM", "RBF_SVM", "Decision_Tree", "Random_Forest","XGBoost")
 
+for(ml in models){
+ 
+  # Read in metadata and select only sample Id and diagnosis columns
+  meta <- read.delim('data/metadata.tsv', header=T, sep='\t') %>%
+    select(sample, Dx_Bin, fit_result)
+  
+  
+  # Read in OTU table and remove label and numOtus columns
+  shared <- read.delim('data/baxter.0.03.subsample.shared', header=T, sep='\t') %>%
+    select(-label, -numOtus)
+  
+  # Merge metadata and OTU table.
+  # Group advanced adenomas and cancers together as cancer and normal, high risk normal and non-advanced adenomas as normal
+  # Then remove the sample ID column
+  data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
+    mutate(dx = case_when(
+      Dx_Bin== "Adenoma" ~ "normal",
+      Dx_Bin== "Normal" ~ "normal",
+      Dx_Bin== "High Risk Normal" ~ "normal",
+      Dx_Bin== "adv Adenoma" ~ "cancer",
+      Dx_Bin== "Cancer" ~ "cancer"
+    )) %>%
+    select(-sample, -Dx_Bin) %>%
+    drop_na()
+  
+  # We want the diagnosis column to a factor
+  data$dx <- factor(data$dx, labels=c("normal", "cancer"))
+  
+  # Save results of the modeling pipeline as a list
+  results <- pipeline(data, ml) 
 
-# Read in OTU table and remove label and numOtus columns
-shared <- read.delim('data/baxter.0.03.subsample.shared', header=T, sep='\t') %>%
-  select(-label, -numOtus)
+  # Create a matrix with cv_aucs and test_aucs from 100 data splits
+  full <- matrix(c(results[[1]], results[[2]]), ncol=2) 
 
-# Merge metadata and OTU table.
-# Group advanced adenomas and cancers together as cancer and normal, high risk normal and non-advanced adenomas as normal
-# Then remove the sample ID column
-data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
-  mutate(dx = case_when(
-    Dx_Bin== "Adenoma" ~ "normal",
-    Dx_Bin== "Normal" ~ "normal",
-    Dx_Bin== "High Risk Normal" ~ "normal",
-    Dx_Bin== "adv Adenoma" ~ "cancer",
-    Dx_Bin== "Cancer" ~ "cancer"
-  )) %>%
-  select(-sample, -Dx_Bin) %>%
-  drop_na()
-
-# We want the diagnosis column to a factor
-data$dx <- factor(data$dx, labels=c("normal", "cancer"))
-
-# Save results of the modeling pipeline as a list
-results <- pipeline(data, "L2_Logistic_Regression") 
-
-# Create a matrix with cv_aucs and test_aucs from 100 data splits
-full <- matrix(c(results[[1]], results[[2]]), ncol=2) 
-
-# Convert to dataframe and add a column noting the model name
-data <- data.frame(full) %>% 
+  # Convert to dataframe and add a column noting the model name
+  data <- data.frame(full) %>% 
   rename(cv_aucs=X1, test_aucs=X2) %>% 
-  mutate(model="L2 Logistic Regression") 
+  mutate(model=ml) %>% 
+  write.csv(paste0("results_", ml,".csv"), row.names=F)
+}
 
 # Box-plot performance for cross-validation and testing AUCs values
 plot_performance(data)
