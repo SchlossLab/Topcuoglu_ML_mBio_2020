@@ -16,7 +16,6 @@ melt_data <-  function(data) {
 
 plot_performance <- function(data) {
   data_melt <- data %>%
-    mutate(model="L2 Linear SVM") %>%
     melt(measure.vars=c('cv_aucs', 'test_aucs')) %>%
     rename(AUC=value) %>%
     rename(Performance=variable) %>%
