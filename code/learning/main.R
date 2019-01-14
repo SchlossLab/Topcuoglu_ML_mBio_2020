@@ -2,7 +2,9 @@
 #### Date: 2018-12-20
 #### Title: Main pipeline for 7 classifiers in R programming language
 ######################################################################
-#### Description: This script will read in 0.03 subsampled OTU dataset and the metadata that has the cancer diagnosis. It will run L2 Logistic Regression, L1 and L2 Linear SVMs, RBF SVM, Decision Tree, Random Forest and XGBoost classifiers
+#### Description: This script will read in 0.03 subsampled OTU dataset and the metadata that has the cancer diagnosis. 
+
+#### It will run L2 Logistic Regression, L1 and L2 Linear SVMs, RBF SVM, Decision Tree, Random Forest and XGBoost classifiers
 ######################################################################
 #### To be able to run this script we need to be in our project directory.
 
