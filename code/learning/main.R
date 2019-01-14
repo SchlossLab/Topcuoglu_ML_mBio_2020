@@ -46,8 +46,12 @@ for (dep in deps){
 source('code/learning/functions.R')
 source('code/learning/model_selection.R')
 source('code/learning/model_pipeline.R')
-##############################################################################
+######################################################################
 
+######################## CLASSIFICATION #############################
+# Features: Hemoglobin levels and 16S rRNA gene sequences in the stool 
+# Labels: - Colorectal lesions of 490 patients. 
+#         - Defined as cancer or not.(Cancer here means: SRN)
 
 # Read in metadata and select only sample Id and diagnosis columns
 meta <- read.delim('data/metadata.tsv', header=T, sep='\t') %>%
@@ -89,7 +93,7 @@ data <- data.frame(full) %>%
 # Box-plot performance for cross-validation and testing AUCs values
 plot_performance(data)
 
-
+######################################################################
 
 
 
