@@ -1,18 +1,38 @@
-#### Author: Begum Topcuoglu
-#### Date: 2018-12-20
-#### Title: Main pipeline for 7 classifiers in R programming language
 ######################################################################
-#### Description: This script will read in 0.03 subsampled OTU dataset and the metadata that has the cancer diagnosis. 
-
-#### It will run L2 Logistic Regression, L1 and L2 Linear SVMs, RBF SVM, Decision Tree, Random Forest and XGBoost classifiers
-######################################################################
-#### To be able to run this script we need to be in our project directory.
-
-#### The outputs are (1) AUC values for cross-validation and testing for each data-split (2) meanAUC values for each hyper-parameter tested during each split.
+# Author: Begum Topcuoglu
+# Date: 2018-12-20
+# Title: Main pipeline for 7 classifiers in R programming language
 ######################################################################
 
+######################################################################
+# Description: 
 
-############################# IMPORT LIBRARIES ##################################
+# This script will read in data from Baxter et al. 2016
+#     - 0.03 subsampled OTU dataset
+#     - CRC metadata: SRN information
+
+
+# It will run the following machine learning pipelines:
+#     - L2 Logistic Regression 
+#     - L1 and L2 Linear SVM
+#     - RBF SVM
+#     - Decision Tree
+#     - Random Forest 
+#     - XGBoost 
+######################################################################
+
+######################################################################
+# Dependencies and Outputs: 
+
+# Be in the project directory.
+
+# The outputs are:
+#   (1) AUC values for cross-validation and testing for each data-split 
+#   (2) meanAUC values for each hyper-parameter tested during each split.
+######################################################################
+
+
+################### IMPORT LIBRARIES and FUNCTIONS ###################
 # The dependinces for this script are consolidated in the first part
 deps = c("reshape2", "kernlab","LiblineaR", "doParallel","pROC", "caret", "gtools", "tidyverse");
 for (dep in deps){
