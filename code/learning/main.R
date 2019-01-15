@@ -46,6 +46,7 @@ for (dep in deps){
 source('code/learning/functions.R')
 source('code/learning/model_selection.R')
 source('code/learning/model_pipeline.R')
+source('code/learning/generateAUCs.R')
 ######################################################################
 
 ######################## CLASSIFICATION #############################
@@ -78,25 +79,11 @@ data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
 # We want the diagnosis column to a factor
 data$dx <- factor(data$dx, labels=c("normal", "cancer"))
 
-models = c("L2_Logistic_Regression", "L2_Linear_SVM", "RBF_SVM", "Decision_Tree", "Random_Forest","XGBoost")
+model_names = c("L2_Logistic_Regression", "L2_Linear_SVM", "RBF_SVM", "Decision_Tree", "Random_Forest","XGBoost")
 
-for(ml in models){
+get_AUCs(model_names)
 
-  # Save results of the modeling pipeline as a list
-  results <- pipeline(data, ml) 
 
-  # Create a matrix with cv_aucs and test_aucs from 100 data splits
-  full <- matrix(c(results[[1]], results[[2]]), ncol=2) 
-
-  # Convert to dataframe and add a column noting the model name
-  dataframe <- data.frame(full) %>% 
-  rename(cv_aucs=X1, test_aucs=X2) %>% 
-  mutate(model=ml) %>% 
-  write.csv(paste0("results_", ml,".csv"), row.names=F)
-}
-
-# Box-plot performance for cross-validation and testing AUCs values
-plot_performance(dataframe)
 
 ######################################################################
 
