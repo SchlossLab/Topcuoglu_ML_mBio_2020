@@ -49,19 +49,16 @@ source('code/learning/model_pipeline.R')
 source('code/learning/generateAUCs.R')
 ######################################################################
 
-######################## CLASSIFICATION #############################
+######################## DATA PREPARATION #############################
 # Features: Hemoglobin levels and 16S rRNA gene sequences in the stool 
 # Labels: - Colorectal lesions of 490 patients. 
 #         - Defined as cancer or not.(Cancer here means: SRN)
 # Read in metadata and select only sample Id and diagnosis columns
 meta <- read.delim('data/metadata.tsv', header=T, sep='\t') %>%
   select(sample, Dx_Bin, fit_result)
-
-
 # Read in OTU table and remove label and numOtus columns
 shared <- read.delim('data/baxter.0.03.subsample.shared', header=T, sep='\t') %>%
   select(-label, -numOtus)
-
 # Merge metadata and OTU table.
 # Group advanced adenomas and cancers together as cancer and normal, high risk normal and non-advanced adenomas as normal
 # Then remove the sample ID column
@@ -75,17 +72,21 @@ data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
   )) %>%
   select(-sample, -Dx_Bin) %>%
   drop_na()
-
 # We want the diagnosis column to a factor
 data$dx <- factor(data$dx, labels=c("normal", "cancer"))
+###################################################################
 
-model_names = c("L2_Logistic_Regression", "L2_Linear_SVM", "RBF_SVM", "Decision_Tree", "Random_Forest","XGBoost")
-
+######################## RUN PIPELINE #############################
+# Choose which classification methods we want to run
+model_names = c("L2_Logistic_Regression", 
+                "L2_Linear_SVM", 
+                "RBF_SVM", 
+                "Decision_Tree", 
+                "Random_Forest",
+                "XGBoost")
+# Get the cv and test AUCs for 100 data-splits
 get_AUCs(model_names)
-
-
-
-######################################################################
+###################################################################
 
 
 
