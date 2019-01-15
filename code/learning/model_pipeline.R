@@ -1,14 +1,37 @@
 # Author: Begum Topcuoglu
 # Date: 2019-01-14
 ######################################################################
+# Description:
 # This script trains and tests the model according to proper pipeline
 ######################################################################
 
-# Classifiers the function will accept are:
-# models = c("L2_Logistic_Regression", "L2_Linear_SVM", "RBF_SVM", "Decision_Tree", "Random_Forest","XGBoost")
+######################################################################
+# Dependencies and Outputs: 
+#    Model to put to function: 
+#       1. "L2_Logistic_Regression"
+#       2. "L2_Linear_SVM"
+#       3. "RBF_SVM"
+#       4. "Decision_Tree"
+#       5. "Random_Forest"
+#       6. "XGBoost"
+#    Dataset to put to function: 
+#         Features: Hemoglobin levels and 16S rRNA gene sequences in the stool 
+#         Labels: - Colorectal lesions of 490 patients. 
+#                 - Defined as cancer or not.(Cancer here means: SRN)
+# 
+# Usage:
+# Call as source when using the function. The function is:
+#   pipeline(data, model) 
+
+# Output:
+#  List of:
+#     1. AUCs  for cv of 100 data-splits
+#     2. AUCS for test of 100 data-splits
 ######################################################################
 
-
+######################################################################
+#------------------------- DEFINE FUNCTION -------------------#
+######################################################################
 pipeline <- function(dataset, model){
   # Create vectors to save cv and test AUC values for every data-split
   best.tunes <- c()

@@ -1,14 +1,38 @@
 # Author: Begum Topcuoglu
 # Date: 2019-01-14
 ######################################################################
-# This function defines the hyper-parameter budget of each classifier.
+# Description:
+# This function defines defines:
+#     1. Tuning budget as a grid the classification methods chosen
+#     2. Cross-validation method
+#     3. Caret name for the classification method chosen
 ######################################################################
-# Define the tuning grid for each of the seven classifiers as well as the cross-validation and classification algorithm. 
 
-# Models we can choose from are:
-# models = c("L2_Logistic_Regression", "L2_Linear_SVM", "RBF_SVM", "Decision_Tree", "Random_Forest","XGBoost")
+######################################################################
+# Dependencies and Outputs: 
+#    Filenames to put to function: 
+#       1. "L2_Logistic_Regression"
+#       2. "L2_Linear_SVM"
+#       3. "RBF_SVM"
+#       4. "Decision_Tree"
+#       5. "Random_Forest"
+#       6. "XGBoost"
+
+# Usage:
+# Call as source when using the function. The function is:
+#   tuning_grid()
+
+# Output:
+#  List of:
+#     1. Tuning budget as a grid the classification methods chosen
+#     2. Cross-validation method
+#     3. Caret name for the classification method chosen
 ######################################################################
 
+
+######################################################################
+#------------------------- DEFINE FUNCTION -------------------#
+######################################################################
 tuning_grid <- function(model){
   
   # Cross-validation method
@@ -20,7 +44,7 @@ tuning_grid <- function(model){
                      summaryFunction=twoClassSummary,
                      indexFinal=NULL,
                      savePredictions = TRUE)
-  
+  # Grid and caret method defined for each classification models
   if(model=="L2_Logistic_Regression") {
     grid <-  expand.grid(cost = c(0.5, 0.6, 0.7, 0.8, 0.9, 1),
                          loss = "L2_dual",

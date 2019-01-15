@@ -20,7 +20,7 @@
 #   get_AUCs()
 
 # The output:
-#  A results file with:
+#  A results .csv file with:
 #     1. AUCs  for cv of 100 data-splits
 #     2. AUCS for test of 100 data-splits
 ######################################################################
@@ -39,6 +39,10 @@ for (dep in deps){
 # Load in needed functions and libraries
 source('code/learning/functions.R')
 
+
+######################################################################
+#------------------------- DEFINE FUNCTION -------------------#
+######################################################################
 get_AUCs <- function(models){
   for(ml in models){
   
