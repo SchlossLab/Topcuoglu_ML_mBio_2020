@@ -85,7 +85,8 @@ model_names = c("L2_Logistic_Regression",
                 "Random_Forest",
                 "XGBoost")
 # Get the cv and test AUCs for 100 data-splits
-get_AUCs(model_names)
+model <- as.character(commandArgs(TRUE)) # recieve input from model
+getAucs(model)
 ###################################################################
 
 
