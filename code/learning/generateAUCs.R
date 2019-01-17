@@ -56,7 +56,7 @@ get_AUCs <- function(models){
   dataframe <- data.frame(full) %>% 
     rename(cv_aucs=X1, test_aucs=X2) %>% 
     mutate(model=ml) %>% 
-    write.csv(file=paste0("results_", ml,".csv"), row.names=F)
+    write.csv(file=paste0("data/process/results_", ml,".csv"), row.names=F)
   }
 }
 
