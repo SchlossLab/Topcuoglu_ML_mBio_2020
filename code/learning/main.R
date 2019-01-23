@@ -37,7 +37,7 @@
 deps = c("reshape2", "kernlab","LiblineaR", "doParallel","pROC", "caret", "gtools", "tidyverse");
 for (dep in deps){
   if (dep %in% installed.packages()[,"Package"] == FALSE){
-    install.packages(as.character(dep), quiet=TRUE, repos = structure(c(CRAN="https://cran.cnr.berkeley.edu/")));
+    install.packages(as.character(dep), quiet=TRUE);
   }
   library(dep, verbose=FALSE, character.only=TRUE)
 }
