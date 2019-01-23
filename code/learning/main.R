@@ -85,8 +85,11 @@ model_names = c("L2_Logistic_Regression",
                 "Random_Forest",
                 "XGBoost")
 # Get the cv and test AUCs for 100 data-splits
+start_time <- Sys.time()
 model <- as.character(commandArgs(TRUE)) # recieve input from model
 get_AUCs(model)
+end_time <- Sys.time()
+print(end_time - start_time)
 ###################################################################
 
 
