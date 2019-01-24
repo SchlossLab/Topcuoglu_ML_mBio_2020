@@ -37,8 +37,8 @@ pipeline <- function(dataset, model){
   results_total <-  data.frame()
   test_aucs <- c()
   cv_aucs <- c()
-  # Loop to do 100 80-20 data-splits 
-  for (i in 1:20) {
+  # Do the 80-20 data-split 
+
     # Stratified data partitioning %80 training - %20 testing
     inTraining <- createDataPartition(data$dx, p = .80, list = FALSE)
     training <- data[ inTraining,]
@@ -106,7 +106,7 @@ pipeline <- function(dataset, model){
     # Save all results of hyper-parameters and their corresponding meanAUCs for each iteration
     results_individual <- trained_model$results
     results_total <- rbind(results_total, results_individual)
-  }
+
   results <- list(cv_aucs, test_aucs, results_total)
   return(results)
 }

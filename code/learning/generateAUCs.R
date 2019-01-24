@@ -43,7 +43,7 @@ source('code/learning/functions.R')
 ######################################################################
 #------------------------- DEFINE FUNCTION -------------------#
 ######################################################################
-get_AUCs <- function(models){
+get_AUCs <- function(models, split_number){
   for(ml in models){
   
   # Save results of the modeling pipeline as a list
@@ -56,7 +56,7 @@ get_AUCs <- function(models){
   aucs_dataframe <- data.frame(aucs) %>% 
     rename(cv_aucs=X1, test_aucs=X2) %>% 
     mutate(model=ml) %>% 
-    write.csv(file=paste0("data/process/best_hp_results_", ml,".csv"), row.names=F)
+    write.csv(file=paste0("data/process/best_hp_results_", ml,"_", split_number, ".csv"), row.names=F)
   # ------------------------------------------------------------------   
 
   # ------------------------------------------------------------------   
@@ -65,7 +65,7 @@ get_AUCs <- function(models){
   # Convert to dataframe and add a column noting the model name
   dataframe <- data.frame(all_results) %>% 
     mutate(model=ml) %>% 
-    write.csv(file=paste0("data/process/all_hp_results_", ml,".csv"), row.names=F)
+    write.csv(file=paste0("data/process/all_hp_results_", ml,"_", split_number, ".csv"), row.names=F)
   # ------------------------------------------------------------------ 
   }
 }

@@ -87,8 +87,13 @@ model_names = c("L2_Logistic_Regression",
 # Get the cv and test AUCs for 100 data-splits
 start_time <- Sys.time()
 
-model <- as.character(commandArgs(TRUE)) # recieve input from model
-get_AUCs(model)
+input <- commandArgs(trailingOnly=TRUE) # recieve input from model
+# Get variables from command line
+seed <- as.numeric(input[1])
+model <- input[2]
+
+set.seed(input)
+get_AUCs(model, input[1])
 
 end_time <- Sys.time()
 print(end_time - start_time)
