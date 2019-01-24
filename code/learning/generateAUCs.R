@@ -49,14 +49,24 @@ get_AUCs <- function(models){
   # Save results of the modeling pipeline as a list
   results <- pipeline(data, ml) 
   
+  # ------------------------------------------------------------------ 
   # Create a matrix with cv_aucs and test_aucs from 100 data splits
-  full <- matrix(c(results[[1]], results[[2]]), ncol=2) 
-  
+  aucs <- matrix(c(results[[1]], results[[2]]), ncol=2) 
   # Convert to dataframe and add a column noting the model name
-  dataframe <- data.frame(full) %>% 
+  aucs_dataframe <- data.frame(aucs) %>% 
     rename(cv_aucs=X1, test_aucs=X2) %>% 
     mutate(model=ml) %>% 
-    write.csv(file=paste0("data/process/results_", ml,".csv"), row.names=F)
+    write.csv(file=paste0("data/process/best_hp_results_", ml,".csv"), row.names=F)
+  # ------------------------------------------------------------------   
+
+  # ------------------------------------------------------------------   
+  # Save all tunes from 100 data splits and corresponding AUCs
+  all_results <- results[4]
+  # Convert to dataframe and add a column noting the model name
+  dataframe <- data.frame(all_results) %>% 
+    mutate(model=ml) %>% 
+    write.csv(file=paste0("data/process/all_hp_results_", ml,".csv"), row.names=F)
+  # ------------------------------------------------------------------ 
   }
 }
 

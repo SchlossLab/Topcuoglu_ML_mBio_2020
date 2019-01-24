@@ -46,8 +46,9 @@ data$dx <- factor(data$dx, labels=c("normal", "cancer"))
 # Create
 best.tunes <- c()
 all.test.response <- all.test.predictor <- test_aucs <- c()
-all.cv.response <- all.cv.predictor <- cv_aucs <- c()
-for (i in 1:100) {
+all.cv.response <- all.cv.predictor <- cv_aucs <- c()  
+results_total <-  data.frame()
+for (i in 1:2) {
   inTraining <- createDataPartition(data$dx, p = .80, list = FALSE)
   training <- data[ inTraining,]
   testing  <- data[-inTraining,]
@@ -105,6 +106,8 @@ for (i in 1:100) {
   #all.cv.response <- c(all.cv.response, L2Logit$pred$obs)
   # Save the training set labels
   #all.cv.predictor <- c(all.cv.predictor, L2Logit$pred$normal)
+  df <- L2Logit$results
+  results_total <- rbind(results_total,df)
 }
 stopCluster(cl)
 # Get the ROC of both test and cv from all the iterations
