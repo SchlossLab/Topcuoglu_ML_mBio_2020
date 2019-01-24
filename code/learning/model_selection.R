@@ -46,7 +46,7 @@ tuning_grid <- function(model){
                      savePredictions = TRUE)
   # Grid and caret method defined for each classification models
   if(model=="L2_Logistic_Regression") {
-    grid <-  expand.grid(cost = c(0.5, 0.6, 0.7, 0.8, 0.9, 1),
+    grid <-  expand.grid(cost = c(0.1, 0.5, 0.6, 0.7, 0.8, 0.9, 1),
                          loss = "L2_dual",
                          epsilon = 0.1)
     method <- "regLogistic"
