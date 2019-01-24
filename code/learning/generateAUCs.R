@@ -61,7 +61,7 @@ get_AUCs <- function(models){
 
   # ------------------------------------------------------------------   
   # Save all tunes from 100 data splits and corresponding AUCs
-  all_results <- results[4]
+  all_results <- results[3]
   # Convert to dataframe and add a column noting the model name
   dataframe <- data.frame(all_results) %>% 
     mutate(model=ml) %>% 
