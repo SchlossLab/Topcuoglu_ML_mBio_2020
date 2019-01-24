@@ -34,7 +34,7 @@
 ######################################################################
 pipeline <- function(dataset, model){
   # Create vectors to save cv and test AUC values for every data-split
-  best.tunes <- c()
+  results_total <-  data.frame()
   test_aucs <- c()
   cv_aucs <- c()
   # Loop to do 100 80-20 data-splits 
@@ -72,6 +72,16 @@ pipeline <- function(dataset, model){
                               tuneGrid = grid,
                               ntree=1000)
     }
+    else if(model=="RBF_SVM"){
+      print(model)
+      trained_model <-  train(dx ~ .,
+                              data=trainTransformed,
+                              method = method,
+                              trControl = cv,
+                              metric = "ROC",
+                              tuneGrid = grid,
+                              ntree=1000)
+    }
     else{
       print(model)
       trained_model <-  train(dx ~ .,
@@ -91,9 +101,12 @@ pipeline <- function(dataset, model){
     # Save all the test AUCs over iterations in test_aucs
     test_aucs <- c(test_aucs, test_auc)
     # Cross-validation mean AUC value
-    # Save all the cv AUCs over iterations in cv_aucs
+    # Save all the cv meanAUCs over iterations in cv_aucs
     cv_aucs <- c(cv_aucs, cv_auc)
+    # Save all results of hyper-parameters and their corresponding meanAUCs for each iteration
+    results_individual <- trained_model$results
+    results_total <- rbind(results_total, results_individual)
   }
-  results <- list(cv_aucs, test_aucs)
+  results <- list(cv_aucs, test_aucs, results_total)
   return(results)
 }
