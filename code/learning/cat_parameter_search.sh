@@ -1,8 +1,9 @@
-#!/bin/bash          
-SEARCH_DIR=data/process/parameter_search
+#!/bin/bash
+SEARCH_DIR=data/temp
 
-# concatenate output from all parameter searches into one file 
-# with only the header from the firsrt file
-# and only lines with 1 at the end of the run
-{ head -n 1 $SEARCH_DIR/parameter_search_HL_070617_1.modelRunHistory.csv & 
-	awk '/1"$/' $SEARCH_DIR/*.modelRunHistory.csv ; } > data/process/cat_parameter_sets.csv
+for model in "L2_Logistic_Regression" "L2_Linear_SVM" "RBF_SVM" "Decision_Tree" "Random_Forest" "XGBoost"
+do
+	head -1 $SEARCH_DIR/all_hp_results_"$model"_1.csv  > $SEARCH_DIR/combined_all_hp_results_"$model".csv; tail -n +2 -q $SEARCH_DIR/all_hp_results_"$model"_*.csv >> $SEARCH_DIR/combined_all_hp_results_"$model".csv
+
+	head -1 $SEARCH_DIR/best_hp_results_"$model"_1.csv  > $SEARCH_DIR/combined_best_hp_results_"$model".csv; tail -n +2 -q $SEARCH_DIR/best_hp_results_"$model"_*.csv >> $SEARCH_DIR/combined_best_hp_results_"$model".csv
+done
