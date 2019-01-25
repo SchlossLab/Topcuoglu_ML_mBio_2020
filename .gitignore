@@ -17,3 +17,4 @@ results/*.DS_Store
 *.jpg
 *.sav
 *.Rout
+/data/temp
