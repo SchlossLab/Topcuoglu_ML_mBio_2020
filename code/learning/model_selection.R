@@ -37,7 +37,7 @@ tuning_grid <- function(model){
   
   # Cross-validation method
   cv <- trainControl(method="repeatedcv",
-                     repeats = 100,
+                     repeats = 10,
                      number=5,
                      returnResamp="final",
                      classProbs=TRUE,
