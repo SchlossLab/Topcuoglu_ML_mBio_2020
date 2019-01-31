@@ -25,41 +25,35 @@ source('code/learning/functions.R')
 ######################################################################
 
 # Read in the cvAUCs, testAUCs and hyper-parameters from L2 logistic regression model for 100 splits.
-logit <- read.delim('data/process/L2_Logistic_Regression_aucs_hps_R.tsv', header=T, sep='\t') %>% 
-  melt_data %>% 
-  mutate(model='L2 Logistic Regression')  
+best_files <- list.files(path= 'data/process', pattern='combined_best.*', full.names = TRUE)
+
+read_files <- function(filenames){
+  for(file in filenames){
+    # Read the files generated in main.R 
+    # These files have cvAUCs and testAUCs for 100 data-splits
+    data <- read.delim(file, header=T, sep=',')
+  }
+  return(data)
+}
+
+logit <- read_files(best_files[3])
+l2svm <- read_files(best_files[2])
+rbf <- read_files(best_files[5])
+rf <- read_files(best_files[4])
+dt <- read_files(best_files[1])
+xgboost <- read_files(best_files[6])
 
 
-l2svm <- read.delim('data/process/L2_Linear_SVM_aucs_hps_R.tsv', header=T, sep='\t')%>% 
-  melt_data%>% 
-  mutate(model='L2 Linear SVM')
 
-rbf <- read.delim('data/process/SVM_RBF_aucs_hps_R.tsv', header=T, sep='\t')%>% 
-  melt_data%>% 
-  mutate(model='RBF SVM') 
-
-xgboost <- read.delim('data/process/xgboost_aucs_hps_R.tsv', header=T, sep='\t')%>% 
-  melt_data%>% 
-  mutate(model='XGBoost') 
-
-dt <-  read.delim('data/process/decision_tree_aucs_hps_R.tsv', header=T, sep='\t')%>% 
-  melt_data%>% 
-  mutate(model='Decision Tree')
-
-rf <-  read.delim('data/process/random_forest_aucs_hps_R.tsv', header=T, sep='\t')%>% 
-  melt_data%>% 
-  mutate(model='Random Forest')
-
-
-all <- bind_rows(logit, l2svm, rbf, dt, xgboost, rf) %>%
-  group_by(model)
+best_performance <- bind_rows(logit, l2svm, rbf, dt, xgboost, rf)%>%
+  melt_data()
 
 ######################################################################
 #Plot the AUC values for cross validation and testing for each model #
 ######################################################################
 
 
-ggplot(all, aes(x = fct_reorder(model, AUC, fun = median, .asc =TRUE), y = AUC, fill = Performance)) +
+performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC, fun = median, .asc =TRUE), y = AUC, fill = Performance)) +
   geom_boxplot(alpha=0.7) +
   scale_y_continuous(name = "AUC",
                      breaks = seq(0.5, 1, 0.02),
@@ -78,38 +72,87 @@ ggplot(all, aes(x = fct_reorder(model, AUC, fun = median, .asc =TRUE), y = AUC, 
         axis.text.x=element_text(size = 12, colour='black'),
         axis.text.y=element_text(size = 12, colour='black'),
         axis.title.y=element_text(size = 20),
-        axis.title.x=element_text(size = 20)) +
-  scale_fill_brewer(palette = "Paired")
+        axis.title.x=element_text(size = 20)) 
 
 
 ######################################################################
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 
-ggsave("AUC_comparison_R.pdf", plot = last_plot(), device = 'pdf', path = 'results/figures', width = 10, height = 10)
+ggsave("AUC_comparison_R.pdf", plot = performance, device = 'pdf', path = 'results/figures', width = 10, height = 10)
 
 
 ######################################################################
 #Plot the mean AUC values for hyper parameters tested #
 ######################################################################
 
-logit_HP_plot <- plot_parameter_linear(logit) +  scale_y_continuous(name="Logistic Regression mean AUC",
-                                                    limits = c(0.50, 1),
-                                                    breaks = seq(0.5, 1, 0.05))
+all_files <- list.files(path= 'data/process', pattern='combined_all.*', full.names = TRUE)
 
-l2svm_HP_plot <- plot_parameter_linear(l2svm) +   scale_y_continuous(name="L2 Support Vector Machine mean AUC",
-                                                                     limits = c(0.50, 1),
-                                                                     breaks = seq(0.5, 1, 0.05))
 
-rbf_HP_plot <- rbf %>% 
-  group_by(Cost, Performance, Sigma) %>% 
-  summarise (mean_AUC = mean(AUC)) %>% 
-  group_by(Performance, Sigma) %>% 
-  ggplot(aes(x=Cost,y=mean_AUC, color=Performance)) +
-  facet_grid(~Sigma) + 
+logit_all <- read_files(all_files[3])
+l2svm_all <- read_files(all_files[2])
+rbf_all <- read_files(all_files[5])
+rf_all <- read_files(all_files[4])
+dt_all <- read_files(all_files[1])
+xgboost_all <- read_files(all_files[6])
+
+logit_all %>% 
+  group_by(cost) %>% 
+  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>% 
+  ggplot(aes(x=cost,y=mean_AUC)) +
   geom_line() +
   geom_point() +
-  scale_x_log10(labels = scales::trans_format("log10", scales::math_format(10^.x))) +
+  scale_x_continuous(name="C (penalty)") +
+  scale_y_continuous(name="L2 Logistic Regression mean AUC",
+                     limits = c(0.50, 1),
+                     breaks = seq(0.5, 1, 0.05)) +
+  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.01) +
+  theme_bw() +
+  theme(legend.text=element_text(size=18),
+        legend.title=element_text(size=22),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        text = element_text(size = 12),
+        axis.text.x=element_text(size = 12, colour='black'),
+        axis.text.y=element_text(size = 12, colour='black'),
+        axis.title.y=element_text(size = 13),
+        axis.title.x=element_text(size = 13))
+
+
+l2svm_all %>% 
+  group_by(C) %>% 
+  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>% 
+  ggplot(aes(x=C,y=mean_AUC)) +
+  geom_line() +
+  geom_point() +
+  scale_x_continuous(name="C (penalty)") +
+  scale_y_continuous(name="L2 Linear Kernel SVM mean AUC",
+                     limits = c(0.50, 1),
+                     breaks = seq(0.5, 1, 0.05)) +
+  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.001) +
+  theme_bw() +
+  theme(legend.text=element_text(size=18),
+        legend.title=element_text(size=22),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        text = element_text(size = 12),
+        axis.text.x=element_text(size = 12, colour='black'),
+        axis.text.y=element_text(size = 12, colour='black'),
+        axis.title.y=element_text(size = 13),
+        axis.title.x=element_text(size = 13))
+
+rbf_all %>% 
+  group_by(sigma, C) %>% 
+  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>% 
+  group_by(C) %>% 
+  ggplot(aes(x=sigma,y=mean_AUC)) +
+  facet_grid(~C) + 
+  geom_line() +
+  geom_point() +
+  scale_x_log10(labels = scales::trans_format("log10", scales::math_format(10^.x)),
+                breaks= c(1e-08, 1e-07,1e-06, 1e-05)) +
   theme_bw() +
   theme(legend.position="none",
         panel.grid.major = element_blank(),
@@ -123,4 +166,75 @@ rbf_HP_plot <- rbf %>%
   scale_y_continuous(name="SVM Support Vector Machine mean AUC",
                      limits = c(0.50, 1),
                      breaks = seq(0.5, 1, 0.05))
+
+rf_all %>% 
+  group_by(mtry) %>% 
+  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>% 
+  ggplot(aes(x=mtry,y=mean_AUC)) +
+  geom_line() +
+  geom_point() +
+  scale_x_continuous(name="mtry") +
+  scale_y_continuous(name="Random Forest mean AUC",
+                     limits = c(0.50, 1),
+                     breaks = seq(0.5, 1, 0.05)) +
+  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=2) +
+  theme_bw() +
+  theme(legend.text=element_text(size=18),
+        legend.title=element_text(size=22),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        text = element_text(size = 12),
+        axis.text.x=element_text(size = 12, colour='black'),
+        axis.text.y=element_text(size = 12, colour='black'),
+        axis.title.y=element_text(size = 13),
+        axis.title.x=element_text(size = 13))
+
+dt_all %>% 
+  group_by(maxdepth) %>% 
+  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>% 
+  ggplot(aes(x=maxdepth,y=mean_AUC)) +
+  geom_line() +
+  geom_point() +
+  scale_x_continuous(name="max depth") +
+  scale_y_continuous(name="Random Forest mean AUC",
+                     limits = c(0.50, 1),
+                     breaks = seq(0.5, 1, 0.05)) +
+  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=0.2) +
+  theme_bw() +
+  theme(legend.text=element_text(size=18),
+        legend.title=element_text(size=22),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        text = element_text(size = 12),
+        axis.text.x=element_text(size = 12, colour='black'),
+        axis.text.y=element_text(size = 12, colour='black'),
+        axis.title.y=element_text(size = 13),
+        axis.title.x=element_text(size = 13))
+
+xgboost_all %>% 
+  group_by(eta, max_depth, min_child_weight, subsample) %>% 
+  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>% 
+  group_by(min_child_weight) %>% 
+  ggplot(aes(x=subsample,y=mean_AUC)) +
+  facet_grid(~min_child_weight) + 
+  geom_line() +
+  geom_point() +
+  scale_x_continuous(name="subsample") +
+  scale_y_continuous(name="XGBoost mean AUC",
+                     limits = c(0.50, 1),
+                     breaks = seq(0.5, 1, 0.05)) +
+  theme_bw() +
+  theme(legend.text=element_text(size=18),
+        legend.title=element_text(size=22),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        text = element_text(size = 12),
+        axis.text.x=element_text(size = 12, colour='black'),
+        axis.text.y=element_text(size = 12, colour='black'),
+        axis.title.y=element_text(size = 13),
+        axis.title.x=element_text(size = 13))
+
 
