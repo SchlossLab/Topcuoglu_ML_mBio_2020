@@ -21,6 +21,8 @@ for (dep in deps){
 #------------ Load .tsv data generated in Python -----------------#
 ######################################################################
 
+filenames <- list.files(path= 'data/process/', pattern='.*parameters.tsv')
+
 # Read in hyper-parameter AUCs generated from L2 logistic regression model for all samples:
 logit <- read.delim('data/process/L2_Logistic_Regression_parameters.tsv', header=T, sep='\t')%>%
   select(-X) %>%
