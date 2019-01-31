@@ -97,7 +97,7 @@ dt_all <- read_files(all_files[1])
 xgboost_all <- read_files(all_files[6])
 
 logit_all %>% 
-  group_by(cost) %>% 
+  group_by(cost, loss, epsilon) %>% 
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>% 
   ggplot(aes(x=cost,y=mean_AUC)) +
   geom_line() +
