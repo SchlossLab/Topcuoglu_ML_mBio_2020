@@ -93,7 +93,7 @@ input <- commandArgs(trailingOnly=TRUE) # recieve input from model
 seed <- as.numeric(input[1])
 model <- input[2]
 
-set.seed(input)
+set.seed(seed)
 get_AUCs(model, input[1])
 
 end_time <- Sys.time()
