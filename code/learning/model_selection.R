@@ -52,7 +52,7 @@ tuning_grid <- function(model){
     method <- "regLogistic"
   }
   else if (model=="L2_Linear_SVM"){
-    grid <- expand.grid(C = c(0.015, 0.025, 0.035, 0.05, 0.06))
+    grid <- expand.grid(C = c(0.0001, 0.001, 0.01, 0.15))
     method <- "svmLinear"
   }
   else if (model=="L1_Linear_SVM"){
@@ -61,8 +61,8 @@ tuning_grid <- function(model){
     method <- "svmLinear5"
   }
   else if (model=="RBF_SVM"){
-    grid <-  expand.grid(sigma = c(0.00001, 0.0001, 0.001, 0.01, 0.1, 1),
-                         C = c(0.001, 0.01, 0.1, 1))
+    grid <-  expand.grid(sigma = c(0.0000001, 0.000001, 0.00001),
+                         C = c(0.001, 0.01, 0.1))
     method <-"svmRadial"
   }
   else if (model=="Decision_Tree"){
