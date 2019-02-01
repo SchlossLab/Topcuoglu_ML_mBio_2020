@@ -19,33 +19,19 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ##### General Context of the work
 
-* As the microbiome field continues to grow, there is an ever-increasing demand for reproducible methods for identifying associations between members of the microbiome and human health. 
-
-* Most microbial communities are pretty patchy and the likelihood of a single species that explains the differences in health is pretty small. It is likely that subsets of those communities in relation to one another are needed to account for the patchiness as well as the context dependency of the features. 
-
-* Thus, researchers have started to explore the utility of machine learning (ML) techniques.
-
-* Currently, the field’s use of machine learning lacks clarity and consistency on
-    1. Which methods are used?
-    2. Why those methods are used? Can these methods explain if there are linear or non-linear relationships between phenotype and features?
-    3. How those methods are used?
-    4. Reproducibilty
-    
-* ML methods have a trade-off for interpretibility, susceptibility to overfitting and actionability versus prediction performance. It is important to prioritize and define task accordingly. 
+Advances in sequencing technology and decreasing costs of generating 16S rRNA gene sequences allowed rapid exploration and taxonomic characterization of the human associated microbiome. Currently, the microbiome field is growing at an unprecedented rate and as a result, there is an ever-increasing demand for reproducible methods for identifying associations between members of the microbiome and human health. Human associated microbial communities are remarkably uneven and it is unlikely that a single species can explain a disease state comprehensively. It is more likely that subsets of those communities, in relation to one another and to their host, account for the unevenness and can be used as biomarkers of a specific disease state. Thus, researchers have started to explore the utility of machine learning (ML) techniques to identify the biomarkers associated with healthy and diseased individuals. However, currently the field's use of ML lacks clarity and consistency on which methods are used, how these methods are implemented and if these methods are reproducible. Moreover, there is a lack of consideration on why a particular method is utilized. Often, there is a trade-off between the interpretibility and accuracy of ML methods. As researchers, we have to find the right balance to accomplish complex knowledge tasks such as identifying a disease state based on microbiome-associated biomarkers while also understanding how these tasks are accomplished.
 
 ##### Narrower research area and statement of its importance
 
-* Among cancers, colorectal cancer is one of the leading causes of death in the US. While colonoscopy is an effective screening tool, it is invasive and as a result has a low rate of patient adherence. In contrast, microbiome analysis of stool is non-invasive. Machine learning (ML) techniques are used to identify patients with colorectal tumors based on microbiota-associated biomarkers.
+One application of machine learning to microbiome data has been to classify patients as having colorectal tumors based on microbiota-associated biomarkers. However, the efforts to combine ML methods with relative abundances of bacterial poplations in stool to predict CRC tumors have been negatively effected by the aforementioned flawed ML practices. As a result, the predictive performance of these models varies greatly with areas under the receiver operating characteristic curve (AUROC) of 0.7-0.9.
 
-* However, the discriminative performance of these models varies greatly, with areas under the receiver operating characteristic curve (AUROC) of 0.7-0.9. 
-
-* Previously:
+* What we see in previous studies:
     - Differences in task definition (what is it that we want to predict?)
-    - Use of logistic regression without discussion of how it explains non-linearity of microbiome & CRC.
     - Use of random forest only without discussion of interpretibility.
     - Use of random forest without proper pipeline.
 
-* To shed light on how much differences in modeling can affect the results, we performed an empirical analysis comparing several different modeling pipelines. 
+* What we do here: 
+    - To shed light on how much differences in modeling can affect the results, we performed an empirical analysis comparing several different modeling pipelines. 
 
 ##### Summary of appraoch and findings
 
