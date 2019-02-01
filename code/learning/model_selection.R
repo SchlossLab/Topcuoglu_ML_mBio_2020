@@ -37,7 +37,7 @@ tuning_grid <- function(model){
   
   # Cross-validation method
   cv <- trainControl(method="repeatedcv",
-                     repeats = 10,
+                     repeats = 100,
                      number=5,
                      returnResamp="final",
                      classProbs=TRUE,
@@ -46,9 +46,9 @@ tuning_grid <- function(model){
                      savePredictions = TRUE)
   # Grid and caret method defined for each classification models
   if(model=="L2_Logistic_Regression") {
-    grid <-  expand.grid(cost = c(0.1, 0.5, 0.6, 0.7, 0.8, 0.9, 1),
-                         loss = "L2_dual",
-                         epsilon = 0.1)
+    grid <-  expand.grid(cost = c(0.001, 0.01, 0.1, 0.5, 1),
+                         loss = c("L2_dual", "L1","L2_primal"),
+                         epsilon = c(0.001, 0.01, 0.1))
     method <- "regLogistic"
   }
   else if (model=="L2_Linear_SVM"){
@@ -61,8 +61,8 @@ tuning_grid <- function(model){
     method <- "svmLinear5"
   }
   else if (model=="RBF_SVM"){
-    grid <-  expand.grid(sigma = c(0.00000001, 0.0000001, 0.000001, 0.00001),
-                         C = c(0.000001, 0.00001, 0.0001, 0.001))
+    grid <-  expand.grid(sigma = c(0.00001, 0.0001, 0.001, 0.01, 0.1, 1),
+                         C = c(0.001, 0.01, 0.1, 1))
     method <-"svmRadial"
   }
   else if (model=="Decision_Tree"){
