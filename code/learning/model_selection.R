@@ -37,7 +37,7 @@ tuning_grid <- function(model){
   
   # Cross-validation method
   cv <- trainControl(method="repeatedcv",
-                     repeats = 100,
+                     repeats = 10,
                      number=5,
                      returnResamp="final",
                      classProbs=TRUE,
@@ -76,11 +76,11 @@ tuning_grid <- function(model){
   else if (model=="XGBoost"){
     grid <-  expand.grid(nrounds=100,
                          gamma=0,
-                         eta=c(0.01, 0.1),
-                         max_depth=c(6,7,8),
+                         eta=c(0.05, 0.1, 0.5),
+                         max_depth=8,
                          colsample_bytree= 0.8,
-                         min_child_weight=c(1,2,3),
-                         subsample=c(0.7,0.8,0.9))
+                         min_child_weight=1,
+                         subsample=c(0.5,0.6,0.7,0.8))
     method <- "xgbTree"
   }
   else { 
