@@ -66,11 +66,11 @@ tuning_grid <- function(model){
     method <-"svmRadial"
   }
   else if (model=="Decision_Tree"){
-    grid <-  expand.grid(maxdepth = c(1,2,3,4,5,6,7,8,9,10))
+    grid <-  expand.grid(maxdepth = c(1,2,3,4,5,6))
     method <-"rpart2"
   }
   else if (model=="Random_Forest"){
-    grid <-  expand.grid(mtry = c(10,80,500,1000,1500,2000))
+    grid <-  expand.grid(mtry = c(80,500,1000,1500))
     method = "rf"
   }
   else if (model=="XGBoost"){
