@@ -52,7 +52,7 @@ tuning_grid <- function(model){
     method <- "regLogistic"
   }
   else if (model=="L2_Linear_SVM"){
-    grid <- expand.grid(C = c(0.0001, 0.001, 0.01, 0.15))
+    grid <- expand.grid(C = c(0.1, 0.15, 0.3, 1))
     method <- "svmLinear"
   }
   else if (model=="L1_Linear_SVM"){
@@ -61,8 +61,8 @@ tuning_grid <- function(model){
     method <- "svmLinear5"
   }
   else if (model=="RBF_SVM"){
-    grid <-  expand.grid(sigma = c(0.0000001, 0.000001, 0.00001),
-                         C = c(0.001, 0.01, 0.1))
+    grid <-  expand.grid(sigma = c(0.000001, 0.00001, 0.0001, 1),
+                         C = c(0.001, 0.01, 0.1, 1))
     method <-"svmRadial"
   }
   else if (model=="Decision_Tree"){
@@ -74,13 +74,13 @@ tuning_grid <- function(model){
     method = "rf"
   }
   else if (model=="XGBoost"){
-    grid <-  expand.grid(nrounds=100,
+    grid <-  expand.grid(nrounds=c(100,200),
                          gamma=0,
-                         eta=c(0.05, 0.1, 0.5),
+                         eta=c(0.01, 0.05, 0.1),
                          max_depth=8,
                          colsample_bytree= 0.8,
                          min_child_weight=1,
-                         subsample=c(0.5,0.6,0.7,0.8))
+                         subsample=c(0.6,0.7,0.8))
     method <- "xgbTree"
   }
   else { 
