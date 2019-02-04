@@ -40,9 +40,9 @@ pipeline <- function(dataset, model){
   # Do the 80-20 data-split 
 
     # Stratified data partitioning %80 training - %20 testing
-    inTraining <- createDataPartition(data$dx, p = .80, list = FALSE)
-    training <- data[ inTraining,]
-    testing  <- data[-inTraining,]
+    inTraining <- createDataPartition(dataset$dx, p = .80, list = FALSE)
+    training <- dataset[ inTraining,]
+    testing  <- dataset[-inTraining,]
     # Scale all features between 0-1
     preProcValues <- preProcess(training, method = "range")
     trainTransformed <- predict(preProcValues, training)
