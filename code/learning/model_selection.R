@@ -74,9 +74,9 @@ tuning_grid <- function(model){
     method = "rf"
   }
   else if (model=="XGBoost"){
-    grid <-  expand.grid(nrounds=c(100,200),
+    grid <-  expand.grid(nrounds=c(200, 500),
                          gamma=0,
-                         eta=c(0.01, 0.05, 0.1),
+                         eta=c(0.005, 0.01, 0.05),
                          max_depth=8,
                          colsample_bytree= 0.8,
                          min_child_weight=1,

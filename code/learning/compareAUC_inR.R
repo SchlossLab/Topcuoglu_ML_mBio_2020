@@ -214,7 +214,7 @@ dt_all %>%
         axis.title.x=element_text(size = 13))
 
 xgboost_all %>% 
-  group_by(eta, max_depth, min_child_weight, subsample) %>% 
+  group_by(eta, nrounds, subsample) %>% 
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>% 
   group_by(min_child_weight) %>% 
   ggplot(aes(x=subsample,y=mean_AUC)) +
