@@ -1,4 +1,6 @@
+library(tidyverse)
 library(caret)
+library(pROC)
 
 ######################## DATA PREPARATION #############################
 # Features: Hemoglobin levels and 16S rRNA gene sequences in the stool
@@ -38,10 +40,7 @@ preProcValues <- preProcess(training, method = "range")
 trainTransformed <- predict(preProcValues, training)
 testTransformed <- predict(preProcValues, testing)
 
-testTransformed$dx <- as.factor(ifelse(testTransformed$dx == "cancer", 1, 0))
-trainTransformed$dx <- as.factor(ifelse(trainTransformed$dx == "cancer", 1, 0))
-
-grid <- expand.grid(cost = c(0.08, 0.09, 0.092, 0.094, 0.096, 0.098, 0.1),
+grid <- expand.grid(cost = c(0.08, 0.09, 0.092, 0.094, 0.096, 0.098, 0.1, 0.5),
                     Loss = c("L1", "L2"))
 mod <- train(dx ~ .,
              data=trainTransformed,
@@ -51,6 +50,8 @@ mod <- train(dx ~ .,
 
 cv_acc <- getTrainPerf(mod)$TrainAccuracy
 #predicting on the training dataset
+testTransformed$dx <- as.factor(ifelse(testTransformed$dx == "cancer", 1, 0))
+trainTransformed$dx <- as.factor(ifelse(trainTransformed$dx == "cancer", 1, 0))
 result_train<-as.data.frame(predict(mod,trainTransformed))
 dataframe<-data.frame(result_train$`predict(mod, trainTransformed)`,trainTransformed$dx)
 colnames(dataframe)<-c("x","y")
@@ -64,3 +65,4 @@ result_test_platt<-predict(model_log,dataframe1,type="response")
 test_roc <- roc(testTransformed$dx,
                 result_test_platt)
 test_auc <- test_roc$auc
+print(test_auc)
