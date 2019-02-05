@@ -37,7 +37,7 @@ tuning_grid <- function(model){
   
   # Cross-validation method
   cv <- trainControl(method="repeatedcv",
-                     repeats = 10,
+                     repeats = 100,
                      number=5,
                      returnResamp="final",
                      classProbs=TRUE,
@@ -62,7 +62,7 @@ tuning_grid <- function(model){
   }
   else if (model=="RBF_SVM"){
     grid <-  expand.grid(sigma = c(0.0000001, 0.000001, 0.00001, 0.0001),
-                         C = c(0.0001, 0.001, 0.01, 0.1, 1))
+                         C = c(0.0001, 0.001, 0.01, 0.1))
     method <-"svmRadial"
   }
   else if (model=="Decision_Tree"){
@@ -74,7 +74,7 @@ tuning_grid <- function(model){
     method = "rf"
   }
   else if (model=="XGBoost"){
-    grid <-  expand.grid(nrounds=c(200, 500),
+    grid <-  expand.grid(nrounds=500,
                          gamma=0,
                          eta=c(0.005, 0.01, 0.05),
                          max_depth=8,
