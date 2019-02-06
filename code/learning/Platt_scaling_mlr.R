@@ -63,45 +63,32 @@ par.svm <- train(l1svm, trainTask)
 #test
 predict.svm <- predict(par.svm, testTask)
 
-lrn=makeClassificationViaRegressionWrapper(l1svm, predict.type = "prob")
-mod <- mlr::train(lrn, trainTask)
-
-makeClassificationViaRegressionWrapper = function(learner, predict.type = "response") {
-  learner = checkLearner(learner, "classif")
-  lrn = makeBaseWrapper(
-    id = stri_paste(learner$id, "classify", sep = "."),
-    type = "classif",
-    next.learner = learner,
-    package = "mlr",
-    par.set = makeParamSet(),
-    par.vals = list(),
-    learner.subclass = "ClassificationViaRegressionWrapper",
-    model.subclass = "ClassificationViaRegressionModel"
-  )
-  lrn$predict.type = predict.type
-  return(lrn)
-}
-trainLearner.ClassificationViaRegressionWrapper = function(.learner, .task, .subset = NULL, .weights = NULL, ...) {
-  pos = getTaskDesc(.task)$positive
-  td = getTaskData(.task, target.extra = TRUE, subset = .subset)
-  target.name = stri_paste(pos, "prob", sep = ".")
-  data = td$data
-  data[[target.name]] = ifelse(td$target == pos, 1, -1)
-  regr.task = makeRegrTask(
-    id = stri_paste(getTaskId(.task), pos, sep = "."),
-    data = data,
-    target = target.name,
-    weights = getTaskWeights(.task),
-    blocking = .task$blocking)
-  model = train(.learner$next.learner, regr.task, weights = .weights)
-  makeChainModel(next.model = model, cl = "ClassificationViaRegressionModel")
+library(checkmate)
+library(tsensembler)
+# p = probabilites for levs[2] => matrix with probs for levs[1] and levs[2]
+propVectorToMatrix = function(p, levs) {
+  assertNumeric(p)
+  y = matrix(0, ncol = 2L, nrow = length(p))
+  colnames(y) = levs
+  y[, 2L] = p
+  y[, 1L] = 1 - p
+  y
 }
 
+pos = getTaskDesc(trainTask)$positive
+td = getTaskData(trainTask, target.extra = TRUE)
+target.name = stri_paste(pos, "prob", sep = ".")
+data = td$data
+data[[target.name]] = ifelse(td$target == pos, 1, -1)
+par.svm <- train(l1svm, trainTask)
+p <-  predict(par.svm, testTask)$data$response
 
-predictLearner.ClassificationViaRegressionWrapper = function(.learner, .model, .newdata, .subset = NULL, ...) {
-  model = getLearnerModel(.model, more.unwrap = FALSE)
-  p = predict(model, newdata = .newdata, subset = .subset, ...)$data$response
-  
+p <- as.numeric(as.character(p))
+
+td = getTaskDesc(par.svm)
+levs = c(td$positive, td$negative)
+y <- propVectorToMatrix(vnapply(p, function(x) exp(x) / sum(exp(x))), levs)
+
   if (.learner$predict.type == "response") {
     factor(ifelse(p > 0, getTaskDesc(.model)$positive, getTaskDesc(.model)$negative))
   } else {

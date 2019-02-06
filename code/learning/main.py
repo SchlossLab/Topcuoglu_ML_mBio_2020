@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#/Library/Frameworks/Python.framework/Versions/3.6/bin/python3
+
 #
 # Author: Begum Topcuoglu
 # Date: 2018-09-26
