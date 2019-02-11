@@ -128,18 +128,6 @@ pipeline <- function(dataset, model){
         # Save all results of hyper-parameters and their corresponding meanAUCs for each iteration
         results_individual <- trained_model$results
         results_total <- rbind(results_total, results_individual)
-        #if(model=="L2_Logistic_Regression" && "L2_Linear_SVM" && "Decision_Tree" && "Random_Forest"){
-        # Collect to plot ROC
-        #selectedIndices <-trained_model$pred[,6] == trained_model$bestTune[,1]
-        # Save the test set labels in all.test.response. Labels converted to 0 for normal and 1 for cancer
-        #all.test.response <- c(all.test.response, ifelse(testTransformed$dx == "cancer", 1, 0))
-        # Save the test set predicted probabilities of highest class in all.test.predictor
-        #all.test.predictor <- c(all.test.predictor, rpartProbs[[2]])
-        # Save the training set labels in all.test.response. Labels are in the obs    column in the training object
-        #all.cv.response <- c(all.cv.response, trained_model$pred[selectedIndices, ]$obs)
-        # Save the training set labels
-        #all.cv.predictor <- c(all.cv.predictor, trained_model$pred[selectedIndices, ]$cancer)
-        #roc_results <- list(all.test.response, all.test.predictor, all.cv.response, all.cv.predictor )
     }
   results <- list(cv_aucs, test_aucs, results_total)
   return(results)
