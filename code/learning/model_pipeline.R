@@ -1,3 +1,4 @@
+
 # Author: Begum Topcuoglu
 # Date: 2019-01-14
 ######################################################################
@@ -46,7 +47,7 @@ pipeline <- function(dataset, model){
     rm(modelInfo)
   }
   # Save to your caret package directory, into the models/ subdirectory
-  save(models, file = "~/R/x86_64-pc-linux-gnu-library/3.5/caret/models/models.RData")
+  save(models, file = "~/R/x86_64-pc-linux-gnu-library/3.5/caret/models/models.Rdata")
   setwd("/nfs/turbo/schloss-lab/begumtop/DeepLearning")
   # Create vectors to save cv and test AUC values for every data-split
   results_total <-  data.frame()
