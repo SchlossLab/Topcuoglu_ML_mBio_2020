@@ -52,7 +52,7 @@ cv_acc <- getTrainPerf(mod)$TrainAccuracy
 #predicting on the training dataset
 testTransformed$dx <- as.factor(ifelse(testTransformed$dx == "cancer", 1, 0))
 trainTransformed$dx <- as.factor(ifelse(trainTransformed$dx == "cancer", 1, 0))
-result_train<-as.data.frame(predict(mod,trainTransformed))
+result_train<-as.data.frame(predict(mod,trainTransformed, type="decision"))
 dataframe<-data.frame(result_train$`predict(mod, trainTransformed)`,trainTransformed$dx)
 colnames(dataframe)<-c("x","y")
 # training a logistic regression model on the cross validation dataset

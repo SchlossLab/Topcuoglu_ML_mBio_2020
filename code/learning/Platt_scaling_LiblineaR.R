@@ -42,7 +42,7 @@ x_test <- testTransformed %>%
   select(-dx)
 y_test <- testTransformed %>% 
   select(dx)
-
+library(LiblineaR)
 #########################################################################
 model <- LiblineaR(x_train, trainTransformed$dx, type = 5)
 pred=predict(model,x_test, decisionValues = TRUE)
@@ -61,10 +61,64 @@ hiTarget <- (prior1+1.0)/(prior1+2.0)
 loTarget <- 1/(prior0+2.0)
 len=prior1+prior0 # Total number of data
 t <- c()
-for(i in 1:length(len)){
-  print(i)
-  if (label[i] > 0)
-    t[i] <- hiTarget
-  else
-    t[i] <- loTarget
+for(i in 1:len){
+  if(label[i] > 0){
+    t[i] <- hiTarget}
+  else{
+    t[i] <- loTarget}
 }
+
+A <- 0.0 
+B <- log((prior0+1.0)/(prior1+1.0))
+fval <- 0.0
+
+for(i in 1:len){
+  
+  fApB <-  deci[i]*A+B
+  
+  if(fApB >= 0){
+    fval <- fval + t[i]*fApB+log(1+exp(-fApB))
+    }
+  else{
+    fval <-  fval + (t[i]-1)*fApB+log(1+exp(fApB))
+    }
+}
+
+for(it in 1:maxiter){
+  ##Update Gradient and Hessian (use H’ = H + sigma I)
+  h11=h22=sigma
+  h21=g1=g2=0.0
+  for(i in 1:len){
+    fApB <- deci[i]*A+B
+      if (fApB >= 0){
+        p=exp(-fApB)/(1.0+exp(-fApB)) 
+        q=1.0/(1.0+exp(-fApB))}
+      else{
+        p=1.0/(1.0+exp(fApB))
+        q=exp(fApB)/(1.0+exp(fApB))}
+    d2=p*q
+    h11 <- h11 + deci[i]*deci[i]*d2
+    h22 <- h22 + d2
+    h21 <- h21 + deci[i]*d2
+    d1 <- t[i]-p
+    g1 <- g1 + deci[i]*d1
+    g2 <- g1 + d1
+  }
+  if (abs(g1)<1e-5 && abs(g2)<1e-5) break##Stopping criteria
+
+##Compute modified Newton directions
+det=h11*h22-h21*h21
+dA=-(h22*g1-h21*g2)/det
+dB=-(-h21*g1+h11*g2)/det
+gd=g1*dA+g2*dB
+stepsize=1
+
+while (stepsize >= minstep){ ##Line search
+  newA=A+stepsize*dA, newB=B+stepsize*dB, newf=0.0
+  for i = 1 to len {
+    fApB=deci[i]*newA+newB
+    if (fApB >= 0)
+      newf += t[i]*fApB+log(1+exp(-fApB))
+      else
+        newf += (t[i]-1)*fApB+log(1+exp(fApB))
+  }
