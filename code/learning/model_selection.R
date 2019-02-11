@@ -54,7 +54,7 @@ tuning_grid <- function(model){
     method <- "svmLinear"
   }
   else if (model=="L1_Linear_SVM"){
-    grid <- expand.grid(cost = c(0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1),
+    grid <- expand.grid(cost = c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1),
                         Loss = "L2")
     method <- "svmLinear5"
   }
