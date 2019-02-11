@@ -48,7 +48,7 @@ best.tunes <- c()
 all.test.response <- all.test.predictor <- test_aucs <- c()
 all.cv.response <- all.cv.predictor <- cv_aucs <- c()  
 results_total <-  data.frame()
-for (i in 1:2) {
+for (i in 1:10) {
   inTraining <- createDataPartition(data$dx, p = .80, list = FALSE)
   training <- data[ inTraining,]
   testing  <- data[-inTraining,]
@@ -103,16 +103,15 @@ for (i in 1:2) {
   # Save the test set predicted probabilities of highest class in all.test.predictor
   all.test.predictor <- c(all.test.predictor, rpartProbs[[2]])
   # Save the training set labels in all.test.response. Labels are in the obs column in the training object
-  #all.cv.response <- c(all.cv.response, L2Logit$pred$obs)
+  all.cv.response <- c(all.cv.response, L2Logit$pred[selectedIndices, ]$obs)
   # Save the training set labels
-  #all.cv.predictor <- c(all.cv.predictor, L2Logit$pred$normal)
-  df <- L2Logit$results
-  results_total <- rbind(results_total,df)
+  all.cv.predictor <- c(all.cv.predictor, L2Logit$pred[selectedIndices, ]$cancer)
+
 }
-stopCluster(cl)
+
 # Get the ROC of both test and cv from all the iterations
 test_roc <- roc(all.test.response, all.test.predictor, auc=TRUE, ci=TRUE)
-#cv_roc <- roc(all.cv.response, all.cv.predictor, auc=TRUE, ci=TRUE)
+cv_roc <- roc(all.cv.response, all.cv.predictor, auc=TRUE, ci=TRUE)
 
 full <- matrix(c(cv_aucs, test_aucs, best.tunes), ncol=3)
 write.table(full, file='data/process/L2_Logistic_Regression_aucs_hps_R.tsv', quote=FALSE, sep='\t', col.names = c("cv_aucs","test_aucs", "Cost"), row.names = FALSE)
@@ -151,7 +150,7 @@ mtext(side=1,
       cex=1.5)
 # Add legends for both lines
 legend(x=0.7,y=0.2,
-       legend=(sprintf('Test - AUC: %.3g, CI: %.3g', test_roc$auc, (auc.ci[3]-auc.ci[2]))),
+       legend=(sprintf('Test - AUC: %.3g, CI: %.3g', cv_roc$auc, (auc.ci[3]-auc.ci[2]))),
        bty='n',
        xjust=0,
        lty=c(1,1),
