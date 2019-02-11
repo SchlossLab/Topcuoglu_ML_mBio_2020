@@ -9,8 +9,8 @@
 ######################################################################
 
 ######################################################################
-# Dependencies and Outputs: 
-#    Filenames to put to function: 
+# Dependencies and Outputs:
+#    Filenames to put to function:
 #       1. "L2_Logistic_Regression"
 #       2. "L2_Linear_SVM"
 #       3. "RBF_SVM"
@@ -34,7 +34,7 @@
 #------------------------- DEFINE FUNCTION -------------------#
 ######################################################################
 tuning_grid <- function(model){
-  
+
   # Cross-validation method
   cv <- trainControl(method="repeatedcv",
                      repeats = 100,
@@ -46,9 +46,7 @@ tuning_grid <- function(model){
                      savePredictions = TRUE)
   # Grid and caret method defined for each classification models
   if(model=="L2_Logistic_Regression") {
-    grid <-  expand.grid(cost = c(0.1, 0.5, 1),
-                         loss = c("L2_dual", "L1","L2_primal"),
-                         epsilon = c(0.001, 0.01, 0.1))
+    grid <-  expand.grid(cost = c(0.1, 0.5, 1))
     method <- "regLogistic"
   }
   else if (model=="L2_Linear_SVM"){
@@ -56,7 +54,7 @@ tuning_grid <- function(model){
     method <- "svmLinear"
   }
   else if (model=="L1_Linear_SVM"){
-    grid <- expand.grid(cost = c(0.00001, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1 ,1),
+    grid <- expand.grid(cost = c(0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1),
                         Loss = "L2")
     method <- "svmLinear5"
   }
@@ -83,10 +81,9 @@ tuning_grid <- function(model){
                          subsample=c(0.6,0.7,0.8))
     method <- "xgbTree"
   }
-  else { 
+  else {
     print("Model not available")
   }
   params <- list(grid, method, cv)
   return(params)
 }
-

@@ -1,4 +1,3 @@
-#!bash
 
 # Download all models file from caret package
 # We will parse, create and save models.RData here:
