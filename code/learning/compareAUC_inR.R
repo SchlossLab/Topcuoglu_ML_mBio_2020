@@ -218,8 +218,6 @@ rf_all %>%
         axis.title.y=element_text(size = 13),
         axis.title.x=element_text(size = 13))
 
-ggsave("RF_hp_R.pdf", plot = last_plot(), device = 'pdf', path = 'results/figures', width = 5, height = 5)
-
 
 dt_all %>% 
   group_by(maxdepth) %>% 
