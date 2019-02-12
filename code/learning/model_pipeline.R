@@ -120,6 +120,6 @@ pipeline <- function(dataset, model){
         results_total <- rbind(results_total, results_individual)
     }
   feature_importance <- model_interpret(trained_model)
-  results <- list(cv_aucs, test_aucs, results_total, feature_importance)
+  results <- list(cv_aucs, test_aucs, results_total, feature_importance, trained_model)
   return(results)
 }
