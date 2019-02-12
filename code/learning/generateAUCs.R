@@ -26,20 +26,6 @@
 #     2. AUCS for test of 100 data-splits
 ######################################################################
 
-######################################################################
-#----------------- Read in necessary libraries -------------------#
-######################################################################
-
-deps = c("reshape2", "kernlab","LiblineaR", "doParallel","pROC", "caret", "gtools", "tidyverse", "ggpubr", "ggplot2","knitr","rmarkdown","vegan");
-for (dep in deps){
-  if (dep %in% installed.packages()[,"Package"] == FALSE){
-    install.packages(as.character(dep), quiet=TRUE);
-  }
-  library(dep, verbose=FALSE, character.only=TRUE)
-}
-# Load in needed functions and libraries
-source('code/learning/functions.R')
-
 
 ######################################################################
 #------------------------- DEFINE FUNCTION -------------------#
