@@ -58,7 +58,7 @@ tuning_grid <- function(model){
   else if (model=="L1_Linear_SVM"){
     # Cross-validation method
     cv <- trainControl(method="repeatedcv",
-                       repeats = 1,
+                       repeats = 100,
                        number=5,
                        returnResamp="final",
                        classProbs=TRUE,
