@@ -14,6 +14,14 @@ melt_data <-  function(data) {
   return(data_melt)
 }
 
-
+# Read in files as delim that are saved in a list with a pattern
+read_files <- function(filenames){
+  for(file in filenames){
+    # Read the files generated in main.R 
+    # These files have cvAUCs and testAUCs for 100 data-splits
+    data <- read.delim(file, header=T, sep=',')
+  }
+  return(data)
+}
 
 
