@@ -76,16 +76,6 @@ pipeline <- function(dataset, model){
                               tuneGrid = grid,
                               ntree=1000)
     }
-    else if(model=="RBF_SVM"){
-      print(model)
-      trained_model <-  train(dx ~ .,
-                              data=trainTransformed,
-                              method = method,
-                              trControl = cv,
-                              metric = "ROC",
-                              tuneGrid = grid,
-                              ntree=1000)
-    }
     else{
       print(model)
       trained_model <-  train(dx ~ .,
@@ -129,6 +119,7 @@ pipeline <- function(dataset, model){
         results_individual <- trained_model$results
         results_total <- rbind(results_total, results_individual)
     }
-  results <- list(cv_aucs, test_aucs, results_total)
+  feature_importance <- model_interpret(trained_model)
+  results <- list(cv_aucs, test_aucs, results_total, feature_importance)
   return(results)
 }

@@ -44,14 +44,14 @@ source('code/learning/functions.R')
 ######################################################################
 #------------------------- DEFINE FUNCTION -------------------#
 ######################################################################
-get_AUCs <- function(dataset, models, split_number){
+get_results <- function(dataset, models, split_number){
   for(ml in models){
   
   # Save results of the modeling pipeline as a list
   results <- pipeline(dataset, ml) 
   
   # ------------------------------------------------------------------ 
-  # Create a matrix with cv_aucs and test_aucs from 100 data splits
+  # Create a matrix with cv_aucs and test_aucs from 1 data split
   aucs <- matrix(c(results[[1]], results[[2]]), ncol=2) 
   # Convert to dataframe and add a column noting the model name
   aucs_dataframe <- data.frame(aucs) %>% 
@@ -61,12 +61,21 @@ get_AUCs <- function(dataset, models, split_number){
   # ------------------------------------------------------------------   
 
   # ------------------------------------------------------------------   
-  # Save all tunes from 100 data splits and corresponding AUCs
+  # Save training results for 1 datasplit and corresponding AUCs
   all_results <- results[3]
   # Convert to dataframe and add a column noting the model name
   dataframe <- data.frame(all_results) %>% 
     mutate(model=ml) %>% 
     write.csv(file=paste0("data/temp/all_hp_results_", ml,"_", split_number, ".csv"), row.names=F)
+  # ------------------------------------------------------------------ 
+  
+  # ------------------------------------------------------------------   
+  # Save 10 feature importance of the model for 1 datasplit
+  imp_features <- results[4]
+  # Convert to dataframe and add a column noting the model name
+  dataframe <- data.frame(imp_features) %>% 
+    mutate(model=ml) %>% 
+    write.csv(file=paste0("data/temp/all_imp_features_results_", ml,"_", split_number, ".csv"), row.names=F)
   # ------------------------------------------------------------------ 
   }
 }

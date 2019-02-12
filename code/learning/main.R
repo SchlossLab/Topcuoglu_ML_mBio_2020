@@ -47,6 +47,7 @@ source('code/learning/functions.R')
 source('code/learning/model_selection.R')
 source('code/learning/model_pipeline.R')
 source('code/learning/generateAUCs.R')
+source('code/learning/model_interpret.R')
 ######################################################################
 
 ######################## DATA PREPARATION #############################
@@ -94,7 +95,7 @@ seed <- as.numeric(input[1])
 model <- input[2]
 
 set.seed(seed)
-get_AUCs(data, model, input[1])
+get_results(data, model, input[1])
 
 end_time <- Sys.time()
 print(end_time - start_time)
