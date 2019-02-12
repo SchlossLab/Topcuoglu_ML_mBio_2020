@@ -34,18 +34,13 @@
 
 ################### IMPORT LIBRARIES and FUNCTIONS ###################
 # The dependinces for this script are consolidated in the first part
-deps = c("rpart", "xgboost", "randomForest", "kernlab","LiblineaR", "pROC", "tidyverse");
+deps = c("caret" ,"rpart", "xgboost", "randomForest", "kernlab","LiblineaR", "pROC", "tidyverse");
 for (dep in deps){
   if (dep %in% installed.packages()[,"Package"] == FALSE){
     install.packages(as.character(dep), quiet=TRUE, repos = "http://cran.us.r-project.org", dependencies=TRUE);
   }
   library(dep, verbose=FALSE, character.only=TRUE)
 }
-#install caret spefically
-install.packages("caret",
-                 repos = "http://cran.r-project.org", 
-                 dependencies = c("Depends", "Imports", "Suggests"))
-library(caret)
 # Load in needed functions and libraries
 source('code/learning/model_selection.R')
 source('code/learning/model_pipeline.R')
