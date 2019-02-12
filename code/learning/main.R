@@ -34,7 +34,7 @@
 
 ################### IMPORT LIBRARIES and FUNCTIONS ###################
 # The dependinces for this script are consolidated in the first part
-deps = c("randomForest", "reshape2", "kernlab","LiblineaR", "doParallel","pROC", "caret", "gtools", "tidyverse");
+deps = c("randomForest", "kernlab","LiblineaR", "doParallel","pROC", "caret", "gtools", "tidyverse");
 for (dep in deps){
   if (dep %in% installed.packages()[,"Package"] == FALSE){
     install.packages(as.character(dep), quiet=TRUE, repos = "http://cran.us.r-project.org");
@@ -43,7 +43,6 @@ for (dep in deps){
 }
 
 # Load in needed functions and libraries
-source('code/learning/functions.R')
 source('code/learning/model_selection.R')
 source('code/learning/model_pipeline.R')
 source('code/learning/generateAUCs.R')
