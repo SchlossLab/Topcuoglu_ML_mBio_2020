@@ -66,6 +66,15 @@ pipeline <- function(dataset, model){
                               tuneGrid = grid,
                               family = "binomial")
     }
+    if(model=="L1_Linear_SVM"){
+      print(model)
+      trained_model <-  train(dx ~ .,
+                              data=trainTransformed,
+                              method = method,
+                              trControl = cv,
+                              metric = "Accuracy",
+                              tuneGrid = grid)
+    }
     else if(model=="Random_Forest"){
       print(model)
       trained_model <-  train(dx ~ .,
