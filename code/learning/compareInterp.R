@@ -46,12 +46,11 @@ get_linear_interp_info <- function(linear_model){
   return(ranked_linear_model)
 }
 
-for(files in interp_files){
-  print(files)
-  file <- read_files(files)
-  model_name <- as.character(file$model[1])
-  dataframe <- get_linear_interp_info(file) 
-  write_tsv(dataframe, paste0("data/process/", model_name, "_importance.tsv"))
+for(file_name in interp_files){
+  importance_data <- read_files(file_name)
+  model_name <- as.character(importance_data$model[1])
+  get_linear_interp_info(importance_data) %>% 
+  write_tsv(., paste0("data/process/", model_name, "_importance.tsv"))
 }
     
 
