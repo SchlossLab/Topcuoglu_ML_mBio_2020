@@ -40,7 +40,7 @@ get_interp_info <- function(model, model_name){
   if(model_name=="L2_Logistic_Regression" || 
      model_name=="L1_Linear_SVM" || 
      model_name=="L2_Linear_SVM")
-    {
+      {
       ranked_imp <- model %>% 
       select(-normal) %>% 
       group_by(names) %>% 
