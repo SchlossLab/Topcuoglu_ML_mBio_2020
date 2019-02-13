@@ -36,20 +36,23 @@ read_files <- function(filenames){
   return(data)
 }
 
-logit <- read_files(interp_files[2])
-l2svm <- read_files(interp_files[1])
-
-
-get_interp_info <- function(linear_model){ 
+get_linear_interp_info <- function(linear_model){ 
   ranked_linear_model <- linear_model %>% 
   select(-normal) %>% 
   group_by(names) %>% 
   summarise(mean_imp = mean(cancer), sd_imp = sd(cancer), n = n()) %>% 
-  arrange(-n)
-  
+  arrange(-n) %>% 
+  head(n=10)
   return(ranked_linear_model)
 }
 
-logit_interp_info <- head(get_interp_info(logit), n=10)
-l2svm_interp_info <- head(get_interp_info(l2svm), n=10)
+for(files in interp_files){
+  print(files)
+  file <- read_files(files)
+  model_name <- as.character(file$model[1])
+  dataframe <- get_linear_interp_info(file) 
+  write_tsv(dataframe, paste0("data/process/", model_name, "_importance.tsv"))
+}
+    
+
 
