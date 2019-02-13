@@ -45,9 +45,10 @@ model_interpret <- function(trained.model){
   # col_index will be ranked for the most important feature to least.
   col_index <- varImp(trained.model, scale = FALSE)$importance %>% 
     mutate(names=row.names(.))
+  sorted_ten <- col_index[order(-col_index[,1]),]
   # We will select the most important 10 features from each data-split
   # We have the names and the importance for each class.
-  ten_imp <- head(col_index, n=10)
+  ten_imp <- head(sorted_ten, n=10)
   return(ten_imp)
 }
 
