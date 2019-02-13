@@ -47,19 +47,6 @@ source('code/learning/model_pipeline.R')
 source('code/learning/generateAUCs.R')
 source('code/learning/model_interpret.R')
 
-# To write the "svmLinear5" into caret package
-setwd("data/caret_models")
-modelFiles <- list.files(pattern = "\\.R$")
-models <- vector(mode = "list", length = length(modelFiles))
-names(models) <- gsub("\\.R$", "", modelFiles)
-for(i in seq(along = modelFiles)) {
-  source(modelFiles[i])
-  models[[i]] <- modelInfo
-  rm(modelInfo)
-}
-# Save to your caret package directory, into the models/ subdirectory
-# Change to your path accordingly
-save(models, file = "/Library/Frameworks/R.framework/Versions/3.5/Resources/library/caret/models/models.RData")
 ######################################################################
 
 ######################## DATA PREPARATION #############################
