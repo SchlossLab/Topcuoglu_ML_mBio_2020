@@ -60,7 +60,7 @@ get_interp_info <- function(model, model_name){
 
 for(file_name in interp_files){
   importance_data <- read_files(file_name)
-  model_name <- as.character(importance_data$model[1])
+  model_name <- as.character(importance_data$model[1]) # get the model name from table
   get_interp_info(importance_data, model_name) %>% 
   write_tsv(., paste0("data/process/", model_name, "_importance.tsv"))
 }
