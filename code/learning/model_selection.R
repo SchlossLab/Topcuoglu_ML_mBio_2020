@@ -56,7 +56,7 @@ tuning_grid <- function(model){
     method <- "regLogistic"
   }
   else if (model=="L2_Linear_SVM"){
-    grid <- expand.grid(C = c(0.1, 0.12, 0.13, 0.14, 0.15, 0.16, 0.2))
+    grid <- expand.grid(C = c(0.1, 0.12, 0.13, 0.14, 0.15, 0.16, 0.2, 0.3, 1))
     method <- "svmLinear"
   }
   else if (model=="L1_Linear_SVM"){ # Exception due to package
