@@ -36,20 +36,32 @@ read_files <- function(filenames){
   return(data)
 }
 
-get_linear_interp_info <- function(linear_model){ 
-  ranked_linear_model <- linear_model %>% 
-  select(-normal) %>% 
-  group_by(names) %>% 
-  summarise(mean_imp = mean(cancer), sd_imp = sd(cancer), n = n()) %>% 
-  arrange(-n) %>% 
-  head(n=10)
-  return(ranked_linear_model)
+get_interp_info <- function(model, model_name){ 
+  if(model_name=="L2_Logistic_Regression" || 
+     model_name=="L1_Linear_SVM" || 
+     model_name=="L2_Linear_SVM")
+    {
+      ranked_imp <- model %>% 
+      select(-normal) %>% 
+      group_by(names) %>% 
+      summarise(mean_imp = mean(cancer), sd_imp = sd(cancer), n = n()) %>% 
+      arrange(-n) %>% 
+      head(n=10)
+      }
+  else{
+      ranked_imp <- model %>% 
+      group_by(names) %>% 
+      summarise(mean_imp = mean(Overall), sd_imp = sd(Overall), n = n()) %>% 
+      arrange(-n) %>% 
+      head(n=10)
+      }
+  return(ranked_imp)
 }
 
 for(file_name in interp_files){
   importance_data <- read_files(file_name)
   model_name <- as.character(importance_data$model[1])
-  get_linear_interp_info(importance_data) %>% 
+  get_interp_info(importance_data, model_name) %>% 
   write_tsv(., paste0("data/process/", model_name, "_importance.tsv"))
 }
     
