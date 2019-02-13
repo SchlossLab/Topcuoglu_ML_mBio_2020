@@ -25,9 +25,11 @@
 #   pipeline(data, model)
 
 # Output:
-#  List of:
-#     1. AUCs  for cv of 100 data-splits
-#     2. AUCS for test of 100 data-splits
+#  A results list of:
+#     1. cvAUC and testAUC for 1 data-split
+#     2. cvAUC for all hyper-parameters during tuning for 1 datasplit
+#     3. feature importance info on first 10 features for 1 datasplit
+#     4. trained model as a caret object
 ######################################################################
 
 ######################################################################
@@ -35,14 +37,12 @@
 ######################################################################
 pipeline <- function(dataset, model){
 
-  # Create vectors to save cv and test AUC values for every data-split
+  # Create vectors to save results of pipeline
   results_total <-  data.frame()
   test_aucs <- c()
   cv_aucs <- c()
-  all.test.response <- all.test.predictor <-  c()
-  all.cv.response <- all.cv.predictor <-  c()
+  
   # Do the 80-20 data-split
-
     # Stratified data partitioning %80 training - %20 testing
     inTraining <- createDataPartition(dataset$dx, p = .80, list = FALSE)
     training <- dataset[ inTraining,]
@@ -58,9 +58,9 @@ pipeline <- function(dataset, model){
     # Train the model
     if(model=="L2_Logistic_Regression"){
       print(model)
-      trained_model <-  train(dx ~ .,
-                              data=trainTransformed,
-                              method = method,
+      trained_model <-  train(dx ~ ., # label 
+                              data=trainTransformed, #total data
+                              method = method, 
                               trControl = cv,
                               metric = "ROC",
                               tuneGrid = grid,
@@ -72,7 +72,7 @@ pipeline <- function(dataset, model){
                               data=trainTransformed,
                               method = method,
                               trControl = cv,
-                              metric = "Accuracy",
+                              metric = "Accuracy", # not ROC due to package problems
                               tuneGrid = grid)
     }
     else if(model=="Random_Forest"){
@@ -83,7 +83,7 @@ pipeline <- function(dataset, model){
                               trControl = cv,
                               metric = "ROC",
                               tuneGrid = grid,
-                              ntree=1000)
+                              ntree=1000) # not tuning ntree
     }
     else{
       print(model)
@@ -94,15 +94,27 @@ pipeline <- function(dataset, model){
                               metric = "ROC",
                               tuneGrid = grid)
     }
-    if(model=="L1_Linear_SVM"){
-        #cv
+    if(model=="L1_Linear_SVM"){ # exception due to package problems for ROC calculation
+      #################################################################################
+      # We have to calculate ROC ourselves for cross-validation
+      # I have made changes to the caret package functions to get Decision Values
+      # In SVM we don't get predicted probabilities but decision values
+      # I changed the function in caret to give us decision values instead of probabilities.
+      #################################################################################
+      # For cross-validation
+        # selected indices are taking the best performing hyper-parameter only
         selectedIndices <-trained_model$pred[,6] == trained_model$bestTune[,1]
+        # The repsonse is the known labels 
         cv.response <- trained_model$pred[selectedIndices, ]$obs
+        # The predictor is the Decision Values that we get from training
         cv.predictor <- trained_model$pred[selectedIndices, ]$cancer
+        # We use pROC function to calculate ROC from decision values
+        # roc function gives us auc values as well
         cv_roc <- roc(cv.response, cv.predictor, auc=TRUE)
         cv_auc <- cv_roc$auc
         cv_aucs <- c(cv_aucs, cv_auc)
-        # test
+      
+      # For testing we can use the type="prob" to get decision values(becuase of my function)
         rpartProbs <- predict(trained_model, testTransformed, type="prob")
         test_roc <- roc(ifelse(testTransformed$dx == "cancer", 1, 0), rpartProbs[[2]])
         test_auc <- test_roc$auc
@@ -113,6 +125,10 @@ pipeline <- function(dataset, model){
         results_total <- rbind(results_total, results_individual)
     }
     else{
+      #################################################################################
+      # For all the other models, ROC calculation is already included.
+      # We follow caret instructions
+      #################################################################################
         # Mean AUC value over repeats of the best cost parameter during training
         cv_auc <- getTrainPerf(trained_model)$TrainROC
         # Predict on the test set and get predicted probabilities
@@ -128,7 +144,9 @@ pipeline <- function(dataset, model){
         results_individual <- trained_model$results
         results_total <- rbind(results_total, results_individual)
     }
+  # Here we look at the top 10 important features 
   feature_importance <- model_interpret(trained_model)
+  # Return all the metrics
   results <- list(cv_aucs, test_aucs, results_total, feature_importance, trained_model)
   return(results)
 }

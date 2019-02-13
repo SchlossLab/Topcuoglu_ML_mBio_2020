@@ -2,9 +2,9 @@
 # Date: 2019-01-14
 ######################################################################
 # Description:
-# This function defines defines:
-#     1. Tuning budget as a grid the classification methods chosen
-#     2. Cross-validation method
+# This function defines:
+#     1. Tuning budget as a grid for the classification methods chosen
+#     2. Cross-validation method (how many repeats and folds)
 #     3. Caret name for the classification method chosen
 ######################################################################
 
@@ -35,7 +35,11 @@
 ######################################################################
 tuning_grid <- function(model){
 
-  # Cross-validation method
+#   Cross-validation method
+#       5-fold
+#       100 internal repeats to pick the best hp
+#       Train the model with final hp decision to use model to predict
+#       Return 2class summary and save predictions to calculate cvROC
   cv <- trainControl(method="repeatedcv",
                      repeats = 100,
                      number=5,
@@ -55,10 +59,14 @@ tuning_grid <- function(model){
     grid <- expand.grid(C = c(0.1, 0.12, 0.13, 0.14, 0.15, 0.16, 0.2))
     method <- "svmLinear"
   }
-  else if (model=="L1_Linear_SVM"){
-    # Cross-validation method
+  else if (model=="L1_Linear_SVM"){ # Exception due to package
+    # Because I made changes to the package function, we can't:
+    #     1. Get class probabilities and 2class summary
+    #     2. We won't get ROC scores from cv
+    #
+    # We will get accuracy instead
     cv <- trainControl(method="repeatedcv",
-                       repeats = 1,
+                       repeats = 100,
                        number=5,
                        returnResamp="final",
                        classProbs=TRUE,
@@ -66,7 +74,7 @@ tuning_grid <- function(model){
                        savePredictions = TRUE)
     grid <- expand.grid(cost = c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1),
                         Loss = "L2")
-    method <- "svmLinear5"
+    method <- "svmLinear5" # I wrote this function in caret
   }
   else if (model=="RBF_SVM"){
     grid <-  expand.grid(sigma = c(0.0000005, 0.000001, 0.000005, 0.00001, 0.00005),
@@ -94,6 +102,10 @@ tuning_grid <- function(model){
   else {
     print("Model not available")
   }
+  # Return:
+  #     1. the hyper-parameter grid to tune
+  #     2. the caret function to train with 
+  #     3, cv method
   params <- list(grid, method, cv)
   return(params)
 }

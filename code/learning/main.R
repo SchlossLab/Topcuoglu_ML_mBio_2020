@@ -46,12 +46,28 @@ source('code/learning/model_selection.R')
 source('code/learning/model_pipeline.R')
 source('code/learning/generateAUCs.R')
 source('code/learning/model_interpret.R')
+
+# To write the "svmLinear5" into caret package
+setwd("data/caret_models")
+modelFiles <- list.files(pattern = "\\.R$")
+models <- vector(mode = "list", length = length(modelFiles))
+names(models) <- gsub("\\.R$", "", modelFiles)
+for(i in seq(along = modelFiles)) {
+  source(modelFiles[i])
+  models[[i]] <- modelInfo
+  rm(modelInfo)
+}
+# Save to your caret package directory, into the models/ subdirectory
+# Change to your path accordingly
+save(models, file = "/Library/Frameworks/R.framework/Versions/3.5/Resources/library/caret/models/models.RData")
 ######################################################################
 
 ######################## DATA PREPARATION #############################
-# Features: Hemoglobin levels and 16S rRNA gene sequences in the stool 
+# Features: Hemoglobin levels(FIT) and 16S rRNA gene sequences(OTUs) in the stool 
 # Labels: - Colorectal lesions of 490 patients. 
 #         - Defined as cancer or not.(Cancer here means: SRN)
+#                                     SRNs are adv adenomas+carcinomas
+
 # Read in metadata and select only sample Id and diagnosis columns
 meta <- read.delim('data/metadata.tsv', header=T, sep='\t') %>%
   select(sample, Dx_Bin, fit_result)
@@ -71,30 +87,40 @@ data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
   )) %>%
   select(-sample, -Dx_Bin) %>%
   drop_na()
-# We want the diagnosis column to a factor
+# We want the diagnosis column to be a factor
 data$dx <- factor(data$dx, labels=c("normal", "cancer"))
 ###################################################################
 
 ######################## RUN PIPELINE #############################
-# Choose which classification methods we want to run
-model_names = c("L2_Logistic_Regression", 
-                "L1_Linear_SVM", 
-                "L2_Linear_SVM",
-                "RBF_SVM", 
-                "Decision_Tree", 
-                "Random_Forest",
-                "XGBoost")
-# Get the cv and test AUCs for 100 data-splits
+# Choose which classification methods we want to run on command line
+#                "L2_Logistic_Regression", 
+#                "L1_Linear_SVM", 
+#                "L2_Linear_SVM",
+#                "RBF_SVM", 
+#                "Decision_Tree", 
+#                "Random_Forest",
+#                "XGBoost"
+
+
+# We want to get walltime for each model for and each data-split t
 start_time <- Sys.time()
 
-input <- commandArgs(trailingOnly=TRUE) # recieve input from model
-# Get variables from command line
+# We will run main.R from command line with arguments
+#  - These arguments will be saved into variable "input"
+#  - First argument is the seed number which is the array index
+#  - Second argument is the model name (one of the list above)
+input <- commandArgs(trailingOnly=TRUE) 
 seed <- as.numeric(input[1])
 model <- input[2]
-
+# Then arguments 1 and 2 will be placed respectively into the functions:
+#   1. set.seed() : creates reproducibility and variability
+#   2. get_results(): self-defined function that
+#                     - runs the modeling pipeline
+#                     - saves performance and hyper-parameters and imp features
 set.seed(seed)
 get_results(data, model, input[1])
 
+# We get wall-time for pipeline
 end_time <- Sys.time()
 print(end_time - start_time)
 ###################################################################
