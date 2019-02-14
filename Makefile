@@ -64,12 +64,7 @@ $(PROC)/combined_best_hp_results_XGBoost.tsv	:	data/baxter.0.03.subsample.shared
 						qsub Random_Forest.pbs\
 						qsub XGBoost.pbs\
 						qsub L1_Linear_SVM.pbs\
-						$(CODE)/generateAUCs.R\
-						$(CODE)/model_pipeline.R\
-						$(CODE)/model_interpret.R\
-						$(CODE)/main.R\
 						code/cat_csv_files.sh\
-						$(CODE)/model_selection.R
 	qsub L2_Logistic_Regression.pbs
 	qsub L2_Linear_SVM.pbs
 	qsub RBF_SVM.pbs
