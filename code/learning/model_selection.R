@@ -41,7 +41,7 @@ tuning_grid <- function(model){
 #       Train the model with final hp decision to use model to predict
 #       Return 2class summary and save predictions to calculate cvROC
   cv <- trainControl(method="repeatedcv",
-                     repeats = 100,
+                     repeats = 1,
                      number=5,
                      returnResamp="final",
                      classProbs=TRUE,
