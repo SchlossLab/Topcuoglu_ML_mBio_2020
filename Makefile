@@ -35,6 +35,16 @@ data/metadata.tsv	:	code/learning/load_datasets.batch
 #	Run scripts to perform all the models on the dataset and generate AUC values
 #
 ################################################################################
+#job names
+jobid1 = `qsub L2_Logistic_Regression.pbs`
+jobid2 =`qsub L2_Linear_SVM.pbs`
+jobid3 =`qsub RBF_SVM.pbs`
+jobid4 =`qsub Decision_Tree.pbs`
+jobid5 =`qsub Random_Forest.pbs`
+jobid6 =`qsub XGBoost.pbs`
+jobid7 =`qsub L1_Linear_SVM.pbs`
+depend_str = "-W after:${jobid1} -W after:${jobid2} -W after:${jobid3} -W after:${jobid4} -W after:${jobid5} -W after:${jobid6} -W after:${jobid7}"
+
 $(PROC)/combined_all_hp_results_L2_Logistic_Regression.csv\
 $(PROC)/combined_all_imp_features_results_L2_Logistic_Regression.csv\
 $(PROC)/combined_best_hp_results_L2_Logistic_Regression.tsv\
@@ -77,7 +87,7 @@ $(PROC)/combined_best_hp_results_XGBoost.tsv	:	data/baxter.0.03.subsample.shared
 	qsub Random_Forest.pbs
 	qsub XGBoost.pbs
 	qsub L1_Linear_SVM.pbs
-	bash code/cat_csv_files.sh
+	bash code/cat_csv_files.sh $depend_str 
 
 
 
