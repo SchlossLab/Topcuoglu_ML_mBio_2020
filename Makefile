@@ -35,7 +35,89 @@ data/metadata.tsv	:	code/learning/load_datasets.batch
 #	Run scripts to perform all the models on the dataset and generate AUC values
 #
 ################################################################################
+$(PROC)/combined_all_hp_results_L2_Logistic_Regression.csv\
+$(PROC)/combined_all_imp_features_results_L2_Logistic_Regression.csv\
+$(PROC)/combined_best_hp_results_L2_Logistic_Regression.tsv	:	data/baxter.0.03.subsample.shared\
+						data/metadata.tsv\
+						$(CODE)/generateAUCs.R\
+						$(CODE)/model_pipeline.R\
+						$(CODE)/model_interpret.R\
+						$(CODE)/main.R\
+						code/cat_csv_files.sh\
+						$(CODE)/model_selection.R
+	for ((seed=1;seed<=100;i++));
+	do
+		Rscript $(CODE)/main.R $seed "L2_Logistic_Regression"
+	done
+	bash code/cat_csv_files.sh
 
+
+$(PROC)/combined_all_hp_results_L1_Linear_SVM.csv\
+$(PROC)/combined_all_imp_features_results_L1_Linear_SVM.csv\
+$(PROC)/combined_best_hp_results_L1_Linear_SVM.tsv	:	data/baxter.0.03.subsample.shared\
+						data/metadata.tsv\
+						$(CODE)/generateAUCs.R\
+						$(CODE)/model_pipeline.R\
+						$(CODE)/model_interpret.R\
+						$(CODE)/main.R\
+						code/cat_csv_files.sh\
+						$(CODE)/model_selection.R
+	for ((seed=1;seed<=100;i++));
+	do
+		Rscript $(CODE)/main.R $seed "L1_Linear_SVM"
+	done
+	bash code/cat_csv_files.sh
+
+
+$(PROC)/combined_all_hp_results_L2_Linear_SVM.csv\
+$(PROC)/combined_all_imp_features_results_L2_Linear_SVM.csv\
+$(PROC)/combined_best_hp_results_L2_Linear_SVM.tsv	:	data/baxter.0.03.subsample.shared\
+						data/metadata.tsv\
+						$(CODE)/generateAUCs.R\
+						$(CODE)/model_pipeline.R\
+						$(CODE)/model_interpret.R\
+						$(CODE)/main.R\
+						code/cat_csv_files.sh\
+						$(CODE)/model_selection.R
+	for ((seed=1;seed<=100;i++));
+	do
+		Rscript $(CODE)/main.R $seed "L2_Linear_SVM"
+	done
+	bash code/cat_csv_files.sh
+
+
+
+$(PROC)/combined_all_hp_results_RBF_SVM.csv\
+$(PROC)/combined_all_imp_features_results_RBF_SVM.csv\
+$(PROC)/combined_best_hp_results_RBF_SVM.tsv	:	data/baxter.0.03.subsample.shared\
+						data/metadata.tsv\
+						$(CODE)/generateAUCs.R\
+						$(CODE)/model_pipeline.R\
+						$(CODE)/model_interpret.R\
+						$(CODE)/main.R\
+						code/cat_csv_files.sh\
+						$(CODE)/model_selection.R
+	for ((seed=1;seed<=100;i++));
+	do
+		Rscript $(CODE)/main.R $seed "RBF_SVM"
+	done
+	bash code/cat_csv_files.sh
+
+$(PROC)/combined_all_hp_results_Decision_Tree.csv\
+$(PROC)/combined_all_imp_features_results_Decision_Tree.csv\
+$(PROC)/combined_best_hp_results_Decision_Tree.tsv	:	data/baxter.0.03.subsample.shared\
+						data/metadata.tsv\
+						$(CODE)/generateAUCs.R\
+						$(CODE)/model_pipeline.R\
+						$(CODE)/model_interpret.R\
+						$(CODE)/main.R\
+						code/cat_csv_files.sh\
+						$(CODE)/model_selection.R
+	for ((seed=1;seed<=100;i++));
+	do
+		Rscript $(CODE)/main.R $seed "Decision_Tree"
+	done
+	bash code/cat_csv_files.sh
 
 $(PROC)/combined_all_hp_results_Random_Forest.csv\
 $(PROC)/combined_all_imp_features_results_Random_Forest.csv\
@@ -52,6 +134,25 @@ $(PROC)/combined_best_hp_results_Random_Forest.tsv	:	data/baxter.0.03.subsample.
 		Rscript $(CODE)/main.R $seed "Random_Forest"
 	done
 	bash code/cat_csv_files.sh
+
+$(PROC)/combined_all_hp_results_XGBoost.csv\
+$(PROC)/combined_all_imp_features_results_XGBoost.csv\
+$(PROC)/combined_best_hp_results_XGBoost.tsv	:	data/baxter.0.03.subsample.shared\
+						data/metadata.tsv\
+						$(CODE)/generateAUCs.R\
+						$(CODE)/model_pipeline.R\
+						$(CODE)/model_interpret.R\
+						$(CODE)/main.R\
+						code/cat_csv_files.sh\
+						$(CODE)/model_selection.R
+	for ((seed=1;seed<=100;i++));
+	do
+		Rscript $(CODE)/main.R $seed "XGBoost"
+	done
+	bash code/cat_csv_files.sh
+
+
+
 
 
 ################################################################################
