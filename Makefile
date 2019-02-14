@@ -87,7 +87,7 @@ $(PROC)/combined_best_hp_results_XGBoost.tsv	:	data/baxter.0.03.subsample.shared
 	qsub Random_Forest.pbs
 	qsub XGBoost.pbs
 	qsub L1_Linear_SVM.pbs
-	bash code/cat_csv_files.sh $depend_str 
+	bash code/cat_csv_files.sh $$depend_str 
 
 
 
