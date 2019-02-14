@@ -54,7 +54,7 @@ $(PROC)/combined_best_hp_results_L1_Linear_SVM.tsv	:	data/baxter.0.03.subsample.
 						code/cat_csv_files_test.sh
 	qsub L2_Logistic_Regression.pbs
 	qsub L1_Linear_SVM.pbs
-	bash code/cat_csv_files_test.sh $$depend_str
+	bash code/cat_csv_files_test.sh 
 
 
 
