@@ -55,14 +55,21 @@ $(PROC)/combined_all_imp_features_results_Random_Forest.csv\
 $(PROC)/combined_best_hp_results_Random_Forest.tsv
 $(PROC)/combined_all_hp_results_XGBoost.csv\
 $(PROC)/combined_all_imp_features_results_XGBoost.csv\
-$(PROC)/combined_best_hp_results_XGBoost.tsv	:	qsub L2_Logistic_Regression.pbs\
-						qsub L2_Linear_SVM.pbs\
-						qsub RBF_SVM.pbs\
-						qsub Decision_Tree.pbs\
-						qsub Random_Forest.pbs\
-						qsub XGBoost.pbs\
-						qsub L1_Linear_SVM.pbs\
+$(PROC)/combined_best_hp_results_XGBoost.tsv	:	data/baxter.0.03.subsample.shared\
+						data/metadata.tsv\
+						L2_Logistic_Regression.pbs\
+						L2_Linear_SVM.pbs\
+						RBF_SVM.pbs\
+						Decision_Tree.pbs\
+						Random_Forest.pbs\
+						XGBoost.pbs\
+						L1_Linear_SVM.pbs\
+						$(CODE)/generateAUCs.R\
+						$(CODE)/model_pipeline.R\
+						$(CODE)/model_interpret.R\
+						$(CODE)/main.R\
 						code/cat_csv_files.sh\
+						$(CODE)/model_selection.R
 	qsub L2_Logistic_Regression.pbs
 	qsub L2_Linear_SVM.pbs
 	qsub RBF_SVM.pbs
