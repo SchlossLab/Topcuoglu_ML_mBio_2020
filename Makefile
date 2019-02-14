@@ -3,6 +3,7 @@ FIGS = results/figures
 TABLES = results/tables
 PROC = data/process
 FINAL = submission/
+CODE = code/learning
 
 # utility function to print various variables. For example, running the
 # following at the command line:
@@ -29,26 +30,28 @@ data/metadata.tsv	:	code/learning/load_datasets.batch
 
 ################################################################################
 #
-# Part 2: Model analysis in python
+# Part 2: Model analysis in R
 #
 #	Run scripts to perform all the models on the dataset and generate AUC values
 #
 ################################################################################
 
 
-$(PROC)/L2_Logistic_Regression.tsv\
-$(PROC)/L1_SVM_Linear_Kernel.tsv\
-$(PROC)/SVM_RBF.tsv\
-$(PROC)/L2_SVM_Linear_Kernel.tsv\
-$(PROC)/Random_Forest.tsv\
-$(PROC)/Decision_Tree.tsv\
-$(PROC)/XGBoost.tsv	:	data/baxter.0.03.subsample.shared\
+$(PROC)/combined_all_hp_results_Random_Forest.csv\
+$(PROC)/combined_all_imp_features_results_Random_Forest.csv\
+$(PROC)/combined_best_hp_results_Random_Forest.tsv	:	data/baxter.0.03.subsample.shared\
 						data/metadata.tsv\
-						code/learning/main.py\
-						code/learning/preprocess_data.py\
-						code/learning/model_selection.py
-	python3 code/learning/main.py
-
+						$(CODE)/generateAUCs.R\
+						$(CODE)/model_pipeline.R\
+						$(CODE)/model_interpret.R\
+						$(CODE)/main.R\
+						code/cat_csv_files.sh\
+						$(CODE)/model_selection.R
+	for ((seed=1;seed<=100;i++));
+	do
+		Rscript $(CODE)/main.R $seed "Random_Forest"
+	done
+	bash code/cat_csv_files.sh
 
 
 ################################################################################
@@ -60,47 +63,35 @@ $(PROC)/XGBoost.tsv	:	data/baxter.0.03.subsample.shared\
 ################################################################################
 
 # Figure 1 shows the generalization performance of all the models tested.
-$(FIGS)/Figure1.pdf :	$(PROC)/L2_Logistic_Regression.tsv\
-						$(PROC)/L1_SVM_Linear_Kernel.tsv\
-						$(PROC)/SVM_RBF.tsv\
-						$(PROC)/L2_SVM_Linear_Kernel.tsv\
-						$(PROC)/Random_Forest.tsv\
-						$(PROC)/Decision_Tree.tsv\
-						$(PROC)/XGBoost.tsv
-						code/learning/compareAUC.R
-	R -e "source('code/learning/compareAUC.R')"
+$(FIGS)/Figure_1.pdf :	$(CODE)/functions.R\
+						$(CODE)/Figure1.R\
+						$(PROC)/combined_best_hp_results_L2_Logistic_Regression.tsv\
+						$(PROC)/combined_best_hp_results_L1_Linear_SVM.tsv\
+						$(PROC)/combined_best_hp_results_L2_Linear_SVM.tsv\
+						$(PROC)/combined_best_hp_results_RBF_SVM.tsv\
+						$(PROC)/combined_best_hp_results_Decision_Tree.tsv\
+						$(PROC)/combined_best_hp_results_Random_Forest.tsv\
+						$(PROC)/combined_best_hp_results_XGBoost.tsv
+	Rscript $(CODE)/Figure1.R
 
 # Figure 2 shows the hyper-parameter tuning of all the models tested.
-$(FIGS)/Figure2.pdf :	$(PROC)/L2_Logistic_Regression_parameters.tsv\
-						$(PROC)/L1_SVM_Linear_Kernel_parameters.tsv\
-						$(PROC)/SVM_RBF_parameters.tsv\
-						$(PROC)/L2_SVM_Linear_Kernel_parameters.tsv\
-						$(PROC)/Random_Forest_parameters.tsv\
-						$(PROC)/Decision_Tree_parameters.tsv\
-						$(PROC)/XGBoost_parameters.tsv
-						code/learning/compareHP.R
-	R -e "source('code/learning/compareHP.R')"
+$(FIGS)/Figure_2.pdf :	$(CODE)/functions.R\
+						$(CODE)/Figure2.R\
+						$(PROC)/combined_all_hp_results_L2_Logistic_Regression.tsv\
+						$(PROC)/combined_all_hp_results_L1_Linear_SVM.tsv\
+						$(PROC)/combined_all_hp_results_L2_Linear_SVM.tsv\
+						$(PROC)/combined_all_hp_results_RBF_SVM.tsv\
+						$(PROC)/combined_all_hp_results_Decision_Tree.tsv\
+						$(PROC)/combined_all_hp_results_Random_Forest.tsv\
+						$(PROC)/combined_all_hp_results_XGBoost.tsv
+	Rscript $(CODE)/Figure2.R
 
 # Table 1 is a summary of the properties of all the models tested.
-$(TABLES)/Table1.pdf :	$(PROC)/model_parameters.txt\
-						$(TABLES)/Table1.Rmd\
-						$(TABLES)/header.tex
-	R -e "rmarkdown::render('$(TABLES)/Table1.Rmd', clean=TRUE)"
-	rm $(TABLES)/Table1.tex
-
-# Table 2 shows the hyper-parameter budget of all the non-tree based models tested.
-$(TABLES)/Table2.pdf :	$(PROC)/param_grid.csv\
-						$(TABLES)/Table2.Rmd\
-						$(TABLES)/header.tex
-	R -e "rmarkdown::render('$(TABLES)/Table2.Rmd', clean=TRUE)"
-	rm $(TABLES)/Table2.tex
-
-# Table 3 shows the hyper-parameter budget of all the tree based models tested. 
-$(TABLES)/Table3.pdf :	$(PROC)/param_grid.csv\
-						$(TABLES)/Table3.Rmd\
-						$(TABLES)/header.tex
-	R -e "rmarkdown::render('$(TABLES)/Table3.Rmd', clean=TRUE)"
-	rm $(TABLES)/Table3.tex
+#$(TABLES)/Table1.pdf :	$(PROC)/model_parameters.txt\#
+#						$(TABLES)/Table1.Rmd\#
+#						$(TABLES)/header.tex#
+#	R -e "rmarkdown::render('$(TABLES)/Table1.Rmd', clean=TRUE)"
+#	rm $(TABLES)/Table1.tex
 
 
 
@@ -119,17 +110,17 @@ $(TABLES)/Table3.pdf :	$(PROC)/param_grid.csv\
 ################################################################################
 
 
-$(FINAL)/manuscript.% : 			\ #include data files that are needed for paper don't leave this line with a : \
-						$(FINAL)/mbio.csl\
-						$(FINAL)/references.bib\
-						$(FINAL)/manuscript.Rmd
-	R -e 'render("$(FINAL)/manuscript.Rmd", clean=FALSE)'
-	mv $(FINAL)/manuscript.knit.md submission/manuscript.md
-	rm $(FINAL)/manuscript.utf8.md
+#$(FINAL)/manuscript.% : 			\ #include data files that are needed for paper don't leave this line with a : \
+#						$(FINAL)/mbio.csl\#
+#						$(FINAL)/references.bib\#
+#						$(FINAL)/manuscript.Rmd#
+#	R -e 'render("$(FINAL)/manuscript.Rmd", clean=FALSE)'
+#	mv $(FINAL)/manuscript.knit.md submission/manuscript.md
+#	rm $(FINAL)/manuscript.utf8.md
 
 
-write.paper : $(TABLES)/table_1.pdf $(TABLES)/table_2.pdf\ #customize to include
-				$(FIGS)/figure_1.pdf $(FIGS)/figure_2.pdf\	# appropriate tables and
-				$(FIGS)/figure_3.pdf $(FIGS)/figure_4.pdf\	# figures
-				$(FINAL)/manuscript.Rmd $(FINAL)/manuscript.md\
-				$(FINAL)/manuscript.tex $(FINAL)/manuscript.pdf
+#write.paper : $(TABLES)/table_1.pdf $(TABLES)/table_2.pdf\ #customize to include
+#				$(FIGS)/figure_1.pdf $(FIGS)/figure_2.pdf\	# appropriate tables and
+#				$(FIGS)/figure_3.pdf $(FIGS)/figure_4.pdf\	# figures
+#				$(FINAL)/manuscript.Rmd $(FINAL)/manuscript.md\#
+#				$(FINAL)/manuscript.tex $(FINAL)/manuscript.pdf
