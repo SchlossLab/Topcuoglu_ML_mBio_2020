@@ -47,7 +47,7 @@ $(PROC)/combined_best_hp_results_L2_Logistic_Regression.tsv	:	data/baxter.0.03.s
 						$(CODE)/model_selection.R
 	for ((seed=1;seed<=100;i++));
 	do
-		Rscript $(CODE)/main.R $seed "L2_Logistic_Regression"
+		Rscript $(CODE)/main.R $$seed "L2_Logistic_Regression"
 	done
 	bash code/cat_csv_files.sh
 
@@ -64,7 +64,7 @@ $(PROC)/combined_best_hp_results_L1_Linear_SVM.tsv	:	data/baxter.0.03.subsample.
 						$(CODE)/model_selection.R
 	for ((seed=1;seed<=100;i++));
 	do
-		Rscript $(CODE)/main.R $seed "L1_Linear_SVM"
+		Rscript $(CODE)/main.R $$seed "L1_Linear_SVM"
 	done
 	bash code/cat_csv_files.sh
 
@@ -81,7 +81,7 @@ $(PROC)/combined_best_hp_results_L2_Linear_SVM.tsv	:	data/baxter.0.03.subsample.
 						$(CODE)/model_selection.R
 	for ((seed=1;seed<=100;i++));
 	do
-		Rscript $(CODE)/main.R $seed "L2_Linear_SVM"
+		Rscript $(CODE)/main.R $$seed "L2_Linear_SVM"
 	done
 	bash code/cat_csv_files.sh
 
@@ -99,7 +99,7 @@ $(PROC)/combined_best_hp_results_RBF_SVM.tsv	:	data/baxter.0.03.subsample.shared
 						$(CODE)/model_selection.R
 	for ((seed=1;seed<=100;i++));
 	do
-		Rscript $(CODE)/main.R $seed "RBF_SVM"
+		Rscript $(CODE)/main.R $$seed "RBF_SVM"
 	done
 	bash code/cat_csv_files.sh
 
@@ -115,7 +115,7 @@ $(PROC)/combined_best_hp_results_Decision_Tree.tsv	:	data/baxter.0.03.subsample.
 						$(CODE)/model_selection.R
 	for ((seed=1;seed<=100;i++));
 	do
-		Rscript $(CODE)/main.R $seed "Decision_Tree"
+		Rscript $(CODE)/main.R $$seed "Decision_Tree"
 	done
 	bash code/cat_csv_files.sh
 
@@ -129,9 +129,8 @@ $(PROC)/combined_best_hp_results_Random_Forest.tsv	:	data/baxter.0.03.subsample.
 						$(CODE)/main.R\
 						code/cat_csv_files.sh\
 						$(CODE)/model_selection.R
-	for ((seed=1;seed<=100;i++));
-	do
-		Rscript $(CODE)/main.R $seed "Random_Forest"
+	seed=1 ; while [[ $$seed -le 2 ]]; do \
+		Rscript $(CODE)/main.R $$seed "Random_Forest"; \
 	done
 	bash code/cat_csv_files.sh
 
@@ -147,7 +146,7 @@ $(PROC)/combined_best_hp_results_XGBoost.tsv	:	data/baxter.0.03.subsample.shared
 						$(CODE)/model_selection.R
 	for ((seed=1;seed<=100;i++));
 	do
-		Rscript $(CODE)/main.R $seed "XGBoost"
+		Rscript $(CODE)/main.R $$seed "XGBoost"
 	done
 	bash code/cat_csv_files.sh
 
