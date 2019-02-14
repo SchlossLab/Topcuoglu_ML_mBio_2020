@@ -86,8 +86,8 @@ $(PROC)/combined_best_hp_results_L1_Linear_SVM.tsv	:	code/cat_csv_files_test.sh\
 						$(L1_ALL_FILE)\
 						$(L2_IMP_FILE)\
 						$(L2_BEST_FILE)\
-						$(L1_ALL_FILE)
-	bash code/cat_csv_files_test.sh 
+						$(L2_ALL_FILE)
+	bash code/cat_csv_files_test.sh
 
 
 
