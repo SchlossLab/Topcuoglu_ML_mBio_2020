@@ -56,7 +56,7 @@ L2_BEST=$(addsuffix .csv,$(L2_BEST_OUT_FILE))
 L2_ALL_OUT_FILE=$(addprefix data/temp/all_hp_results_L2_Logistic_Regression_,$(OUT_NO))
 L2_ALL_FILE=$(addsuffix .csv,$(L2_ALL_OUT_FILE))
 
-data/temp/%.csv\
+
 $(L1_IMP_FILE)\
 $(L1_BEST_FILE)\
 $(L1_ALL_FILE)\
@@ -82,7 +82,12 @@ $(PROC)/combined_best_hp_results_L2_Logistic_Regression.tsv\
 $(PROC)/combined_all_hp_results_L1_Linear_SVM.csv\
 $(PROC)/combined_all_imp_features_results_L1_Linear_SVM.csv\
 $(PROC)/combined_best_hp_results_L1_Linear_SVM.tsv	:	code/cat_csv_files_test.sh\
-						data/temp/%.csv
+					$(L1_IMP_FILE)\
+					$(L1_BEST_FILE)\
+					$(L1_ALL_FILE)\
+					$(L2_IMP_FILE)\
+					$(L2_BEST_FILE)\
+					$(L2_ALL_FILE)
 	bash code/cat_csv_files_test.sh
 
 
