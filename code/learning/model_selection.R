@@ -66,7 +66,7 @@ tuning_grid <- function(model){
     #
     # We will get accuracy instead
     cv <- trainControl(method="repeatedcv",
-                       repeats = 100,
+                       repeats = 1,
                        number=5,
                        returnResamp="final",
                        classProbs=TRUE,
