@@ -3,7 +3,7 @@ SEARCH_DIR=data/temp
 	FINAL_DIR=data/process
 	# Keep the first line of File1 and remove the first line of all the others and combine
 
-for model in "XGBoost" "Random_Forest" "RBF_SVM"  "L1_Linear_SVM" "L2_Logistic_Regression" "L2_Linear_SVM" "Decision_Tree"
+for model in "L1_Linear_SVM" "L2_Logistic_Regression" 
 	do
 		head -1 $SEARCH_DIR/all_hp_results_"$model"_1.csv  > $SEARCH_DIR/test_combined_all_hp_results_"$model".csv; tail -n +2 -q $SEARCH_DIR/all_hp_results_"$model"_*.csv >> $SEARCH_DIR/test_combined_all_hp_results_"$model".csv
 
