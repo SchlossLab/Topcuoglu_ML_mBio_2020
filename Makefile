@@ -83,7 +83,7 @@ $(PROC)/combined_best_hp_results_L1_Linear_SVM.tsv	:	code/cat_csv_files_test.sh\
 						$(L2_IMP_FILE)\
 						$(L2_BEST_FILE)\
 						$(L2_ALL_FILE)
-	bash code/cat_csv_files_test.sh $$depend_str
+	bash code/cat_csv_files_test.sh 
 
 
 
