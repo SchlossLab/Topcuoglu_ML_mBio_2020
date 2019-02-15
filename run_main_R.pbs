@@ -1,0 +1,47 @@
+#!/bin/sh
+#PBS -l procs=1,pmem=10gb
+#PBS -l walltime=500:00:00
+#PBS -j oe
+#PBS -m abe
+#PBS -V
+#PBS -M begumtop@umich.edu
+#PBS -A pschloss_fluxod
+#PBS -q fluxod
+#PBS -l qos=flux
+#PBS -t 1-6
+
+# Load Modules:
+#  1) R/3.5.0   2) r-biomed-libs/3.5.0
+
+# -t is array parameter, the same job will be submitted the length of the input, 
+# each with its own unique array id ($PBS_ARRAYID)
+
+
+cat $PBS_NODEFILE
+qstat -f $PBS_JOBID
+
+cd $PBS_O_WORKDIR
+
+NCPUS=`wc -l $PBS_NODEFILE | awk '{print $1}'`
+
+model_list=('L2_Logistic_Regression' 'L2_Linear_SVM' 'RBF_SVM' 'Decision_Tree' 'Random_Forest' 'XGBoost')
+
+# vector index starts at 0 so shift array by one
+
+which_model=$(($PBS_ARRAYID - 1))
+
+# print out which model is being run in each job
+
+echo Using ${model_list[$which_model]}
+
+# Using $PBS_ARRAYID to select parameter set
+
+Rscript code/learning/main.R ${model_list[$which_model]}
+
+
+echo "Script complete"
+echo "qsub working directory absolute is"
+echo $PBS_O_WORKDIR
+qstat -f $PBS_JOBID 
+exit
+

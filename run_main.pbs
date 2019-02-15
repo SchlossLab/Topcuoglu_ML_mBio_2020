@@ -1,0 +1,24 @@
+#!/bin/sh
+#PBS -l procs=4,pmem=10gb
+#PBS -l walltime=500:00:00
+#PBS -j oe
+#PBS -m abe
+#PBS -V
+#PBS -M begumtop@umich.edu
+#PBS -A pschloss_fluxod
+#PBS -q fluxod
+#PBS -l qos=flux
+echo "ncpus-2.pbs"
+cat $PBS_NODEFILE
+qstat -f $PBS_JOBID
+cd $PBS_O_WORKDIR
+NCPUS=`wc -l $PBS_NODEFILE | awk '{print $1}'`
+
+source demo/bin/activate
+python code/learning/main.py
+
+echo "qsub working directory absolute is"
+echo $PBS_O_WORKDIR
+exit
+
+
