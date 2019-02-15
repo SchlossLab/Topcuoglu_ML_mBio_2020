@@ -52,12 +52,12 @@ L2_ALL_OUT_FILE=$(addprefix data/temp/all_hp_results_L2_Logistic_Regression_,$(O
 L2_ALL_FILE=$(addsuffix .csv,$(L2_ALL_OUT_FILE))
 
 
-$(L1_IMP_FILE)\
-$(L1_BEST_FILE)\
-$(L1_ALL_FILE)\
-$(L2_IMP_FILE)\
-$(L2_BEST_FILE)\
-$(L2_ALL_FILE)	:	data/baxter.0.03.subsample.shared\
+data/temp/best_hp_results_L2_Logistic_Regression_1.csv\
+data/temp/all_imp_features_results_L2_Logistic_Regression_1.csv\
+data/temp/all_hp_results_L2_Logistic_Regression_1.csv\
+data/temp/best_hp_results_L1_Linear_SVM_Regression_1.csv\
+data/temp/all_imp_features_results_L1_Linear_SVM_1.csv\
+data/temp/all_hp_results_L1_Linear_SVM_1.csv	:	data/baxter.0.03.subsample.shared\
 					data/metadata.tsv\
 					$(CODE)/generateAUCs.R\
 					$(CODE)/model_pipeline.R\
