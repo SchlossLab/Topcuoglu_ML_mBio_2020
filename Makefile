@@ -39,15 +39,18 @@ data/metadata.tsv	:	code/learning/load_datasets.batch
 
 OUT_NO=$(shell seq 0 99)
 
-L1_ALL_OUT_FILE=$(addprefix data/temp/all_hp_results_L1_Linear_SVM_,$(OUT_NO))
-L1_ALL_FILE=$(addsuffix .csv,$(L1_ALL_OUT_FILE))
+L2_IMP_OUT_FILE=$(addprefix data/temp/all_imp_features_results_L2_Logistic_Regression_,$(OUT_NO))
+L2_IMP=$(addsuffix .csv,$(L2_IMP_OUT_FILE))
+
+L2_BEST_OUT_FILE=$(addprefix data/temp/best_hp_results_L2_Logistic_Regression_,$(OUT_NO))
+L2_BEST=$(addsuffix .csv,$(L2_BEST_OUT_FILE))
 
 
 L2_ALL_OUT_FILE=$(addprefix data/temp/all_hp_results_L2_Logistic_Regression_,$(OUT_NO))
 L2_ALL_FILE=$(addsuffix .csv,$(L2_ALL_OUT_FILE))
 
-
-
+$(L2_IMP)\
+$(L2_BEST)\
 $(L2_ALL_FILE)	:	input.in.intermediate;
 
 .INTERMEDIATE:	input.in.intermediate
@@ -61,11 +64,13 @@ input.in.intermediate:	data/baxter.0.03.subsample.shared\
 	qsub L2_Logistic_Regression.pbs
 
 
-
-
-$(PROC)/combined_all_hp_results_L2_Logistic_Regression.csv\
+$(PROC)/combined_best_hp_results_L2_Logistic_Regression.csv\
+$(PROC)/combined_all_im_features_results_L2_Logistic_Regression.csv\
+$(PROC)/combined_all_hp_results_L2_Logistic_Regression.csv
 	:						code/cat_csv_files_test.sh\
-							$(L2_ALL_FILE)
+							$(L2_ALL_FILE)\
+							$(L2_IMP)\
+							$(L2_BEST)
 		bash code/cat_csv_files_test.sh
 
 
