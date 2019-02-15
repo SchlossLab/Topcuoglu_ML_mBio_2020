@@ -41,7 +41,7 @@ tuning_grid <- function(model){
 #       Train the model with final hp decision to use model to predict
 #       Return 2class summary and save predictions to calculate cvROC
   cv <- trainControl(method="repeatedcv",
-                     repeats = 1,
+                     repeats = 100,
                      number=5,
                      returnResamp="final",
                      classProbs=TRUE,
@@ -51,7 +51,7 @@ tuning_grid <- function(model){
   # Grid and caret method defined for each classification models
   if(model=="L2_Logistic_Regression") {
     grid <-  expand.grid(cost = c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1),
-                         loss = "L2_dual", 
+                         loss = "L2_dual",
                          epsilon = 0.1)
     method <- "regLogistic"
   }
@@ -66,7 +66,7 @@ tuning_grid <- function(model){
     #
     # We will get accuracy instead
     cv <- trainControl(method="repeatedcv",
-                       repeats = 1,
+                       repeats = 100,
                        number=5,
                        returnResamp="final",
                        classProbs=TRUE,
@@ -104,7 +104,7 @@ tuning_grid <- function(model){
   }
   # Return:
   #     1. the hyper-parameter grid to tune
-  #     2. the caret function to train with 
+  #     2. the caret function to train with
   #     3, cv method
   params <- list(grid, method, cv)
   return(params)
