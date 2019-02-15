@@ -185,27 +185,7 @@ $(PROC)/combined_best_hp_results_XGBoost.csv\
 $(PROC)/combined_all_im_features_results_XGBoost.csv\
 $(PROC)/combined_all_hp_results_XGBoost.csv\
 	:						code/cat_csv_files_test.sh\
-							$(L1_BEST)\
-							$(L21_IMP)\
-							$(L1_ALL_FILE)\
-							$(L2_ALL_FILE)\
-							$(L2_IMP)\
-							$(L2_BEST)\
-							$(Logit_BEST)\
-							$(Logit_IMP)\
-							$(Logit_ALL_FILE)\
-							$(RBF_BEST)\
-							$(RBF_IMP)\
-							$(RBF_ALL_FILE)\
-							$(DT_BEST)\
-							$(DT_IMP)\
-							$(DT_ALL_FILE)\
-							$(RF_BEST)\
-							$(RF_IMP)\
-							$(RF_ALL_FILE)\
-							$(XG_IMP)\
-							$(XG_ALL_FILE)\
-							$(XG_BEST)
+							input.in.intermediate\
 		bash code/cat_csv_files_test.sh
 
 
