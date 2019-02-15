@@ -185,7 +185,7 @@ $(PROC)/combined_best_hp_results_XGBoost.csv\
 $(PROC)/combined_all_im_features_results_XGBoost.csv\
 $(PROC)/combined_all_hp_results_XGBoost.csv\
 	:						code/cat_csv_files_test.sh\
-							input.in.intermediate\
+							input.in.intermediate
 		bash code/cat_csv_files_test.sh
 
 
