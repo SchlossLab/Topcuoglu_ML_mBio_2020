@@ -36,16 +36,17 @@ read_files <- function(filenames){
   return(data)
 }
 
-logit <- read_files(best_files[3])
-l2svm <- read_files(best_files[2])
-rbf <- read_files(best_files[5])
-rf <- read_files(best_files[4])
+logit <- read_files(best_files[4])
+l2svm <- read_files(best_files[3])
+l1svm <- read_files(best_files[2])
+rbf <- read_files(best_files[6])
+rf <- read_files(best_files[5])
 dt <- read_files(best_files[1])
-xgboost <- read_files(best_files[6])
+xgboost <- read_files(best_files[7])
 
 
 
-best_performance <- bind_rows(logit, l2svm, rbf, dt, xgboost, rf)%>%
+best_performance <- bind_rows(logit, l2svm, rbf, dt, xgboost, rf, l1svm)%>%
   melt_data()
 
 ######################################################################
@@ -57,7 +58,8 @@ performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC, fun = me
   geom_boxplot(alpha=0.7) +
   scale_y_continuous(name = "AUC",
                      breaks = seq(0.5, 1, 0.02),
-                     limits=c(0.5, 1), expand=c(0,0)) +
+                     limits=c(0.5, 1), 
+                     expand=c(0,0)) +
   scale_x_discrete(name = "") +
   theme_bw() +
   theme(legend.justification=c(0,1), 
@@ -79,7 +81,7 @@ performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC, fun = me
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 
-ggsave("AUC_comparison_R.pdf", plot = performance, device = 'pdf', path = 'results/figures', width = 10, height = 10)
+ggsave("AUC_comparison_R.pdf", plot = performance, device = 'pdf', path = 'results/figures', width = 15, height = 10)
 
 
 ######################################################################
@@ -89,12 +91,13 @@ ggsave("AUC_comparison_R.pdf", plot = performance, device = 'pdf', path = 'resul
 all_files <- list.files(path= 'data/process', pattern='combined_all.*', full.names = TRUE)
 
 
-logit_all <- read_files(all_files[3])
-l2svm_all <- read_files(all_files[2])
-rbf_all <- read_files(all_files[5])
-rf_all <- read_files(all_files[4])
+logit_all <- read_files(all_files[4])
+l2svm_all <- read_files(all_files[3])
+l1svm_all <- read_files(all_files[2])
+rbf_all <- read_files(all_files[6])
+rf_all <- read_files(all_files[5])
 dt_all <- read_files(all_files[1])
-xgboost_all <- read_files(all_files[6])
+xgboost_all <- read_files(all_files[7])
 
 logit_all %>% 
   group_by(cost, loss, epsilon) %>% 
@@ -143,6 +146,30 @@ l2svm_all %>%
         axis.title.y=element_text(size = 13),
         axis.title.x=element_text(size = 13))
 
+l1svm_all %>% 
+  group_by(cost) %>% 
+  summarise(mean_sens = mean(Sens), mean_spec = mean(Spec)) %>% 
+  ggplot(aes(x=C,y=mean_AUC)) +
+  geom_line() +
+  geom_point() +
+  scale_x_continuous(name="C (penalty)") +
+  scale_y_continuous(name="L2 Linear Kernel SVM mean AUC",
+                     limits = c(0.50, 1),
+                     breaks = seq(0.5, 1, 0.05)) +
+  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.001) +
+  theme_bw() +
+  theme(legend.text=element_text(size=18),
+        legend.title=element_text(size=22),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        text = element_text(size = 12),
+        axis.text.x=element_text(size = 12, colour='black'),
+        axis.text.y=element_text(size = 12, colour='black'),
+        axis.title.y=element_text(size = 13),
+        axis.title.x=element_text(size = 13))
+
+
 rbf_all %>% 
   group_by(sigma, C) %>% 
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>% 
@@ -173,8 +200,9 @@ rf_all %>%
   ggplot(aes(x=mtry,y=mean_AUC)) +
   geom_line() +
   geom_point() +
-  scale_x_continuous(name="mtry") +
-  scale_y_continuous(name="Random Forest mean AUC",
+  scale_x_continuous(name="mtry", 
+                     breaks=seq(0, 1500, 250), limits = c(0, 1500)) +
+  scale_y_continuous(name="Random Forest mean cvAUC",
                      limits = c(0.50, 1),
                      breaks = seq(0.5, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=2) +
@@ -185,10 +213,11 @@ rf_all %>%
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         text = element_text(size = 12),
-        axis.text.x=element_text(size = 12, colour='black'),
+        axis.text.x=element_text(size = 10, colour='black'),
         axis.text.y=element_text(size = 12, colour='black'),
         axis.title.y=element_text(size = 13),
         axis.title.x=element_text(size = 13))
+
 
 dt_all %>% 
   group_by(maxdepth) %>% 

@@ -31,8 +31,7 @@ modelInfo <- list(label = "L1 Regularized L2-Loss Support Vector Machine with Li
                     predict(modelFit, newdata)$predictions
                   },
                   prob = function(modelFit, newdata, submodels = NULL){
-                      out <- exp(predict(modelFit, newdata))
-                      t(apply(out, 1, function(x) x/sum(x)))
+                    predict(modelFit, newdata, decisionValues = TRUE)$decisionValues
                   },
                   predictors = function(x, ...) {
                     out <- colnames(x$W)

@@ -1,57 +1,47 @@
 ######################################################################
 # Author: Begum Topcuoglu
 # Date: 2019-01-15
-# Title: Generate files that has cv and test AUCs for100 data-split 
+# Title: Generate files that has cv and test AUCs for 1 data-split 
 ######################################################################
 
 ######################################################################
 # Dependencies and Outputs: 
-# This function accept files generated in main.R
-#    Filenames to put to function: 
-#       1. "L2_Logistic_Regression"
-#       2. "L1_Linear_SVM"
-#       3. "L2_Linear_SVM"
-#       4. "RBF_SVM"
-#       5. "Decision_Tree"
-#       6. "Random_Forest"
-#       7. "XGBoost"
+# This function accept:
+#   1. Data file generated in main.R
+#   2. Model name defined in command line: 
+#       "L2_Logistic_Regression"
+#       "L1_Linear_SVM"
+#       "L2_Linear_SVM"
+#       "RBF_SVM"
+#       "Decision_Tree"
+#       "Random_Forest"
+#       "XGBoost"
+#   3. Seed number defined in command line:
+#       [1-100]
 
 
 # Call as source when using the function. The function is:
 #   get_AUCs()
 
 # The output:
-#  A results .csv file with:
-#     1. AUCs  for cv of 100 data-splits
-#     2. AUCS for test of 100 data-splits
+#  Results .csv files:
+#     1. cvAUC and testAUC for 1 data-split
+#     2. cvAUC for all hyper-parameters during tuning for 1 datasplit
+#     3. feature importance info on first 10 features for 1 datasplit
 ######################################################################
-
-######################################################################
-#----------------- Read in necessary libraries -------------------#
-######################################################################
-
-deps = c("reshape2", "kernlab","LiblineaR", "doParallel","pROC", "caret", "gtools", "tidyverse", "ggpubr", "ggplot2","knitr","rmarkdown","vegan");
-for (dep in deps){
-  if (dep %in% installed.packages()[,"Package"] == FALSE){
-    install.packages(as.character(dep), quiet=TRUE);
-  }
-  library(dep, verbose=FALSE, character.only=TRUE)
-}
-# Load in needed functions and libraries
-source('code/learning/functions.R')
 
 
 ######################################################################
 #------------------------- DEFINE FUNCTION -------------------#
 ######################################################################
-get_AUCs <- function(dataset, models, split_number){
+get_results <- function(dataset, models, split_number){
   for(ml in models){
   
   # Save results of the modeling pipeline as a list
   results <- pipeline(dataset, ml) 
   
   # ------------------------------------------------------------------ 
-  # Create a matrix with cv_aucs and test_aucs from 100 data splits
+  # Create a matrix with cv_aucs and test_aucs from 1 data split
   aucs <- matrix(c(results[[1]], results[[2]]), ncol=2) 
   # Convert to dataframe and add a column noting the model name
   aucs_dataframe <- data.frame(aucs) %>% 
@@ -61,12 +51,21 @@ get_AUCs <- function(dataset, models, split_number){
   # ------------------------------------------------------------------   
 
   # ------------------------------------------------------------------   
-  # Save all tunes from 100 data splits and corresponding AUCs
+  # Save training results for 1 datasplit and corresponding AUCs
   all_results <- results[3]
   # Convert to dataframe and add a column noting the model name
   dataframe <- data.frame(all_results) %>% 
     mutate(model=ml) %>% 
     write.csv(file=paste0("data/temp/all_hp_results_", ml,"_", split_number, ".csv"), row.names=F)
+  # ------------------------------------------------------------------ 
+  
+  # ------------------------------------------------------------------   
+  # Save 10 feature importance of the model for 1 datasplit
+  imp_features <- results[4]
+  # Convert to dataframe and add a column noting the model name
+  dataframe <- data.frame(imp_features) %>% 
+    mutate(model=ml) %>% 
+    write.csv(file=paste0("data/temp/all_imp_features_results_", ml,"_", split_number, ".csv"), row.names=F)
   # ------------------------------------------------------------------ 
   }
 }
