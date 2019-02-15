@@ -49,9 +49,9 @@ L2_BEST=$(addsuffix .csv,$(L2_BEST_OUT_FILE))
 L2_ALL_OUT_FILE=$(addprefix data/temp/all_hp_results_L2_Logistic_Regression_,$(OUT_NO))
 L2_ALL_FILE=$(addsuffix .csv,$(L2_ALL_OUT_FILE))
 
-$(L2_IMP)\
-$(L2_BEST)\
-$(L2_ALL_FILE)	:	input.in.intermediate;
+
+
+$(L2_IMP)	$(L2_ALL_FILE)	$(L2_BEST)	:	input.in.intermediate;
 
 .INTERMEDIATE:	input.in.intermediate
 input.in.intermediate:	data/baxter.0.03.subsample.shared\
@@ -60,7 +60,7 @@ input.in.intermediate:	data/baxter.0.03.subsample.shared\
 					$(CODE)/model_pipeline.R\
 					$(CODE)/model_interpret.R\
 					$(CODE)/main.R\
-					$(CODE)/model_selection.R
+					$(CODE)/model_selection.R\
 	qsub L2_Logistic_Regression.pbs
 
 
@@ -70,7 +70,7 @@ $(PROC)/combined_all_hp_results_L2_Logistic_Regression.csv
 	:						code/cat_csv_files_test.sh\
 							$(L2_ALL_FILE)\
 							$(L2_IMP)\
-							$(L2_BEST)
+							$(L2_BEST)\
 		bash code/cat_csv_files_test.sh
 
 
