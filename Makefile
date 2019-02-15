@@ -72,7 +72,7 @@ $(PROC)/combined_all_hp_results_L2_Logistic_Regression.csv\
 	:						code/cat_csv_files_test.sh\
 							$(L2_ALL_FILE)\
 							$(L2_IMP)\
-							$(L2_BEST)\
+							$(L2_BEST)
 		bash code/cat_csv_files_test.sh
 
 
