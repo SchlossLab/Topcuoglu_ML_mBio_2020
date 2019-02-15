@@ -62,7 +62,7 @@ input.in.intermediate:	data/baxter.0.03.subsample.shared\
 					$(CODE)/model_pipeline.R\
 					$(CODE)/model_interpret.R\
 					$(CODE)/main.R\
-					$(CODE)/model_selection.R\
+					$(CODE)/model_selection.R
 	qsub L2_Logistic_Regression.pbs
 
 
