@@ -56,12 +56,10 @@ $(L2_ALL_FILE)	:	data/baxter.0.03.subsample.shared\
 					$(CODE)/main.R\
 					$(CODE)/model_selection.R
 	qsub L2_Logistic_Regression.pbs
-	qsub L1_Linear_SVM.pbs
 
 
 
 $(PROC)/combined_all_hp_results_L2_Logistic_Regression.csv\
-$(PROC)/combined_all_hp_results_L1_Linear_SVM.csv\
 	:						code/cat_csv_files_test.sh\
 							$(L2_ALL_FILE)
 		bash code/cat_csv_files_test.sh
