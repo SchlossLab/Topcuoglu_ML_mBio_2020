@@ -5,15 +5,6 @@ PROC = data/process
 FINAL = submission/
 CODE = code/learning
 
-# utility function to print various variables. For example, running the
-# following at the command line:
-#
-#	make print-BAM
-#
-# will generate:
-#	BAM=data/raw_june/V1V3_0001.bam data/raw_june/V1V3_0002.bam ...
-print-%:
-	@echo '$*=$($*)'
 
 ################################################################################
 #
