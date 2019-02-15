@@ -183,8 +183,10 @@ $(PROC)/combined_all_im_features_results_Random_Forest.csv\
 $(PROC)/combined_all_hp_results_Random_Forest.csv\
 $(PROC)/combined_best_hp_results_XGBoost.csv\
 $(PROC)/combined_all_im_features_results_XGBoost.csv\
-$(PROC)/combined_all_hp_results_XGBoost.csv\
-	:						code/cat_csv_files_test.sh\
+$(PROC)/combined_all_hp_results_XGBoost.csv	:	input.in.intermediate;
+
+.INTERMEDIATE:	input.in.intermediate
+input.in.intermediate:	code/cat_csv_files_test.sh\
 							$(L1_BEST)\
 							$(L21_IMP)\
 							$(L1_ALL_FILE)\
