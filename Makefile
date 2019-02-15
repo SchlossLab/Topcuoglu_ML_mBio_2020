@@ -47,7 +47,7 @@ L2_ALL_OUT_FILE=$(addprefix data/temp/all_hp_results_L2_Logistic_Regression_,$(O
 L2_ALL_FILE=$(addsuffix .csv,$(L2_ALL_OUT_FILE))
 
 
-$(L1_ALL_FILE)\
+
 $(L2_ALL_FILE)	:	data/baxter.0.03.subsample.shared\
 					data/metadata.tsv\
 					$(CODE)/generateAUCs.R\
@@ -62,8 +62,7 @@ $(L2_ALL_FILE)	:	data/baxter.0.03.subsample.shared\
 
 $(PROC)/combined_all_hp_results_L2_Logistic_Regression.csv\
 $(PROC)/combined_all_hp_results_L1_Linear_SVM.csv\
-	:							code/cat_csv_files_test.sh\
-							$(L1_ALL_FILE)\
+	:						code/cat_csv_files_test.sh\
 							$(L2_ALL_FILE)
 		bash code/cat_csv_files_test.sh
 
