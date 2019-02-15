@@ -143,10 +143,10 @@ $(RF_IMP)\
 $(RF_ALL_FILE)\
 $(XG_IMP)\
 $(XG_ALL_FILE)\
-$(XG_BEST)	:	input.in.intermediate;
+$(XG_BEST)	:	output.in.intermediate;
 
-.INTERMEDIATE:	input.in.intermediate
-input.in.intermediate:	data/baxter.0.03.subsample.shared\
+.INTERMEDIATE:	output.in.intermediate
+output.in.intermediate:	data/baxter.0.03.subsample.shared\
 					data/metadata.tsv\
 					$(CODE)/generateAUCs.R\
 					$(CODE)/model_pipeline.R\
@@ -185,7 +185,7 @@ $(PROC)/combined_best_hp_results_XGBoost.csv\
 $(PROC)/combined_all_im_features_results_XGBoost.csv\
 $(PROC)/combined_all_hp_results_XGBoost.csv\
 	:						code/cat_csv_files_test.sh\
-							input.in.intermediate
+							output.in.intermediate
 		bash code/cat_csv_files_test.sh
 
 
