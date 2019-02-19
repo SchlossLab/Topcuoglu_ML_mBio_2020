@@ -136,23 +136,19 @@ $(FIGS)/Figure_1.pdf :	$(CODE)/functions.R\
 						$(PROC)/combined_best_hp_results_RBF_SVM.csv\
 						$(PROC)/combined_best_hp_results_L2_Logistic_Regression.csv\
 						$(PROC)/combined_best_hp_results_L1_Linear_SVM.csv\
-						$(PROC)/combined_best_hp_results_L2_Linear_SVM.csv\
-
-
-
-
+						$(PROC)/combined_best_hp_results_L2_Linear_SVM.csv
 	Rscript $(CODE)/Figure1.R
 
 # Figure 2 shows the hyper-parameter tuning of all the models tested.
 $(FIGS)/Figure_2.pdf :	$(CODE)/functions.R\
 						$(CODE)/Figure2.R\
+						$(PROC)/combined_all_hp_results_XGBoost.csv\
+						$(PROC)/combined_all_hp_results_Random_Forest.csv\
+						$(PROC)/combined_all_hp_results_Decision_Tree.csv\
+						$(PROC)/combined_all_hp_results_RBF_SVM.csv\
 						$(PROC)/combined_all_hp_results_L2_Logistic_Regression.csv\
 						$(PROC)/combined_all_hp_results_L1_Linear_SVM.csv\
-						$(PROC)/combined_all_hp_results_L2_Linear_SVM.csv\
-						$(PROC)/combined_all_hp_results_RBF_SVM.csv\
-						$(PROC)/combined_all_hp_results_Decision_Tree.csv\
-						$(PROC)/combined_all_hp_results_Random_Forest.csv\
-						$(PROC)/combined_all_hp_results_XGBoost.csv
+						$(PROC)/combined_all_hp_results_L2_Linear_SVM.csv
 	Rscript $(CODE)/Figure2.R
 
 # Table 1 is a summary of the properties of all the models tested.

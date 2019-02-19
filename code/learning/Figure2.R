@@ -46,8 +46,8 @@ xgboost_all <- read_files(all_files[7])
 ######################################################################
 
 # Define the base plot for all the modeling methods
-base_plot <-  function(data, x_axis){
-  plot <- ggplot(data, aes(x_axis, mean_AUC)) +
+base_plot <-  function(data, x_axis, y_axis){
+  plot <- ggplot(data, aes(x_axis, y_axis)) +
   geom_line() +
   geom_point() +
   theme_bw() +
@@ -67,21 +67,21 @@ base_plot <-  function(data, x_axis){
 # Start plotting models with one hyper-parameter individually
 l1svm <- l1svm_all %>% 
   group_by(cost) %>% 
-  summarise(mean_Acc = mean(Acc), sd_Acc = sd(Acc))
+  summarise(mean_Acc = mean(Accuracy), sd_Acc = sd(Accuracy))
 
-l1svm_plot <- base_plot(l1svm, l2svm$cost) +
+l1svm_plot <- base_plot(l1svm, l1svm$cost, l1svm$mean_Acc) +
   scale_x_continuous(name="C (penalty)") +
   scale_y_continuous(name="L1 Linear Kernel SVM mean cvAUC",
                      limits = c(0.50, 1),
                      breaks = seq(0.5, 1, 0.05)) +
-  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.001) 
+  geom_errorbar(aes(ymin=mean_Acc-sd_Acc, ymax=mean_Acc+sd_Acc), width=.01) 
   
 
 l2svm <- l2svm_all %>% 
   group_by(C) %>% 
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC))
 
-l2svm_plot <- base_plot(l2svm, l2svm$C) +
+l2svm_plot <- base_plot(l2svm, l2svm$C, l2svm$mean_AUC) +
   scale_x_continuous(name="C (penalty)") +
   scale_y_continuous(name="L2 Linear Kernel SVM mean cvAUC",
                      limits = c(0.50, 1),
@@ -92,24 +92,24 @@ dt <- dt_all %>%
   group_by(maxdepth) %>% 
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC))
 
-dt_plot <- base_plot(dt, dt$maxdepth) +
+dt_plot <- base_plot(dt, dt$maxdepth, dt$mean_AUC) +
 scale_x_continuous(name="max depth") +
   scale_y_continuous(name="Decision Tree mean cvAUC",
                      limits = c(0.50, 1),
                      breaks = seq(0.5, 1, 0.05)) +
-  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=0.2)
+  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.05)
 
 rf <- rf_all %>% 
   group_by(mtry) %>% 
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC))
 
-rf_plot <-  base_plot(rf, rf$mtry) +
+rf_plot <-  base_plot(rf, rf$mtry, rf$mean_AUC) +
 scale_x_continuous(name="mtry", 
                    breaks=seq(0, 1500, 250), limits = c(0, 1500)) +
   scale_y_continuous(name="Random Forest mean cvAUC",
                      limits = c(0.50, 1),
                      breaks = seq(0.5, 1, 0.05)) +
-  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.01) 
+  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=1) 
 
 # Start plotting models with 2 hyper-parameters individually
 
@@ -124,6 +124,7 @@ rbf_plot <- rbf_all %>%
   geom_point() +
   scale_x_log10(labels = scales::trans_format("log10", scales::math_format(10^.x)),
                 breaks= c(1e-08, 1e-07,1e-06, 1e-05)) +
+  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.05) + 
   theme_bw() +
   theme(legend.position="none",
         panel.grid.major = element_blank(),
@@ -134,7 +135,7 @@ rbf_plot <- rbf_all %>%
         axis.text.y=element_text(size = 11, colour='black'),
         axis.title.y=element_text(size = 13),
         axis.title.x=element_text(size = 13)) +
-  scale_y_continuous(name="SVM Support Vector Machine mean AUC",
+  scale_y_continuous(name="RBF SVM  mean AUC",
                      limits = c(0.50, 1),
                      breaks = seq(0.5, 1, 0.05))
 
@@ -151,6 +152,7 @@ xgboost_plot <- xgboost_all %>%
   scale_y_continuous(name="XGBoost mean AUC",
                      limits = c(0.50, 1),
                      breaks = seq(0.5, 1, 0.05)) +
+  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.05) +
   theme_bw() +
   theme(legend.text=element_text(size=18),
         legend.title=element_text(size=22),
