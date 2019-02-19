@@ -72,7 +72,7 @@ tuning_grid <- function(model){
                        classProbs=TRUE,
                        indexFinal=NULL,
                        savePredictions = TRUE)
-    grid <- expand.grid(cost = c(0.001, 0.01, 0.1, 1),
+    grid <- expand.grid(cost = c(0.1, 0.12, 0.14, 0.16, 0.18, 0.2, 0.3),
                         Loss = "L2")
     method <- "svmLinear5" # I wrote this function in caret
   }
