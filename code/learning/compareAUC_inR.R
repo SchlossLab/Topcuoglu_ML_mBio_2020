@@ -18,6 +18,7 @@ for (dep in deps){
 }
 
 # Load in needed functions and libraries
+
 source('code/learning/functions.R')
 
 ######################################################################
@@ -29,7 +30,7 @@ best_files <- list.files(path= 'data/process', pattern='combined_best.*', full.n
 
 read_files <- function(filenames){
   for(file in filenames){
-    # Read the files generated in main.R 
+    # Read the files generated in main.R
     # These files have cvAUCs and testAUCs for 100 data-splits
     data <- read.delim(file, header=T, sep=',')
   }
@@ -58,11 +59,11 @@ performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC, fun = me
   geom_boxplot(alpha=0.7) +
   scale_y_continuous(name = "AUC",
                      breaks = seq(0.5, 1, 0.02),
-                     limits=c(0.5, 1), 
+                     limits=c(0.5, 1),
                      expand=c(0,0)) +
   scale_x_discrete(name = "") +
   theme_bw() +
-  theme(legend.justification=c(0,1), 
+  theme(legend.justification=c(0,1),
         legend.position=c(0,1),
         legend.box.margin=margin(c(10,10,10,10)),
         legend.text=element_text(size=18),
@@ -74,7 +75,7 @@ performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC, fun = me
         axis.text.x=element_text(size = 12, colour='black'),
         axis.text.y=element_text(size = 12, colour='black'),
         axis.title.y=element_text(size = 20),
-        axis.title.x=element_text(size = 20)) 
+        axis.title.x=element_text(size = 20))
 
 
 ######################################################################
@@ -99,9 +100,9 @@ rf_all <- read_files(all_files[5])
 dt_all <- read_files(all_files[1])
 xgboost_all <- read_files(all_files[7])
 
-logit_all %>% 
-  group_by(cost, loss, epsilon) %>% 
-  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>% 
+logit_all %>%
+  group_by(cost, loss, epsilon) %>%
+  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>%
   ggplot(aes(x=cost,y=mean_AUC)) +
   geom_line() +
   geom_point() +
@@ -123,9 +124,9 @@ logit_all %>%
         axis.title.x=element_text(size = 13))
 
 
-l2svm_all %>% 
-  group_by(C) %>% 
-  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>% 
+l2svm_all %>%
+  group_by(C) %>%
+  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>%
   ggplot(aes(x=C,y=mean_AUC)) +
   geom_line() +
   geom_point() +
@@ -146,9 +147,9 @@ l2svm_all %>%
         axis.title.y=element_text(size = 13),
         axis.title.x=element_text(size = 13))
 
-l1svm_all %>% 
-  group_by(cost) %>% 
-  summarise(mean_sens = mean(Sens), mean_spec = mean(Spec)) %>% 
+l1svm_all %>%
+  group_by(cost) %>%
+  summarise(mean_sens = mean(Sens), mean_spec = mean(Spec)) %>%
   ggplot(aes(x=C,y=mean_AUC)) +
   geom_line() +
   geom_point() +
@@ -170,12 +171,12 @@ l1svm_all %>%
         axis.title.x=element_text(size = 13))
 
 
-rbf_all %>% 
-  group_by(sigma, C) %>% 
-  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>% 
-  group_by(C) %>% 
+rbf_all %>%
+  group_by(sigma, C) %>%
+  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>%
+  group_by(C) %>%
   ggplot(aes(x=sigma,y=mean_AUC)) +
-  facet_grid(~C) + 
+  facet_grid(~C) +
   geom_line() +
   geom_point() +
   scale_x_log10(labels = scales::trans_format("log10", scales::math_format(10^.x)),
@@ -194,13 +195,13 @@ rbf_all %>%
                      limits = c(0.50, 1),
                      breaks = seq(0.5, 1, 0.05))
 
-rf_all %>% 
-  group_by(mtry) %>% 
-  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>% 
+rf_all %>%
+  group_by(mtry) %>%
+  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>%
   ggplot(aes(x=mtry,y=mean_AUC)) +
   geom_line() +
   geom_point() +
-  scale_x_continuous(name="mtry", 
+  scale_x_continuous(name="mtry",
                      breaks=seq(0, 1500, 250), limits = c(0, 1500)) +
   scale_y_continuous(name="Random Forest mean cvAUC",
                      limits = c(0.50, 1),
@@ -219,9 +220,9 @@ rf_all %>%
         axis.title.x=element_text(size = 13))
 
 
-dt_all %>% 
-  group_by(maxdepth) %>% 
-  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>% 
+dt_all %>%
+  group_by(maxdepth) %>%
+  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>%
   ggplot(aes(x=maxdepth,y=mean_AUC)) +
   geom_line() +
   geom_point() +
@@ -242,12 +243,12 @@ dt_all %>%
         axis.title.y=element_text(size = 13),
         axis.title.x=element_text(size = 13))
 
-xgboost_all %>% 
-  group_by(eta, nrounds, subsample) %>% 
-  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>% 
-  group_by(min_child_weight) %>% 
+xgboost_all %>%
+  group_by(eta, nrounds, subsample) %>%
+  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>%
+  group_by(min_child_weight) %>%
   ggplot(aes(x=subsample,y=mean_AUC)) +
-  facet_grid(~min_child_weight) + 
+  facet_grid(~min_child_weight) +
   geom_line() +
   geom_point() +
   scale_x_continuous(name="subsample") +
@@ -265,5 +266,3 @@ xgboost_all %>%
         axis.text.y=element_text(size = 12, colour='black'),
         axis.title.y=element_text(size = 13),
         axis.title.x=element_text(size = 13))
-
-

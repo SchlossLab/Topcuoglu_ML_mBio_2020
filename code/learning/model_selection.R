@@ -50,13 +50,13 @@ tuning_grid <- function(model){
                      savePredictions = TRUE)
   # Grid and caret method defined for each classification models
   if(model=="L2_Logistic_Regression") {
-    grid <-  expand.grid(cost = c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1),
+    grid <-  expand.grid(cost = c(0.1, 0.5, 1, 5),
                          loss = "L2_dual",
                          epsilon = 0.1)
     method <- "regLogistic"
   }
   else if (model=="L2_Linear_SVM"){
-    grid <- expand.grid(C = c(0.1, 0.12, 0.13, 0.14, 0.15, 0.16, 0.2, 0.3, 1))
+    grid <- expand.grid(C = c(0.1, 0.12, 0.13, 0.14, 0.15, 0.16, 0.2, 0.3))
     method <- "svmLinear"
   }
   else if (model=="L1_Linear_SVM"){ # Exception due to package
@@ -72,7 +72,7 @@ tuning_grid <- function(model){
                        classProbs=TRUE,
                        indexFinal=NULL,
                        savePredictions = TRUE)
-    grid <- expand.grid(cost = c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1),
+    grid <- expand.grid(cost = c(0.001, 0.01, 0.1, 1),
                         Loss = "L2")
     method <- "svmLinear5" # I wrote this function in caret
   }
@@ -92,11 +92,11 @@ tuning_grid <- function(model){
   else if (model=="XGBoost"){
     grid <-  expand.grid(nrounds=500,
                          gamma=0,
-                         eta=c(0.005, 0.01, 0.05),
+                         eta=c(0.005, 0.01, 0.02),
                          max_depth=8,
                          colsample_bytree= 0.8,
                          min_child_weight=1,
-                         subsample=c(0.5, 0.6, 0.7))
+                         subsample=c(0.4, 0.5, 0.6))
     method <- "xgbTree"
   }
   else {
