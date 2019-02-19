@@ -1,1 +1,8 @@
-while [ ! -f data/temp/all_hp_results_L1_Linear_SVM_98.csv ]; do sleep 1; done
+while :; do
+    count="$(ls -1 data/temp/ | wc -l)"
+    echo "$count";
+    if [ "$count" == 2101 ]; then
+        break
+    fi;
+    sleep 1m;
+done
