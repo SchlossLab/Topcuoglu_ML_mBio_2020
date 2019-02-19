@@ -130,13 +130,17 @@ $(PROC)/combined_best_hp_results_L2_Linear_SVM.csv	:	data/baxter.0.03.subsample.
 # Figure 1 shows the generalization performance of all the models tested.
 $(FIGS)/Figure_1.pdf :	$(CODE)/functions.R\
 						$(CODE)/Figure1.R\
+						$(PROC)/combined_best_hp_results_XGBoost.csv\
+						$(PROC)/combined_best_hp_results_Random_Forest.csv\
+						$(PROC)/combined_best_hp_results_Decision_Tree.csv\
+						$(PROC)/combined_best_hp_results_RBF_SVM.csv\
 						$(PROC)/combined_best_hp_results_L2_Logistic_Regression.csv\
 						$(PROC)/combined_best_hp_results_L1_Linear_SVM.csv\
 						$(PROC)/combined_best_hp_results_L2_Linear_SVM.csv\
-						$(PROC)/combined_best_hp_results_RBF_SVM.csv\
-						$(PROC)/combined_best_hp_results_Decision_Tree.csv\
-						$(PROC)/combined_best_hp_results_Random_Forest.csv\
-						$(PROC)/combined_best_hp_results_XGBoost.csv
+
+
+
+
 	Rscript $(CODE)/Figure1.R
 
 # Figure 2 shows the hyper-parameter tuning of all the models tested.
