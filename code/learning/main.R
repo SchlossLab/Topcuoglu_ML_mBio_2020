@@ -110,6 +110,9 @@ get_results(data, model, input[1])
 # We get wall-time for pipeline
 end_time <- Sys.time()
 print(end_time - start_time)
+walltime <- (end_time - start_time)
+# Save wall-time
+write.csv(walltime, file=paste0("data/temp/walltime_", model, "_", seed, ".csv"), row.names=F)
 ###################################################################
 
 
