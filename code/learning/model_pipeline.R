@@ -41,7 +41,7 @@ pipeline <- function(dataset, model){
   results_total <-  data.frame()
   test_aucs <- c()
   cv_aucs <- c()
-  
+
   # Do the 80-20 data-split
     # Stratified data partitioning %80 training - %20 testing
     inTraining <- createDataPartition(dataset$dx, p = .80, list = FALSE)
@@ -58,15 +58,15 @@ pipeline <- function(dataset, model){
     # Train the model
     if(model=="L2_Logistic_Regression"){
       print(model)
-      trained_model <-  train(dx ~ ., # label 
+      trained_model <-  train(dx ~ ., # label
                               data=trainTransformed, #total data
-                              method = method, 
+                              method = method,
                               trControl = cv,
                               metric = "ROC",
                               tuneGrid = grid,
                               family = "binomial")
     }
-    if(model=="L1_Linear_SVM"){
+    if(model=="L1_Linear_SVM" || model=="L2_Linear_SVM"){
       print(model)
       trained_model <-  train(dx ~ .,
                               data=trainTransformed,
@@ -104,7 +104,7 @@ pipeline <- function(dataset, model){
       # For cross-validation
         # selected indices are taking the best performing hyper-parameter only
         selectedIndices <-trained_model$pred[,6] == trained_model$bestTune[,1]
-        # The repsonse is the known labels 
+        # The repsonse is the known labels
         cv.response <- trained_model$pred[selectedIndices, ]$obs
         # The predictor is the Decision Values that we get from training
         cv.predictor <- trained_model$pred[selectedIndices, ]$cancer
@@ -113,7 +113,7 @@ pipeline <- function(dataset, model){
         cv_roc <- roc(cv.response, cv.predictor, auc=TRUE)
         cv_auc <- cv_roc$auc
         cv_aucs <- c(cv_aucs, cv_auc)
-      
+
       # For testing we can use the type="prob" to get decision values(becuase of my function)
         rpartProbs <- predict(trained_model, testTransformed, type="prob")
         test_roc <- roc(ifelse(testTransformed$dx == "cancer", 1, 0), rpartProbs[[2]])
@@ -144,7 +144,7 @@ pipeline <- function(dataset, model){
         results_individual <- trained_model$results
         results_total <- rbind(results_total, results_individual)
     }
-  # Here we look at the top 10 important features 
+  # Here we look at the top 10 important features
   feature_importance <- model_interpret(trained_model)
   # Return all the metrics
   results <- list(cv_aucs, test_aucs, results_total, feature_importance, trained_model)
