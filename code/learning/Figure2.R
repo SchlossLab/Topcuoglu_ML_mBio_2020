@@ -7,7 +7,7 @@
 #   2. X axis: different hyper-parameters tested in cv(hp)
 ######################################################################
 
- 
+
 ######################################################################
 # Load in needed functions and libraries
 source('code/learning/functions.R')
@@ -29,7 +29,7 @@ for (dep in deps){
 # Load .tsv data generated with modeling pipeline for Logistic Regression
 ######################################################################
 
-# Read in the results of trained model of 100 data-splits 
+# Read in the results of trained model of 100 data-splits
 
 all_files <- list.files(path= 'data/process', pattern='combined_all.*', full.names = TRUE)
 
@@ -65,8 +65,8 @@ base_plot <-  function(data, x_axis, y_axis){
 }
 
 # Start plotting models with one hyper-parameter individually
-l1svm <- l1svm_all %>% 
-  group_by(cost) %>% 
+l1svm <- l1svm_all %>%
+  group_by(cost) %>%
   summarise(mean_Acc = mean(Accuracy), sd_Acc = sd(Accuracy))
 
 l1svm_plot <- base_plot(l1svm, l1svm$cost, l1svm$mean_Acc) +
@@ -74,11 +74,11 @@ l1svm_plot <- base_plot(l1svm, l1svm$cost, l1svm$mean_Acc) +
   scale_y_continuous(name="L1 Linear Kernel SVM mean cvAUC",
                      limits = c(0.50, 1),
                      breaks = seq(0.5, 1, 0.05)) +
-  geom_errorbar(aes(ymin=mean_Acc-sd_Acc, ymax=mean_Acc+sd_Acc), width=.01) 
-  
+  geom_errorbar(aes(ymin=mean_Acc-sd_Acc, ymax=mean_Acc+sd_Acc), width=.001)
 
-l2svm <- l2svm_all %>% 
-  group_by(C) %>% 
+
+l2svm <- l2svm_all %>%
+  group_by(C) %>%
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC))
 
 l2svm_plot <- base_plot(l2svm, l2svm$C, l2svm$mean_AUC) +
@@ -86,10 +86,10 @@ l2svm_plot <- base_plot(l2svm, l2svm$C, l2svm$mean_AUC) +
   scale_y_continuous(name="L2 Linear Kernel SVM mean cvAUC",
                      limits = c(0.50, 1),
                      breaks = seq(0.5, 1, 0.05)) +
-  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.01) 
+  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.001)
 
-dt <- dt_all %>% 
-  group_by(maxdepth) %>% 
+dt <- dt_all %>%
+  group_by(maxdepth) %>%
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC))
 
 dt_plot <- base_plot(dt, dt$maxdepth, dt$mean_AUC) +
@@ -99,32 +99,32 @@ scale_x_continuous(name="max depth") +
                      breaks = seq(0.5, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.05)
 
-rf <- rf_all %>% 
-  group_by(mtry) %>% 
+rf <- rf_all %>%
+  group_by(mtry) %>%
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC))
 
 rf_plot <-  base_plot(rf, rf$mtry, rf$mean_AUC) +
-scale_x_continuous(name="mtry", 
+scale_x_continuous(name="mtry",
                    breaks=seq(0, 1500, 250), limits = c(0, 1500)) +
   scale_y_continuous(name="Random Forest mean cvAUC",
                      limits = c(0.50, 1),
                      breaks = seq(0.5, 1, 0.05)) +
-  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=1) 
+  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=1)
 
 # Start plotting models with 2 hyper-parameters individually
 
 
-rbf_plot <- rbf_all %>% 
-  group_by(sigma, C) %>% 
-  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>% 
-  group_by(C) %>% 
+rbf_plot <- rbf_all %>%
+  group_by(sigma, C) %>%
+  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>%
+  group_by(C) %>%
   ggplot(aes(x=sigma,y=mean_AUC)) +
-  facet_grid(~C) + 
+  facet_grid(~C) +
   geom_line() +
   geom_point() +
   scale_x_log10(labels = scales::trans_format("log10", scales::math_format(10^.x)),
                 breaks= c(1e-08, 1e-07,1e-06, 1e-05)) +
-  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.05) + 
+  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.05) +
   theme_bw() +
   theme(legend.position="none",
         panel.grid.major = element_blank(),
@@ -135,21 +135,21 @@ rbf_plot <- rbf_all %>%
         axis.text.y=element_text(size = 11, colour='black'),
         axis.title.y=element_text(size = 13),
         axis.title.x=element_text(size = 13)) +
-  scale_y_continuous(name="RBF SVM  mean AUC",
+  scale_y_continuous(name="RBF SVM  mean cvAUC",
                      limits = c(0.50, 1),
                      breaks = seq(0.5, 1, 0.05))
 
 
-xgboost_plot <- xgboost_all %>% 
-  group_by(eta, subsample) %>% 
-  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>% 
+xgboost_plot <- xgboost_all %>%
+  group_by(eta, subsample) %>%
+  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>%
   ggplot(aes(x=eta,y=mean_AUC)) +
-  facet_grid(~subsample) + 
+  facet_grid(~subsample) +
   geom_line() +
   geom_point() +
-  scale_x_continuous(name="subsample", 
+  scale_x_continuous(name="subsample",
                      limits = c(0, 0.05)) +
-  scale_y_continuous(name="XGBoost mean AUC",
+  scale_y_continuous(name="XGBoost mean cvAUC",
                      limits = c(0.50, 1),
                      breaks = seq(0.5, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.05) +
@@ -165,14 +165,14 @@ xgboost_plot <- xgboost_all %>%
         axis.title.y=element_text(size = 13),
         axis.title.x=element_text(size = 13))
 
-logit_plot <- logit_all %>% 
-  group_by(cost, loss, epsilon) %>% 
-  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>% 
+logit_plot <- logit_all %>%
+  group_by(cost, loss, epsilon) %>%
+  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>%
   ggplot(aes(x=cost,y=mean_AUC)) +
   geom_line() +
   geom_point() +
   scale_x_continuous(name="C (penalty)") +
-  scale_y_continuous(name="L2 Logistic Regression mean AUC",
+  scale_y_continuous(name="L2 Logistic Regression mean cvAUC",
                      limits = c(0.50, 1),
                      breaks = seq(0.5, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.01) +
