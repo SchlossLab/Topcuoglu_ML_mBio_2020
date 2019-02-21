@@ -94,7 +94,7 @@ pipeline <- function(dataset, model){
                               metric = "ROC",
                               tuneGrid = grid)
     }
-    if(model=="L1_Linear_SVM"){ # exception due to package problems for ROC calculation
+    if(model=="L1_Linear_SVM" || model=="L2_Linear_SVM"){ # exception due to package problems for ROC calculation
       #################################################################################
       # We have to calculate ROC ourselves for cross-validation
       # I have made changes to the caret package functions to get Decision Values

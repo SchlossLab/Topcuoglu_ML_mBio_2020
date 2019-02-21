@@ -78,15 +78,15 @@ l1svm_plot <- base_plot(l1svm, l1svm$cost, l1svm$mean_Acc) +
 
 
 l2svm <- l2svm_all %>%
-  group_by(C) %>%
-  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC))
+  group_by(cost) %>%
+  summarise(mean_Acc = mean(Accuracy), sd_Acc = sd(Accuracy))
 
-l2svm_plot <- base_plot(l2svm, l2svm$C, l2svm$mean_AUC) +
+l2svm_plot <- base_plot(l2svm, l2svm$cost, l2svm$mean_Acc) +
   scale_x_continuous(name="C (penalty)") +
   scale_y_continuous(name="L2 Linear Kernel SVM mean cvAUC",
                      limits = c(0.50, 1),
                      breaks = seq(0.5, 1, 0.05)) +
-  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.001)
+  geom_errorbar(aes(ymin=mean_Acc-sd_Acc, ymax=mean_Acc+sd_Acc), width=.001)
 
 dt <- dt_all %>%
   group_by(maxdepth) %>%

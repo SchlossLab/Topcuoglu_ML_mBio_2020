@@ -33,6 +33,7 @@ echo Using "L2 Linear SVM"
 
 # Using $PBS_ARRAYID to select parameter set
 
+Rscript code/learning/load_caret_models_flux.R
 Rscript code/learning/main.R $seed "L2_Linear_SVM"
 
 

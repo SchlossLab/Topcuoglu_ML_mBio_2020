@@ -31,3 +31,19 @@ read_files <- function(filenames){
   }
   return(data)
 }
+
+
+# Get model name with sub from file name
+get_model_name <- function(files){
+  pat1 <- "data/process/walltime_"
+  name_files <- sub(pat1, "", files)
+  pat2 <- ".csv"
+  names <- sub(pat2, "", name_files)
+  return(names)
+}
+
+summarise_walltime <- function(files){
+  summarized_walltimes <- summarise(mean_walltime = mean(files$x), sd_AUC = sd(files$x)) %>% 
+  mutate(model=get_model_name(walltime_files))
+  return(summarized_walltimes)
+}

@@ -55,10 +55,6 @@ tuning_grid <- function(model){
                          epsilon = 0.1)
     method <- "regLogistic"
   }
-  else if (model=="L2_Linear_SVM"){
-    grid <- expand.grid(C = c(0.1, 0.12, 0.13, 0.14, 0.15, 0.16, 0.18, 0.2))
-    method <- "svmLinear"
-  }
   else if (model=="L1_Linear_SVM"){ # Exception due to package
     # Because I made changes to the package function, we can't:
     #     1. Get class probabilities and 2class summary
@@ -75,6 +71,23 @@ tuning_grid <- function(model){
     grid <- expand.grid(cost = c(0.1, 0.12, 0.14, 0.16, 0.18, 0.2),
                         Loss = "L2")
     method <- "svmLinear5" # I wrote this function in caret
+  }
+  else if (model=="L2_Linear_SVM"){ # Exception due to package
+    # Because I made changes to the package function, we can't:
+    #     1. Get class probabilities and 2class summary
+    #     2. We won't get ROC scores from cv
+    #
+    # We will get accuracy instead
+    cv <- trainControl(method="repeatedcv",
+                       repeats = 100,
+                       number=5,
+                       returnResamp="final",
+                       classProbs=TRUE,
+                       indexFinal=NULL,
+                       savePredictions = TRUE)
+    grid <- expand.grid(cost = c(0.1, 0.12, 0.14, 0.16, 0.18, 0.2),
+                        Loss = "L2")
+    method <- "svmLinear3" # I changed this function in caret
   }
   else if (model=="RBF_SVM"){
     grid <-  expand.grid(sigma = c(0.0000005, 0.000001, 0.000005, 0.00001, 0.00005),
