@@ -43,7 +43,6 @@ get_model_name <- function(files){
 }
 
 summarise_walltime <- function(files){
-  summarized_walltimes <- summarise(mean_walltime = mean(files$x), sd_AUC = sd(files$x)) %>% 
-  mutate(model=get_model_name(walltime_files))
+  summarized_walltimes <- summarise(files, mean_walltime = mean(files[,1]), sd_AUC = sd(files[,1])) 
   return(summarized_walltimes)
 }
