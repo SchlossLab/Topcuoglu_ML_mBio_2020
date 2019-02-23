@@ -42,24 +42,34 @@ best_performance <- bind_rows(logit, l2svm, rbf, dt, xgboost, rf, l1svm)%>%
 
 performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC, fun = median, .asc =TRUE), y = AUC, fill = Performance)) +
   geom_boxplot(alpha=0.7) +
-  scale_y_continuous(name = "AUC",
+  scale_y_continuous(name = "AUROC",
                      breaks = seq(0.5, 1, 0.02),
                      limits=c(0.5, 1), 
                      expand=c(0,0)) +
-  scale_x_discrete(name = "") +
+  scale_x_discrete(name = "",
+                   labels=c("L2 Linear SVM", 
+                            "RBF SVM",
+                            "L2 Linear SVM",
+                            "Decision Tree",
+                            "L1 Linear SVM",
+                            "XGBoost",
+                            "Random Forest")) +
   theme_bw() +
-  theme(legend.justification=c(0,1), 
+  theme(panel.border = element_rect(colour = "black", fill=NA, size=1),
+        legend.title = element_blank(),
+        legend.background = element_rect(size=0.5, linetype="solid", color="black"),
+        legend.justification=c(0,1), 
         legend.position=c(0,1),
         legend.box.margin=margin(c(10,10,10,10)),
-        legend.text=element_text(size=18),
-        legend.title=element_text(size=22),
+        legend.text=element_text(size=20),
+        #legend.title=element_text(size=22),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         text = element_text(size = 12),
-        axis.text.x=element_text(size = 12, colour='black'),
+        axis.text.x=element_text(size = 15, colour='black'),
         axis.text.y=element_text(size = 12, colour='black'),
-        axis.title.y=element_text(size = 20),
+        axis.title.y=element_text(size = 30),
         axis.title.x=element_text(size = 20)) 
 
 ######################################################################

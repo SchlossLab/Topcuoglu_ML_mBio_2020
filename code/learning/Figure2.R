@@ -112,9 +112,19 @@ scale_x_continuous(name="mtry",
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=1)
 
 # Start plotting models with 2 hyper-parameters individually
-
-
 rbf_plot <- rbf_all %>%
+  group_by(sigma, C) %>%
+  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>%
+  ggplot(aes(x=sigma, y=C) ) +
+  stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE) +
+  scale_fill_distiller(palette=4, direction=-1) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  theme(
+    legend.position='none'
+  )
+
+rbf_all %>%
   group_by(sigma, C) %>%
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>%
   group_by(C) %>%
@@ -123,7 +133,7 @@ rbf_plot <- rbf_all %>%
   geom_line() +
   geom_point() +
   scale_x_log10(labels = scales::trans_format("log10", scales::math_format(10^.x)),
-                breaks= c(1e-08, 1e-07,1e-06, 1e-05)) +
+                breaks= c(1e-06, 1e-05, 1e-04)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.05) +
   theme_bw() +
   theme(legend.position="none",
