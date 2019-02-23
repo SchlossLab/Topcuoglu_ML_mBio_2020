@@ -117,7 +117,7 @@ rbf_plot <- rbf_all %>%
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>%
   ggplot(aes(x=sigma, y=C) ) +
   stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE) +
-  scale_fill_distiller(palette=4, direction=-1) +
+  scale_fill_distiller(palette="Greys", direction=1) +
   scale_x_continuous(expand = c(0, 0)) +
   scale_y_continuous(expand = c(0, 0)) +
   theme(
@@ -151,6 +151,18 @@ rbf_all %>%
 
 
 xgboost_plot <- xgboost_all %>%
+  group_by(eta, subsample) %>%
+  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>%
+  ggplot(aes(x=eta, y=subsample) ) +
+  stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE) +
+  scale_fill_distiller(palette="Greys", direction=1) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  theme(
+    legend.position='none'
+  )
+
+xgboost_all %>%
   group_by(eta, subsample) %>%
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>%
   ggplot(aes(x=eta,y=mean_AUC)) +
