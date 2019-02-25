@@ -34,8 +34,12 @@ for(i in result){
     i$x <- i$x/60 # The walltimes were saved as minutes
     print(i) # We convert these to hours by diving with 60
   }
+  if((sum(i$model=="Random_Forest")==100 || sum(i$model=="XGBoost")==100)){
+    i$x <- i$x*24 # The walltimes were saved as minutes
+    print(i) # We convert these to hours by diving with 60
+  }
   else{
-    print("not minutes")
+    print("hours")
   }
   min_fixed_result[[length(min_fixed_result)+1]] <- i
 }

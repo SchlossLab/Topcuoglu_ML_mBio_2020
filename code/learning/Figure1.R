@@ -49,7 +49,7 @@ performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC, fun = me
   scale_x_discrete(name = "",
                    labels=c("L2 Linear SVM", 
                             "RBF SVM",
-                            "L2 Linear SVM",
+                            "L2 Logistic Regression",
                             "Decision Tree",
                             "L1 Linear SVM",
                             "XGBoost",
