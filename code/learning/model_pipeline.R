@@ -144,8 +144,13 @@ pipeline <- function(dataset, model){
         results_individual <- trained_model$results
         results_total <- rbind(results_total, results_individual)
     }
-  # Here we look at the top 10 important features
-  feature_importance <- model_interpret(trained_model)
+    # Here we look at the top 10 important features
+    if(model=="L1_Linear_SVM" || model=="L2_Linear_SVM" || model=="L2_Logistic_Regression"){
+      feature_importance <- trained_model$finalModel$W
+    }
+    else{
+      feature_importance <- model_interpret(trained_model)
+    }
   # Return all the metrics
   results <- list(cv_aucs, test_aucs, results_total, feature_importance, trained_model)
   return(results)

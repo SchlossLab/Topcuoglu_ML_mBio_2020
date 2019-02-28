@@ -2,8 +2,7 @@
 title: "**Evaluation of binary classification pipelines and methods for 16S rRNA gene data**"
 bibliography: references.bib
 output:
-  word_document: default
-  pdf_document:
+  pdf_document: 
     keep_tex: true
     includes:
       in_header: header.tex
@@ -17,7 +16,7 @@ geometry: margin=1.0in
 ######################################################################
 #----------------- Read in necessary libraries -------------------#
 ######################################################################
-deps = c("knitr","rmarkdown","vegan","gtools", "tidyverse");
+deps = c("reshape2","knitr","rmarkdown","vegan","gtools", "tidyverse");
 for (dep in deps){
   if (dep %in% installed.packages()[,"Package"] == FALSE){
     install.packages(as.character(dep), quiet=TRUE);
@@ -51,11 +50,41 @@ inline_hook <- function(x){
 	}
 }
 knitr::knit_hooks$set(inline=inline_hook)
-library(reticulate)
-use_python("/Library/Frameworks/Python.framework/Versions/3.6/bin/python3", required = TRUE)
 ```
 
 ```{r LoadData, eval=TRUE, echo=FALSE, cache=FALSE, warning=FALSE, message=FALSE}
+######################################################################
+# Load in needed functions and libraries
+melt_data <-  function(data) {
+  data_melt <- data %>%
+    melt(measure.vars=c('cv_aucs', 'test_aucs')) %>%
+    rename(AUC=value) %>%
+    mutate(Performance = case_when(variable == "cv_aucs" ~ 'cross-validation', variable == "test_aucs" ~ 'testing')) %>%
+    group_by(Performance)
+  return(data_melt)
+}
+
+# Read in files as delim that are saved in a list with a pattern
+read_files <- function(filenames){
+  for(file in filenames){
+    # Read the files generated in main.R
+    # These files have cvAUCs and testAUCs for 100 data-splits
+    data <- read.delim(file, header=T, sep=',')
+  }
+  return(data)
+}
+
+
+# Get model name with sub from file name
+get_model_name <- function(files){
+  pat1 <- "../data/process/walltime_"
+  name_files <- sub(pat1, "", files)
+  pat2 <- ".csv"
+  names <- sub(pat2, "", name_files)
+  return(names)
+}
+######################################################################
+
 ######################################################################
 #----------------- Load OTU table and MetaData -----------------#
 ######################################################################
@@ -69,14 +98,89 @@ meta <- read.delim('../data/metadata.tsv', header=T, sep='\t') %>%
 shared <- read.delim('../data/baxter.0.03.subsample.shared', header=T, sep='\t') %>%
    select(-label, -numOtus)
 
-```
+######################################################################
+#--------- Load .csv datato get mean test AUC for 7 models--------#
+######################################################################
 
+# Read in the cvAUCs, testAUCs for 100 splits.
+best_files <- list.files(path= '../data/process', pattern='combined_best.*', full.names = TRUE)
+logit <- read_files(best_files[4])
+l2svm <- read_files(best_files[3])
+l1svm <- read_files(best_files[2])
+rbf <- read_files(best_files[6])
+rf <- read_files(best_files[5])
+dt <- read_files(best_files[1])
+xgboost <- read_files(best_files[7])
 
-```{python, cache=FALSE, message=FALSE, warning=FALSE, engine.path = '/Library/Frameworks/Python.framework/Versions/3.6/bin/python3'}
-import platform
-python_version = platform.python_version()
-import sklearn
-sklearn_module = sklearn.__version__
+# Bind them together and summarise mean testAUC by model
+test_all <- bind_rows(logit, l2svm, rbf, dt, xgboost, rf, l1svm)%>%
+  melt_data() %>% 
+  select(-variable) %>% 
+  group_by(model, Performance) %>% 
+  summarise(mean_AUC = mean(AUC), sd_AUC = sd(AUC)) %>% 
+  filter(Performance=="testing") 
+
+# Get the order index from small to large meanAUC
+performance_index <- order(test_all$mean_AUC)
+
+# Bind them together and summarise mean cvAUC by model
+cv_all <- bind_rows(logit, l2svm, rbf, dt, xgboost, rf, l1svm)%>%
+  melt_data() %>% 
+  select(-variable) %>% 
+  group_by(model, Performance) %>% 
+  summarise(mean_AUC = mean(AUC), sd_AUC = sd(AUC)) %>% 
+  filter(Performance=="cross-validation") 
+
+# Get the difference between mean cvAUC and testAUC for each model
+difference <- cv_all$mean_AUC - test_all$mean_AUC[match(cv_all$model, test_all$model)]
+difference_model <- data.frame(difference, test_all$model)
+# Get the order index from small to large of the differences
+difference_index <- order(difference_model$difference)
+
+######################################################################
+#---------- Load .csv datato get mean walltime for 7 models-------#
+######################################################################
+
+# Read in the walltime for each split.
+walltime_files <- list.files(path= '../data/process', pattern='walltime*', full.names = TRUE) 
+
+# ------- 1. In a loop read the files as delim
+# --------2. get the model name for each with get_model_name() 
+#---------3. Add a column with model name to each delim
+result <- list()
+for(file in walltime_files){
+  model_walltime <- read_files(file) %>%  
+  #summarise_walltime() %>% 
+  mutate(model=get_model_name(file))
+  result[[length(result)+1]] <- model_walltime
+}
+
+# ------- 1. If models are L1 or L2 Linear SVM or L2 Logit then the walltime is in minutes
+# --------2. If models are Random Forest or XGBoost then the walltime is in days
+#---------3. If other models, the walltime is in hours.
+#---------4. This loop converts all to hours.
+min_fixed_result <- list()
+for(i in result){
+  if((sum(i$model=="L1_Linear_SVM")==100 || sum(i$model=="L2_Linear_SVM")==100 || sum(i$model=="L2_Logistic_Regression")==100)){
+    i$x <- i$x/60 # The walltimes were saved as minutes # We convert these to hours by diving with 60
+  }
+  if((sum(i$model=="Random_Forest")==100 || sum(i$model=="XGBoost")==100)){
+    i$x <- i$x*24 # The walltimes were saved as minutes # We convert these to hours by diving with 60
+  }
+  else{
+  }
+  min_fixed_result[[length(min_fixed_result)+1]] <- i
+}
+
+# Bind all delims with model name and walltime together
+# Summarise mean walltime
+walltime_df <- bind_rows(min_fixed_result) %>% 
+  group_by(model) %>% 
+  summarise(mean_walltime=mean(x), sd_walltime=sd(x))
+
+# Get the sorted mean walltime for each model small to large
+walltime_index <- order(walltime_df$mean_walltime)
+
 ```
 
 \vspace{35mm}
@@ -108,21 +212,29 @@ $\dagger$ To whom correspondence should be addressed: pschloss@umich.edu
 
 ## Introduction
 
-Advances in sequencing technology and decreasing costs of generating 16S rRNA gene sequences allowed rapid exploration and taxonomic characterization of the human associated microbiome. Currently, the microbiome field is growing at an unprecedented rate and as a result, there is an ever-increasing demand for reproducible methods for identifying associations between members of the microbiome and human health. Human associated microbial communities are remarkably uneven and it is unlikely that a single species can explain a disease state comprehensively. It is more likely that subsets of those communities, in relation to one another and to their host, can reliably account for the unevenness and be used as biomarkers of a specific disease state. Thus, researchers have started to explore the utility of machine learning (ML) techniques to identify the biomarkers associated with healthy and diseased individuals. However, currently the field's use of ML lacks clarity and consistency on which methods are used, how these methods are implemented and if these methods are reproducible. Moreover, there is a lack of consideration on why a particular method is utilized. Often, there is a trade-off between the interpretibility and accuracy of ML methods. As researchers, we have to find the right balance to accomplish complex knowledge tasks such as identifying a disease state based on microbiome-associated biomarkers while also understanding how these tasks are accomplished.
+Advances in sequencing technology and decreasing costs of generating 16S rRNA gene sequences have allowed rapid exploration and taxonomic characterization of the human associated microbiome. Currently, the microbiome field is growing at an unprecedented rate and as a result, there is an ever-increasing demand for reproducible methods for identifying associations between members of the microbiome and human health. However, this is an undertaking as human associated microbial communities are remarkably uneven. It is unlikely that a single species can explain a disease state comprehensively. It is more likely that subsets of those communities, in relation to one another and to their host, account for different disease states. Thus, researchers have started to explore the utility of machine learning (ML) techniques to develop predictive models that use microbiota associated biomarkers to identify healthy and diseased states. However, currently the field's use of ML lacks clarity and consistency on which methods are used, how these methods are implemented and if these methods are robust and reproducible. Moreover, there is a lack of consideration on why a particular ML model is utilized. There is a wide range of complexity and interpretibility in models used in microbiome field [@zeller_potential_2014; @zackular_human_2014; @baxter_dna_2016; @baxter_microbiota-based_2016; @pasolli_machine_2016]; recently with many that are black boxes which cannot be interpreted by humans [@galkin_human_2018; @reiman_using_2017; @fioravanti_phylogenetic_2017]. ML model choice should reflect the goal of the study; whether it is to develop the best predictive model or to understand the ecology of microbiota associated diseases. 
 
-One application of machine learning to microbiome data has been to classify patients as having colorectal tumors based on microbiota-associated biomarkers. Colorectal cancer (CRC) is one of the leading causes of death in the US, therefore developing a microbiome assay as a non-invasive screening tool would be a useful innovation. However, the efforts to combine ML methods with relative abundances of bacterial poplations in stool to predict CRC tumors have been afflicted by the aforementioned flawed ML practices. As a result, the predictive performance of these models varies greatly with areas under the receiver operating characteristic curve (AUROC) of 0.7-0.9. 
+One application of machine learning to microbiome data has been to classify patients as having colorectal tumors based on microbiota-associated biomarkers. Colorectal cancer (CRC) is one of the leading causes of death in the US, therefore developing a predictive model from a stool microbiome assay as a non-invasive screening tool is a remarkable innovation. However, the efforts to combine ML methods with relative abundances of bacterial poplations in stool to predict CRC tumors have been afflicted by flawed ML methods and by the lack of discussion on modeling choices. In previous studies, ... There is a need for implementing consistent and transparent machine learning practices to generate reproducible and replicable CRC biomarker models. This study aims to shed light on how much task definition and model choices can affect the results. Here we performed an empirical analysis comparing several different modeling pipelines using the same dataset.
 
-
-
-
-
-
-
-Patients with colorectal cancer have different stool community of microbes than adults with normal colons (10–15). This difference however cannot be explained by a single species in the gut but by many of them in relation to one another. Therefore, machine learning emerged as a tool to identify the microbial biomarkers of CRC. Previous studies that used cohorts of 90 (30 SRN, 30 adenomas, 30 normal colons) (7) and 490 (229 SRN, 89 adenoma, 172 normal colons) patients (5) suggest that machine learning models can predict SRN. However, the prediction performance of previous models varies greatly. There is a need for implementing consistent and transparent machine learning practices to generate reproducible and replicable CRC biomarker models. This study aims to determine whether a reproducible and replicable classification model that incorporate the relative abundance of fecal bacterial populations can be developed to discriminate between individuals with and without, SRN.
-
-Here, colonic disease status is defined as Normal or Screen Relevant Neoplasias (SRN). Stool bacterial population abundances and stool hemoglobin levels of `r paste(sum(sum(meta$dx=="normal")+sum(meta$Dx_Bin=="Adenoma")))` Normal and `r paste(sum(sum(meta$dx=="cancer")+sum(meta$Dx_Bin=="adv Adenoma")))` SRN samples were used to learn binary classifiers and evaluate their performances. Modeling pipelines were established for L2-regularized Logistic Regression, L1 and L2 Linear Support Vector Machines (SVM), Radial Basis Function SVM, Decision Tree, Random Forest and XGBoost binary classification models. The mean AUCs of these models were `r paste(round(test_meanAUC,2))` ± `r paste(round(test_sdAUC,2))`,  `r paste(round(l1svm_summary[2,2],2))` ± `r paste(round(l1svm_summary[2,3],2))`,  `r paste(round(l2svm_summary[2,2],2))` ± `r paste(round(l2svm_summary[2,3],2))`, `r paste(round(svmRBF_summary[2,2],2))` ± `r paste(round(svmRBF_summary[2,3],2))`, `r paste(round(dt_summary[2,2],2))` ± `r paste(round(dt_summary[2,3],2))`, `r paste(round(rf_summary[2,2],2))` ± `r paste(round(rf_summary[2,3],2))`, and `r paste(round(xgboost_summary[2,2],2))` ± `r paste(round(xgboost_summary[2,3],2))`, respectively.
+As our dataset, we used a previously published CRC study [@baxter_dna_2016] which had fecal 16S rRNA gene sequences and immunochemical test (FIT) results from `r paste(nrow(shared))` patients. We built ML models using 16S abundances and FIT to predict patients with normal or screen relevant neoplasias (SRN) disease status. The study had `r paste(sum(sum(meta$dx=="normal")+sum(meta$Dx_Bin=="Adenoma")))` normal and `r paste(sum(sum(meta$dx=="cancer")+sum(meta$Dx_Bin=="adv Adenoma")))` SRN samples. We established modeling pipelines for L2-regularized logistic regression, L1 and L2 support vector machines (SVM) with linear and radial basis function kernels, a decision tree, random forest and XGBoost. These models increase in complexity while they decrease in interpretability. Our ML pipeline performed 100 data-splits and utilized held-out test data to evaluate generalization and predicton performance of each ML model. The mean AUROC varied from `r paste(round(test_all[performance_index[1],3], 2))` (std ± `r paste(round(test_all[performance_index[1],4], 2))`) to `r paste(round(test_all[performance_index[7],3], 2))` (std ± `r paste(round(test_all[performance_index[7],4], 2))`). Random Forest and XGBoost had the highest mean AUROC for detecting SRN. In terms of computational efficiency, L2 Logistic Regression trained the fastest (`r paste(round(walltime_df[walltime_index[1],2], 3))` hours, std ± `r paste(round(walltime_df[walltime_index[1],3], 3))`), while XGBoost took the longest (`r paste(round(walltime_df[walltime_index[6],2], 3))` hours, std ± `r paste(round(walltime_df[walltime_index[6],3], 3))`). We found that mean cross-validation and testing AUROC could vary by as much as `r paste(round(difference[difference_index[7]], 3))`, which highlights the importance of a seperate held-out test set for evaluation. Aside from evaluating generalization and classification performances for each of these models, this study established standards for modeling pipelines of microbiome-associated machine learning models.
 
 ## Results and Discussion
+
+__The prediction and generalization performance of classifiers during cross-validation and when applied to the held-out test data.__
+
+We evaluated the prediction performance of seven binary classification models when applied to held-out test data using AUROC as our metric.  Random Forest and XGBoost had the highest mean AUROC for detecting SRN, `r paste(round(mean(rf$test_aucs), 3))` (std ± `r paste(round(sd(rf$test_aucs), 3))`) and `r paste(round(mean(xgboost$test_aucs), 3))` (std ± `r paste(round(sd(xgboost$test_aucs), 3))`) respectively [Figure 2]. L1 linear SVM and decision tree had significantly lower AUROC values, `r paste(round(mean(l1svm$test_aucs), 3))` (std ± `r paste(round(sd(l1svm$test_aucs), 3))`) and `r paste(round(mean(dt$test_aucs), 3))` (std ± `r paste(round(sd(dt$test_aucs), 3))`)  [Figure 2]. However, they had significanly higher performances than L2 linear SVM, RBF SVM and L2 logistic regression which had mean AUROC values of `r paste(round(mean(l2svm$test_aucs), 3))` (std ± `r paste(round(sd(l2svm$test_aucs), 3))`),  `r paste(round(mean(rbf$test_aucs), 3))` (std ± `r paste(round(sd(rbf$test_aucs), 3))`) and `r paste(round(mean(logit$test_aucs), 3))` (std ± `r paste(round(sd(logit$test_aucs), 3))`) respectively [Figure 2]. We also evaluated the generalization performance of each classifier by comparing their mean cross-validation AUROC and mean testing AUROC. We found a statistically significant difference for classifiers L2 support vector machines (SVM) with linear and radial basis function kernels and L2 logistic regression. These differences were `r paste(round(difference_model[3,1], 3))`, `r paste(round(difference_model[6,1], 3))` and `r paste(round(difference_model[4,1], 3))`, respectively [Figure 2] . 
+
+__Hyperparameter optimization for each classifier.__
+
+
+
+
+__The interpretation of classifiers.__
+
+
+
+
+
 
 ## Conclusions
 
@@ -136,12 +248,12 @@ Here, colonic disease status is defined as Normal or Screen Relevant Neoplasias 
 
 #### Data definitions and pre-processing
 
-  The colonic disease status is re-defined as two encompassing classes; Normal or Screen Relevant Neoplasias (SRNs). Normal class includes patients with non-advanced adenomas or normal colons whereas SRN class includes patients with advanced adenomas or carcinomas. Colonic disease status is the label predicted with each classifier.   The bacterial abundances and FIT results are the features used to predict colonic disease status. Bacterial abundances are discrete data in the form of Operational Taxonomic Unit (OTU) counts. There are 6920 OTUs for each sample. FIT levels are continuous data present for each sample. Because the data are in different scales, Python programming language v`r paste(py$python_version)`, module scikit-learn v`r paste(py$sklearn_module)` is used to transform features by scaling each feature to a [0-1] range (Table 1) [@scikit-learn].
+  The colonic disease status is re-defined as two encompassing classes; Normal or Screen Relevant Neoplasias (SRNs). Normal class includes patients with non-advanced adenomas or normal colons whereas SRN class includes patients with advanced adenomas or carcinomas. Colonic disease status is the label predicted with each classifier.   The bacterial abundances and FIT results are the features used to predict colonic disease status. Bacterial abundances are discrete data in the form of Operational Taxonomic Unit (OTU) counts. There are 6920 OTUs for each sample. FIT levels are continuous data present for each sample. Because the data are in different scales, Python programming language v, module scikit-learn v is used to transform features by scaling each feature to a [0-1] range (Table 1) [@scikit-learn].
   
 #### Learning the Classifier
 
   To train and validate our model, labeled data is randomly split 80/20 into a training set and testing
-set. Then, seven binary class classifiers, L2 logistic regression, L1 and L2 linear suppor vector machines (SVM), radial basis function SVM, decision tree, random forest and XGBoost, are learned. The training set is used for training purposes and validation of hyperparameter selection, and the test set is used for evaluation purposes. Hyperparameters are selected using 5-fold cross-validation with 100-repeats on the training set. Since the colonic disease status are not uniformly represented in the data, 5-fold splits are stratified to maintain the overall label distribution on the training set. Python programming language v`r paste(py$python_version)`, module scikit-learn v`r paste(py$sklearn_module)` functions are used to learn the seven classifiers (Table 1). 
+set. Then, seven binary class classifiers, L2 logistic regression, L1 and L2 linear suppor vector machines (SVM), radial basis function SVM, decision tree, random forest and XGBoost, are learned. The training set is used for training purposes and validation of hyperparameter selection, and the test set is used for evaluation purposes. Hyperparameters are selected using 5-fold cross-validation with 100-repeats on the training set. Since the colonic disease status are not uniformly represented in the data, 5-fold splits are stratified to maintain the overall label distribution on the training set. 
 
 #### Classifier Performance
 

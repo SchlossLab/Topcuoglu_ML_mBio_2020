@@ -15,7 +15,7 @@ source('code/learning/functions.R')
 
 
 ######################################################################
-# Load .tsv data generated with modeling pipeline 
+# Load .csv data generated with modeling pipeline 
 ######################################################################
 
 # Read in the cvAUCs, testAUCs for 100 splits.

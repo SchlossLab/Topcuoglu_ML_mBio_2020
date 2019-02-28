@@ -88,6 +88,29 @@ l2svm_plot <- base_plot(l2svm, l2svm$cost, l2svm$mean_Acc) +
                      breaks = seq(0.5, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_Acc-sd_Acc, ymax=mean_Acc+sd_Acc), width=.001)
 
+logit_plot <- logit_all %>%
+  group_by(cost, loss, epsilon) %>%
+  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>%
+  ggplot(aes(x=cost,y=mean_AUC)) +
+  geom_line() +
+  geom_point() +
+  scale_x_continuous(name="C (penalty)") +
+  scale_y_continuous(name="L2 Logistic Regression mean cvAUC",
+                     limits = c(0.50, 1),
+                     breaks = seq(0.5, 1, 0.05)) +
+  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.01) +
+  theme_bw() +
+  theme(legend.text=element_text(size=18),
+        legend.title=element_text(size=22),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        text = element_text(size = 12),
+        axis.text.x=element_text(size = 12, colour='black'),
+        axis.text.y=element_text(size = 12, colour='black'),
+        axis.title.y=element_text(size = 13),
+        axis.title.x=element_text(size = 13))
+
 dt <- dt_all %>%
   group_by(maxdepth) %>%
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC))
@@ -112,103 +135,24 @@ scale_x_continuous(name="mtry",
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=1)
 
 # Start plotting models with 2 hyper-parameters individually
+
 rbf_plot <- rbf_all %>%
   group_by(sigma, C) %>%
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>%
-  ggplot(aes(x=sigma, y=C) ) +
-  stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE) +
-  scale_fill_distiller(palette="Greys", direction=1) +
-  scale_x_continuous(expand = c(0, 0)) +
-  scale_y_continuous(expand = c(0, 0)) +
-  theme(
-    legend.position='none'
-  )
-
-rbf_all %>%
-  group_by(sigma, C) %>%
-  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>%
-  group_by(C) %>%
-  ggplot(aes(x=sigma,y=mean_AUC)) +
-  facet_grid(~C) +
-  geom_line() +
-  geom_point() +
-  scale_x_log10(labels = scales::trans_format("log10", scales::math_format(10^.x)),
-                breaks= c(1e-06, 1e-05, 1e-04)) +
-  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.05) +
-  theme_bw() +
-  theme(legend.position="none",
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        panel.background = element_blank(),
-        text = element_text(size = 12),
-        axis.text.x=element_text(size = 11, colour='black'),
-        axis.text.y=element_text(size = 11, colour='black'),
-        axis.title.y=element_text(size = 13),
-        axis.title.x=element_text(size = 13)) +
-  scale_y_continuous(name="RBF SVM  mean cvAUC",
-                     limits = c(0.50, 1),
-                     breaks = seq(0.5, 1, 0.05))
-
+  ggplot(aes(x=sigma, y=C)) +
+  geom_point(aes(color = mean_AUC), size=5)+
+  scale_x_log10()+
+  scale_y_log10()+
+  scale_color_distiller(palette = "RdPu")
 
 xgboost_plot <- xgboost_all %>%
   group_by(eta, subsample) %>%
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>%
-  ggplot(aes(x=eta, y=subsample) ) +
-  stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE) +
-  scale_fill_distiller(palette="Greys", direction=1) +
-  scale_x_continuous(expand = c(0, 0)) +
-  scale_y_continuous(expand = c(0, 0)) +
-  theme(
-    legend.position='none'
-  )
+  ggplot(aes(x=eta, y=subsample)) +
+  geom_point(aes(color = mean_AUC), size=5)+
+  scale_color_distiller(palette = "RdPu")
 
-xgboost_all %>%
-  group_by(eta, subsample) %>%
-  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>%
-  ggplot(aes(x=eta,y=mean_AUC)) +
-  facet_grid(~subsample) +
-  geom_line() +
-  geom_point() +
-  scale_x_continuous(name="subsample",
-                     limits = c(0, 0.05)) +
-  scale_y_continuous(name="XGBoost mean cvAUC",
-                     limits = c(0.50, 1),
-                     breaks = seq(0.5, 1, 0.05)) +
-  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.05) +
-  theme_bw() +
-  theme(legend.text=element_text(size=18),
-        legend.title=element_text(size=22),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        panel.background = element_blank(),
-        text = element_text(size = 12),
-        axis.text.x=element_text(size = 12, colour='black'),
-        axis.text.y=element_text(size = 12, colour='black'),
-        axis.title.y=element_text(size = 13),
-        axis.title.x=element_text(size = 13))
 
-logit_plot <- logit_all %>%
-  group_by(cost, loss, epsilon) %>%
-  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>%
-  ggplot(aes(x=cost,y=mean_AUC)) +
-  geom_line() +
-  geom_point() +
-  scale_x_continuous(name="C (penalty)") +
-  scale_y_continuous(name="L2 Logistic Regression mean cvAUC",
-                     limits = c(0.50, 1),
-                     breaks = seq(0.5, 1, 0.05)) +
-  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.01) +
-  theme_bw() +
-  theme(legend.text=element_text(size=18),
-        legend.title=element_text(size=22),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        panel.background = element_blank(),
-        text = element_text(size = 12),
-        axis.text.x=element_text(size = 12, colour='black'),
-        axis.text.y=element_text(size = 12, colour='black'),
-        axis.title.y=element_text(size = 13),
-        axis.title.x=element_text(size = 13))
 
 all <- plot_grid(logit_plot, l1svm_plot, l2svm_plot, rbf_plot, rf_plot, dt_plot, xgboost_plot, labels = c("A", "B", "C", "D", "E", "F", "G"))
 

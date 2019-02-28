@@ -183,7 +183,7 @@ DISCUSSION: VSEARCH has been shown to be a fast, accurate and full-fledged alter
 	keywords = {Metagenomics, Alignment, Chimera detection, Clustering, Dereplication, Masking, Parallellization, Searching, Sequences, Shuffling},
 	pages = {e2584}
 }
- 
+
 @article{westcott_opticlust_2017,
 	title = {{OptiClust}, an {Improved} {Method} for {Assigning} {Amplicon}-{Based} {Sequence} {Data} to {Operational} {Taxonomic} {Units}},
 	volume = {2},
@@ -217,5 +217,94 @@ DISCUSSION: VSEARCH has been shown to be a fast, accurate and full-fledged alter
 	annote = {Schloss, Patrick DWestcott, Sarah LRyabin, ThomasHall, Justine RHartmann, MartinHollister, Emily BLesniewski, Ryan AOakley, Brian BParks, Donovan HRobinson, Courtney JSahl, Jason WStres, BlazThallinger, Gerhard GVan Horn, David JWeber, Carolyn FResearch Support, Non-U.S. Gov'tAppl Environ Microbiol. 2009 Dec;75(23):7537-41. doi: 10.1128/AEM.01541-09. Epub 2009 Oct 2.}
 }
 
+@article{galkin_human_2018,
+	title = {Human microbiome aging clocks based on deep learning and tandem of permutation feature importance and accumulated local effects},
+	url = {http://biorxiv.org/lookup/doi/10.1101/507780},
+	doi = {10.1101/507780},
+	abstract = {The human gut microbiome is a complex ecosystem that both affects and is affected by its host status. Previous analyses of gut microflora revealed associations between specific microbes and host health and disease status, genotype and diet. Here, we developed a method of predicting biological age of the host based on the microbiological profiles of gut microbiota using a curated dataset of 1,165 healthy individuals (3,663 microbiome samples). Our predictive model, a human microbiome clock, has an architecture of a deep neural network and achieves the accuracy of 3.94 years mean absolute error in cross-validation. The performance of the deep microbiome clock was also evaluated on several additional populations. We further introduce a platform for biological interpretation of individual microbial features used in age models, which relies on permutation feature importance and accumulated local effects. This approach has allowed us to define two lists of 95 intestinal biomarkers of human aging. We further show that this list can be reduced to 39 taxa that convey the most information on their host’s aging. Overall, we show that (a) microbiological profiles can be used to predict human age; and (b) microbial features selected by models are age-related.},
+	journaltitle = {{bioRxiv}},
+	author = {Galkin, Fedor and Aliper, Alexander and Putin, Evgeny and Kuznetsov, Igor and Gladyshev, Vadim N and Zhavoronkov, Alex},
+	urldate = {2019-02-25},
+	date = {2018-12-28},
+	langid = {english},
+	file = {Galkin et al. - 2018 - Human microbiome aging clocks based on deep learni.pdf:/Users/Begum/Zotero/storage/639ZBB44/Galkin et al. - 2018 - Human microbiome aging clocks based on deep learni.pdf:application/pdf}
+}
+
+@inproceedings{reiman_using_2017,
+	title = {Using convolutional neural networks to explore the microbiome},
+	doi = {10.1109/EMBC.2017.8037799},
+	abstract = {The microbiome has been shown to have an impact on the development of various diseases in the host. Being able to make an accurate prediction of the phenotype of a genomic sample based on its microbial taxonomic abundance profile is an important problem for personalized medicine. In this paper, we examine the potential of using a deep learning framework, a convolutional neural network ({CNN}), for such a prediction. To facilitate the {CNN} learning, we explore the structure of abundance profiles by creating the phylogenetic tree and by designing a scheme to embed the tree to a matrix that retains the spatial relationship of nodes in the tree and their quantitative characteristics. The proposed {CNN} framework is highly accurate, achieving a 99.47\% of accuracy based on the evaluation on a dataset 1967 samples of three phenotypes. Our result demonstrated the feasibility and promising aspect of {CNN} in the classification of sample phenotype.},
+	eventtitle = {2017 39th Annual International Conference of the {IEEE} Engineering in Medicine and Biology Society ({EMBC})},
+	pages = {4269--4272},
+	booktitle = {2017 39th Annual International Conference of the {IEEE} Engineering in Medicine and Biology Society ({EMBC})},
+	author = {Reiman, D. and Metwally, A. and Dai, Y.},
+	date = {2017-07},
+	keywords = {bioinformatics, {CNN} learning, convolutional neural networks, deep learning framework, disease, diseases, Diseases, genetics, genomic phenotype prediction, genomics, learning (artificial intelligence), Machine learning, Machine Learning, microbial taxonomic abundance profile, microbiome, Microbiota, microorganisms, neural nets, Neural Networks (Computer), Neurons, personalized medicine, phylogenetic tree, Phylogeny, Sequential analysis, Training, Vegetation},
+	file = {IEEE Xplore Abstract Record:/Users/Begum/Zotero/storage/GEF3ZMRF/8037799.html:text/html;IEEE Xplore Full Text PDF:/Users/Begum/Zotero/storage/EWJTM3VH/Reiman et al. - 2017 - Using convolutional neural networks to explore the.pdf:application/pdf}
+}
 
 
+
+    @article{fioravanti_phylogenetic_2017,
+    	title = {Phylogenetic Convolutional Neural Networks in Metagenomics},
+    	url = {http://arxiv.org/abs/1709.02268},
+    	abstract = {Background: Convolutional Neural Networks can be effectively used only when data are endowed with an intrinsic concept of neighbourhood in the input space, as is the case of pixels in images. We introduce here Ph-{CNN}, a novel deep learning architecture for the classification of metagenomics data based on the Convolutional Neural Networks, with the patristic distance defined on the phylogenetic tree being used as the proximity measure. The patristic distance between variables is used together with a sparsified version of {MultiDimensional} Scaling to embed the phylogenetic tree in a Euclidean space. Results: Ph-{CNN} is tested with a domain adaptation approach on synthetic data and on a metagenomics collection of gut microbiota of 38 healthy subjects and 222 Inflammatory Bowel Disease patients, divided in 6 subclasses. Classification performance is promising when compared to classical algorithms like Support Vector Machines and Random Forest and a baseline fully connected neural network, e.g. the Multi-Layer Perceptron. Conclusion: Ph-{CNN} represents a novel deep learning approach for the classification of metagenomics data. Operatively, the algorithm has been implemented as a custom Keras layer taking care of passing to the following convolutional layer not only the data but also the ranked list of neighbourhood of each sample, thus mimicking the case of image data, transparently to the user. Keywords: Metagenomics; Deep learning; Convolutional Neural Networks; Phylogenetic trees},
+    	journaltitle = {{arXiv}:1709.02268 [cs, q-bio]},
+    	author = {Fioravanti, Diego and Giarratano, Ylenia and Maggio, Valerio and Agostinelli, Claudio and Chierici, Marco and Jurman, Giuseppe and Furlanello, Cesare},
+    	urldate = {2019-02-25},
+    	date = {2017-09-06},
+    	eprinttype = {arxiv},
+    	eprint = {1709.02268},
+    	keywords = {Computer Science - Machine Learning, Computer Science - Neural and Evolutionary Computing, Quantitative Biology - Genomics, Quantitative Biology - Quantitative Methods},
+    	file = {arXiv\:1709.02268 PDF:/Users/Begum/Zotero/storage/G88XYLLL/Fioravanti et al. - 2017 - Phylogenetic Convolutional Neural Networks in Meta.pdf:application/pdf;arXiv.org Snapshot:/Users/Begum/Zotero/storage/P9GT42JG/1709.html:text/html}
+    }
+
+    @article{zeller_potential_2014,
+    	title = {Potential of fecal microbiota for early-stage detection of colorectal cancer},
+    	volume = {10},
+    	issn = {1744-4292},
+    	url = {https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4299606/},
+    	doi = {10.15252/msb.20145645},
+    	abstract = {Several bacterial species have been implicated in the development of colorectal carcinoma ({CRC}),
+    but {CRC}-associated changes of fecal microbiota and their potential for cancer screening remain to be
+    explored. Here, we used metagenomic sequencing of fecal samples to identify taxonomic markers that
+    distinguished {CRC} patients from tumor-free controls in a study population of 156 participants.
+    Accuracy of metagenomic {CRC} detection was similar to the standard fecal occult blood test ({FOBT}) and
+    when both approaches were combined, sensitivity improved {\textgreater} 45\% relative to the {FOBT},
+    while maintaining its specificity. Accuracy of metagenomic {CRC} detection did not differ
+    significantly between early- and late-stage cancer and could be validated in independent patient and
+    control populations (N = 335) from different countries. {CRC}-associated
+    changes in the fecal microbiome at least partially reflected microbial community composition at the
+    tumor itself, indicating that observed gene pool differences may reveal tumor-related
+    host–microbe interactions. Indeed, we deduced a metabolic shift from fiber degradation in
+    controls to utilization of host carbohydrates and amino acids in {CRC} patients, accompanied by an
+    increase of lipopolysaccharide metabolism.},
+    	number = {11},
+    	journaltitle = {Molecular Systems Biology},
+    	shortjournal = {Mol Syst Biol},
+    	author = {Zeller, Georg and Tap, Julien and Voigt, Anita Y and Sunagawa, Shinichi and Kultima, Jens Roat and Costea, Paul I and Amiot, Aurélien and Böhm, Jürgen and Brunetti, Francesco and Habermann, Nina and Hercog, Rajna and Koch, Moritz and Luciani, Alain and Mende, Daniel R and Schneider, Martin A and Schrotz-King, Petra and Tournigand, Christophe and Tran Van Nhieu, Jeanne and Yamada, Takuji and Zimmermann, Jürgen and Benes, Vladimir and Kloor, Matthias and Ulrich, Cornelia M and von Knebel Doeberitz, Magnus and Sobhani, Iradj and Bork, Peer},
+    	urldate = {2018-11-30},
+    	date = {2014-11-28},
+    	pmid = {25432777},
+    	pmcid = {PMC4299606},
+    	file = {PubMed Central Full Text PDF:/Users/Begum/Zotero/storage/9T2MMNIF/Zeller et al. - 2014 - Potential of fecal microbiota for early-stage dete.pdf:application/pdf}
+    }
+
+    @article{pasolli_machine_2016,
+    	title = {Machine Learning Meta-analysis of Large Metagenomic Datasets: Tools and Biological Insights},
+    	volume = {12},
+    	issn = {1553-734X},
+    	url = {https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4939962/},
+    	doi = {10.1371/journal.pcbi.1004977},
+    	shorttitle = {Machine Learning Meta-analysis of Large Metagenomic Datasets},
+    	abstract = {Shotgun metagenomic analysis of the human associated microbiome provides a rich set of microbial features for prediction and biomarker discovery in the context of human diseases and health conditions. However, the use of such high-resolution microbial features presents new challenges, and validated computational tools for learning tasks are lacking. Moreover, classification rules have scarcely been validated in independent studies, posing questions about the generality and generalization of disease-predictive models across cohorts. In this paper, we comprehensively assess approaches to metagenomics-based prediction tasks and for quantitative assessment of the strength of potential microbiome-phenotype associations. We develop a computational framework for prediction tasks using quantitative microbiome profiles, including species-level relative abundances and presence of strain-specific markers. A comprehensive meta-analysis, with particular emphasis on generalization across cohorts, was performed in a collection of 2424 publicly available metagenomic samples from eight large-scale studies. Cross-validation revealed good disease-prediction capabilities, which were in general improved by feature selection and use of strain-specific markers instead of species-level taxonomic abundance. In cross-study analysis, models transferred between studies were in some cases less accurate than models tested by within-study cross-validation. Interestingly, the addition of healthy (control) samples from other studies to training sets improved disease prediction capabilities. Some microbial species (most notably Streptococcus anginosus) seem to characterize general dysbiotic states of the microbiome rather than connections with a specific disease. Our results in modelling features of the “healthy” microbiome can be considered a first step toward defining general microbial dysbiosis. The software framework, microbiome profiles, and metadata for thousands of samples are publicly available at http://segatalab.cibio.unitn.it/tools/metaml., The human microbiome–the entire set of microbial organisms associated with the human host–interacts closely with host immune and metabolic functions and is crucial for human health. Significant advances in the characterization of the microbiome associated with healthy and diseased individuals have been obtained through next-generation {DNA} sequencing technologies, which permit accurate estimation of microbial communities directly from uncultured human-associated samples (e.g., stool). In particular, shotgun metagenomics provide data at unprecedented species- and strain- levels of resolution. Several large-scale metagenomic disease-associated datasets are also becoming available, and disease-predictive models built on metagenomic signatures have been proposed. However, the generalization of resulting prediction models on different cohorts and diseases has not been validated. In this paper, we comprehensively assess approaches to metagenomics-based prediction tasks and for quantitative assessment of microbiome-phenotype associations. We consider 2424 samples from eight studies and six different diseases to assess the independent prediction accuracy of models built on shotgun metagenomic data and to compare strategies for practical use of the microbiome as a prediction tool.},
+    	number = {7},
+    	journaltitle = {{PLoS} Computational Biology},
+    	shortjournal = {{PLoS} Comput Biol},
+    	author = {Pasolli, Edoardo and Truong, Duy Tin and Malik, Faizan and Waldron, Levi and Segata, Nicola},
+    	urldate = {2019-01-17},
+    	date = {2016-07-11},
+    	pmid = {27400279},
+    	pmcid = {PMC4939962},
+    	file = {PubMed Central Full Text PDF:/Users/Begum/Zotero/storage/U4XLL4KV/Pasolli et al. - 2016 - Machine Learning Meta-analysis of Large Metagenomi.pdf:application/pdf}
+    }

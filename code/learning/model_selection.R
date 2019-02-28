@@ -109,7 +109,7 @@ tuning_grid <- function(model){
                          max_depth=8,
                          colsample_bytree= 0.8,
                          min_child_weight=1,
-                         subsample=c(0.5, 0.6, 0.7))
+                         subsample=c(0.4, 0.5, 0.6, 0.7))
     method <- "xgbTree"
   }
   else {
