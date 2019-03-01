@@ -68,7 +68,7 @@ tuning_grid <- function(model){
                        classProbs=TRUE,
                        indexFinal=NULL,
                        savePredictions = TRUE)
-    grid <- expand.grid(cost = c(0.1, 0.12, 0.14, 0.16, 0.18, 0.2),
+    grid <- expand.grid(cost = c(0.01, 0.025, 0.05, 0.075, 0.1, 0.15, 0.2),
                         Loss = "L2")
     method <- "svmLinear5" # I wrote this function in caret
   }
@@ -85,12 +85,12 @@ tuning_grid <- function(model){
                        classProbs=TRUE,
                        indexFinal=NULL,
                        savePredictions = TRUE)
-    grid <- expand.grid(cost = c(0.1, 0.12, 0.14, 0.16, 0.18, 0.2),
+    grid <- expand.grid(cost = c(0.01, 0.025, 0.05, 0.075, 0.1, 0.15, 0.2),
                         Loss = "L2")
     method <- "svmLinear3" # I changed this function in caret
   }
   else if (model=="RBF_SVM"){
-    grid <-  expand.grid(sigma = c(0.00000001, 0.0000001, 0.0000005, 0.000001, 0.000005, 0.00001, 0.0001, 0.001, 0.01),
+    grid <-  expand.grid(sigma = c(0.00000001, 0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1),
                          C = c(0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1))
     method <-"svmRadial"
   }
