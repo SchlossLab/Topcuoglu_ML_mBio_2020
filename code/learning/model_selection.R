@@ -85,13 +85,13 @@ tuning_grid <- function(model){
                        classProbs=TRUE,
                        indexFinal=NULL,
                        savePredictions = TRUE)
-    grid <- expand.grid(cost = c(0.01, 0.025, 0.05, 0.075, 0.1, 0.15, 0.2),
+    grid <- expand.grid(cost = c(0.00001, 0.00005, 0.0001, 0.0005, 0.001, 0.005, 0.01),
                         Loss = "L2")
     method <- "svmLinear3" # I changed this function in caret
   }
   else if (model=="RBF_SVM"){
-    grid <-  expand.grid(sigma = c(0.00000001, 0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1),
-                         C = c(0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1))
+    grid <-  expand.grid(sigma = c(0.00000001, 0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1),
+                         C = c(0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1, 10))
     method <-"svmRadial"
   }
   else if (model=="Decision_Tree"){
@@ -105,7 +105,7 @@ tuning_grid <- function(model){
   else if (model=="XGBoost"){
     grid <-  expand.grid(nrounds=500,
                          gamma=0,
-                         eta=c(0.0001, 0.001, 0.01),
+                         eta=c(0.001, 0.005, 0.01, 0.015, 0.02),
                          max_depth=8,
                          colsample_bytree= 0.8,
                          min_child_weight=1,

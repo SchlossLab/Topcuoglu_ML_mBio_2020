@@ -72,8 +72,8 @@ l1svm <- l1svm_all %>%
 l1svm_plot <- base_plot(l1svm, l1svm$cost, l1svm$mean_Acc) +
   scale_x_continuous(name="C (penalty)") +
   scale_y_continuous(name="L1 Linear Kernel SVM mean cvAUC",
-                     limits = c(0.50, 1),
-                     breaks = seq(0.5, 1, 0.05)) +
+                     limits = c(0.30, 1),
+                     breaks = seq(0.3, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_Acc-sd_Acc, ymax=mean_Acc+sd_Acc), width=.001)
 
 
@@ -84,8 +84,8 @@ l2svm <- l2svm_all %>%
 l2svm_plot <- base_plot(l2svm, l2svm$cost, l2svm$mean_Acc) +
   scale_x_continuous(name="C (penalty)") +
   scale_y_continuous(name="L2 Linear Kernel SVM mean cvAUC",
-                     limits = c(0.50, 1),
-                     breaks = seq(0.5, 1, 0.05)) +
+                     limits = c(0.30, 1),
+                     breaks = seq(0.3, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_Acc-sd_Acc, ymax=mean_Acc+sd_Acc), width=.001)
 
 logit_plot <- logit_all %>%
@@ -96,8 +96,8 @@ logit_plot <- logit_all %>%
   geom_point() +
   scale_x_continuous(name="C (penalty)") +
   scale_y_continuous(name="L2 Logistic Regression mean cvAUC",
-                     limits = c(0.50, 1),
-                     breaks = seq(0.5, 1, 0.05)) +
+                     limits = c(0.30, 1),
+                     breaks = seq(0.3, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.01) +
   theme_bw() +
   theme(legend.text=element_text(size=18),
@@ -118,8 +118,8 @@ dt <- dt_all %>%
 dt_plot <- base_plot(dt, dt$maxdepth, dt$mean_AUC) +
 scale_x_continuous(name="max depth") +
   scale_y_continuous(name="Decision Tree mean cvAUC",
-                     limits = c(0.50, 1),
-                     breaks = seq(0.5, 1, 0.05)) +
+                     limits = c(0.30, 1),
+                     breaks = seq(0.3, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.05)
 
 rf <- rf_all %>%
@@ -130,8 +130,8 @@ rf_plot <-  base_plot(rf, rf$mtry, rf$mean_AUC) +
 scale_x_continuous(name="mtry",
                    breaks=seq(0, 1500, 250), limits = c(0, 1500)) +
   scale_y_continuous(name="Random Forest mean cvAUC",
-                     limits = c(0.50, 1),
-                     breaks = seq(0.5, 1, 0.05)) +
+                     limits = c(0.30, 1),
+                     breaks = seq(0.3, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=1)
 
 # Start plotting models with 2 hyper-parameters individually
