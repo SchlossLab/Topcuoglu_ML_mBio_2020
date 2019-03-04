@@ -149,36 +149,36 @@ rRNA gene sequences have allowed rapid exploration and taxonomic
 characterization of the human associated microbiome. Currently, the
 microbiome field is growing at an unprecedented rate and as a result,
 there is an increasing demand for reproducible methods to identify
-associations between members of the microbiome and human host. However,
-this is an undertaking as human associated microbial communities are
-remarkably uneven. It is unlikely that a single species can explain a
-phenotype. Instead, subsets of those communities, in relation to one
-another and to their host, account for the differences. Therefore,
-researchers have started to explore the utility of machine learning (ML)
-models that use microbiota associated biomarkers to predict a phenotype
-and to understand the microbial ecology of the host. However, currently
-the field's use of ML lacks clarity and consistency on which methods are
-used and how these methods are implemented. Moreover, there is a lack of
-consideration on why a particular ML model is utilized. Recently, there
-is a trend towards using more complex ML models (1--3) without a
-discussion on if interpretibility is important for the study. If we want
-to generate reproducible and robust microbiota-associated biomarker
-models we need to (1) implement consistent, accessible and transparent
-machine learning practices; (2) use ML models that reflect the goal of
-the study as it will inform/define the expectations of model accuracy,
-complexity, interpretibility, computational efficiency and scalability.
+associations between members of the microbiome and human health.
+However, this is an undertaking as human associated microbial
+communities are remarkably uneven. It is unlikely that a single species
+can explain a disease. Instead, subsets of those communities, in
+relation to one another and to their host, account for the differences
+in the health outcomes. Therefore, researchers have started to explore
+the utility of machine learning (ML) models that use microbiota
+associated biomarkers to predict human health and to understand the
+microbial ecology of the human diseases such as liver cirrhosis,
+colorectal cancer, inflammatory bowel diseases (IBD), obesity, and type
+2 diabetes (1--11). However, currently the field's use of ML lacks
+clarity and consistency on which methods are used and how these methods
+are implemented. Moreover, there is a lack of deliberation on why a
+particular ML model is utilized. Recently, there is a trend towards
+using more complex ML models such as random forest, extreme gradient
+boosting and neural networks (11--14) without a discussion on if and how
+much model interpretibility is necessary for the study. If we want to
+generate reproducible and robust microbiota-associated biomarker models
+we need to (1) implement consistent, accessible and transparent machine
+learning practices; (2) use ML models that reflect the goal of the study
+as it will inform the expectations of model accuracy, complexity,
+interpretibility, computational efficiency and scalability.
 
-One application of machine learning to microbiome data has been to
-classify patients as having colorectal tumors based on
-microbiota-associated biomarkers in the stool (4--8). Colorectal cancer
-(CRC) is one of the leading causes of death in the US, therefore
-developing a non-invasive screening tool with ML is a remarkable
-innovation. However, afforementioned standards have not been established
-in these ML models. Here we performed an empirical analysis comparing
-several different modeling pipelines using the same dataset. We used a
-previously published CRC study (6) which had fecal 16S rRNA gene
-sequences and immunochemical test (FIT) results from 490 patients. We
-built ML models using 16S abundances and FIT to predict patients with
+To shed light on how much task definition and modeling choices can
+affect the outcomes of ML studies, we performed an empirical analysis
+comparing several different modeling pipelines using the same dataset.
+We used a previously published colorectal cancer (CRC) study (3) which
+had fecal 16S rRNA gene sequences and human hemoglobin concentrations
+from 490 patients. We built ML models using fecal 16S rRNA gene
+sequences and human hemoglobin concentrations to predict patients with
 normal or screen relevant neoplasias (SRN) disease status. The study had
 261 normal and 229 SRN samples. We established modeling pipelines for
 L2-regularized logistic regression, L1 and L2 support vector machines
@@ -188,15 +188,16 @@ they decrease in interpretability. Our ML pipeline performed 100
 data-splits and utilized held-out test data to evaluate generalization
 and predicton performance of each ML model. The mean AUROC varied from
 0.67 (std ± 0.05) to 0.82 (std ± 0.04). Random Forest and XGBoost had
-the highest mean AUROC for detecting SRN. In terms of computational
-efficiency, L2 Logistic Regression trained the fastest (0.098 hours, std
-± 0.008), while XGBoost took the longest (82.47 hours, std ± 17.045). We
-found that mean cross-validation and testing AUROC could vary by as much
-as 0.062, which highlights the importance of a seperate held-out test
-set for evaluation. Aside from evaluating generalization and
-classification performances for each of these models, this study
-established standards for modeling pipelines of microbiome-associated
-machine learning models.
+the highest mean AUROC for detecting SRN. Despite the simplicity, the
+L1-regularized linear kernel SVM performed on par with many of the
+non-linear models. In terms of computational efficiency, L2 Logistic
+Regression trained the fastest (0.105 hours, std ± 0.013), while XGBoost
+took the longest (82.47 hours, std ± 17.045). We found that mean
+cross-validation and testing AUROC could vary by as much as 0.062, which
+highlights the importance of a seperate held-out test set for
+evaluation. Aside from evaluating generalization and classification
+performances for each of these models, this study established standards
+for modeling pipelines of microbiome-associated machine learning models.
 
 \subsection{Results and Discussion}\label{results-and-discussion}
 
@@ -211,7 +212,7 @@ L1 linear SVM and decision tree had significantly lower AUROC values,
 0.748 (std ± 0.043) and 0.741 (std ± 0.038) {[}Figure 2{]}. However,
 they had significanly higher performances than L2 linear SVM, RBF SVM
 and L2 logistic regression which had mean AUROC values of 0.67 (std ±
-0.054), 0.684 (std ± 0.048) and 0.677 (std ± 0.053) respectively
+0.054), 0.684 (std ± 0.049) and 0.677 (std ± 0.053) respectively
 {[}Figure 2{]}. We also evaluated the generalization performance of each
 classifier by comparing their mean cross-validation AUROC and mean
 testing AUROC. We found a statistically significant difference for
@@ -232,7 +233,7 @@ were 0.062, 0.046 and 0.061, respectively {[}Figure 2{]} .
 The data used for this analysis are stool bacterial abundances, stool
 hemoglobin levels and clinical information of the patients recruited by
 Great Lakes-New England Early Detection Research Network study. These
-data were obtained from Sze et al (9). The stool samples were provided
+data were obtained from Sze et al (15). The stool samples were provided
 by recruited adult participants who were undergoing scheduled screening
 or surveillance colonoscopy. Colonoscopies were performed and fecal
 samples were collected from participants in four locations: Toronto (ON,
@@ -250,7 +251,7 @@ population abundances. The bacterial abundance data was generated by Sze
 et al, by processing 16S rRNA sequences in Mothur (v1.39.3) using the
 default quality filtering methods, identifying and removing chimeric
 sequences using VSEARCH and assigning to OTUs at 97\% similarity using
-the OptiClust algorithm (10--12).
+the OptiClust algorithm (16--18).
 
 \paragraph{Data definitions and
 pre-processing}\label{data-definitions-and-pre-processing}
@@ -264,9 +265,8 @@ abundances and FIT results are the features used to predict colonic
 disease status. Bacterial abundances are discrete data in the form of
 Operational Taxonomic Unit (OTU) counts. There are 6920 OTUs for each
 sample. FIT levels are continuous data present for each sample. Because
-the data are in different scales, Python programming language v, module
-scikit-learn v is used to transform features by scaling each feature to
-a {[}0-1{]} range (Table 1) (13).
+the data are in different scales, features are transformd by scaling
+each feature to a {[}0-1{]} range (Table 1).
 
 \paragraph{Learning the Classifier}\label{learning-the-classifier}
 
@@ -310,27 +310,8 @@ are not within 3/2 times the interquartile ranges.
 \subsection{References}\label{references}
 
 \hypertarget{refs}{}
-\hypertarget{ref-galkin_human_2018}{}
-1. \textbf{Galkin F}, \textbf{Aliper A}, \textbf{Putin E},
-\textbf{Kuznetsov I}, \textbf{Gladyshev VN}, \textbf{Zhavoronkov A}.
-2018. Human microbiome aging clocks based on deep learning and tandem of
-permutation feature importance and accumulated local effects. bioRxiv.
-doi:\href{https://doi.org/10.1101/507780}{10.1101/507780}.
-
-\hypertarget{ref-reiman_using_2017}{}
-2. \textbf{Reiman D}, \textbf{Metwally A}, \textbf{Dai Y}. 2017. Using
-convolutional neural networks to explore the microbiome, pp. 4269--4272.
-\emph{In} 2017 39th annual international conference of the IEEE
-engineering in medicine and biology society (EMBC).
-
-\hypertarget{ref-fioravanti_phylogenetic_2017}{}
-3. \textbf{Fioravanti D}, \textbf{Giarratano Y}, \textbf{Maggio V},
-\textbf{Agostinelli C}, \textbf{Chierici M}, \textbf{Jurman G},
-\textbf{Furlanello C}. 2017. Phylogenetic convolutional neural networks
-in metagenomics. arXiv:170902268 {[}cs, q-bio{]}.
-
 \hypertarget{ref-zeller_potential_2014}{}
-4. \textbf{Zeller G}, \textbf{Tap J}, \textbf{Voigt AY},
+1. \textbf{Zeller G}, \textbf{Tap J}, \textbf{Voigt AY},
 \textbf{Sunagawa S}, \textbf{Kultima JR}, \textbf{Costea PI},
 \textbf{Amiot A}, \textbf{Böhm J}, \textbf{Brunetti F},
 \textbf{Habermann N}, \textbf{Hercog R}, \textbf{Koch M},
@@ -344,27 +325,27 @@ for early-stage detection of colorectal cancer. Mol Syst Biol
 doi:\href{https://doi.org/10.15252/msb.20145645}{10.15252/msb.20145645}.
 
 \hypertarget{ref-zackular_human_2014}{}
-5. \textbf{Zackular JP}, \textbf{Rogers MAM}, \textbf{Ruffin MT},
+2. \textbf{Zackular JP}, \textbf{Rogers MAM}, \textbf{Ruffin MT},
 \textbf{Schloss PD}. 2014. The human gut microbiome as a screening tool
 for colorectal cancer. Cancer Prev Res \textbf{7}:1112--1121.
 doi:\href{https://doi.org/10.1158/1940-6207.CAPR-14-0129}{10.1158/1940-6207.CAPR-14-0129}.
 
 \hypertarget{ref-baxter_dna_2016}{}
-6. \textbf{Baxter NT}, \textbf{Koumpouras CC}, \textbf{Rogers MAM},
+3. \textbf{Baxter NT}, \textbf{Koumpouras CC}, \textbf{Rogers MAM},
 \textbf{Ruffin MT}, \textbf{Schloss PD}. 2016. DNA from fecal
 immunochemical test can replace stool for detection of colonic lesions
 using a microbiota-based model. Microbiome \textbf{4}.
 doi:\href{https://doi.org/10.1186/s40168-016-0205-y}{10.1186/s40168-016-0205-y}.
 
 \hypertarget{ref-baxter_microbiota-based_2016}{}
-7. \textbf{Baxter NT}, \textbf{Ruffin MT}, \textbf{Rogers MAM},
+4. \textbf{Baxter NT}, \textbf{Ruffin MT}, \textbf{Rogers MAM},
 \textbf{Schloss PD}. 2016. Microbiota-based model improves the
 sensitivity of fecal immunochemical test for detecting colonic lesions.
 Genome Medicine \textbf{8}:37.
 doi:\href{https://doi.org/10.1186/s13073-016-0290-3}{10.1186/s13073-016-0290-3}.
 
 \hypertarget{ref-hale_shifts_2017}{}
-8. \textbf{Hale VL}, \textbf{Chen J}, \textbf{Johnson S},
+5. \textbf{Hale VL}, \textbf{Chen J}, \textbf{Johnson S},
 \textbf{Harrington SC}, \textbf{Yab TC}, \textbf{Smyrk TC},
 \textbf{Nelson H}, \textbf{Boardman LA}, \textbf{Druliner BR},
 \textbf{Levin TR}, \textbf{Rex DK}, \textbf{Ahnen DJ}, \textbf{Lance P},
@@ -373,14 +354,77 @@ microbiota associated with adenomatous polyps. Cancer Epidemiol
 Biomarkers Prev \textbf{26}:85--94.
 doi:\href{https://doi.org/10.1158/1055-9965.EPI-16-0337}{10.1158/1055-9965.EPI-16-0337}.
 
+\hypertarget{ref-pasolli_machine_2016}{}
+6. \textbf{Pasolli E}, \textbf{Truong DT}, \textbf{Malik F},
+\textbf{Waldron L}, \textbf{Segata N}. 2016. Machine learning
+meta-analysis of large metagenomic datasets: Tools and biological
+insights. PLoS Comput Biol \textbf{12}.
+doi:\href{https://doi.org/10.1371/journal.pcbi.1004977}{10.1371/journal.pcbi.1004977}.
+
+\hypertarget{ref-sze_looking_2016}{}
+7. \textbf{Sze MA}, \textbf{Schloss PD}. 2016. Looking for a signal in
+the noise: Revisiting obesity and the microbiome. mBio \textbf{7}.
+doi:\href{https://doi.org/10.1128/mBio.01018-16}{10.1128/mBio.01018-16}.
+
+\hypertarget{ref-walters_meta-analyses_2014}{}
+8. \textbf{Walters WA}, \textbf{Xu Z}, \textbf{Knight R}. 2014.
+Meta-analyses of human gut microbes associated with obesity and IBD.
+FEBS Lett \textbf{588}:4223--4233.
+doi:\href{https://doi.org/10.1016/j.febslet.2014.09.039}{10.1016/j.febslet.2014.09.039}.
+
+\hypertarget{ref-vazquez-baeza_guiding_2018}{}
+9. \textbf{Vázquez-Baeza Y}, \textbf{Gonzalez A}, \textbf{Xu ZZ},
+\textbf{Washburne A}, \textbf{Herfarth HH}, \textbf{Sartor RB},
+\textbf{Knight R}. 2018. Guiding longitudinal sampling in IBD cohorts.
+Gut \textbf{67}:1743--1745.
+doi:\href{https://doi.org/10.1136/gutjnl-2017-315352}{10.1136/gutjnl-2017-315352}.
+
+\hypertarget{ref-qin_alterations_2014}{}
+10. \textbf{Qin N}, \textbf{Yang F}, \textbf{Li A}, \textbf{Prifti E},
+\textbf{Chen Y}, \textbf{Shao L}, \textbf{Guo J}, \textbf{Le Chatelier
+E}, \textbf{Yao J}, \textbf{Wu L}, \textbf{Zhou J}, \textbf{Ni S},
+\textbf{Liu L}, \textbf{Pons N}, \textbf{Batto JM}, \textbf{Kennedy SP},
+\textbf{Leonard P}, \textbf{Yuan C}, \textbf{Ding W}, \textbf{Chen Y},
+\textbf{Hu X}, \textbf{Zheng B}, \textbf{Qian G}, \textbf{Xu W},
+\textbf{Ehrlich SD}, \textbf{Zheng S}, \textbf{Li L}. 2014. Alterations
+of the human gut microbiome in liver cirrhosis. Nature
+\textbf{513}:59--64.
+doi:\href{https://doi.org/10.1038/nature13568}{10.1038/nature13568}.
+
+\hypertarget{ref-geman_deep_2018}{}
+11. \textbf{Geman O}, \textbf{Chiuchisan I}, \textbf{Covasa M},
+\textbf{Doloc C}, \textbf{Milici M-R}, \textbf{Milici L-D}. 2018. Deep
+learning tools for human microbiome big data, pp. 265--275. \emph{In}
+Balas, VE, Jain, LC, Balas, MM (eds.), Soft computing applications.
+Springer International Publishing.
+
+\hypertarget{ref-galkin_human_2018}{}
+12. \textbf{Galkin F}, \textbf{Aliper A}, \textbf{Putin E},
+\textbf{Kuznetsov I}, \textbf{Gladyshev VN}, \textbf{Zhavoronkov A}.
+2018. Human microbiome aging clocks based on deep learning and tandem of
+permutation feature importance and accumulated local effects. bioRxiv.
+doi:\href{https://doi.org/10.1101/507780}{10.1101/507780}.
+
+\hypertarget{ref-reiman_using_2017}{}
+13. \textbf{Reiman D}, \textbf{Metwally A}, \textbf{Dai Y}. 2017. Using
+convolutional neural networks to explore the microbiome, pp. 4269--4272.
+\emph{In} 2017 39th annual international conference of the IEEE
+engineering in medicine and biology society (EMBC).
+
+\hypertarget{ref-fioravanti_phylogenetic_2017}{}
+14. \textbf{Fioravanti D}, \textbf{Giarratano Y}, \textbf{Maggio V},
+\textbf{Agostinelli C}, \textbf{Chierici M}, \textbf{Jurman G},
+\textbf{Furlanello C}. 2017. Phylogenetic convolutional neural networks
+in metagenomics. arXiv:170902268 {[}cs, q-bio{]}.
+
 \hypertarget{ref-sze_leveraging_2018}{}
-9. \textbf{Sze MA}, \textbf{Schloss PD}. 2018. Leveraging existing 16S
+15. \textbf{Sze MA}, \textbf{Schloss PD}. 2018. Leveraging existing 16S
 rRNA gene surveys to identify reproducible biomarkers in individuals
 with colorectal tumors. mBio \textbf{9}:e00630--18.
 doi:\href{https://doi.org/10.1128/mBio.00630-18}{10.1128/mBio.00630-18}.
 
 \hypertarget{ref-schloss_introducing_2009}{}
-10. \textbf{Schloss PD}, \textbf{Westcott SL}, \textbf{Ryabin T},
+16. \textbf{Schloss PD}, \textbf{Westcott SL}, \textbf{Ryabin T},
 \textbf{Hall JR}, \textbf{Hartmann M}, \textbf{Hollister EB},
 \textbf{Lesniewski RA}, \textbf{Oakley BB}, \textbf{Parks DH},
 \textbf{Robinson CJ}, \textbf{Sahl JW}, \textbf{Stres B},
@@ -390,25 +434,16 @@ Community-Supported Software for Describing and Comparing Microbial
 Communities. ApplEnvironMicrobiol \textbf{75}:7537--7541.
 
 \hypertarget{ref-westcott_opticlust_2017}{}
-11. \textbf{Westcott SL}, \textbf{Schloss PD}. 2017. OptiClust, an
+17. \textbf{Westcott SL}, \textbf{Schloss PD}. 2017. OptiClust, an
 Improved Method for Assigning Amplicon-Based Sequence Data to
 Operational Taxonomic Units. mSphere \textbf{2}.
 doi:\href{https://doi.org/10.1128/mSphereDirect.00073-17}{10.1128/mSphereDirect.00073-17}.
 
 \hypertarget{ref-rognes_vsearch_2016}{}
-12. \textbf{Rognes T}, \textbf{Flouri T}, \textbf{Nichols B},
+18. \textbf{Rognes T}, \textbf{Flouri T}, \textbf{Nichols B},
 \textbf{Quince C}, \textbf{Mahé F}. 2016. VSEARCH: A versatile open
 source tool for metagenomics. PeerJ \textbf{4}:e2584.
 doi:\href{https://doi.org/10.7717/peerj.2584}{10.7717/peerj.2584}.
-
-\hypertarget{ref-scikit-learn}{}
-13. \textbf{Pedregosa F}, \textbf{Varoquaux G}, \textbf{Gramfort A},
-\textbf{Michel V}, \textbf{Thirion B}, \textbf{Grisel O},
-\textbf{Blondel M}, \textbf{Prettenhofer P}, \textbf{Weiss R},
-\textbf{Dubourg V}, \textbf{Vanderplas J}, \textbf{Passos A},
-\textbf{Cournapeau D}, \textbf{Brucher M}, \textbf{Perrot M},
-\textbf{Duchesnay E}. 2011. Scikit-learn: Machine learning in Python.
-Journal of Machine Learning Research \textbf{12}:2825--2830.
 
 
 \end{document}
