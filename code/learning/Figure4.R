@@ -156,7 +156,7 @@ base_plot <-  function(data, x_axis, y_axis){
 l1svm <- read.delim("data/process/L1_Linear_SVM_importance.tsv", header=T, sep='\t') 
 
 l1svm_plot <- base_plot(l1svm, x=l1svm$key,y=l1svm$mean_weights) +
-  scale_y_continuous(name="L1 Linear SVM feature weights",
+  scale_y_continuous(name="L1 linear kernel SVM feature weights",
                     limits = c(-3, 3),
                     breaks = seq(-3, 3, 0.5)) +
   geom_errorbar(aes(ymin=l1svm$mean_weights-l1svm$sd_weights, 
@@ -165,7 +165,7 @@ l1svm_plot <- base_plot(l1svm, x=l1svm$key,y=l1svm$mean_weights) +
 # Plot L2-linear svm 
 l2svm <- read.delim("data/process/L2_Linear_SVM_importance.tsv", header=T, sep='\t') 
 l2svm_plot <- base_plot(l2svm, x=l2svm$key,y=l2svm$mean_weights) +
-  scale_y_continuous(name="L2 Linear SVM feature weights",
+  scale_y_continuous(name="L2 linear kernel SVM feature weights",
                      limits = c(-1, 1),
                      breaks = seq(-1, 1, 0.5)) +    
   geom_errorbar(aes(ymin=l2svm$mean_weights-l2svm$sd_weights, 
@@ -175,7 +175,7 @@ l2svm_plot <- base_plot(l2svm, x=l2svm$key,y=l2svm$mean_weights) +
 # Plot L2 Logistic regression
 logit <- read.delim("data/process/L2_Logistic_Regression_importance.tsv", header=T, sep='\t') 
 logit_plot <- base_plot(logit, x=logit$key, y=logit$mean_weights) +
-  scale_y_continuous(name="L2 Logistic Regression feature weights",
+  scale_y_continuous(name="L2 logistic regression coefficients",
                      limits = c(-3, 3),
                      breaks = seq(-3, 3, 0.5)) +    
   geom_errorbar(aes(ymin=logit$mean_weights-logit$sd_weights, 
