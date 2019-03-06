@@ -75,7 +75,7 @@ data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
   select(-sample, -Dx_Bin) %>%
   drop_na()
 # We want the diagnosis column to be a factor
-data$dx <- factor(data$dx, labels=c("cancer", "normal"))
+data$dx <- factor(data$dx, labels=c("normal", "cancer"))
 set.seed(0)
 data <- data[sample(1:nrow(data)), ]
 ###################################################################
