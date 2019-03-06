@@ -116,7 +116,7 @@ pipeline <- function(dataset, model){
 
       # For testing we can use the type="prob" to get decision values(becuase of my function)
         rpartProbs <- predict(trained_model, testTransformed, type="prob")
-        test_roc <- roc(ifelse(testTransformed$dx == "cancer", 1, 0), rpartProbs[[2]])
+        test_roc <- roc(ifelse(testTransformed$dx == "cancer", 1, 0), rpartProbs[[1]])
         test_auc <- test_roc$auc
         # Save all the test AUCs over iterations in test_aucs
         test_aucs <- c(test_aucs, test_auc)
@@ -133,7 +133,7 @@ pipeline <- function(dataset, model){
         cv_auc <- getTrainPerf(trained_model)$TrainROC
         # Predict on the test set and get predicted probabilities
         rpartProbs <- predict(trained_model, testTransformed, type="prob")
-        test_roc <- roc(ifelse(testTransformed$dx == "cancer", 1, 0), rpartProbs[[2]])
+        test_roc <- roc(ifelse(testTransformed$dx == "cancer", 1, 0), rpartProbs[[1]])
         test_auc <- test_roc$auc
         # Save all the test AUCs over iterations in test_aucs
         test_aucs <- c(test_aucs, test_auc)
