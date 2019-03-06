@@ -71,7 +71,7 @@ l1svm <- l1svm_all %>%
 
 l1svm_plot <- base_plot(l1svm, l1svm$cost, l1svm$mean_Acc) +
   scale_x_continuous(name="C (penalty)") +
-  scale_y_continuous(name="L1 Linear Kernel SVM mean cvAUC",
+  scale_y_continuous(name="L1 SVM with linear kernel mean cvAUC",
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_Acc-sd_Acc, ymax=mean_Acc+sd_Acc), width=.001)
@@ -83,7 +83,7 @@ l2svm <- l2svm_all %>%
 
 l2svm_plot <- base_plot(l2svm, l2svm$cost, l2svm$mean_Acc) +
   scale_x_continuous(name="C (penalty)") +
-  scale_y_continuous(name="L2 Linear Kernel SVM mean cvAUC",
+  scale_y_continuous(name="L2 SVM with linear kernel mean cvAUC",
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_Acc-sd_Acc, ymax=mean_Acc+sd_Acc), width=.001)
@@ -95,7 +95,7 @@ logit_plot <- logit_all %>%
   geom_line() +
   geom_point() +
   scale_x_continuous(name="C (penalty)") +
-  scale_y_continuous(name="L2 Logistic Regression mean cvAUC",
+  scale_y_continuous(name="L2 logistic regression mean cvAUC",
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.01) +
@@ -117,7 +117,7 @@ dt <- dt_all %>%
 
 dt_plot <- base_plot(dt, dt$maxdepth, dt$mean_AUC) +
 scale_x_continuous(name="max depth") +
-  scale_y_continuous(name="Decision Tree mean cvAUC",
+  scale_y_continuous(name="Decision tree mean cvAUC",
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.05)
@@ -129,28 +129,47 @@ rf <- rf_all %>%
 rf_plot <-  base_plot(rf, rf$mtry, rf$mean_AUC) +
 scale_x_continuous(name="mtry",
                    breaks=seq(0, 1500, 250), limits = c(0, 1500)) +
-  scale_y_continuous(name="Random Forest mean cvAUC",
+  scale_y_continuous(name="Random forest mean cvAUC",
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=1)
 
 # Start plotting models with 2 hyper-parameters individually
 
-rbf_plot <- rbf_all %>%
+rbf_data<- rbf_all %>%
   group_by(sigma, C) %>%
-  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>%
-  ggplot(aes(x=sigma, y=C)) +
-  geom_point(aes(color = mean_AUC), size=5)+
-  scale_x_log10()+
-  scale_y_log10()+
-  scale_color_distiller(palette = "RdPu")
+  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>% 
+  filter(sigma!=1)
 
-xgboost_plot <- xgboost_all %>%
+library(scales)
+rbf_data$sigma <- scientific(rbf_data$sigma)
+rbf_data$sigma <- as.character(rbf_data$sigma)
+  
+rbf_plot <- ggplot(rbf_data, aes(x=C, y=mean_AUC, color=sigma)) +
+  geom_line() +
+  geom_point() + 
+  scale_x_log10(breaks = c(0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1, 10)) +
+  scale_color_brewer(palette="Dark2") +
+  scale_y_continuous(name="SVM with radial bias kernel mean cvAUC",
+                     limits = c(0.50, 0.75))
+
+xgboost_data <- xgboost_all %>%
   group_by(eta, subsample) %>%
-  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) %>%
-  ggplot(aes(x=eta, y=subsample)) +
-  geom_point(aes(color = mean_AUC), size=5)+
-  scale_color_distiller(palette = "RdPu")
+  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) 
+
+
+xgboost_data$subsample <- as.character(xgboost_data$subsample)
+xgboost_plot <- ggplot(xgboost_data, aes(x=eta, y=mean_AUC, color=subsample)) +
+  geom_line() +
+  geom_point()+
+  scale_x_continuous(breaks = c(0.001, 0.005, 0.01, 0.015, 0.02)) +
+  scale_y_continuous(name="XGBoost mean cvAUC",
+                     limits = c(0.80, 0.82),
+                     breaks = seq(0.80, 0.82, 0.005)) +
+  scale_color_brewer(palette="Dark2")
+
+  
+  
 
 
 

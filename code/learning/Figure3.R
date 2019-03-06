@@ -54,7 +54,7 @@ walltime_df <- bind_rows(min_fixed_result)
 
 walltime_plot <- ggplot(walltime_df, aes(x = fct_reorder(model, x, fun = median, .asc =TRUE), y = x)) +
   geom_boxplot(alpha=0.7) +
-  scale_y_continuous(name = "Walltime") +
+  scale_y_continuous(name = "Walltime (hours)") +
   scale_x_discrete(name = "") +
   theme_bw() +
   theme(legend.title=element_text(size=22),

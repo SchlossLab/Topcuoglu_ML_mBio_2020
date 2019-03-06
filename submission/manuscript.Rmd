@@ -243,7 +243,7 @@ We evaluated the prediction performance of seven binary classification models wh
 
 __The complexity and interpretibility of each classifier.__
 
-We interpreted the feature weights of L1 and L2 SVM with linear kernel and log odds ratios of L2 logistic regression using the training data. To get a sense of the importance of each feature we randomly subsampled 80% of the data 100 times and trained 100 models; this resulted in 100 different sets of feature weights. We reported the mean weights of the 10 most important features for[Figure 4]. FIT levels were 
+We interpreted the feature weights of L1 and L2 SVM with linear kernel and regression coefficients of L2 logistic regression using the training data. To get a sense of the importance of each feature we randomly subsampled 80% of the data 100 times and trained 100 models; this resulted in 100 different sets of feature weights. We reported the mean weights of the 10 most important features [Figure 4]. FIT levels were 
 
 
 __The computational efficiency of each classifier.__
