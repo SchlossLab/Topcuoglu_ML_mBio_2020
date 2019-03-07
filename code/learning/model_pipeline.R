@@ -66,15 +66,6 @@ pipeline <- function(dataset, model){
                               tuneGrid = grid,
                               family = "binomial")
     }
-    if(model=="L1_Linear_SVM" || model=="L2_Linear_SVM"){
-      print(model)
-      trained_model <-  train(dx ~ .,
-                              data=trainTransformed,
-                              method = method,
-                              trControl = cv,
-                              metric = "Accuracy", # not ROC due to package problems
-                              tuneGrid = grid)
-    }
     else if(model=="Random_Forest"){
       print(model)
       trained_model <-  train(dx ~ .,
@@ -94,39 +85,9 @@ pipeline <- function(dataset, model){
                               metric = "ROC",
                               tuneGrid = grid)
     }
-    if(model=="L1_Linear_SVM" || model=="L2_Linear_SVM"){ # exception due to package problems for ROC calculation
       #################################################################################
-      # We have to calculate ROC ourselves for cross-validation
-      # I have made changes to the caret package functions to get Decision Values
-      # In SVM we don't get predicted probabilities but decision values
-      # I changed the function in caret to give us decision values instead of probabilities.
-      #################################################################################
-      # For cross-validation
-        # selected indices are taking the best performing hyper-parameter only
-        selectedIndices <-trained_model$pred[,6] == trained_model$bestTune[,1]
-        # The repsonse is the known labels
-        cv.response <- trained_model$pred[selectedIndices, ]$obs
-        # The predictor is the Decision Values that we get from training
-        cv.predictor <- trained_model$pred[selectedIndices, ]$cancer
-        # We use pROC function to calculate ROC from decision values
-        # roc function gives us auc values as well
-        cv_roc <- roc(cv.response, cv.predictor, auc=TRUE)
-        cv_auc <- cv_roc$auc
-        cv_aucs <- c(cv_aucs, cv_auc)
-
-      # For testing we can use the type="prob" to get decision values(becuase of my function)
-        rpartProbs <- predict(trained_model, testTransformed, type="prob")
-        test_roc <- roc(ifelse(testTransformed$dx == "cancer", 1, 0), rpartProbs[[1]])
-        test_auc <- test_roc$auc
-        # Save all the test AUCs over iterations in test_aucs
-        test_aucs <- c(test_aucs, test_auc)
-        # complete results
-        results_individual <- trained_model$results
-        results_total <- rbind(results_total, results_individual)
-    }
-    else{
-      #################################################################################
-      # For all the other models, ROC calculation is already included.
+      # For all the models after adding decision value calculation for SVMs
+      # ROC calculation is already included.
       # We follow caret instructions
       #################################################################################
         # Mean AUC value over repeats of the best cost parameter during training
@@ -143,7 +104,6 @@ pipeline <- function(dataset, model){
         # Save all results of hyper-parameters and their corresponding meanAUCs for each iteration
         results_individual <- trained_model$results
         results_total <- rbind(results_total, results_individual)
-    }
     # Here we look at the top 10 important features
     if(model=="L1_Linear_SVM" || model=="L2_Linear_SVM" || model=="L2_Logistic_Regression"){
       feature_importance <- trained_model$finalModel$W

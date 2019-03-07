@@ -54,43 +54,17 @@ tuning_grid <- function(train_data, model){
                      savePredictions = TRUE)
   # Grid and caret method defined for each classification models
   if(model=="L2_Logistic_Regression") {
-    grid <-  expand.grid(cost = c(0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1),
+    grid <-  expand.grid(cost = c(0.0001, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1),
                          loss = "L2_primal", # This chooses type=0 for liblinear R package which is logistic loss, primal solve for L2 regularized logistic regression
                          epsilon = 0.01) #default epsioln recommended from liblinear
     method <- "regLogistic"
   }
-  else if (model=="L1_Linear_SVM"){ # Exception due to package
-    # Because I made changes to the package function, we can't:
-    #     1. Get class probabilities and 2class summary
-    #     2. We won't get ROC scores from cv
-    #
-    # We will get accuracy instead
-    cv <- trainControl(method="repeatedcv",
-                       repeats = 100,
-                       number=folds,
-                       index = cvIndex,
-                       returnResamp="final",
-                       classProbs=TRUE,
-                       indexFinal=NULL,
-                       savePredictions = TRUE)
-    grid <- expand.grid(cost = c(0.01, 0.025, 0.05, 0.075, 0.1, 0.15, 0.2),
+  else if (model=="L1_Linear_SVM"){ # 
+    grid <- expand.grid(cost = c(0.0001, 0.001, 0.01, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 1),
                         Loss = "L2")
     method <- "svmLinear5" # I wrote this function in caret
   }
-  else if (model=="L2_Linear_SVM"){ # Exception due to package
-    # Because I made changes to the package function, we can't:
-    #     1. Get class probabilities and 2class summary
-    #     2. We won't get ROC scores from cv
-    #
-    # We will get accuracy instead
-    cv <- trainControl(method="repeatedcv",
-                       repeats = 100,
-                       number=folds,
-                       index = cvIndex,
-                       returnResamp="final",
-                       classProbs=TRUE,
-                       indexFinal=NULL,
-                       savePredictions = TRUE)
+  else if (model=="L2_Linear_SVM"){ 
     grid <- expand.grid(cost = c(0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1),
                         Loss = "L2")
     method <- "svmLinear3" # I changed this function in caret
