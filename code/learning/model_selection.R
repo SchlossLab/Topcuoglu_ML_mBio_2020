@@ -44,7 +44,7 @@ tuning_grid <- function(train_data, model){
   folds <- 5
   cvIndex <- createFolds(factor(train_data$dx), folds, returnTrain = T)
   cv <- trainControl(method="repeatedcv",
-                     repeats = 1,
+                     repeats = 100,
                      number=folds,
                      index = cvIndex,
                      returnResamp="final",
@@ -84,7 +84,7 @@ tuning_grid <- function(train_data, model){
     #
     # We will get accuracy instead
     cv <- trainControl(method="repeatedcv",
-                       repeats = 1,
+                       repeats = 100,
                        number=folds,
                        index = cvIndex,
                        returnResamp="final",
