@@ -176,8 +176,8 @@ l2svm_plot <- base_plot(l2svm, x=l2svm$key,y=l2svm$mean_weights) +
 logit <- read.delim("data/process/L2_Logistic_Regression_importance.tsv", header=T, sep='\t') 
 logit_plot <- base_plot(logit, x=logit$key, y=logit$mean_weights) +
   scale_y_continuous(name="L2 logistic regression coefficients",
-                     limits = c(-3, 3),
-                     breaks = seq(-3, 3, 0.5)) +    
+                     limits = c(-4, 4),
+                     breaks = seq(-4, 4, 0.5)) +   
   geom_errorbar(aes(ymin=logit$mean_weights-logit$sd_weights, 
                     ymax=logit$mean_weights+logit$sd_weights), 
                 width=.01)

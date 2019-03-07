@@ -40,7 +40,8 @@ tuning_grid <- function(train_data, model){
 #       100 internal repeats to pick the best hp
 #       Train the model with final hp decision to use model to predict
 #       Return 2class summary and save predictions to calculate cvROC
-  
+# -------------------------CHANGED--------------------------------------->  
+# ADDED cv index to make sure the internal 5-folds are stratified for diagnosis. 
   folds <- 5
   cvIndex <- createFolds(factor(train_data$dx), folds, returnTrain = T)
   cv <- trainControl(method="repeatedcv",
@@ -52,7 +53,36 @@ tuning_grid <- function(train_data, model){
                      summaryFunction=twoClassSummary,
                      indexFinal=NULL,
                      savePredictions = TRUE)
-  # Grid and caret method defined for each classification models
+# # -----------------------------------------------------------------------> 
+  
+# For linear models we are using LiblineaR package
+# LiblineaR can produce 10 types of (generalized) linear models:
+# The regularization can be L1 or L2.
+# The losses can be the:
+#     1. Regular L2-loss for SVM (hinge loss), 
+#     2. L1-loss for SVM
+#     3. Logistic loss for logistic regression. 
+# Here we will use L1 and L2 regularization and hinge loss (L2-loss) for linear SVMs
+# We will use logistic loss for L2-resularized logistic regression
+# The liblinear 'type' choioces are below:
+#
+# for classification
+# • 0 – L2-regularized logistic regression (primal)---> we use this for l2-logistic
+#  • 1 – L2-regularized L2-loss support vector classification (dual)
+#  • 2 – L2-regularized L2-loss support vector classification (primal) ---> we use this for l2-linear SVM
+#  • 3 – L2-regularized L1-loss support vector classification (dual)
+#  • 4 – support vector classification by Crammer and Singer
+#  • 5 – L1-regularized L2-loss support vector classification---> we use this for l1-linear SVM
+#  • 6 – L1-regularized logistic regression
+#  • 7 – L2-regularized logistic regression (dual)
+#  
+#for regression 
+#  • 11 – L2-regularized L2-loss support vector regression (primal)
+#  • 12 – L2-regularized L2-loss support vector regression (dual)
+#  • 13 – L2-regularized L1-loss support vector regression (dual)
+ 
+
+     # Grid and caret method defined for each classification models
   if(model=="L2_Logistic_Regression") {
     grid <-  expand.grid(cost = c(0.0001, 0.001, 0.005, 0.01, 0.05, 0.1, 0.25, 0.5, 1, 10),
                          loss = "L2_primal", # This chooses type=0 for liblinear R package which is logistic loss, primal solve for L2 regularized logistic regression

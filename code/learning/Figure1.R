@@ -40,13 +40,13 @@ best_performance <- bind_rows(logit, l2svm, rbf, dt, xgboost, rf, l1svm)%>%
 ######################################################################
 
 
-performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC, fun = median, .asc =TRUE), y = AUC, fill = Performance)) +
+performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC), y = AUC, fill = Performance)) +
   geom_boxplot(alpha=0.7) +
   scale_y_continuous(name = "AUROC",
                      breaks = seq(0.5, 1, 0.02),
                      limits=c(0.5, 1), 
                      expand=c(0,0)) +
- # scale_x_discrete(name = "",
+  scale_x_discrete(name = "") +
   #                 labels=c("L2 Linear SVM", 
    #                         "RBF SVM",
     #                        "L2 Logistic Regression",

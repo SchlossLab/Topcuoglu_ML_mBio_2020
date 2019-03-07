@@ -41,16 +41,18 @@ pipeline <- function(dataset, model){
   results_total <-  data.frame()
   test_aucs <- c()
   cv_aucs <- c()
+  # ----------------------------CHANGED------------------------------------------->    
+  # We are doing the pre-processing to the full dataset and then splitting 80-20
   # Scale all features between 0-1
-  preProcValues <- preProcess(data, method = "range")
-  dataTransformed <- predict(preProcValues, data)
+  preProcValues <- preProcess(dataset, method = "range")
+  dataTransformed <- predict(preProcValues, dataset)
   
   # Do the 80-20 data-split
     # Stratified data partitioning %80 training - %20 testing
     inTraining <- createDataPartition(dataTransformed$dx, p = .80, list = FALSE)
     trainTransformed <- dataTransformed[ inTraining,]
     testTransformed  <- dataTransformed[-inTraining,]
-
+  # ----------------------------------------------------------------------->    
     # Define hyper-parameter tuning grid and the training method
     grid <- tuning_grid(trainTransformed, model)[[1]]
     method <- tuning_grid(trainTransformed, model)[[2]]
