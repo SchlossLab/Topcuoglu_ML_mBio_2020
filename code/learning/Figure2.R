@@ -84,7 +84,7 @@ l2svm <- l2svm_all %>%
 
 l2svm_plot <- base_plot(l2svm, l2svm$cost, l2svm$mean_AUC) +
   scale_x_log10(name="C (penalty)", 
-                     breaks= c(0.0001, 0.0005, 0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.5, 1)) +
+                     breaks= c(0.0001, 0.0005, 0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1)) +
   scale_y_continuous(name="L2 SVM with linear kernel mean cvAUC",
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
@@ -96,8 +96,8 @@ logit_plot <- logit_all %>%
   ggplot(aes(x=cost,y=mean_AUC)) +
   geom_line() +
   geom_point() +
-  scale_x_continuous(name="C (penalty)", 
-                     breaks= c(0.0001, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1)) +
+  scale_x_log10(name="C (penalty)", 
+                     breaks= c(0.0001, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 10)) +
   scale_y_continuous(name="L2 logistic regression mean cvAUC",
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +

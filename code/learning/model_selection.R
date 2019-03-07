@@ -54,7 +54,7 @@ tuning_grid <- function(train_data, model){
                      savePredictions = TRUE)
   # Grid and caret method defined for each classification models
   if(model=="L2_Logistic_Regression") {
-    grid <-  expand.grid(cost = c(0.0001, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1),
+    grid <-  expand.grid(cost = c(0.0001, 0.001, 0.005, 0.01, 0.05, 0.1, 0.25, 0.5, 1, 10),
                          loss = "L2_primal", # This chooses type=0 for liblinear R package which is logistic loss, primal solve for L2 regularized logistic regression
                          epsilon = 0.01) #default epsioln recommended from liblinear
     method <- "regLogistic"
