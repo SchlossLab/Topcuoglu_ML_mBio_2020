@@ -54,14 +54,18 @@ tuning_grid <- function(train_data, model){
                      indexFinal=NULL,
                      savePredictions = TRUE)
 # # -----------------------------------------------------------------------> 
-  
+  #################################################################################  
 # For linear models we are using LiblineaR package
+#
 # LiblineaR can produce 10 types of (generalized) linear models:
-# The regularization can be L1 or L2.
-# The losses can be the:
+# The regularization can be 
+#     1. L1 
+#     2. L2
+# The losses can be:
 #     1. Regular L2-loss for SVM (hinge loss), 
 #     2. L1-loss for SVM
 #     3. Logistic loss for logistic regression. 
+#
 # Here we will use L1 and L2 regularization and hinge loss (L2-loss) for linear SVMs
 # We will use logistic loss for L2-resularized logistic regression
 # The liblinear 'type' choioces are below:
@@ -80,13 +84,47 @@ tuning_grid <- function(train_data, model){
 #  • 11 – L2-regularized L2-loss support vector regression (primal)
 #  • 12 – L2-regularized L2-loss support vector regression (dual)
 #  • 13 – L2-regularized L1-loss support vector regression (dual)
- 
-
-     # Grid and caret method defined for each classification models
+  #################################################################################
+  
+  
+  #################################################################################
+  # We use ROC metric for all the models
+  # To do that I had to make changes to the caret package functions.
+  # The files 'data/caret_models/svmLinear3.R and svmLinear5.R are my functions. 
+  # I added 1 line to get Decision Values for linear SVMs:
+  #
+  #           prob = function(modelFit, newdata, submodels = NULL){
+  #             predict(modelFit, newdata, decisionValues = TRUE)$decisionValues
+  #           },
+  #
+  # This line gives decision values instead of probabilities and computes ROC in:
+  #   1. train function with the cross-validataion
+  #   2. final trained model
+  # using decision values and saves them in the variable "prob"
+  # This allows us to pass the cv function for all models:
+  # cv <- trainControl(method="repeatedcv",
+  #                   repeats = 100,
+  #                   number=folds,
+  #                   index = cvIndex,
+  #                   returnResamp="final",
+  #                   classProbs=TRUE,
+  #                   summaryFunction=twoClassSummary,
+  #                   indexFinal=NULL,
+  #                   savePredictions = TRUE)
+  # 
+  # There parameters we pass for L1 and L2 SVM:
+  #                   classProbs=TRUE,
+  #                   summaryFunction=twoClassSummary,
+  # are actually computing ROC from decision values not probabilities
+  #################################################################################
+  
+  # Grid and caret method defined for each classification models
   if(model=="L2_Logistic_Regression") {
     grid <-  expand.grid(cost = c(0.0001, 0.001, 0.005, 0.01, 0.05, 0.1, 0.25, 0.5, 1, 10),
-                         loss = "L2_primal", # This chooses type=0 for liblinear R package which is logistic loss, primal solve for L2 regularized logistic regression
-                         epsilon = 0.01) #default epsioln recommended from liblinear
+                         loss = "L2_primal", 
+                         # This chooses type=0 for liblinear R package 
+                         # which is logistic loss, primal solve for L2 regularized logistic regression
+                         epsilon = 0.01) #default epsilon recommended from liblinear
     method <- "regLogistic"
   }
   else if (model=="L1_Linear_SVM"){ # 

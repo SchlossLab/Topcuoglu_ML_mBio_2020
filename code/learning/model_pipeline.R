@@ -48,19 +48,19 @@ pipeline <- function(dataset, model){
   dataTransformed <- predict(preProcValues, dataset)
   
   # Do the 80-20 data-split
-    # Stratified data partitioning %80 training - %20 testing
-    inTraining <- createDataPartition(dataTransformed$dx, p = .80, list = FALSE)
-    trainTransformed <- dataTransformed[ inTraining,]
-    testTransformed  <- dataTransformed[-inTraining,]
+  # Stratified data partitioning %80 training - %20 testing
+  inTraining <- createDataPartition(dataTransformed$dx, p = .80, list = FALSE)
+  trainTransformed <- dataTransformed[ inTraining,]
+  testTransformed  <- dataTransformed[-inTraining,]
   # ----------------------------------------------------------------------->    
-    # Define hyper-parameter tuning grid and the training method
-    grid <- tuning_grid(trainTransformed, model)[[1]]
-    method <- tuning_grid(trainTransformed, model)[[2]]
-    cv <- tuning_grid(trainTransformed, model)[[3]]
-    # Train the model
-    if(model=="L2_Logistic_Regression"){
-      print(model)
-      trained_model <-  train(dx ~ ., # label
+  # Define hyper-parameter tuning grid and the training method
+  grid <- tuning_grid(trainTransformed, model)[[1]]
+  method <- tuning_grid(trainTransformed, model)[[2]]
+  cv <- tuning_grid(trainTransformed, model)[[3]]
+  # Train the model
+  if(model=="L2_Logistic_Regression"){
+  print(model)
+  trained_model <-  train(dx ~ ., # label
                               data=trainTransformed, #total data
                               method = method,
                               trControl = cv,
@@ -88,9 +88,19 @@ pipeline <- function(dataset, model){
                               tuneGrid = grid)
     }
       #################################################################################
-      # For all the models after adding decision value calculation for SVMs
-      # ROC calculation is already included.
-      # We follow caret instructions
+      # We use ROC metric for all the models
+      # To do that I had to make changes to the caret package functions.
+      # The files 'data/caret_models/svmLinear3.R and svmLinear5.R are my functions. 
+      # I added 1 line to get Decision Values for linear SVMs:
+      #
+      #           prob = function(modelFit, newdata, submodels = NULL){
+      #             predict(modelFit, newdata, decisionValues = TRUE)$decisionValues
+      #           },
+      #
+      # This line gives decision values instead of probabilities and computes ROC in:
+      #   1. train function with the cross-validataion
+      #   2. final trained model
+      # using decision values and saves them in the variable "prob"
       #################################################################################
         # Mean AUC value over repeats of the best cost parameter during training
         cv_auc <- getTrainPerf(trained_model)$TrainROC
