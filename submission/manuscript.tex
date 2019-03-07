@@ -189,14 +189,14 @@ decision tree, random forest and XGBoost which increase in complexity
 and decrease in interpretability respectively. Our ML pipeline performed
 100 data-splits and utilized held-out test data to evaluate
 generalization and predicton performance of each ML model. The mean
-AUROC varied from 0.68 (std ± 0.05) to 0.82 (std ± 0.04). Random Forest
+AUROC varied from 0.5 (std ± 0.01) to 0.82 (std ± 0.04). Random Forest
 and XGBoost had the highest mean AUROC for detecting SRN. Despite the
 simplicity, the L1-regularized linear kernel SVM followed Random Forest
 and XGBoost in performance. In terms of computational efficiency, L2 SVM
-with linear kernel trained the fastest (0.127 hours, std ± 0.01), while
-XGBoost took the longest (82.47 hours, std ± 17.045). We found that mean
-cross-validation and testing AUROC could vary by as much as 0.061, which
-highlights the importance of a seperate held-out test set for
+with linear kernel trained the fastest (0.123 hours, std ± 0.014), while
+XGBoost took the longest (106.568 hours, std ± 6.839). We found that
+mean cross-validation and testing AUROC could vary by as much as 0.238,
+which highlights the importance of a seperate held-out test set for
 evaluation. Aside from evaluating generalization and classification
 performances for each of these models, this study established standards
 for modeling pipelines of microbiome-associated machine learning models.
@@ -227,29 +227,36 @@ models when applied to held-out test data over 100 data-splits using
 AUROC as classification performance metric. Random Forest and XGBoost
 had the highest mean AUROC for detecting SRN, 0.816 (std ± 0.039) and
 0.814 (std ± 0.04) respectively {[}Figure 2{]}. L1 linear SVM and
-decision tree had significantly lower AUROC values, 0.75 (std ± 0.045)
+decision tree had significantly lower AUROC values, 0.503 (std ± 0.027)
 and 0.741 (std ± 0.038) {[}Figure 2{]}. However, they had significanly
 higher performances than L2 linear SVM, RBF SVM and L2 logistic
-regression which had mean AUROC values of 0.68 (std ± 0.052), 0.684 (std
-± 0.049) and 0.677 (std ± 0.053) respectively {[}Figure 2{]}. We also
+regression which had mean AUROC values of 0.501 (std ± 0.013), 0.68 (std
+± 0.05) and 0.672 (std ± 0.05) respectively {[}Figure 2{]}. We also
 evaluated the generalization performance of each classifier by comparing
 their mean cross-validation AUROC and mean testing AUROC. We found a
 statistically significant difference for classifiers L2 support vector
 machines (SVM) with linear and radial basis function kernels and L2
-logistic regression (p-values = 2.4e-16, 3.5e-13 and 9.4e-20
-respectively). These differences were 0.052, 0.047 and 0.061,
+logistic regression (p-values = 2.4e-37, 1.3e-14 and 2.6e-21
+respectively). These differences were 0.222, 0.05 and 0.064,
 respectively {[}Figure 2{]} .
 
 \textbf{The complexity and interpretibility of each classifier.}
+
+We interpreted the feature weights of L1 and L2 SVM with linear kernel
+and regression coefficients of L2 logistic regression using the training
+data. To get a sense of the importance of each feature we randomly
+subsampled 80\% of the data 100 times and trained 100 models; this
+resulted in 100 different sets of feature weights. We reported the mean
+weights of the 10 most important features {[}Figure 4{]}.
 
 \textbf{The computational efficiency of each classifier.}
 
 Linear models trained faster than non-linear models. L2 logistic
 Rregression and L1 and L2 SVM with linear kernel had training times of
-7.8 min, (std ± 0.6), 9.6 min, (std ± 0.6) and 13.2 min, (std ± 1.2)
+7.2 min, (std ± 0.6), 10.2 min, (std ± 0.6) and 13.2 min, (std ± 1.8)
 respectively. Whereas, SVM with radial basis function kernel, decision
-tree, random forest and xgboost had training times of 2.21 hrs, (std ±
-0.25), 4.2 hrs, (std ± 0.49), 82.47 hrs, (std ± 17.05) and 116.83 hrs,
+tree, random forest and xgboost had training times of 2.01 hrs, (std ±
+0.28), 4.2 hrs, (std ± 0.49), 106.57 hrs, (std ± 6.84) and 116.83 hrs,
 (std ± 17.24), respectively.
 
 \subsection{Conclusions}\label{conclusions}
