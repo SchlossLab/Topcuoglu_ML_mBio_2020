@@ -82,11 +82,12 @@ l2svm <- l2svm_all %>%
   summarise(mean_Acc = mean(Accuracy), sd_Acc = sd(Accuracy))
 
 l2svm_plot <- base_plot(l2svm, l2svm$cost, l2svm$mean_Acc) +
-  scale_x_continuous(name="C (penalty)") +
+  scale_x_continuous(name="C (penalty)", 
+                     breaks= c(0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1)) +
   scale_y_continuous(name="L2 SVM with linear kernel mean cvAUC",
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
-  geom_errorbar(aes(ymin=mean_Acc-sd_Acc, ymax=mean_Acc+sd_Acc), width=.001)
+  geom_errorbar(aes(ymin=mean_Acc-sd_Acc, ymax=mean_Acc+sd_Acc))
 
 logit_plot <- logit_all %>%
   group_by(cost, loss, epsilon) %>%
@@ -98,7 +99,7 @@ logit_plot <- logit_all %>%
   scale_y_continuous(name="L2 logistic regression mean cvAUC",
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
-  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.01) +
+  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.001) +
   theme_bw() +
   theme(legend.text=element_text(size=18),
         legend.title=element_text(size=22),
@@ -120,7 +121,7 @@ scale_x_continuous(name="max depth") +
   scale_y_continuous(name="Decision tree mean cvAUC",
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
-  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.05)
+  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.001)
 
 rf <- rf_all %>%
   group_by(mtry) %>%

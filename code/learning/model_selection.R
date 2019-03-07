@@ -33,16 +33,20 @@
 ######################################################################
 #------------------------- DEFINE FUNCTION -------------------#
 ######################################################################
-tuning_grid <- function(model){
+tuning_grid <- function(train_data, model){
 
 #   Cross-validation method
 #       5-fold
 #       100 internal repeats to pick the best hp
 #       Train the model with final hp decision to use model to predict
 #       Return 2class summary and save predictions to calculate cvROC
+  
+  folds <- 5
+  cvIndex <- createFolds(factor(train_data$dx), folds, returnTrain = T)
   cv <- trainControl(method="repeatedcv",
-                     repeats = 100,
-                     number=5,
+                     repeats = 1,
+                     number=folds,
+                     index = cvIndex,
                      returnResamp="final",
                      classProbs=TRUE,
                      summaryFunction=twoClassSummary,
@@ -50,9 +54,9 @@ tuning_grid <- function(model){
                      savePredictions = TRUE)
   # Grid and caret method defined for each classification models
   if(model=="L2_Logistic_Regression") {
-    grid <-  expand.grid(cost = c(0.01, 0.025, 0.05, 0.075, 0.1, 0.5, 1),
-                         loss = "L2_dual",
-                         epsilon = 0.1)
+    grid <-  expand.grid(cost = c(0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1),
+                         loss = "L2_primal", # This chooses type=0 for liblinear R package which is logistic loss, primal solve for L2 regularized logistic regression
+                         epsilon = 0.01) #default epsioln recommended from liblinear
     method <- "regLogistic"
   }
   else if (model=="L1_Linear_SVM"){ # Exception due to package
@@ -63,7 +67,8 @@ tuning_grid <- function(model){
     # We will get accuracy instead
     cv <- trainControl(method="repeatedcv",
                        repeats = 100,
-                       number=5,
+                       number=folds,
+                       index = cvIndex,
                        returnResamp="final",
                        classProbs=TRUE,
                        indexFinal=NULL,
@@ -79,8 +84,9 @@ tuning_grid <- function(model){
     #
     # We will get accuracy instead
     cv <- trainControl(method="repeatedcv",
-                       repeats = 100,
-                       number=5,
+                       repeats = 1,
+                       number=folds,
+                       index = cvIndex,
                        returnResamp="final",
                        classProbs=TRUE,
                        indexFinal=NULL,

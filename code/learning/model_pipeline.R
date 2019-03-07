@@ -41,20 +41,20 @@ pipeline <- function(dataset, model){
   results_total <-  data.frame()
   test_aucs <- c()
   cv_aucs <- c()
-
+  # Scale all features between 0-1
+  preProcValues <- preProcess(data, method = "range")
+  dataTransformed <- predict(preProcValues, data)
+  
   # Do the 80-20 data-split
     # Stratified data partitioning %80 training - %20 testing
-    inTraining <- createDataPartition(dataset$dx, p = .80, list = FALSE)
-    training <- dataset[ inTraining,]
-    testing  <- dataset[-inTraining,]
-    # Scale all features between 0-1
-    preProcValues <- preProcess(training, method = "range")
-    trainTransformed <- predict(preProcValues, training)
-    testTransformed <- predict(preProcValues, testing)
+    inTraining <- createDataPartition(dataTransformed$dx, p = .80, list = FALSE)
+    trainTransformed <- dataTransformed[ inTraining,]
+    testTransformed  <- dataTransformed[-inTraining,]
+
     # Define hyper-parameter tuning grid and the training method
-    grid <- tuning_grid(model)[[1]]
-    method <- tuning_grid(model)[[2]]
-    cv <- tuning_grid(model)[[3]]
+    grid <- tuning_grid(trainTransformed, model)[[1]]
+    method <- tuning_grid(trainTransformed, model)[[2]]
+    cv <- tuning_grid(trainTransformed, model)[[3]]
     # Train the model
     if(model=="L2_Logistic_Regression"){
       print(model)
