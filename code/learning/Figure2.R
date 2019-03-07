@@ -67,27 +67,28 @@ base_plot <-  function(data, x_axis, y_axis){
 # Start plotting models with one hyper-parameter individually
 l1svm <- l1svm_all %>%
   group_by(cost) %>%
-  summarise(mean_Acc = mean(Accuracy), sd_Acc = sd(Accuracy))
+  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC))
 
-l1svm_plot <- base_plot(l1svm, l1svm$cost, l1svm$mean_Acc) +
-  scale_x_continuous(name="C (penalty)") +
+l1svm_plot <- base_plot(l1svm, l1svm$cost, l1svm$mean_AUC) +
+  scale_x_log10(name="C (penalty)",
+                breaks=c(0.0001, 0.001, 0.01, 0.025, 0.05, 0.1, 0.5, 1)) +
   scale_y_continuous(name="L1 SVM with linear kernel mean cvAUC",
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
-  geom_errorbar(aes(ymin=mean_Acc-sd_Acc, ymax=mean_Acc+sd_Acc), width=.001)
+  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.001)
 
 
 l2svm <- l2svm_all %>%
   group_by(cost) %>%
-  summarise(mean_Acc = mean(Accuracy), sd_Acc = sd(Accuracy))
+  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC))
 
-l2svm_plot <- base_plot(l2svm, l2svm$cost, l2svm$mean_Acc) +
-  scale_x_continuous(name="C (penalty)", 
-                     breaks= c(0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1)) +
+l2svm_plot <- base_plot(l2svm, l2svm$cost, l2svm$mean_AUC) +
+  scale_x_log10(name="C (penalty)", 
+                     breaks= c(0.0001, 0.0005, 0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.5, 1)) +
   scale_y_continuous(name="L2 SVM with linear kernel mean cvAUC",
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
-  geom_errorbar(aes(ymin=mean_Acc-sd_Acc, ymax=mean_Acc+sd_Acc))
+  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC))
 
 logit_plot <- logit_all %>%
   group_by(cost, loss, epsilon) %>%
@@ -95,7 +96,8 @@ logit_plot <- logit_all %>%
   ggplot(aes(x=cost,y=mean_AUC)) +
   geom_line() +
   geom_point() +
-  scale_x_continuous(name="C (penalty)") +
+  scale_x_continuous(name="C (penalty)", 
+                     breaks= c(0.0001, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1)) +
   scale_y_continuous(name="L2 logistic regression mean cvAUC",
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
