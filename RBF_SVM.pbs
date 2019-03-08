@@ -32,6 +32,7 @@ echo Using "RBF SVM"
 
 # Using $PBS_ARRAYID to select parameter set
 
+#make data/process/best_hp_results_RBF_SVM_$seed.csv
 Rscript code/learning/main.R $seed "RBF_SVM"
 
 
