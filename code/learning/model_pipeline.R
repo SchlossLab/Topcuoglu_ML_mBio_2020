@@ -66,8 +66,7 @@ pipeline <- function(dataset, model){
   cv <- tuning_grid(trainTransformed, model)[[3]]
   # ----------------------------------------------------------------------->   
   
-  
-  ########################### TRAIN THE MODEL ###############################
+  # ---------------------------TRAIN THE MODEL ---------------------------->   
   # ------------------------------- 1. --------------------------------------
   # - We train on the 80% of the full dataset.
   # - We use the cross-validation and hyper-parameter settings defined above to train
@@ -89,8 +88,7 @@ pipeline <- function(dataset, model){
   # - If the model is logistic regression, we need to add a family=binomial parameter.
   # - If the model is random forest, we need to add a ntree=1000 parameter.
   #         We chose ntree=1000 empirically.
-  
-  #################################################################################
+  # ----------------------------------------------------------------------->   
   if(model=="L2_Logistic_Regression"){
   print(model)
   trained_model <-  train(dx ~ ., # label
