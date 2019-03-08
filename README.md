@@ -65,7 +65,7 @@ make -n results/figures/Figure_1.pdf
 
 5. In our lab, we provide the seed which is [0-99] by submitting an array job in our HPC cluster. That 1 array job then runs 100 jobs with the seeds [0-99]. 
 
-	- The array job as seen in `full_analysis.pbs` has these commands in it: 
+	- The array job -as seen in any of the `.pbs` files- has these commands in it: 
 
 ```
 # define array id as [1-100]
