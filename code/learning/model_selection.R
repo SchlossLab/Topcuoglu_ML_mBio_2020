@@ -120,7 +120,7 @@ tuning_grid <- function(train_data, model){
   
   # Grid and caret method defined for each classification models
   if(model=="L2_Logistic_Regression") {
-    grid <-  expand.grid(cost = c(0.0001, 0.001, 0.005, 0.01, 0.05, 0.1, 0.25, 0.5, 1, 10),
+    grid <-  expand.grid(cost = c(0.0001, 0.001, 0.0025, 0.005, 0.01, 0.05, 0.1, 0.25, 0.5, 1, 10),
                          loss = "L2_primal", 
                          # This chooses type=0 for liblinear R package 
                          # which is logistic loss, primal solve for L2 regularized logistic regression
@@ -133,7 +133,7 @@ tuning_grid <- function(train_data, model){
     method <- "svmLinear5" # I wrote this function in caret
   }
   else if (model=="L2_Linear_SVM"){ 
-    grid <- expand.grid(cost = c(0.0001, 0.0005, 0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.5, 1),
+    grid <- expand.grid(cost = c(0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.1, 0.5, 1),
                         Loss = "L2")
     method <- "svmLinear3" # I changed this function in caret
   }
