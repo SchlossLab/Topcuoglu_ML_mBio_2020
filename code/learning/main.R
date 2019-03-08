@@ -76,6 +76,7 @@ data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
   drop_na()
 # We want the diagnosis column to be a factor
 data$dx <- factor(data$dx)
+# We want the first sample to be a cancer 
 set.seed(0)
 data <- data[sample(1:nrow(data)), ]
 ###################################################################
@@ -107,7 +108,7 @@ model <- input[2]
 #                     - runs the modeling pipeline
 #                     - saves performance and hyper-parameters and imp features
 set.seed(seed)
-get_results(data, model, input[1])
+get_results(data, model, seed)
 
 # We get wall-time for pipeline
 end_time <- Sys.time()

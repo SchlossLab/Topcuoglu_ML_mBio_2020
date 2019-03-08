@@ -35,17 +35,18 @@
 ######################################################################
 tuning_grid <- function(train_data, model){
 
-#   Cross-validation method
-#       5-fold
-#       100 internal repeats to pick the best hp
-#       Train the model with final hp decision to use model to predict
-#       Return 2class summary and save predictions to calculate cvROC
-# -------------------------CHANGED--------------------------------------->  
-# ADDED cv index to make sure the internal 5-folds are stratified for diagnosis. 
+
+# -------------------------CV method definition--------------------------------------->  
+# ADDED cv index to make sure 
+#     1. the internal 5-folds are stratified for diagnosis classes 
+#     2. Resample the dataset 100 times for 5-fold cv to get robust hp.
+# IN trainControl function:
+#     1. Train the model with final hp decision to use model to predict
+#     2. Return 2class summary and save predictions to calculate cvROC
+#     3. Save the predictions and class probabilities/decision values. 
   folds <- 5
   cvIndex <- createMultiFolds(factor(train_data$dx), folds, times=100)
   cv <- trainControl(method="repeatedcv",
-                     repeats = 100,
                      number=folds,
                      index = cvIndex,
                      returnResamp="final",
@@ -54,6 +55,11 @@ tuning_grid <- function(train_data, model){
                      indexFinal=NULL,
                      savePredictions = TRUE)
 # # -----------------------------------------------------------------------> 
+
+  
+  
+# -------------------Classification Method Definition---------------------->    
+  
   #################################################################################  
 # For linear models we are using LiblineaR package
 #
