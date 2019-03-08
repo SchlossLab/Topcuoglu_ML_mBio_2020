@@ -65,19 +65,15 @@ make -n results/figures/Figure_1.pdf
 
 5. In our lab, we provide the seed which is [0-99] by submitting an array job in our HPC cluster. That 1 array job then runs 100 jobs with the seeds [0-99]. 
 
-	- The array job -as seen in any of the `.pbs` files- has these commands in it: 
+	- The array job -as an example in the  `L2_Logistic_Regression.pbs` files- has these commands in it: 
 
 ```
 # define array id as [1-100]
 seed=$(($PBS_ARRAYID - 1))
 
 # make 100 best_results files for 7 models by running machine learning pipeline with 100 different seeds. 
-make data/process/best_hp_results_XGBoost_$seed.csv
-make data/process/best_hp_results_Random_Forest_$seed.csv
-make data/process/best_hp_results_Decision_Tree_$seed.csv
-make data/process/best_hp_results_RBF_SVM_$seed.csv
-make data/process/best_hp_results_L1_Linear_SVM_$seed.csv
-make data/process/best_hp_results_L2_Linear_SVM_$seed.csv
+make data/process/best_hp_results_L2_Logistic_Regression_$seed.csv
+
 ```
 
 - So why do we use [0-99] seeds and run the same script 100 times. Because the jobs actually call an Rscript which is called `code/learning/main.R`. This script runs the full machine learning pipeline for 1 datasplit where the full dataset is split to training and testing sets with a 80-20% proportion. The training data is used for training purposes and validation of parameter selection, and the test set is used for evaluation purposes. To get robut models, we can't just do this datasplit once. We do it 100 times to see how much variation there is in the random splitting of our data. 
