@@ -60,7 +60,8 @@ cd DeepLearning
 make -n results/figures/Figure_1.pdf
 ```
 
-	- As you see; for each model, we are running `Rscript code/learning/main.R $* "model name"` a 100 times. The argument in the middle `$*` is a seed that is set differently to numbers [0-99]. 
+- As you see; for each model, we are running `Rscript code/learning/main.R $* "model name"` a 100 times. 
+- The argument in the middle `$*` is a seed that is set differently to numbers [0-99]. 
 
 5. In our lab, we provide the seed which is [0-99] by submitting an array job in our HPC cluster. That 1 array job then runs 100 jobs with the seeds [0-99]. 
 
@@ -79,9 +80,9 @@ make data/process/best_hp_results_L1_Linear_SVM_$seed.csv
 make data/process/best_hp_results_L2_Linear_SVM_$seed.csv
 ```
 
-	- So why do we use [0-99] seeds and run the same script 100 times. Because the jobs actually call an Rscript which is called `code/learning/main.R`. This script runs the full machine learning pipeline for 1 datasplit where the full dataset is split to training and testing sets with a 80-20% proportion. The training data is used for training purposes and validation of parameter selection, and the test set is used for evaluation purposes. To get robut models, we can't just do this datasplit once. We do it 100 times to see how much variation there is in the random splitting of our data. 
+- So why do we use [0-99] seeds and run the same script 100 times. Because the jobs actually call an Rscript which is called `code/learning/main.R`. This script runs the full machine learning pipeline for 1 datasplit where the full dataset is split to training and testing sets with a 80-20% proportion. The training data is used for training purposes and validation of parameter selection, and the test set is used for evaluation purposes. To get robut models, we can't just do this datasplit once. We do it 100 times to see how much variation there is in the random splitting of our data. 
 
-	-The reason we use the [0-99] as set.seed[seed] in the `main.R` script is because we want our datasplits to be random but reproducible. 
+-The reason we use the [0-99] as set.seed[seed] in the `main.R` script is because we want our datasplits to be random but reproducible. 
 
 6.  We need to wait for this array jobs to finish and generate 700 files (100 files for each model). Once this job is finished and 100 files are generated for each model and saved to `data/process/`. We can now run:
  
