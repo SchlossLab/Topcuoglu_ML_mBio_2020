@@ -91,7 +91,8 @@ make data/process/best_hp_results_L2_Linear_SVM_$seed.csv
  ```
 
 ### How to regenerate this repository in python (in progress)
-```
+
+
 #### To run L2 Logistic Regression, L1 and L2 Linear SVM, RBF SVM, Decision Tree, Random Forest and XGBoost in Python
 1. Generate tab-delimited files: Cross-validation and testing AUC scores of each model.
 2. Generate tab-delimited files: The AUC scores of each hyper-parameter tested for each model.
