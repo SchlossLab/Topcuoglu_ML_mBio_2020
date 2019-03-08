@@ -60,7 +60,7 @@ tuning_grid <- function(train_data, model){
   
 # -------------------Classification Method Definition---------------------->    
   
-  #################################################################################  
+# ---------------------------------1---------------------------------------> 
 # For linear models we are using LiblineaR package
 #
 # LiblineaR can produce 10 types of (generalized) linear models:
@@ -90,10 +90,10 @@ tuning_grid <- function(train_data, model){
 #  • 11 – L2-regularized L2-loss support vector regression (primal)
 #  • 12 – L2-regularized L2-loss support vector regression (dual)
 #  • 13 – L2-regularized L1-loss support vector regression (dual)
-  #################################################################################
+# ------------------------------------------------------------------------> 
   
   
-  #################################################################################
+  # ---------------------------------2---------------------------------------> 
   # We use ROC metric for all the models
   # To do that I had to make changes to the caret package functions.
   # The files 'data/caret_models/svmLinear3.R and svmLinear5.R are my functions. 
@@ -122,7 +122,7 @@ tuning_grid <- function(train_data, model){
   #                   classProbs=TRUE,
   #                   summaryFunction=twoClassSummary,
   # are actually computing ROC from decision values not probabilities
-  #################################################################################
+  # ------------------------------------------------------------------------> 
   
   # Grid and caret method defined for each classification models
   if(model=="L2_Logistic_Regression") {
