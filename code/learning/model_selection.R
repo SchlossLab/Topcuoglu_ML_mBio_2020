@@ -43,7 +43,7 @@ tuning_grid <- function(train_data, model){
 # -------------------------CHANGED--------------------------------------->  
 # ADDED cv index to make sure the internal 5-folds are stratified for diagnosis. 
   folds <- 5
-  cvIndex <- createMultiFolds(factor(train_data$dx), folds, times=10)
+  cvIndex <- createMultiFolds(factor(train_data$dx), folds, times=100)
   cv <- trainControl(method="repeatedcv",
                      repeats = 100,
                      number=folds,
