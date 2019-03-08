@@ -43,7 +43,7 @@ tuning_grid <- function(train_data, model){
 # -------------------------CHANGED--------------------------------------->  
 # ADDED cv index to make sure the internal 5-folds are stratified for diagnosis. 
   folds <- 5
-  cvIndex <- createMultiFolds(factor(train_data$dx), folds, times=100)
+  cvIndex <- createMultiFolds(factor(train_data$dx), folds, times=10)
   cv <- trainControl(method="repeatedcv",
                      repeats = 100,
                      number=folds,
@@ -128,7 +128,7 @@ tuning_grid <- function(train_data, model){
     method <- "regLogistic"
   }
   else if (model=="L1_Linear_SVM"){ # 
-    grid <- expand.grid(cost = c(0.0001, 0.001, 0.01, 0.025, 0.05, 0.1, 0.5, 1),
+    grid <- expand.grid(cost = c(0.0001, 0.001, 0.01, 0.015, 0.025, 0.05, 0.1, 0.5, 1),
                         Loss = "L2")
     method <- "svmLinear5" # I wrote this function in caret
   }
