@@ -140,7 +140,8 @@ rbf_plot <- ggplot(rbf_data, aes(x=C, y=mean_AUC, color=sigma)) +
   scale_x_log10(breaks = c(0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1, 10)) +
   scale_color_brewer(palette="Dark2") +
   scale_y_continuous(name="SVM with radial bias kernel mean cvAUC",
-                     limits = c(0.50, 0.75)) +
+                     limits = c(0.30, 1),
+                     breaks = seq(0.3, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=0.01)
 
 xgboost_data <- xgboost_all %>%
@@ -154,10 +155,10 @@ xgboost_plot <- ggplot(xgboost_data, aes(x=eta, y=mean_AUC, color=subsample)) +
   geom_point()+
   scale_x_continuous(breaks = c(0.001, 0.005, 0.01, 0.015, 0.02)) +
   scale_y_continuous(name="XGBoost mean cvAUC",
-                     limits = c(0.80, 0.82),
-                     breaks = seq(0.80, 0.82, 0.005)) +
+                     limits = c(0.30, 1),
+                     breaks = seq(0.3, 1, 0.05)) +
   scale_color_brewer(palette="Dark2") +
-  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=0.01)
+  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=0.00001)
 
   
   

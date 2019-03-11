@@ -73,17 +73,14 @@ get_interp_info <- function(data, model_name){
         head(n=10)
   }
   else{
-    # If the models are not linear, we saved variable importance of the top 10 variables per each datasplit
+    # If the models are not linear, we saved variable importance of all the variables per each datasplit
       # We will group by the OTU names 
     imp_means <- data %>% 
       group_by(names) %>% 
-      # We then get the mean of importance of each OTU and how many times that OTU was saved 
-        # How many data-splits actually chose that OTU as important
-      summarise(mean_imp = mean(Overall), sd_imp = sd(Overall), n = n()) %>% 
-      # Order the dataframe by how many times the OTU was observed 
-        # Choose the top 10
-      arrange(-n) %>% 
-      head(n=10) 
+      # We then get the mean of importance of each OTU 
+      summarise(mean_imp = mean(Overall), sd_imp = sd(Overall)) %>% 
+      arrange(-mean_imp) %>% 
+      head(n=10) # order the largest 10
       }
   return(imp_means)
 }

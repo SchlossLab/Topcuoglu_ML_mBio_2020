@@ -142,7 +142,8 @@ pipeline <- function(dataset, model){
     feature_importance <- trained_model$finalModel$W
   }
   else{
-    feature_importance <- model_interpret(trained_model)
+    feature_importance <- varImp(trained.model, scale = TRUE)$importance %>% 
+      mutate(names=row.names(.))
   }
   # ---------------------------------------------------------------------------------->  
   

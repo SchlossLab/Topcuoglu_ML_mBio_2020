@@ -30,13 +30,16 @@ for(file in walltime_files){
 
 min_fixed_result <- list()
 for(i in result){
-  if((sum(i$model=="L1_Linear_SVM")==100 || sum(i$model=="L2_Linear_SVM")==100 || sum(i$model=="L2_Logistic_Regression")==100 || sum(i$model=="Decision_Tree") || sum(i$model=="RBF_SVM")==100)){
+  if(sum(i$model=="L1_Linear_SVM")==100 || sum(i$model=="L2_Linear_SVM")==100 || sum(i$model=="L2_Logistic_Regression")==100){
     i$x <- i$x/60 # The walltimes were saved as minutes
     print(i) # We convert these to hours by diving with 60
   }
-  else if((sum(i$model=="Random_Forest")==100 || sum(i$model=="XGBoost")==100)){
-    i$x <- i$x*24 # The walltimes were saved as minutes
-    print(i) # We convert these to hours by diving with 60
+  else if(sum(i$model=="Random_Forest")==100 || sum(i$model=="XGBoost")==100 || sum(i$model=="RBF_SVM")==100){
+    i$x <- i$x*24 # The walltimes were saved as days
+    print(i) 
+  }
+  else{
+    i$x <- i$x # walltimes saved as hours
   }
   min_fixed_result[[length(min_fixed_result)+1]] <- i
 }
