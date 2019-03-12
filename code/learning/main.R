@@ -72,7 +72,7 @@ data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
     Dx_Bin== "adv Adenoma" ~ "cancer",
     Dx_Bin== "Cancer" ~ "cancer"
   )) %>%
-  select(-sample, -Dx_Bin, -fit_result) %>%
+  select(-sample, -Dx_Bin) %>%
   drop_na()
 # We want the diagnosis column to be a factor
 data$dx <- factor(data$dx)
