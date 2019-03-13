@@ -153,26 +153,27 @@ of the microbiome and human health. However, this is an undertaking as
 human associated microbial communities are remarkably complex and
 uneven. It is unlikely that a single species can explain a disease.
 Instead, subsets of those communities, in relation to one another and to
-their host, account for the differences in the health outcomes.
-Therefore, researchers have started to explore the utility of machine
-learning (ML) models that use microbiota associated biomarkers to
-predict human health and to understand the microbial ecology of diseases
-such as liver cirrhosis, colorectal cancer, inflammatory bowel diseases
-(IBD), obesity, and type 2 diabetes (1--11). ML methods are effective at
-recognizing and highlighting patterns in complex microbial datasets.
-However, currently the field's use of ML lacks clarity and consistency
-on which methods are used and how these methods are implemented.
-Moreover, there is a lack of deliberation on why a particular ML model
-is utilized. Recently, there is a trend towards using more complex ML
-models such as random forest, extreme gradient boosting and neural
-networks without a discussion on if and how much model interpretibility
-is necessary for the study (11--14). The lack of transparency on
-methodology and modeling decisions can have negative consequences on
-model reproducibility and reliability which we need avoid by (1)
-implementing consistent, accessible and transparent machine learning
-practices; (2) selecting ML models that reflect the goal of the study as
-it will inform the expectations of model accuracy, complexity,
-interpretibility and computational efficiency.
+their host, account for the differences in health outcomes. Machine
+learning (ML) methods are effective at recognizing and highlighting
+patterns in complex microbial datasets. Therefore, researchers have
+started to explore the utility of ML models that use microbiota
+associated biomarkers to predict human health and to understand the
+microbial ecology of diseases such as liver cirrhosis, colorectal
+cancer, inflammatory bowel diseases (IBD), obesity, and type 2 diabetes
+(1--11). However, currently the field's use of ML lacks clarity and
+consistency on which methods are used and how these methods are
+implemented. Moreover, there is a lack of deliberation on why a
+particular ML model is utilized. Recently, there is a trend towards
+using more complex ML models such as random forest, extreme gradient
+boosting and neural networks without a discussion on if and how much
+model interpretibility is necessary for the study (11--14). The lack of
+transparency on modeling methodology and model selection negatively
+impact model reproducibility and reliability. We need to strive toward
+better machine learning practices by (1) implementing consistent,
+accessible and transparent machine learning methods; (2) selecting ML
+models that reflect the goal of the study as it will inform our
+expectations of model accuracy, complexity, interpretibility and
+computational efficiency.
 
 To showcase transparent ML methodologies and to shed light on how much
 ML model selection can affect modeling results, we performed an
@@ -181,43 +182,62 @@ dataset. We used a previously published colorectal cancer (CRC) study
 (3) which had fecal 16S rRNA gene sequences and human hemoglobin
 concentrations from 490 patients. We built ML models using fecal 16S
 rRNA gene sequences and human hemoglobin concentrations to predict
-patients with normal or screen relevant neoplasias (SRN) disease status.
-The study had 261 normal and 229 SRN samples. We established modeling
-pipelines for L2-regularized logistic regression, L1 and L2 support
-vector machines (SVM) with linear and radial basis function kernels, a
-decision tree, random forest and XGBoost which increase in complexity
-and decrease in interpretability respectively. Our ML pipeline performed
-100 data-splits and utilized held-out test data to evaluate
-generalization and predicton performance of each ML model. The mean
-AUROC varied from 0.5 (std ± 0.01) to 0.82 (std ± 0.04). Random Forest
-and XGBoost had the highest mean AUROC for detecting SRN. Despite the
-simplicity, the L1-regularized linear kernel SVM followed Random Forest
-and XGBoost in performance. In terms of computational efficiency, L2 SVM
-with linear kernel trained the fastest (0.123 hours, std ± 0.014), while
-XGBoost took the longest (106.568 hours, std ± 6.839). We found that
-mean cross-validation and testing AUROC could vary by as much as 0.238,
-which highlights the importance of a seperate held-out test set for
-evaluation. Aside from evaluating generalization and classification
-performances for each of these models, this study established standards
-for modeling pipelines of microbiome-associated machine learning models.
+patients with normal colons or patients with colonic tumors which are
+called screen relevant neoplasias (SRN). The study had 261 normal and
+229 SRN samples. We established modeling pipelines for L2-regularized
+logistic regression, L1 and L2 support vector machines (SVM) with linear
+and radial basis function kernels, a decision tree, random forest and
+XGBoost which are ML models that increase in complexity respectively.
+Our ML pipeline utilized held-out test data to evaluate generalization
+and prediction performance of each ML model. The mean test AUROC varied
+from 0.73 (std ± 0.04) to 0.82 (std ± 0.03). Random Forest and XGBoost
+had the highest mean AUROC for detecting SRN. Despite the simplicity,
+the L1-regularized linear kernel SVM followed Random Forest and XGBoost
+in performance. In terms of computational efficiency, L2 logistic
+regression trained the fastest (0.001 hours, std ± 0.001), while XGBoost
+took the longest (0.231 hours, std ± 0). We found that mean
+cross-validation and testing AUROC varied only 0.007, which highlights
+the importance of a seperate held-out test set and consistent
+preprocessing/splitting data for evaluation. Aside from evaluating
+generalization and classification performances for each of these models,
+this study established standards for modeling pipelines of
+microbiome-associated machine learning models.
 
 \subsection{Results}\label{results}
 
 \textbf{Model selection and construction}
 
-We established modeling pipelines for binary classification with
+The data has 6921 features (6920 OTUs and FIT) and a two-class label
+that defines the colonic health of the patients (SRN or normal). We
+established modeling pipelines for binary classification with
 L2-regularized logistic regression, L1 and L2 support vector machines
 (SVM) with linear and radial basis function kernels, a decision tree,
 random forest and XGBoost to emphasize the differences in model
-accuracy, complexity, interpretibility, computational efficiency and
-scalability due to model selection. We randomly split the data into
-stratified training and test sets 100 times with a 80/20 split {[}Figure
-1{]}. The training set consisted of 393 patients (209 SRN), while the
-test set was composed of 97 patients (52 SRN). The training data was
-used for training purposes and validation of parameter selection, and
-the test set was used for evaluation purposes. Validation of parameter
-selection was repeated 100 times to get a robust parameter selection for
-each model {[}Figure 1{]}.
+accuracy, complexity, interpretibility and computational efficiency due
+to model selection. We randomly split the data into stratified
+training/validation and test sets 100 times with a 80/20 proportion
+{[}Figure 1{]}. For each data-split, training/validation set consisted
+of 393 patients (209 SRN), while the test set was composed of 97
+patients (52 SRN). The training/validation data was used for training
+purposes and validation of hyperparameter selection, and the test set
+was used for evaluation purposes. Validation of hyperparameter selection
+was performed by randomly splitting the training/validation set into
+stratified training and validation sets 100 times with a 80/20
+proportion {[}Figure 1{]}. For L2-regularized logistic regression, L1
+and L2 support vector machines (SVM) with linear and radial basis
+function kernels we tuned the \textbf{cost} hyperparameter which
+determines the regularization strength where smaller values specify
+stronger regularization. For SVM with radial basis function kernel we
+also tuned \textbf{sigma} hyperparameter which determines the reach of a
+single training instance where for a high value of sigma, the SVM
+decision boundary will be dependent on the points that are closest to
+the decision boundary. For the decision tree model, we tuned the
+\textbf{depth of the tree} where deeper the tree, the more splits it
+has. For random forest, we tuned the \textbf{number of features} to
+consider when looking for the best tree split. For xgboost, we tuned for
+\textbf{learning rate} and the \textbf{fraction of samples} to be used
+for fitting the individual base learners. We validated the prediction
+performances of each hyperparameter setting (Figure S1{]}.
 
 \textbf{The prediction and generalization performance of classifiers
 during cross-validation and when applied to the held-out test data.}
@@ -225,39 +245,39 @@ during cross-validation and when applied to the held-out test data.}
 We evaluated the prediction performance of seven binary classification
 models when applied to held-out test data over 100 data-splits using
 AUROC as classification performance metric. Random Forest and XGBoost
-had the highest mean AUROC for detecting SRN, 0.816 (std ± 0.039) and
-0.814 (std ± 0.04) respectively {[}Figure 2{]}. L1 linear SVM and
-decision tree had significantly lower AUROC values, 0.503 (std ± 0.027)
-and 0.741 (std ± 0.038) {[}Figure 2{]}. However, they had significanly
-higher performances than L2 linear SVM, RBF SVM and L2 logistic
-regression which had mean AUROC values of 0.501 (std ± 0.013), 0.68 (std
-± 0.05) and 0.672 (std ± 0.05) respectively {[}Figure 2{]}. We also
-evaluated the generalization performance of each classifier by comparing
-their mean cross-validation AUROC and mean testing AUROC. We found a
-statistically significant difference for classifiers L2 support vector
-machines (SVM) with linear and radial basis function kernels and L2
-logistic regression (p-values = 2.4e-37, 1.3e-14 and 2.6e-21
-respectively). These differences were 0.222, 0.05 and 0.064,
-respectively {[}Figure 2{]} .
+had the highest mean AUROC for detecting SRN, 0.82 (std ± 0.033) and
+0.814 (std ± 0.04) respectively {[}Figure 2{]}. L1 linear SVM had
+significantly lower AUROC values, 0.76 (std ± 0.054) and 0.742 (std ±
+0.04) {[}Figure 2{]}. However, it also had significanly higher
+performances than L2 linear SVM, RBF SVM, L2 logistic regression and
+decision tree which had mean AUROC values of 0.74 (std ± 0.045), 0.73
+(std ± 0.041), 0.745 (std ± 0.039) and 0.742 (std ± 0.04), respectively
+{[}Figure 2{]}. We also evaluated the generalization performance of each
+classifier by comparing their mean cross-validation AUROC and mean
+testing AUROC. We found that mean cross-validation and testing AUROC
+difference for each model was below 0.01.
 
 \textbf{The complexity and interpretibility of each classifier.}
 
 We interpreted the feature weights of L1 and L2 SVM with linear kernel
 and regression coefficients of L2 logistic regression using the training
-data. To get a sense of the importance of each feature we randomly
-subsampled 80\% of the data 100 times and trained 100 models; this
-resulted in 100 different sets of feature weights. We reported the mean
-weights of the 10 most important features {[}Figure 4{]}.
+data. To get a sense of the most important features in linear models, we
+calculated the mean weights of all the features over the 100 data-splits
+for each model. {[}Figure 4{]}. In the three linear models, FIT was the
+feature that drove the detection of SRNs, followed by eight OTUs which
+belong to family \emph{Lachnospiraceae} and \emph{Ruminococcaceae} (four
+with positive signs; Otu01239, Otu00742, Otu00008 Otu00659, and four
+with negative signs; Otu00015, Otu000150, Otu00609, Otu00629). To get
+the importance of features in non-linear models, we
 
 \textbf{The computational efficiency of each classifier.}
 
 Linear models trained faster than non-linear models. L2 logistic
-Rregression and L1 and L2 SVM with linear kernel had training times of
-7.2 min, (std ± 0.6), 10.2 min, (std ± 0.6) and 13.2 min, (std ± 1.8)
-respectively. Whereas, SVM with radial basis function kernel, decision
-tree, random forest and xgboost had training times of 2.01 hrs, (std ±
-0.28), 4.2 hrs, (std ± 0.49), 106.57 hrs, (std ± 6.84) and 116.83 hrs,
-(std ± 17.24), respectively.
+Rregression and L1 and L2 SVM with linear kernel had training times of 0
+min, (std ± 0), 13.8 min, (std ± 1.2) and 0 min, (std ± 0) respectively.
+Whereas, SVM with radial basis function kernel, decision tree, random
+forest and xgboost had training times of 0 hrs, (std ± 0), 0 hrs, (std ±
+0), 0 hrs, (std ± 0) and 0 hrs, (std ± 0), respectively {[}Figure 4{]}.
 
 \subsection{Conclusions}\label{conclusions}
 
