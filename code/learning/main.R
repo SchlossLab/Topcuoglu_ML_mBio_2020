@@ -34,7 +34,7 @@
 
 ################### IMPORT LIBRARIES and FUNCTIONS ###################
 # The dependinces for this script are consolidated in the first part
-deps = c("caret" ,"rpart", "xgboost", "randomForest", "kernlab","LiblineaR", "pROC", "tidyverse");
+deps = c("tictoc", "caret" ,"rpart", "xgboost", "randomForest", "kernlab","LiblineaR", "pROC", "tidyverse");
 for (dep in deps){
   if (dep %in% installed.packages()[,"Package"] == FALSE){
     install.packages(as.character(dep), quiet=TRUE, repos = "http://cran.us.r-project.org", dependencies=TRUE);
@@ -94,26 +94,27 @@ data <- data[sample(1:nrow(data)), ]
 
 # We want to get walltime for each model for and each data-split t
 start_time <- Sys.time()
-
 # We will run main.R from command line with arguments
 #  - These arguments will be saved into variable "input"
 #  - First argument is the seed number which is the array index
 #  - Second argument is the model name (one of the list above)
-input <- commandArgs(trailingOnly=TRUE) 
-seed <- as.numeric(input[1])
-model <- input[2]
+#input <- commandArgs(trailingOnly=TRUE) 
+#seed <- as.numeric(input[1])
+#model <- input[2]
 # Then arguments 1 and 2 will be placed respectively into the functions:
 #   1. set.seed() : creates reproducibility and variability
 #   2. get_results(): self-defined function that
 #                     - runs the modeling pipeline
 #                     - saves performance and hyper-parameters and imp features
 set.seed(seed)
+# Start walltime for running model
+tic("model")
+# Run the model
 get_results(data, model, seed)
-
-# We get wall-time for pipeline
-end_time <- Sys.time()
-print(end_time - start_time)
-walltime <- (end_time - start_time)
+# Stop walltime for running model
+secs <- toc()
+# Save elapsed time
+walltime <- secs$toc-secs$tic
 # Save wall-time
 write.csv(walltime, file=paste0("data/temp/walltime_", model, "_", seed, ".csv"), row.names=F)
 ###################################################################
