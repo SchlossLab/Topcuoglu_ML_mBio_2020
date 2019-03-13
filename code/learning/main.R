@@ -91,16 +91,15 @@ data <- data[sample(1:nrow(data)), ]
 #                "Random_Forest",
 #                "XGBoost"
 
-
-# We want to get walltime for each model for and each data-split t
-start_time <- Sys.time()
 # We will run main.R from command line with arguments
 #  - These arguments will be saved into variable "input"
 #  - First argument is the seed number which is the array index
 #  - Second argument is the model name (one of the list above)
-#input <- commandArgs(trailingOnly=TRUE) 
-#seed <- as.numeric(input[1])
-#model <- input[2]
+
+input <- commandArgs(trailingOnly=TRUE) 
+seed <- as.numeric(input[1])
+model <- input[2]
+
 # Then arguments 1 and 2 will be placed respectively into the functions:
 #   1. set.seed() : creates reproducibility and variability
 #   2. get_results(): self-defined function that
