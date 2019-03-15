@@ -46,7 +46,7 @@ source('code/learning/model_selection.R')
 source('code/learning/model_pipeline.R')
 source('code/learning/generateAUCs.R')
 source('code/learning/model_interpret.R')
-
+source('code/learning/permutation_importance.R')
 ######################################################################
 
 ######################## DATA PREPARATION #############################
@@ -76,7 +76,7 @@ data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
   drop_na()
 # We want the diagnosis column to be a factor
 data$dx <- factor(data$dx)
-# We want the first sample to be a cancer 
+# We want the first sample to be a cancer so we shuffle the dataset with a specific seed to get cancer as the first sample
 set.seed(0)
 data <- data[sample(1:nrow(data)), ]
 ###################################################################

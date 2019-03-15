@@ -58,7 +58,7 @@ get_interp_info <- function(data, model_name){
       #     c) Put the signs back to weights
       imp_means <- weights %>% 
         arrange(desc(mean_weights)) %>% 
-        head(n=10) %>% 
+        head(n=20) %>% 
         mutate(mean_weights = case_when(sign=="negative" ~ mean_weights*-1,
                                   sign=="positive"~ mean_weights)) %>% 
         select(key, mean_weights, sd_weights)
@@ -68,9 +68,9 @@ get_interp_info <- function(data, model_name){
     imp_means <- data %>% 
         select(-normal) %>% 
         group_by(names) %>% 
-        summarise(mean_imp = mean(cancer), sd_imp = sd(cancer), n = n()) %>% 
-        arrange(-n) %>% 
-        head(n=10)
+        summarise(mean_imp = mean(cancer), sd_imp = sd(cancer)) %>% 
+        arrange(-mean_imp) %>% 
+        head(n=20)
   }
   else{
     # If the models are not linear, we saved variable importance of all the variables per each datasplit
@@ -80,7 +80,7 @@ get_interp_info <- function(data, model_name){
       # We then get the mean of importance of each OTU 
       summarise(mean_imp = mean(Overall), sd_imp = sd(Overall)) %>% 
       arrange(-mean_imp) %>% 
-      head(n=10) # order the largest 10
+      head(n=20) # order the largest 10
       }
   return(imp_means)
 }
@@ -117,6 +117,7 @@ base_plot <-  function(data, x_axis, y_axis){
   return(plot)
 }
 
+l1svm <- read.delim("data/process/Decision_Tree_importance.tsv", header=T, sep='\t') 
 
 l1svm <- read.delim("data/process/L1_Linear_SVM_importance.tsv", header=T, sep='\t') 
 

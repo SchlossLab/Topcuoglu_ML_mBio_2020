@@ -73,32 +73,28 @@ get_interp_info <- function(data, model_name){
       select(key, mean_weights, sd_weights)
     
   }
-  # If the model is RBF, we saved class importance for top 10 variables per each datasplit
+  # If the model is RBF, we saved class importance for all variables per each datasplit
   # Group by the OTU name and compute mean and sd for each OTU
   else if(model_name=="RBF_SVM"){
     imp_means <- data %>% 
       select(-normal) %>% 
       group_by(names) %>% 
-      summarise(mean_imp = mean(cancer), sd_imp = sd(cancer), n = n()) %>% 
-      # We then get the mean of importance of each OTU and how many times that OTU was saved 
-      # the top ten OTUs that we most see in data-splits are returned as important
-      # Order the dataframe by how many times the OTU was observed 
+      summarise(mean_imp = mean(cancer), sd_imp = sd(cancer)) %>% 
+      # We then get the mean of importance of each OTU for each datasplit
+      # Order the dataframe by the most important to least important
       # Choose the top 10
-      arrange(-n) %>% 
+      arrange(-mean_imp) %>% 
       head(n=10)
   }
   else{
-    # If the models are not linear, we saved variable importance of the top 10 variables per each datasplit
-    # Group by the OTU name and compute mean and sd for each OTU
+    # If the models are not linear, we saved variable importance of all the variables per each datasplit
+    # We will group by the OTU names 
     imp_means <- data %>% 
       group_by(names) %>% 
-      # We then get the mean of importance of each OTU and how many times that OTU was saved 
-      # the top ten OTUs that we most see in data-splits are returned as important
-      summarise(mean_imp = mean(Overall), sd_imp = sd(Overall), n = n()) %>% 
-      # Order the dataframe by how many times the OTU was observed 
-      # Choose the top 10
-      arrange(-n) %>% 
-      head(n=10) 
+      # We then get the mean of importance of each OTU 
+      summarise(mean_imp = mean(Overall), sd_imp = sd(Overall)) %>% 
+      arrange(-mean_imp) %>% 
+      head(n=10) # order the largest 10
   }
   return(imp_means)
 }
@@ -128,11 +124,11 @@ for(file_name in interp_files){
 #-------------- Plot the weights of linear models ----------#
 ######################################################################
 
-# We will plot the mean feature weights for top 10 OTUs
+# We will plot the mean feature weights for top 20 OTUs
 
 # Define the base plot for all the modeling methods
 base_plot <-  function(data, x_axis, y_axis){
-  plot <- ggplot(data, aes(x_axis, y_axis)) +
+  plot <- ggplot(data, aes(fct_reorder(x_axis, -abs(y_axis)), y_axis)) +
     geom_point(colour = "red", size = 3) +
     theme_classic() +
     scale_x_discrete(name = "") +
@@ -181,12 +177,55 @@ logit_plot <- base_plot(logit, x=logit$key, y=logit$mean_weights) +
   geom_errorbar(aes(ymin=logit$mean_weights-logit$sd_weights, 
                     ymax=logit$mean_weights+logit$sd_weights), 
                 width=.01)
-#combine with cowplot
-all <- plot_grid(logit_plot, l1svm_plot, l2svm_plot, labels = c("A", "B", "C"))
+
+
+
+######################################################################
+#-------------- Plot the weights of linear models ----------#
+######################################################################
+# Define the base plot for all the modeling methods
+base_plot_nonlin <- function(df, x_axis, y_axis){
+plot <- ggplot(df, aes(x=reorder(x_axis, y_axis), y=y_axis, label=y_axis)) +
+  geom_bar(stat='identity')+
+  coord_flip() +
+  theme_classic() +
+  scale_y_continuous(name = "Normalized mean feature importance ") +
+  scale_x_discrete(name = "Important features") +
+  theme(legend.position="none",
+        axis.title = element_text(size=14),
+        axis.text = element_text(size=12),
+        panel.border = element_rect(colour = "black", fill=NA, size=1), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.text.x=element_text(size = 12, colour='black'),
+        axis.text.y=element_text(size = 10, colour='black'))
+  return(plot)
+}
+
+# Plot decision tree
+rbf <- read.delim("data/process/RBF_SVM_importance.tsv", header=T, sep='\t') %>% 
+  base_plot_nonlin(names, mean_imp)
+
+# Plot decision tree
+dt <- read.delim("data/process/Decision_Tree_importance.tsv", header=T, sep='\t') %>% 
+base_plot_nonlin(names, mean_imp)
+
+# Plot random forest
+rf <- read.delim("data/process/Random_Forest_importance.tsv", header=T, sep='\t') %>% 
+  base_plot_nonlin(names, mean_imp)
+
+# Plot decision tree
+xgboost <- read.delim("data/process/XGBoost_importance.tsv", header=T, sep='\t') %>% 
+  base_plot_nonlin(names, mean_imp)
+
+
 
 ######################################################################
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
+#combine with cowplot
+all <- plot_grid(logit_plot, l1svm_plot, l2svm_plot, labels = c("A", "B", "C"))
 
 ggsave("Figure_4.pdf", plot = all, device = 'pdf', path = 'results/figures', width = 20, height = 15)
 

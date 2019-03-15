@@ -123,9 +123,8 @@ pipeline <- function(dataset, model){
   # Mean AUC value over repeats of the best cost parameter during training
   cv_auc <- getTrainPerf(trained_model)$TrainROC
   # Predict on the test set and get predicted probabilities
-  rpartProbs <- predict(trained_model, testTransformed, type="prob")
-  test_roc <- roc(ifelse(testTransformed$dx == "cancer", 1, 0), rpartProbs[[1]])
-  test_auc <- test_roc$auc
+  roc_results <- permutation_importance(trained_model, testTransformed)
+  test_auc <- roc_results[1]
   # Save all the test AUCs over iterations in test_aucs
   test_aucs <- c(test_aucs, test_auc)
   # Cross-validation mean AUC value
@@ -142,8 +141,7 @@ pipeline <- function(dataset, model){
     feature_importance <- trained_model$finalModel$W
   }
   else{
-    feature_importance <- varImp(trained_model, scale = TRUE)$importance %>% 
-      mutate(names=row.names(.))
+    feature_importance <- roc_results[3]
   }
   # ---------------------------------------------------------------------------------->  
   
