@@ -58,7 +58,7 @@ permutation_importance <- function(model, full){
   imp <- c()
   library(tictoc)
   tic("perm")
-  for (i in 1:5){
+  for (i in 1:6921){
     full_permuted <- full 
     full_permuted[,i] <- sample(full[,i])
     rpartProbs_permuted <- predict(model, full_permuted, type="prob")
