@@ -42,8 +42,8 @@ walltime_df <- bind_rows(min_fixed_result)
 ######################################################################
 
 
-walltime_plot <- ggplot(walltime_df, aes(x = fct_reorder(model, x, fun = median, .asc =TRUE), y = x)) +
-  geom_boxplot(alpha=0.7) +
+walltime_plot <- ggplot(walltime_df, aes(x = fct_reorder(model, x), y = x)) +
+  geom_boxplot(alpha=0.7, fill="darkgoldenrod1") +
   scale_y_continuous(name = "Walltime (hours)") +
   scale_x_discrete(name = "") +
   theme_bw() +
@@ -55,7 +55,8 @@ walltime_plot <- ggplot(walltime_df, aes(x = fct_reorder(model, x, fun = median,
         axis.text.x=element_text(size = 12, colour='black'),
         axis.text.y=element_text(size = 12, colour='black'),
         axis.title.y=element_text(size = 20),
-        axis.title.x=element_text(size = 20)) 
+        axis.title.x=element_text(size = 20), 
+        panel.border = element_rect(colour = "black", fill=NA, size=1)) 
 
 ######################################################################
 #-----------------------Save figure as .pdf ------------------------ #
