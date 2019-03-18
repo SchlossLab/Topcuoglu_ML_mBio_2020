@@ -60,7 +60,7 @@ permutation_importance <- function(model, full){
   library(tictoc)
   tic("perm")
   # Permutate each feature in a 6921 dimensional feature vector
-  imp <- do.call('rbind', lapply(1:5, function(i){    
+  imp <- do.call('rbind', lapply(1:6921, function(i){    
     full_permuted <- full 
     full_permuted[,i] <- sample(full[,i])
     # Predict the diagnosis outcome with the one-feature-permuted test dataset
