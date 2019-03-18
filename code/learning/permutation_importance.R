@@ -76,7 +76,7 @@ permutation_importance <- function(model, full){
   print(walltime)
   # save results
   imp <- as.data.frame(imp) %>% 
-    mutate(names=colnames(full[,1:5])) %>% 
+    mutate(names=colnames(full[,1:6921])) %>% 
     rename(percent_auc_change=V1)
   roc_results <- list(base_auc, imp)
   return(roc_results)
