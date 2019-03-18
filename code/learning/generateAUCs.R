@@ -35,10 +35,8 @@
 #------------------------- DEFINE FUNCTION -------------------#
 ######################################################################
 get_results <- function(dataset, models, split_number){
-  for(ml in models){
-  
   # Save results of the modeling pipeline as a list
-  results <- pipeline(dataset, ml) 
+  results <- pipeline(dataset, models) 
   
   # ------------------------------------------------------------------ 
   # Create a matrix with cv_aucs and test_aucs from 1 data split
@@ -46,8 +44,8 @@ get_results <- function(dataset, models, split_number){
   # Convert to dataframe and add a column noting the model name
   aucs_dataframe <- data.frame(aucs) %>% 
     rename(cv_aucs=X1, test_aucs=X2) %>% 
-    mutate(model=ml) %>% 
-    write.csv(file=paste0("data/temp/best_hp_results_", ml,"_", split_number, ".csv"), row.names=F)
+    mutate(model=models) %>% 
+    write.csv(file=paste0("data/temp/best_hp_results_", models,"_", split_number, ".csv"), row.names=F)
   # ------------------------------------------------------------------   
 
   # ------------------------------------------------------------------   
@@ -55,8 +53,8 @@ get_results <- function(dataset, models, split_number){
   all_results <- results[3]
   # Convert to dataframe and add a column noting the model name
   dataframe <- data.frame(all_results) %>% 
-    mutate(model=ml) %>% 
-    write.csv(file=paste0("data/temp/all_hp_results_", ml,"_", split_number, ".csv"), row.names=F)
+    mutate(model=models) %>% 
+    write.csv(file=paste0("data/temp/all_hp_results_", models,"_", split_number, ".csv"), row.names=F)
   # ------------------------------------------------------------------ 
   
   # ------------------------------------------------------------------   
@@ -64,9 +62,9 @@ get_results <- function(dataset, models, split_number){
   imp_features <- results[4]
   # Convert to dataframe and add a column noting the model name
   dataframe <- data.frame(imp_features) %>% 
-    mutate(model=ml) %>% 
-    write.csv(file=paste0("data/temp/all_imp_features_results_", ml,"_", split_number, ".csv"), row.names=F)
+    mutate(model=models) %>% 
+    write.csv(file=paste0("data/temp/all_imp_features_results_", models,"_", split_number, ".csv"), row.names=F)
   # ------------------------------------------------------------------ 
-  }
+
 }
 
