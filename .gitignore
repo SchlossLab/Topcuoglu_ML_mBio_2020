@@ -1,3 +1,4 @@
+data/process/flatten_corr_matrix.csv
 *pbs*
 *pbs.o*
 code/learning/__pycache__/*
