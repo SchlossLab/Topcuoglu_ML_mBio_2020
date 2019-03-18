@@ -79,6 +79,8 @@ data$dx <- factor(data$dx)
 # We want the first sample to be a cancer so we shuffle the dataset with a specific seed to get cancer as the first sample
 set.seed(0)
 data <- data[sample(1:nrow(data)), ]
+
+
 ###################################################################
 
 ######################## RUN PIPELINE #############################

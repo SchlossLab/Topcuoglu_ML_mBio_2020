@@ -141,7 +141,7 @@ pipeline <- function(dataset, model){
     feature_importance <- trained_model$finalModel$W
   }
   else{
-    feature_importance <- roc_results[3]
+    feature_importance <- roc_results[2]
   }
   # ---------------------------------------------------------------------------------->  
   

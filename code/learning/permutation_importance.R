@@ -7,9 +7,9 @@
 ######################################################################
 # Description: 
 
-# This script will read in data from Baxter et al. 2016
-#     - 0.03 subsampled OTU dataset
-#     - CRC metadata: SRN information
+# This script will read in:
+#     - Trained model
+#     - Pre-processed hel-out test data
 
 
 
@@ -48,29 +48,37 @@ for (dep in deps){
 ######################################################################
 
 
+
 ####################### DEFINE FUNCTION  #############################
 permutation_importance <- function(model, full){
-  # Calculate the test-auc for the 
+  # Calculate the test-auc for the actual pre-processed held-out data
   rpartProbs <- predict(model, full, type="prob")
   base_roc <- roc(ifelse(full$dx == "cancer", 1, 0), rpartProbs[[1]])
   base_auc <- base_roc$auc
   
-  imp <- c()
+  # Start the timer
   library(tictoc)
   tic("perm")
-  for (i in 1:6921){
+  # Permutate each feature in a 6921 dimensional feature vector
+  imp <- do.call('rbind', lapply(1:5, function(i){    
     full_permuted <- full 
     full_permuted[,i] <- sample(full[,i])
+    # Predict the diagnosis outcome with the one-feature-permuted test dataset
     rpartProbs_permuted <- predict(model, full_permuted, type="prob")
-    new_roc <- roc(ifelse(full_permuted$dx == "cancer", 1, 0), rpartProbs_permuted[[1]])
-    new_auc <- new_roc$auc
-    percent_increase_error=((base_auc-new_auc)/base_auc)*100
-    imp <- c(imp, percent_increase_error)
-  }
+    # Calculate the new auc
+    new_auc <- roc(ifelse(full_permuted$dx == "cancer", 1, 0), rpartProbs_permuted[[1]])$auc
+    # Return how does this feature being permuted effect the auc
+    return(((base_auc-new_auc)/base_auc)*100)
+  }))
+  # stop timer
   secs <- toc()
   walltime <- secs$toc-secs$tic
   print(walltime)
-  roc_results <- c(base_auc, new_auc, imp)
+  # save results
+  imp <- as.data.frame(imp) %>% 
+    mutate(names=colnames(full[,1:5])) %>% 
+    rename(percent_auc_change=V1)
+  roc_results <- list(base_auc, imp)
   return(roc_results)
 }
 
