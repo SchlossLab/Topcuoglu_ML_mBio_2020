@@ -124,7 +124,7 @@ pipeline <- function(dataset, model){
   cv_auc <- getTrainPerf(trained_model)$TrainROC
   # Predict on the test set and get predicted probabilities
   roc_results <- permutation_importance(trained_model, testTransformed)
-  test_auc <- roc_results[1]
+  test_auc <- roc_results[[1]]
   # Save all the test AUCs over iterations in test_aucs
   test_aucs <- c(test_aucs, test_auc)
   # Cross-validation mean AUC value
