@@ -73,26 +73,13 @@ get_interp_info <- function(data, model_name){
       select(key, mean_weights, sd_weights)
     
   }
-  # If the model is RBF, we saved class importance for all variables per each datasplit
-  # Group by the OTU name and compute mean and sd for each OTU
-  else if(model_name=="RBF_SVM"){
-    imp_means <- data %>% 
-      select(-normal) %>% 
-      group_by(names) %>% 
-      summarise(mean_imp = mean(cancer), sd_imp = sd(cancer)) %>% 
-      # We then get the mean of importance of each OTU for each datasplit
-      # Order the dataframe by the most important to least important
-      # Choose the top 10
-      arrange(-mean_imp) %>% 
-      head(n=10)
-  }
   else{
     # If the models are not linear, we saved variable importance of all the variables per each datasplit
     # We will group by the OTU names 
     imp_means <- data %>% 
       group_by(names) %>% 
       # We then get the mean of importance of each OTU 
-      summarise(mean_imp = mean(Overall), sd_imp = sd(Overall)) %>% 
+      summarise(mean_imp = mean(percent_auc_change), sd_imp = sd(percent_auc_change)) %>% 
       arrange(-mean_imp) %>% 
       head(n=10) # order the largest 10
   }
@@ -206,6 +193,23 @@ rbf_plot <- read.delim("data/process/RBF_SVM_importance.tsv", header=T, sep='\t'
 # Plot decision tree
 #dt <- read.delim("data/process/Decision_Tree_importance.tsv", header=T, sep='\t') %>% 
 #base_plot_nonlin(names, mean_imp)
+dt_plot <- read.delim("data/process/Decision_Tree_importance.tsv", header=T, sep='\t') %>% 
+  ggplot(aes(x=reorder(names, mean_imp), y=mean_imp, label=mean_imp)) +
+  geom_bar(stat='identity')+
+  coord_flip() +
+  theme_classic() +
+  scale_y_continuous(name = "Normalized mean feature importance ") +
+  scale_x_discrete(name = "Random forest ") +
+  theme(legend.position="none",
+        axis.title = element_text(size=14),
+        axis.text = element_text(size=12),
+        panel.border = element_rect(colour = "black", fill=NA, size=1), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        axis.text.x=element_text(size = 12, colour='black'),
+        axis.text.y=element_text(size = 10, colour='black'))
+
 
 # Plot random forest
 rf_plot <- read.delim("data/process/Random_Forest_importance.tsv", header=T, sep='\t') %>% 
