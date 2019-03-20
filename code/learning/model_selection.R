@@ -159,11 +159,11 @@ tuning_grid <- function(train_data, model){
   else if (model=="XGBoost"){
     grid <-  expand.grid(nrounds=500,
                          gamma=0,
-                         eta=c(0.001, 0.005, 0.01, 0.015, 0.02),
+                         eta=c(0.001, 0.01, 0.1, 1),
                          max_depth=8,
                          colsample_bytree= 0.8,
                          min_child_weight=1,
-                         subsample=c(0.4, 0.5, 0.6))
+                         subsample=c(0.4, 0.5, 0.6, 0.7))
     method <- "xgbTree"
   }
   else {
