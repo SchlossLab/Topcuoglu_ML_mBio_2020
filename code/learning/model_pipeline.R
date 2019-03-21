@@ -39,11 +39,6 @@
 
 pipeline <- function(dataset, model){
 
-  # Create vectors to save results of pipeline
-  results_total <-  data.frame()
-  test_aucs <- c()
-  cv_aucs <- c()
-  
   # ------------------Pre-process the full Dataset------------------------->    
   # We are doing the pre-processing to the full dataset and then splitting 80-20
   # Scale all features between 0-1
@@ -125,14 +120,8 @@ pipeline <- function(dataset, model){
   # Predict on the test set and get predicted probabilities
   roc_results <- permutation_importance(trained_model, testTransformed)
   test_auc <- roc_results[[1]]
-  # Save all the test AUCs over iterations in test_aucs
-  test_aucs <- c(test_aucs, test_auc)
-  # Cross-validation mean AUC value
-  # Save all the cv meanAUCs over iterations in cv_aucs
-  cv_aucs <- c(cv_aucs, cv_auc)
   # Save all results of hyper-parameters and their corresponding meanAUCs for each iteration
   results_individual <- trained_model$results
-  results_total <- rbind(results_total, results_individual)
   # ---------------------------------------------------------------------------------->       
         
   #  - Output the weights of features of linear models and feature importance of non-linear ->       
@@ -147,6 +136,6 @@ pipeline <- function(dataset, model){
   
   # ----------------------------Save metrics as vector ------------------------------->  
   # Return all the metrics
-  results <- list(cv_aucs, test_aucs, results_total, feature_importance, trained_model)
+  results <- list(cv_auc, test_auc, results_individual, feature_importance, trained_model)
   return(results)
 }
