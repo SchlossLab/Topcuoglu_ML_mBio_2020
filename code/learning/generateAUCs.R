@@ -7,8 +7,8 @@
 ######################################################################
 # Dependencies and Outputs: 
 # This function accept:
-#   1. Data file generated in main.R
-#   2. Model name defined in command line: 
+#   1. Data file generated in main.R (features and label as dataframe)
+#   2. Model name defined in command line as an argument: 
 #       "L2_Logistic_Regression"
 #       "L1_Linear_SVM"
 #       "L2_Linear_SVM"
@@ -16,7 +16,7 @@
 #       "Decision_Tree"
 #       "Random_Forest"
 #       "XGBoost"
-#   3. Seed number defined in command line:
+#   3. Seed number defined as argument in command line:
 #       [1-100]
 
 
@@ -37,6 +37,11 @@
 get_results <- function(dataset, models, split_number){
   # Save results of the modeling pipeline as a list
   results <- pipeline(dataset, models) 
+  # These results have
+  # 1. cv_auc, 
+  # 2. test_auc
+  # 3. total_results of all hyper-parameter settings
+  # 4. feature importance
   
   # ------------------------------------------------------------------ 
   # Create a matrix with cv_aucs and test_aucs from 1 data split
@@ -49,7 +54,7 @@ get_results <- function(dataset, models, split_number){
   # ------------------------------------------------------------------   
 
   # ------------------------------------------------------------------   
-  # Save training results for 1 datasplit and corresponding AUCs
+  # Save results for all hyper-parameters for 1 datasplit and corresponding AUCs
   all_results <- results[3]
   # Convert to dataframe and add a column noting the model name
   dataframe <- data.frame(all_results) %>% 

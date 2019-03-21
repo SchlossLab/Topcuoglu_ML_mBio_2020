@@ -75,7 +75,8 @@ get_interp_info <- function(data, model_name){
   }
   else{
     # If the models are not linear, we saved variable importance of all the variables per each datasplit
-    # We will group by the OTU names 
+    # We used random permutation importance for each feature
+    # We will group by the OTU names because we saved importance for each data-split
     imp_means <- data %>% 
       group_by(names) %>% 
       # We then get the mean of importance of each OTU 
