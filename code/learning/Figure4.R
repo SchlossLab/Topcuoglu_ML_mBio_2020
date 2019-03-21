@@ -171,7 +171,7 @@ logit_plot <- base_plot(logit, x=logit$key, y=logit$mean_weights) +
 #-------------- Plot the weights of linear models ----------#
 ######################################################################
 
-# Plot decision tree
+# Plot rbf svm
 rbf_plot <- read.delim("data/process/RBF_SVM_importance.tsv", header=T, sep='\t') %>% 
   ggplot(aes(x=reorder(names, mean_imp), y=mean_imp, label=mean_imp)) +
   geom_bar(stat='identity')+
@@ -194,20 +194,22 @@ rbf_plot <- read.delim("data/process/RBF_SVM_importance.tsv", header=T, sep='\t'
 #dt <- read.delim("data/process/Decision_Tree_importance.tsv", header=T, sep='\t') %>% 
 #base_plot_nonlin(names, mean_imp)
 dt_plot <- read.delim("data/process/Decision_Tree_importance.tsv", header=T, sep='\t') %>% 
+  head(n=5) %>% 
   ggplot(aes(x=reorder(names, mean_imp), y=mean_imp, label=mean_imp)) +
   geom_bar(stat='identity')+
   coord_flip() +
   theme_classic() +
-  scale_y_continuous(name = "Normalized mean feature importance ") +
-  scale_x_discrete(name = "Random forest ") +
+  scale_y_continuous(name = "Percent AUROC decrease", 
+                     limits = c(0, 100)) +
+  scale_x_discrete(name = "Decision tree ") +
   theme(legend.position="none",
-        axis.title = element_text(size=14),
-        axis.text = element_text(size=12),
+        axis.title = element_text(size=10),
+        axis.text = element_text(size=10),
         panel.border = element_rect(colour = "black", fill=NA, size=1), 
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
-        axis.text.x=element_text(size = 12, colour='black'),
+        axis.text.x=element_text(size = 10, colour='black'),
         axis.text.y=element_text(size = 10, colour='black'))
 
 
@@ -231,7 +233,7 @@ rf_plot <- read.delim("data/process/Random_Forest_importance.tsv", header=T, sep
 
   
 
-# Plot decision tree
+# Plot xgboost
 xgboost_plot <- read.delim("data/process/XGBoost_importance.tsv", header=T, sep='\t') %>% 
   ggplot(aes(x=reorder(names, mean_imp), y=mean_imp, label=mean_imp)) +
   geom_bar(stat='identity')+
@@ -260,9 +262,9 @@ linear <- plot_grid(logit_plot, l1svm_plot, l2svm_plot, labels = c("A", "B", "C"
 
 ggsave("Figure_4.pdf", plot = linear, device = 'pdf', path = 'results/figures', width = 18, height = 10)
 
-non_lin <- plot_grid(rf_plot, labels = c("A"))
+non_lin <- plot_grid(dt_plot, labels = c("A"))
 
-ggsave("Figure_5.pdf", plot = non_lin, device = 'pdf', path = 'results/figures', width = 5, height = 3)
+ggsave("Figure_5.pdf", plot = non_lin, device = 'pdf', path = 'results/figures', width = 5, height = 2)
 
 
 
