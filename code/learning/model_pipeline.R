@@ -126,16 +126,21 @@ pipeline <- function(dataset, model){
   #   Output the feature importances based on random permutation for non-linear models    
   # Here we look at the top 10 important features
   if(model=="L1_Linear_SVM" || model=="L2_Linear_SVM" || model=="L2_Logistic_Regression"){
-    # Predict on the test set and get predicted or decision values
+    # Predict on the test set and get predicted probabilities or decision values
     rpartProbs <- predict(trained_model, testTransformed, type="prob")
+    # Calculate the ROC for each model
     test_roc <- roc(ifelse(testTransformed$dx == "cancer", 1, 0), rpartProbs[[1]])
+    # Get the AUROC value for test set
     test_auc <- test_roc$auc
     # Get feature weights
     feature_importance_non_cor <- trained_model$finalModel$W
     feature_importance_cor <- trained_model$finalModel$W
   }
   else{
-    # Predict on the test set and get predicted probabilities
+    # We will use the permutation_importance function here to:
+    #     1. Predict held-out test-data
+    #     2. Calculate ROC and AUROC values on this prediction
+    #     3. Get the feature importances for correlated and uncorrelated feautures
     roc_results <- permutation_importance(trained_model, testTransformed)
     test_auc <- roc_results[[1]]
     # Predict the test importance
