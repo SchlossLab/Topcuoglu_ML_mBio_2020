@@ -55,12 +55,21 @@ permutation_importance <- function(model, full){
   rpartProbs <- predict(model, full, type="prob")
   base_roc <- roc(ifelse(full$dx == "cancer", 1, 0), rpartProbs[[1]])
   base_auc <- base_roc$auc
-  
+  # Get the correlation matrix made by full dataset
+  corr <- read_csv("data/process/sig_flat_corr_matrix.csv") %>% 
+    select(-p, -cor)
+  # Get the correlated unique OTU ids
+  correlated_otus <- unique(c(corr$row, corr$column))
+  # Remove those names as columns from full test data
+  non_correlated_otus <- full %>% 
+    select(-correlated_otus) %>% 
+    select(-dx) %>% 
+    colnames() 
   # Start the timer
   library(tictoc)
   tic("perm")
-  # Permutate each feature in a 6921 dimensional feature vector
-  imp <- do.call('rbind', lapply(1:6921, function(i){    
+  # Permutate each feature in the non-correlated dimensional feature vector
+  non_corr_imp <- do.call('rbind', lapply(non_correlated_otus, function(i){    
     full_permuted <- full 
     full_permuted[,i] <- sample(full[,i])
     # Predict the diagnosis outcome with the one-feature-permuted test dataset
@@ -70,17 +79,59 @@ permutation_importance <- function(model, full){
     # Return how does this feature being permuted effect the auc
     return(((base_auc-new_auc)/base_auc)*100)
   }))
+  print(non_corr_imp)
+  # save non correlated results
+  non_corr_imp <- as.data.frame(non_corr_imp) %>% 
+    mutate(names=factor(non_correlated_otus)) %>% 
+    rename(percent_auc_change=V1)
+  # Have all the correlated OTUs once in a group of OTUs that they are correlated with 
+  non_matched_corr <- corr %>% filter(!row %in% column) %>% 
+    group_by(row)
+  split <- group_split(non_matched_corr) 
+  groups <- lapply(1:432, function(i){  
+  grouped_corr_otus <- split[[i]][2] %>% 
+    add_case(column=unlist(unique(split[[i]][1])))
+  return(grouped_corr_otus)
+  })
+  groups_list <- map(groups[1:432], "column")
+  groups_list_sorted <- map(groups_list[1:432], sort)
+  # Permute the grouped OTUs together and calculate AUC change
+  corr_imp <- do.call('rbind', lapply(groups_list_sorted, function(i){
+    full_permuted_corr <- full   
+    full_permuted_corr[,unlist(groups_list_sorted[i])] <- sample(full[,unlist(groups_list_sorted[i])])
+    # Predict the diagnosis outcome with the one-feature-permuted test dataset
+    rpartProbs_permuted_corr <- predict(model, full_permuted_corr, type="prob")
+    # Calculate the new auc
+    new_auc <- roc(ifelse(full_permuted_corr$dx == "cancer", 1, 0), rpartProbs_permuted_corr[[1]])$auc
+    list <- list(((base_auc-new_auc)/base_auc)*100, unlist(i))
+    return(list)
+  }))
+  print(corr_imp)
+  # save non correlated results
+  x <- as.character(seq(0, 432, 1))
+  corr_imp_appended <- as.data.frame(corr_imp) %>% 
+    separate(V2, into = x)
+  
+  results <- corr_imp_appended %>% 
+    mutate(percent_auc_change=unlist(corr_imp_appended$V1)) 
+ 
+  not_all_na <- function(x) any(!is.na(x))
+  
+  correlated_auc_results <- results %>% 
+    select(-V1, -"0") %>% 
+    select_if(not_all_na) 
+    
   # stop timer
   secs <- toc()
   walltime <- secs$toc-secs$tic
   print(walltime)
-  # save results
-  imp <- as.data.frame(imp) %>% 
-    mutate(names=colnames(full[,1:6921])) %>% 
-    rename(percent_auc_change=V1)
-  roc_results <- list(base_auc, imp)
+  roc_results <- list(base_auc, non_corr_imp, correlated_auc_results)
   return(roc_results)
 }
+
+
+
+
 
 
 

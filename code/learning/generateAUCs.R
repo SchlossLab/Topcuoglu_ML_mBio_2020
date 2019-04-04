@@ -68,8 +68,15 @@ get_results <- function(dataset, models, split_number){
   # Convert to dataframe and add a column noting the model name
   dataframe <- data.frame(imp_features) %>% 
     mutate(model=models) %>% 
-    write_csv(path=paste0("data/temp/all_imp_features_results_", models,"_", split_number, ".csv"))
+    write_csv(path=paste0("data/temp/all_imp_features_non_cor_results_", models,"_", split_number, ".csv"))
   # ------------------------------------------------------------------ 
+  
+  # Save 10 feature importance of the model for 1 datasplit
+  corr_imp_features <- results[5]
+  # Convert to dataframe and add a column noting the model name
+  dataframe <- data.frame(corr_imp_features) %>% 
+    mutate(model=models) %>% 
+    write_csv(path=paste0("data/temp/all_imp_features_cor_results_", models,"_", split_number, ".csv"), col_names = TRUE)
 
 }
 

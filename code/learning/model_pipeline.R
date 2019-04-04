@@ -129,15 +129,17 @@ pipeline <- function(dataset, model){
   #   Output the feature importances based on random permutation for non-linear models    
   # Here we look at the top 10 important features
   if(model=="L1_Linear_SVM" || model=="L2_Linear_SVM" || model=="L2_Logistic_Regression"){
-    feature_importance <- trained_model$finalModel$W
+    feature_importance_non_cor <- trained_model$finalModel$W
+    feature_importance_cor <- trained_model$finalModel$W
   }
   else{
-    feature_importance <- roc_results[2]
+    feature_importance_non_cor <- roc_results[2]
+    feature_importance_cor <- roc_results[3]
   }
   # ---------------------------------------------------------------------------------->  
   
   # ----------------------------Save metrics as vector ------------------------------->  
   # Return all the metrics
-  results <- list(cv_auc, test_auc, results_individual, feature_importance, trained_model)
+  results <- list(cv_auc, test_auc, results_individual, feature_importance_non_cor, feature_importance_cor, trained_model)
   return(results)
 }
