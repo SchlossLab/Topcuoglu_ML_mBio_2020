@@ -117,9 +117,6 @@ pipeline <- function(dataset, model){
   # ------------- Output the cvAUC and testAUC for 1 datasplit ----------------------> 
   # Mean cv AUC value over repeats of the best cost parameter during training
   cv_auc <- getTrainPerf(trained_model)$TrainROC
-  # Predict on the test set and get predicted probabilities
-  roc_results <- permutation_importance(trained_model, testTransformed)
-  test_auc <- roc_results[[1]]
   # Save all results of hyper-parameters and their corresponding meanAUCs over 100 internal repeats
   results_individual <- trained_model$results
   # ---------------------------------------------------------------------------------->       
@@ -129,10 +126,19 @@ pipeline <- function(dataset, model){
   #   Output the feature importances based on random permutation for non-linear models    
   # Here we look at the top 10 important features
   if(model=="L1_Linear_SVM" || model=="L2_Linear_SVM" || model=="L2_Logistic_Regression"){
+    # Predict on the test set and get predicted or decision values
+    rpartProbs <- predict(trained_model, testTransformed, type="prob")
+    test_roc <- roc(ifelse(testTransformed$dx == "cancer", 1, 0), rpartProbs[[1]])
+    test_auc <- test_roc$auc
+    # Get feature weights
     feature_importance_non_cor <- trained_model$finalModel$W
     feature_importance_cor <- trained_model$finalModel$W
   }
   else{
+    # Predict on the test set and get predicted probabilities
+    roc_results <- permutation_importance(trained_model, testTransformed)
+    test_auc <- roc_results[[1]]
+    # Predict the test importance
     feature_importance_non_cor <- roc_results[2]
     feature_importance_cor <- roc_results[3]
   }
