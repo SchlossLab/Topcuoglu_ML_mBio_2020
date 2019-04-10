@@ -103,13 +103,13 @@ permutation_importance <- function(model, full){
     # Calculate the new auc
     new_auc <- roc(ifelse(full_permuted$dx == "cancer", 1, 0), rpartProbs_permuted[[1]])$auc
     # Return how does this feature being permuted effect the auc
-    return(((base_auc-new_auc)/base_auc)*100)
+    return(new_auc)
   }))
   print(non_corr_imp)
   # Save non correlated results in a dataframe.
   non_corr_imp <- as.data.frame(non_corr_imp) %>% 
     mutate(names=factor(non_correlated_otus)) %>% 
-    rename(percent_auc_change=V1)
+    rename(new_auc=V1)
   # -------------------------------------------------------------------->
   
   
@@ -142,7 +142,7 @@ permutation_importance <- function(model, full){
     rpartProbs_permuted_corr <- predict(model, full_permuted_corr, type="prob")
     # Calculate the new auc
     new_auc <- roc(ifelse(full_permuted_corr$dx == "cancer", 1, 0), rpartProbs_permuted_corr[[1]])$auc
-    list <- list(((base_auc-new_auc)/base_auc)*100, unlist(i))
+    list <- list(new_auc, unlist(i))
     return(list)
   }))
   print(corr_imp)
@@ -157,7 +157,7 @@ permutation_importance <- function(model, full){
     separate(V2, into = x)
   # Unlist percent auc change to save it as a csv later
   results <- corr_imp_appended %>% 
-    mutate(percent_auc_change=unlist(corr_imp_appended$V1)) 
+    mutate(new_auc=unlist(corr_imp_appended$V1)) 
   # Only keep the columns that are not all NA
   not_all_na <- function(x) any(!is.na(x))
   correlated_auc_results <- results %>% 
