@@ -16,15 +16,15 @@ for (dep in deps){
 #                                     SRNs are adv adenomas+carcinomas
 
 # Read in metadata and select only sample Id and diagnosis columns
-meta <- read.delim('data/metadata.tsv', header=T, sep='\t') %>%
+meta_corr <- read.delim('data/metadata.tsv', header=T, sep='\t') %>%
   select(sample, Dx_Bin, fit_result)
 # Read in OTU table and remove label and numOtus columns
-shared <- read.delim('data/baxter.0.03.subsample.shared', header=T, sep='\t') %>%
+shared_corr <- read.delim('data/baxter.0.03.subsample.shared', header=T, sep='\t') %>%
   select(-label, -numOtus)
 # Merge metadata and OTU table.
 # Group advanced adenomas and cancers together as cancer and normal, high risk normal and non-advanced adenomas as normal
 # Then remove the sample ID column
-data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
+data_corr <- inner_join(meta, shared, by=c("sample"="Group")) %>%
   mutate(dx = case_when(
     Dx_Bin== "Adenoma" ~ "normal",
     Dx_Bin== "Normal" ~ "normal",
@@ -38,7 +38,7 @@ data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
 library(Hmisc)
 library(RcmdrMisc)
 
-r <- rcorr(as.matrix(data), type="spearman")
+r <- rcorr(as.matrix(data_corr), type="spearman")
 
 adjusted <- p.adjust(r$P, method = "holm")
 r$P <- adjusted
