@@ -63,7 +63,7 @@ get_results <- function(dataset, models, split_number){
   # ------------------------------------------------------------------ 
   
   # ------------------------------------------------------------------   
-  # Save 10 feature importance of the model for 1 datasplit
+  # Save all non-correlated feature importance of the model for 1 datasplit
   imp_features <- results[4]
   # Convert to dataframe and add a column noting the model name
   dataframe <- data.frame(imp_features) %>% 
@@ -71,7 +71,7 @@ get_results <- function(dataset, models, split_number){
     write_csv(path=paste0("data/temp/all_imp_features_non_cor_results_", models,"_", split_number, ".csv"))
   # ------------------------------------------------------------------ 
   
-  # Save 10 feature importance of the model for 1 datasplit
+  # Save all correlated feature importance of the model for 1 datasplit
   corr_imp_features <- results[5]
   # Convert to dataframe and add a column noting the model name
   dataframe <- data.frame(corr_imp_features) %>% 

@@ -72,15 +72,13 @@ data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
     Dx_Bin== "adv Adenoma" ~ "cancer",
     Dx_Bin== "Cancer" ~ "cancer"
   )) %>%
-  select(-sample, -Dx_Bin) %>%
+  select(-sample, -Dx_Bin, -fit_result) %>%
   drop_na()
 # We want the diagnosis column to be a factor
 data$dx <- factor(data$dx)
 # We want the first sample to be a cancer so we shuffle the dataset with a specific seed to get cancer as the first sample
 set.seed(0)
 data <- data[sample(1:nrow(data)), ]
-
-
 ###################################################################
 
 ######################## RUN PIPELINE #############################
