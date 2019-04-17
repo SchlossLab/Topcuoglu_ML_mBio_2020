@@ -240,13 +240,16 @@ logit_plot <- base_plot(logit, x=logit$key, y=logit$mean_weights) +
 
 # ----------------- SVM with radial basis function------------------------>
 # Plot correlated OTUs importance rbf svm
-rbf_plot <- read.delim("data/process/RBF_SVM_importance.tsv", header=T, sep='\t') %>% 
+rbf_cor_results <- read.delim("data/process/RBF_SVM_cor_importance.tsv", header=T, sep='\t') %>% 
+  filter(!mean_imp==0) 
+
+rbf_plot <- read.delim("data/process/RBF_SVM_non_cor_importance.tsv", header=T, sep='\t') %>% 
   ggplot(aes(x=reorder(names, mean_imp), y=mean_imp, label=mean_imp)) +
   geom_bar(stat='identity')+
   coord_flip() +
   theme_classic() +
   scale_y_continuous(name = "Normalized mean feature importance ") +
-  scale_x_discrete(name = "SVM with rbf kernel") +
+  scale_x_discrete(name = "Random forest ") +
   theme(legend.position="none",
         axis.title = element_text(size=14),
         axis.text = element_text(size=12),
@@ -309,13 +312,16 @@ rf_plot <- read.delim("data/process/Random_Forest_non_cor_importance.tsv", heade
   
 
 # Plot xgboost
-xgboost_plot <- read.delim("data/process/XGBoost_importance.tsv", header=T, sep='\t') %>% 
+xgboost_cor_results <- read.delim("data/process/XGBoost_cor_importance.tsv", header=T, sep='\t') %>% 
+  filter(!mean_imp==0) 
+
+xgboost_plot <- read.delim("data/process/XGBoost_non_cor_importance.tsv", header=T, sep='\t') %>% 
   ggplot(aes(x=reorder(names, mean_imp), y=mean_imp, label=mean_imp)) +
   geom_bar(stat='identity')+
   coord_flip() +
   theme_classic() +
   scale_y_continuous(name = "Normalized mean feature importance ") +
-  scale_x_discrete(name = "Xgboost") +
+  scale_x_discrete(name = "Random forest ") +
   theme(legend.position="none",
         axis.title = element_text(size=14),
         axis.text = element_text(size=12),
