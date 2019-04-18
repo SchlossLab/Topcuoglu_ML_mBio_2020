@@ -10,8 +10,8 @@ for (dep in deps){
 ######################################################################
 
 ######################## DATA PREPARATION #############################
-# Features: Hemoglobin levels(FIT) and 16S rRNA gene sequences(OTUs) in the stool 
-# Labels: - Colorectal lesions of 490 patients. 
+# Features: Hemoglobin levels(FIT) and 16S rRNA gene sequences(OTUs) in the stool
+# Labels: - Colorectal lesions of 490 patients.
 #         - Defined as cancer or not.(Cancer here means: SRN)
 #                                     SRNs are adv adenomas+carcinomas
 
@@ -32,7 +32,7 @@ data_corr <- inner_join(meta, shared, by=c("sample"="Group")) %>%
     Dx_Bin== "adv Adenoma" ~ "cancer",
     Dx_Bin== "Cancer" ~ "cancer"
   )) %>%
-  select(-sample, -Dx_Bin, -fit_result, -dx) %>%
+  select(-sample, -Dx_Bin, -dx) %>%
   drop_na()
 
 library(Hmisc)
@@ -53,9 +53,7 @@ flattenCorrMatrix <- function(cormat, pmat) {
   )
 }
 
-new_r <- flattenCorrMatrix(r$r, r$P) %>% 
-  filter(cor==1) %>% 
-  filter(p<0.01) %>% 
+new_r <- flattenCorrMatrix(r$r, r$P) %>%
+  filter(cor==1) %>%
+  filter(p<0.01) %>%
   write_csv("data/process/sig_flat_corr_matrix.csv")
-
-
