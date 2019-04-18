@@ -15,7 +15,7 @@ source('code/learning/functions.R')
 
 
 ######################################################################
-# Load .csv data generated with modeling pipeline 
+# Load .csv data generated with modeling pipeline
 ######################################################################
 
 # Read in the cvAUCs, testAUCs for 100 splits.
@@ -45,10 +45,10 @@ performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC), y = AUC
   scale_fill_manual(values=c("#999999", "#E69F00")) +
   scale_y_continuous(name = "AUROC",
                      breaks = seq(0.5, 1, 0.02),
-                     limits=c(0.5, 1), 
+                     limits=c(0.5, 1),
                      expand=c(0,0)) +
   scale_x_discrete(name = "") +
-  #                 labels=c("L2 Linear SVM", 
+  #                 labels=c("L2 Linear SVM",
    #                         "RBF SVM",
     #                        "L2 Logistic Regression",
      #                       "Decision Tree",
@@ -58,7 +58,7 @@ performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC), y = AUC
   theme_bw() +
   theme(legend.title = element_blank(),
         legend.background = element_rect(size=0.5, linetype="solid", color="black"),
-        legend.justification=c(0,1), 
+        legend.justification=c(0,1),
         legend.position=c(0,1),
         legend.box.margin=margin(c(10,10,10,10)),
         legend.text=element_text(size=20),
@@ -70,12 +70,11 @@ performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC), y = AUC
         axis.text.x=element_text(size = 15, colour='black'),
         axis.text.y=element_text(size = 12, colour='black'),
         axis.title.y=element_text(size = 30),
-        axis.title.x=element_text(size = 20), 
-        panel.border = element_rect(colour = "black", fill=NA, size=1)) 
+        axis.title.x=element_text(size = 20),
+        panel.border = element_rect(colour = "black", fill=NA, size=1))
 
 ######################################################################
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 
 ggsave("Figure_2.pdf", plot = performance, device = 'pdf', path = 'results/figures', width = 15, height = 10)
-

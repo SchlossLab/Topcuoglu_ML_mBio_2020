@@ -31,7 +31,7 @@ for (dep in deps){
 
 # Read in the results of trained model of 100 data-splits
 
-all_files <- list.files(path= 'data/process', pattern='combined_all.*', full.names = TRUE)
+all_files <- list.files(path= 'data/process', pattern='combined_all_hp.*', full.names = TRUE)
 
 logit_all <- read_files(all_files[4])
 l2svm_all <- read_files(all_files[3])
@@ -72,7 +72,7 @@ l1svm <- l1svm_all %>%
 l1svm_plot <- base_plot(l1svm, l1svm$cost, l1svm$mean_AUC) +
   scale_x_log10(name="C (penalty)",
                 labels=trans_format('log10',math_format(10^.x))) +
-  scale_y_continuous(name="L1 linear SVM 
+  scale_y_continuous(name="L1 linear SVM
 mean cvAUROC",
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
@@ -86,7 +86,7 @@ l2svm <- l2svm_all %>%
 l2svm_plot <- base_plot(l2svm, l2svm$cost, l2svm$mean_AUC) +
   scale_x_log10(name="C (penalty)",
                 labels=trans_format('log10',math_format(10^.x))) +
-  scale_y_continuous(name="L2 linear SVM 
+  scale_y_continuous(name="L2 linear SVM
 mean cvAUROC",
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
@@ -94,16 +94,16 @@ mean cvAUROC",
 
 logit <- logit_all %>%
   group_by(cost, loss, epsilon) %>%
-  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) 
+  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC))
 
-logit_plot <- base_plot(logit, logit$cost, logit$mean_AUC) + 
-  scale_x_log10(name="C (penalty)", 
+logit_plot <- base_plot(logit, logit$cost, logit$mean_AUC) +
+  scale_x_log10(name="C (penalty)",
                 labels=trans_format('log10',math_format(10^.x))) +
-  scale_y_continuous(name="L2 logistic regression 
+  scale_y_continuous(name="L2 logistic regression
 mean cvAUROC",
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
-  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.001) 
+  geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.001)
 
 
 dt <- dt_all %>%
@@ -112,7 +112,7 @@ dt <- dt_all %>%
 
 dt_plot <- base_plot(dt, dt$maxdepth, dt$mean_AUC) +
 scale_x_continuous(name="max depth") +
-  scale_y_continuous(name="Decision tree 
+  scale_y_continuous(name="Decision tree
 mean cvAUROC",
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
@@ -125,7 +125,7 @@ rf <- rf_all %>%
 rf_plot <-  base_plot(rf, rf$mtry, rf$mean_AUC) +
 scale_x_continuous(name="mtry",
                    breaks=seq(0, 1500, 250), limits = c(0, 1500)) +
-  scale_y_continuous(name="Random forest 
+  scale_y_continuous(name="Random forest
 mean cvAUROC",
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
@@ -135,70 +135,62 @@ mean cvAUROC",
 
 rbf_data <- rbf_all %>%
   group_by(sigma, C) %>%
-  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) 
+  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC))
 
-rbf_plot <- ggplot(rbf_data, aes(x = sigma, y = C, fill = mean_AUC)) +
-  geom_tile() +
+rbf_plot <- ggplot(rbf_data, aes(log10(sigma), log10(C))) +
+  geom_raster(aes(fill = mean_AUC), interpolate = TRUE) +
   scale_fill_gradient(name= "Mean cvAUROC",
                       low = "#FFFFFF",
                       high = "#012345") +
-  #coord_fixed(ratio = 0.5) +
-  #coord_equal() +
-  scale_y_log10(name="SVM RBF kernel
+  scale_y_continuous(name="SVM RBF kernel
 C",
-                labels=trans_format('log10',math_format(10^.x)), 
-    breaks = c(0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1, 10), 
-                expand = c(0, 0)) +
-  scale_x_log10(breaks = c(0.00000001, 0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1), 
-                expand = c(0, 0),
-                labels=trans_format('log10',math_format(10^.x))) +
+                     expand=c(0,0)) +
+  scale_x_continuous(name="sigma",
+                     expand=c(0,0)) +
   theme(legend.background = element_rect(size=0.5, linetype="solid", color="black"),
         legend.box.margin=margin(c(1,1,1,1)),
         legend.text=element_text(size=6),
-        legend.title=element_text(size=8), 
+        legend.title=element_text(size=8),
         legend.position="bottom",
         axis.title = element_text(size=10),
         axis.text = element_text(size=10),
-        panel.border = element_rect(colour = "black", fill=NA, size=3), 
+        panel.border = element_rect(colour = "black", fill=NA, size=3),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         axis.text.x=element_text(size = 8, colour='black'),
         axis.text.y=element_text(size = 8, colour='black'))
-  
 
 xgboost_data <- xgboost_all %>%
   group_by(eta, subsample) %>%
-  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC)) 
+  summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC))
 
 xgboost_plot <- ggplot(xgboost_data, aes(x = eta, y = subsample, fill = mean_AUC)) +
   geom_tile() +
   #coord_fixed(ratio = 5) +
-  scale_fill_gradient2(name= "Mean cvAUROC",
-                      low = "white",
-                      mid = "gold1",
-                      high = "red3",
-                      midpoint = 0.75) +
+  scale_fill_gradient(name= "Mean cvAUROC",
+                      low = "#FFFFFF",
+                      high = "#012345") +
   scale_y_continuous(name="XGBoost
 subsample",
-    breaks = c(0.4, 0.5, 0.6, 0.7),  
-    expand=c(0,0)) + 
-  scale_x_log10(breaks = c(0.001, 0.01, 0.1, 1), 
-                expand = c(0, 0), 
+    breaks = c(0.4, 0.5, 0.6, 0.7),
+    expand=c(0,0)) +
+  scale_x_log10(breaks = c(0.001, 0.01, 0.1, 1),
+                expand = c(0, 0),
                 labels=trans_format('log10',math_format(10^.x))) +
   theme(axis.title = element_text(size=10),
         axis.text = element_text(size=10),
-        panel.border = element_rect(colour = "black", fill=NA, size=3), 
+        panel.border = element_rect(colour = "black", fill=NA, size=3),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         axis.text.x=element_text(size = 8, colour='black'),
-        axis.text.y=element_text(size = 8, colour='black'), 
+        axis.text.y=element_text(size = 8, colour='black'),
         legend.background = element_rect(size=0.5, linetype="solid", color="black"),
         legend.box.margin=margin(c(1,1,1,1)),
         legend.text=element_text(size=6),
         legend.title=element_text(size=8), legend.position="bottom")
-  
+
 
 linear_models <- plot_grid(logit_plot, l1svm_plot, l2svm_plot, labels = c("A", "B", "C"), ncol=3)
 
@@ -211,4 +203,3 @@ non_linear_models <- plot_grid(dt_plot, rf_plot, rbf_plot, xgboost_plot, labels 
 ggsave("Figure_S1.pdf", plot = linear_models, device = 'pdf', path = 'results/figures', width = 8, height = 2.5)
 
 ggsave("Figure_S2.pdf", plot = non_linear_models, device = 'pdf', path = 'results/figures', width = 7, height = 6)
-
