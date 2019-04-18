@@ -24,7 +24,7 @@ shared_corr <- read.delim('data/baxter.0.03.subsample.shared', header=T, sep='\t
 # Merge metadata and OTU table.
 # Group advanced adenomas and cancers together as cancer and normal, high risk normal and non-advanced adenomas as normal
 # Then remove the sample ID column
-data_corr <- inner_join(meta, shared, by=c("sample"="Group")) %>%
+data_corr <- inner_join(meta_corr, shared_corr, by=c("sample"="Group")) %>%
   mutate(dx = case_when(
     Dx_Bin== "Adenoma" ~ "normal",
     Dx_Bin== "Normal" ~ "normal",
