@@ -238,16 +238,25 @@ logit_plot <- base_plot(logit, x=logit$key, y=logit$mean_weights) +
 
 # ----------------- SVM with radial basis function------------------------>
 # Plot correlated OTUs importance rbf svm
-rbf_cor_results <- read.delim("data/process/RBF_SVM_cor_importance.tsv", header=T, sep='\t') %>% 
-  filter(!mean_imp==0) 
+rbf_base <- rbf %>% 
+  summarise(mean_imp = mean(test_aucs), sd_imp = sd(test_aucs)) %>% 
+  mutate(names="base_auc")
 
-rbf_plot <- read.delim("data/process/RBF_SVM_non_cor_importance.tsv", header=T, sep='\t') %>% 
-  ggplot(aes(x=reorder(names, mean_imp), y=mean_imp, label=mean_imp)) +
+rbf_cor_results <- read.delim("data/process/RBF_SVM_cor_importance.tsv", header=T, sep='\t') %>% 
+  filter(!mean_imp==rbf_base$mean_imp) 
+
+rbf_full <- read.delim("data/process/RBF_SVM_non_cor_importance.tsv", header=T, sep='\t') %>%
+  head(n=5) %>% 
+  bind_rows(rbf_base) 
+
+rbf_plot <- ggplot(rbf_full, aes(x=reorder(names, mean_imp), y=mean_imp, label=mean_imp)) +
   geom_bar(stat='identity')+
   coord_flip() +
   theme_classic() +
-  scale_y_continuous(name = "Normalized mean feature importance ") +
-  scale_x_discrete(name = "Random forest ") +
+  scale_y_continuous(name = " AUROC with the OTU permuted randomly", 
+                     limits = c(0,1), 
+                     expand=c(0,0)) +
+  scale_x_discrete(name = "RBF SVM ") +
   theme(legend.position="none",
         axis.title = element_text(size=14),
         axis.text = element_text(size=12),
@@ -256,7 +265,8 @@ rbf_plot <- read.delim("data/process/RBF_SVM_non_cor_importance.tsv", header=T, 
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         axis.text.x=element_text(size = 12, colour='black'),
-        axis.text.y=element_text(size = 10, colour='black'))
+        axis.text.y=element_text(size = 10, colour='black')) +
+  geom_errorbar(aes(ymin=mean_imp-sd_imp, ymax=mean_imp+sd_imp), width=.001)
 # ----------------------------------------------------------------------->
 
 # Plot decision tree
@@ -268,17 +278,19 @@ dt_base <- dt %>%
   mutate(names="base_auc")
 
 dt_cor_results <- read.delim("data/process/Decision_Tree_cor_importance.tsv", header=T, sep='\t') %>% 
-  filter(!mean_imp==rf_base$mean_imp) 
+  filter(!mean_imp==dt_base$mean_imp) 
 
 dt_full <- read.delim("data/process/Decision_Tree_non_cor_importance.tsv", header=T, sep='\t') %>%
-  head(n=10) %>% 
+  head(n=5) %>% 
   bind_rows(dt_base) 
 
 dt_plot <- ggplot(dt_full, aes(x=reorder(names, mean_imp), y=mean_imp, label=mean_imp)) +
   geom_bar(stat='identity')+
   coord_flip() +
   theme_classic() +
-  scale_y_continuous(name = "Normalized mean feature importance ") +
+  scale_y_continuous(name = " AUROC with the OTU permuted randomly", 
+                     limits = c(0,1), 
+                     expand=c(0,0)) +
   scale_x_discrete(name = "Decision Tree ") +
   theme(legend.position="none",
         axis.title = element_text(size=14),
@@ -301,14 +313,16 @@ rf_cor_results <- read.delim("data/process/Random_Forest_cor_importance.tsv", he
   filter(!mean_imp==rf_base$mean_imp) 
 
 rf_full <- read.delim("data/process/Random_Forest_non_cor_importance.tsv", header=T, sep='\t') %>%
-  head(n=10) %>% 
+  head(n=5) %>% 
   bind_rows(rf_base) 
 
 rf_plot <- ggplot(rf_full, aes(x=reorder(names, mean_imp), y=mean_imp, label=mean_imp)) +
   geom_bar(stat='identity')+
   coord_flip() +
   theme_classic() +
-  scale_y_continuous(name = "Normalized mean feature importance ") +
+  scale_y_continuous(name = " AUROC with the OTU permuted randomly", 
+                     limits = c(0,1), 
+                     expand=c(0,0))+
   scale_x_discrete(name = "Random forest ") +
   theme(legend.position="none",
         axis.title = element_text(size=14),
@@ -318,7 +332,8 @@ rf_plot <- ggplot(rf_full, aes(x=reorder(names, mean_imp), y=mean_imp, label=mea
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         axis.text.x=element_text(size = 12, colour='black'),
-        axis.text.y=element_text(size = 10, colour='black'))
+        axis.text.y=element_text(size = 10, colour='black')) +
+  geom_errorbar(aes(ymin=mean_imp-sd_imp, ymax=mean_imp+sd_imp), width=.001)
 
   
 
