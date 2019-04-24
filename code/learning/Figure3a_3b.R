@@ -90,8 +90,7 @@ get_interp_info <- function(data, model_name){
       #     c) Put the signs back to weights
       #     d) select the OTU names, mean weights with their signs and the sd
       imp_means <- correlated_data %>% 
-        arrange(desc(mean_imp)) %>% 
-        head(n=10)
+        arrange(mean_imp)
     }
     else{
       # The file doesn't have "names" column which means these are correlated OTU groups
@@ -107,8 +106,7 @@ get_interp_info <- function(data, model_name){
       #       We have the mean percent auc change for each correlated group of OTUs in a row
       #       We will also have all the OTU names in the group in the same row.
       imp_means <- correlated_data %>% 
-        arrange(-mean_imp) %>% 
-        head(n=10) %>% 
+        arrange(mean_imp) %>% 
         inner_join(data, by="X1") %>% # order the largest 10 
         unique() %>% 
         select(-new_auc, -model)
@@ -271,7 +269,7 @@ dt_base <- dt %>%
   summarise(mean_imp = mean(test_aucs), sd_imp = sd(test_aucs)) %>% 
   mutate(names="base_auc")
 
-dt_plot <- read.delim("data/process/Decision_Tree_non_cor_importance.tsv", header=T, sep='\t') %>%
+dt_full <- read.delim("data/process/Decision_Tree_non_cor_importance.tsv", header=T, sep='\t') %>%
   bind_rows(dt_base) %>% 
   head(n=10) %>% 
   ggplot(aes(x=reorder(names, mean_imp), y=mean_imp, label=mean_imp)) +
@@ -294,12 +292,17 @@ dt_plot <- read.delim("data/process/Decision_Tree_non_cor_importance.tsv", heade
 # ----------------------------------------------------------------------->
 
 # Plot random forest
+rf_base <- rf %>% 
+  summarise(mean_imp = mean(test_aucs), sd_imp = sd(test_aucs)) %>% 
+  mutate(names="base_auc")
 
 rf_cor_results <- read.delim("data/process/Random_Forest_cor_importance.tsv", header=T, sep='\t') %>% 
-  filter(!mean_imp==0) 
+  filter(!mean_imp==rf_base$mean_imp) 
 
-rf_plot <- read.delim("data/process/Random_Forest_non_cor_importance.tsv", header=T, sep='\t') %>% 
-  ggplot(aes(x=reorder(names, mean_imp), y=mean_imp, label=mean_imp)) +
+rf_full <- read.delim("data/process/Decision_Tree_non_cor_importance.tsv", header=T, sep='\t') %>%
+  head(n=5) %>% 
+  bind_rows(rf_base) 
+rf_plot <- ggplot(rf_full, aes(x=reorder(names, mean_imp), y=mean_imp, label=mean_imp)) +
   geom_bar(stat='identity')+
   coord_flip() +
   theme_classic() +
