@@ -369,9 +369,9 @@ linear <- plot_grid(logit_plot, l1svm_plot, l2svm_plot, labels = c("A", "B", "C"
 
 ggsave("Figure_3a.pdf", plot = linear, device = 'pdf', path = 'results/figures', width = 18, height = 10)
 
-non_lin <- plot_grid(dt_plot, labels = c("A"))
+non_lin <- plot_grid(rbf_plot, dt_plot, rf_plot, labels = c("A", "B", "C"))
 
-ggsave("Figure_3b.pdf", plot = non_lin, device = 'pdf', path = 'results/figures', width = 5, height = 2)
+ggsave("Figure_3b.pdf", plot = non_lin, device = 'pdf', path = 'results/figures', width = 10, height = 5)
 
 
 
