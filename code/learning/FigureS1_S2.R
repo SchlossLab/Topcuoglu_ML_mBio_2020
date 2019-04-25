@@ -137,24 +137,29 @@ rbf_data <- rbf_all %>%
   group_by(sigma, C) %>%
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC))
 
-rbf_plot <- ggplot(rbf_data, aes(log10(sigma), log10(C))) +
-  geom_raster(aes(fill = mean_AUC), interpolate = TRUE) +
+rbf_plot <- ggplot(rbf_data, aes(x = sigma, y = C, fill = mean_AUC)) +
+  geom_tile() +
   scale_fill_gradient(name= "Mean cvAUROC",
                       low = "#FFFFFF",
                       high = "#012345") +
-  scale_y_continuous(name="SVM RBF kernel
-                     C",
-                     expand=c(0,0)) +
-  scale_x_continuous(name="sigma",
-                     expand=c(0,0)) +
+  #coord_fixed(ratio = 0.5) +
+  #coord_equal() +
+  scale_y_log10(name="SVM RBF kernel
+                C",
+                breaks = c(0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1, 10), 
+                expand = c(0, 0), 
+                labels=trans_format('log10',math_format(10^.x))) +
+  scale_x_log10(breaks = c(0.00000001, 0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1), 
+                expand = c(0, 0), 
+                labels=trans_format('log10',math_format(10^.x))) +
   theme(legend.background = element_rect(size=0.5, linetype="solid", color="black"),
         legend.box.margin=margin(c(1,1,1,1)),
         legend.text=element_text(size=6),
-        legend.title=element_text(size=8),
+        legend.title=element_text(size=8), 
         legend.position="bottom",
         axis.title = element_text(size=10),
         axis.text = element_text(size=10),
-        panel.border = element_rect(colour = "black", fill=NA, size=3),
+        panel.border = element_rect(colour = "black", fill=NA, size=3), 
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
