@@ -42,9 +42,10 @@ dt_all <- read_files(all_files[1])
 xgboost_all <- read_files(all_files[7])
 
 ######################################################################
-#Plot the mean AUC values for hyper parameters tested #
+# Models with 1 HP - Plot the mean AUC values for hyper parameters tested #
 ######################################################################
 
+# -----------------------Base plot function -------------------------->
 # Define the base plot for all the modeling methods
 base_plot <-  function(data, x_axis, y_axis){
   plot <- ggplot(data, aes(x_axis, y_axis)) +
@@ -63,8 +64,11 @@ base_plot <-  function(data, x_axis, y_axis){
           axis.title.x=element_text(size = 10))
   return(plot)
 }
+# ----------------------------------------------------------------------->
 
 # Start plotting models with one hyper-parameter individually
+
+# ------------------L1 SVM with linear kernel---------------------------->
 l1svm <- l1svm_all %>%
   group_by(cost) %>%
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC))
@@ -77,8 +81,9 @@ l1svm_plot <- base_plot(l1svm, l1svm$cost, l1svm$mean_AUC) +
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.001)
+# ----------------------------------------------------------------------->
 
-
+# ------------------L2 SVM with linear kernel---------------------------->
 l2svm <- l2svm_all %>%
   group_by(cost) %>%
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC))
@@ -91,7 +96,9 @@ l2svm_plot <- base_plot(l2svm, l2svm$cost, l2svm$mean_AUC) +
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.001)
+# ----------------------------------------------------------------------->
 
+# ------------------- L2 logistic regression ---------------------------->
 logit <- logit_all %>%
   group_by(cost, loss, epsilon) %>%
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC))
@@ -104,8 +111,9 @@ logit_plot <- base_plot(logit, logit$cost, logit$mean_AUC) +
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.001)
+# ----------------------------------------------------------------------->
 
-
+# --------------------------- Decision Tree ----------------------------->
 dt <- dt_all %>%
   group_by(maxdepth) %>%
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC))
@@ -117,7 +125,9 @@ dt_plot <- base_plot(dt, dt$maxdepth, dt$mean_AUC) +
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.001)
+# ----------------------------------------------------------------------->
 
+# --------------------------- Random Forest ----------------------------->
 rf <- rf_all %>%
   group_by(mtry) %>%
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC))
@@ -130,72 +140,70 @@ rf_plot <-  base_plot(rf, rf$mtry, rf$mean_AUC) +
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=1)
+# ----------------------------------------------------------------------->
+
+######################################################################
+# Models with 2 HP - Plot the mean AUC values for hyper parameters tested #
+######################################################################
 
 # Start plotting models with 2 hyper-parameters individually
 
+# -----------------------Base plot function -------------------------->
+# Define the base plot for all the modeling methods
+base_two_plot <-  function(data, x_axis, y_axis, fill){
+  plot <- ggplot(data, aes(x = x_axis, y = y_axis, fill =fill)) +
+    geom_tile() +
+    scale_fill_gradient(name= "Mean cvAUROC",
+                        low = "#FFFFFF",
+                        high = "#012345") +
+    theme(legend.background = element_rect(size=0.5, linetype="solid", color="black"),
+          legend.box.margin=margin(c(1,1,1,1)),
+          legend.text=element_text(size=6),
+          legend.title=element_text(size=8), 
+          legend.position="bottom",
+          axis.title = element_text(size=10),
+          axis.text = element_text(size=10),
+          panel.border = element_rect(colour = "black", fill=NA, size=3), 
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.background = element_blank(),
+          axis.text.x=element_text(size = 8, colour='black'),
+          axis.text.y=element_text(size = 8, colour='black'))
+
+  return(plot)
+}
+# ----------------------------------------------------------------------->
+
+# ----------------------------RBF SVM ---------------------------------->
 rbf_data <- rbf_all %>%
   group_by(sigma, C) %>%
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC))
 
-rbf_plot <- ggplot(rbf_data, aes(x = sigma, y = C, fill = mean_AUC)) +
-  geom_tile() +
-  scale_fill_gradient(name= "Mean cvAUROC",
-                      low = "#FFFFFF",
-                      high = "#012345") +
-  #coord_fixed(ratio = 0.5) +
-  #coord_equal() +
+rbf_plot <- base_two_plot(rbf_data, rbf_data$sigma, rbf_data$C, rbf_data$mean_AUC) +
   scale_y_log10(name="SVM RBF kernel
-                C",
+  C",
                 breaks = c(0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1, 10), 
                 expand = c(0, 0), 
-                labels=trans_format('log10',math_format(10^.x))) +
+                labels=scales::trans_format('log10',math_format(10^.x))) +
   scale_x_log10(breaks = c(0.00000001, 0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1), 
                 expand = c(0, 0), 
-                labels=trans_format('log10',math_format(10^.x))) +
-  theme(legend.background = element_rect(size=0.5, linetype="solid", color="black"),
-        legend.box.margin=margin(c(1,1,1,1)),
-        legend.text=element_text(size=6),
-        legend.title=element_text(size=8), 
-        legend.position="bottom",
-        axis.title = element_text(size=10),
-        axis.text = element_text(size=10),
-        panel.border = element_rect(colour = "black", fill=NA, size=3), 
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        panel.background = element_blank(),
-        axis.text.x=element_text(size = 8, colour='black'),
-        axis.text.y=element_text(size = 8, colour='black'))
+                labels=scales::trans_format('log10',math_format(10^.x)))
+# ----------------------------------------------------------------------->
 
+# --------------------------- XGBoost ----------------------------->
 xgboost_data <- xgboost_all %>%
   group_by(eta, subsample) %>%
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC))
 
-xgboost_plot <- ggplot(xgboost_data, aes(x = eta, y = subsample, fill = mean_AUC)) +
-  geom_tile() +
-  #coord_fixed(ratio = 5) +
-  scale_fill_gradient(name= "Mean cvAUROC",
-                      low = "#FFFFFF",
-                      high = "#012345") +
+xgboost_plot <- base_two_plot(xgboost_data, xgboost$eta, xgboost$subsample, xgboost$mean_AUC) +
   scale_y_continuous(name="XGBoost
                      subsample",
                      breaks = c(0.4, 0.5, 0.6, 0.7),
                      expand=c(0,0)) +
   scale_x_log10(breaks = c(0.001, 0.01, 0.1, 1),
                 expand = c(0, 0),
-                labels=trans_format('log10',math_format(10^.x))) +
-  theme(axis.title = element_text(size=10),
-        axis.text = element_text(size=10),
-        panel.border = element_rect(colour = "black", fill=NA, size=3),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        panel.background = element_blank(),
-        axis.text.x=element_text(size = 8, colour='black'),
-        axis.text.y=element_text(size = 8, colour='black'),
-        legend.background = element_rect(size=0.5, linetype="solid", color="black"),
-        legend.box.margin=margin(c(1,1,1,1)),
-        legend.text=element_text(size=6),
-        legend.title=element_text(size=8), legend.position="bottom")
-
+                labels=scales::trans_format('log10',math_format(10^.x))) 
+# ----------------------------------------------------------------------->
 
 linear_models <- plot_grid(logit_plot, l1svm_plot, l2svm_plot, labels = c("A", "B", "C"), ncol=3)
 
