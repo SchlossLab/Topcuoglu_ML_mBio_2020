@@ -45,7 +45,14 @@ walltime_df <- bind_rows(min_fixed_result)
 walltime_plot <- ggplot(walltime_df, aes(x = fct_reorder(model, x), y = x)) +
   geom_boxplot(alpha=0.7, fill="darkgoldenrod1") +
   scale_y_continuous(name = "Walltime (hours)") +
-  scale_x_discrete(name = "") +
+  scale_x_discrete(name = "",
+                   labels=c("L2 Logistic Regression",
+                     "L1 Linear SVM",
+                     "L2 Linear SVM",
+                     "Decision Tree",
+                     "RBF SVM",
+                      "Random Forest", 
+                     "XGBoost")) +
   theme_bw() +
   theme(legend.title=element_text(size=22),
         panel.grid.major = element_blank(),

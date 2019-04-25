@@ -253,7 +253,6 @@ base_nonlin_plot <-  function(data, name){
     scale_y_continuous(name = " AUROC with the OTU permuted randomly", 
                        limits = c(0,1), 
                        expand=c(0,0)) +
-    scale_x_discrete(name = "RBF SVM ") +
     theme(legend.position="none",
           axis.title = element_text(size=14),
           axis.text = element_text(size=12),
@@ -280,22 +279,26 @@ base_nonlin_plot <-  function(data, name){
 
 # ----------------- SVM with radial basis function------------------------>
 # Plot most important 5 features effect on AUROC
-rbf_plot <- base_nonlin_plot(rbf, "RBF_SVM")
+rbf_plot <- base_nonlin_plot(rbf, "RBF_SVM") +
+  scale_x_discrete(name = "RBF SVM ") 
 # ----------------------------------------------------------------------->
 
 # --------------------------- Decision Tree ----------------------------->
 # Plot most important 5 features effect on AUROC
-dt_plot <- base_nonlin_plot(dt, "Decision_Tree")
+dt_plot <- base_nonlin_plot(dt, "Decision_Tree") +
+  scale_x_discrete(name = "Decision Tree ") 
 # ----------------------------------------------------------------------->
 
 # --------------------------- Random Forest ----------------------------->
 # Plot most important 5 features effect on AUROC
-rf_plot <- base_nonlin_plot(rf, "Random_Forest")
+rf_plot <- base_nonlin_plot(rf, "Random_Forest") +
+  scale_x_discrete(name = "Random Forest ") 
 # ----------------------------------------------------------------------->
 
 # --------------------------- XGBoost ----------------------------->
 # Plot most important 5 features effect on AUROC
-xgboost_plot <- base_nonlin_plot(xgboost, "XGBoost")
+xgboost_plot <- base_nonlin_plot(xgboost, "XGBoost")+
+  scale_x_discrete(name = "XGBoost ") 
 # ----------------------------------------------------------------------->
 
 ######################################################################
