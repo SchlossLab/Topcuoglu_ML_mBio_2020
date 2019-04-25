@@ -48,19 +48,19 @@ xgboost_all <- read_files(all_files[7])
 # Define the base plot for all the modeling methods
 base_plot <-  function(data, x_axis, y_axis){
   plot <- ggplot(data, aes(x_axis, y_axis)) +
-  geom_line() +
-  geom_point() +
-  theme_bw() +
-  theme(legend.text=element_text(size=10),
-        legend.title=element_text(size=10),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        panel.background = element_blank(),
-        text = element_text(size = 10),
-        axis.text.x=element_text(size = 8, colour='black'),
-        axis.text.y=element_text(size = 8, colour='black'),
-        axis.title.y=element_text(size = 10),
-        axis.title.x=element_text(size = 10))
+    geom_line() +
+    geom_point() +
+    theme_bw() +
+    theme(legend.text=element_text(size=10),
+          legend.title=element_text(size=10),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.background = element_blank(),
+          text = element_text(size = 10),
+          axis.text.x=element_text(size = 8, colour='black'),
+          axis.text.y=element_text(size = 8, colour='black'),
+          axis.title.y=element_text(size = 10),
+          axis.title.x=element_text(size = 10))
   return(plot)
 }
 
@@ -73,7 +73,7 @@ l1svm_plot <- base_plot(l1svm, l1svm$cost, l1svm$mean_AUC) +
   scale_x_log10(name="C (penalty)",
                 labels=trans_format('log10',math_format(10^.x))) +
   scale_y_continuous(name="L1 linear SVM
-mean cvAUROC",
+                     mean cvAUROC",
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.001)
@@ -87,7 +87,7 @@ l2svm_plot <- base_plot(l2svm, l2svm$cost, l2svm$mean_AUC) +
   scale_x_log10(name="C (penalty)",
                 labels=trans_format('log10',math_format(10^.x))) +
   scale_y_continuous(name="L2 linear SVM
-mean cvAUROC",
+                     mean cvAUROC",
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.001)
@@ -100,7 +100,7 @@ logit_plot <- base_plot(logit, logit$cost, logit$mean_AUC) +
   scale_x_log10(name="C (penalty)",
                 labels=trans_format('log10',math_format(10^.x))) +
   scale_y_continuous(name="L2 logistic regression
-mean cvAUROC",
+                     mean cvAUROC",
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.001)
@@ -111,9 +111,9 @@ dt <- dt_all %>%
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC))
 
 dt_plot <- base_plot(dt, dt$maxdepth, dt$mean_AUC) +
-scale_x_continuous(name="max depth") +
+  scale_x_continuous(name="max depth") +
   scale_y_continuous(name="Decision tree
-mean cvAUROC",
+                     mean cvAUROC",
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.001)
@@ -123,10 +123,10 @@ rf <- rf_all %>%
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC))
 
 rf_plot <-  base_plot(rf, rf$mtry, rf$mean_AUC) +
-scale_x_continuous(name="mtry",
-                   breaks=seq(0, 1500, 250), limits = c(0, 1500)) +
+  scale_x_continuous(name="mtry",
+                     breaks=seq(0, 1500, 250), limits = c(0, 1500)) +
   scale_y_continuous(name="Random forest
-mean cvAUROC",
+                     mean cvAUROC",
                      limits = c(0.30, 1),
                      breaks = seq(0.3, 1, 0.05)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=1)
@@ -143,7 +143,7 @@ rbf_plot <- ggplot(rbf_data, aes(log10(sigma), log10(C))) +
                       low = "#FFFFFF",
                       high = "#012345") +
   scale_y_continuous(name="SVM RBF kernel
-C",
+                     C",
                      expand=c(0,0)) +
   scale_x_continuous(name="sigma",
                      expand=c(0,0)) +
@@ -172,9 +172,9 @@ xgboost_plot <- ggplot(xgboost_data, aes(x = eta, y = subsample, fill = mean_AUC
                       low = "#FFFFFF",
                       high = "#012345") +
   scale_y_continuous(name="XGBoost
-subsample",
-    breaks = c(0.4, 0.5, 0.6, 0.7),
-    expand=c(0,0)) +
+                     subsample",
+                     breaks = c(0.4, 0.5, 0.6, 0.7),
+                     expand=c(0,0)) +
   scale_x_log10(breaks = c(0.001, 0.01, 0.1, 1),
                 expand = c(0, 0),
                 labels=trans_format('log10',math_format(10^.x))) +
