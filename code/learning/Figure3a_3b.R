@@ -56,7 +56,7 @@ get_interp_info <- function(data, model_name){
     weights <- data %>% 
       select(-Bias, -model) %>% 
       gather(factor_key=TRUE) %>% 
-    # 2. Group by the OTU name and compute mean and sd for each OTU
+      # 2. Group by the OTU name and compute mean and sd for each OTU
       group_by(key) %>% 
       summarise(mean_weights = mean(value), sd_weights = sd(value)) %>% 
       # 2. We now want to save to a new column the sign of the weights
@@ -84,24 +84,13 @@ get_interp_info <- function(data, model_name){
       correlated_data <- data %>% 
         # 1. Group by the OTU names and calculate mean and sd for auc change 
         group_by(names) %>% 
-        summarise(mean_imp = mean(new_auc), sd_imp = sd(new_auc)) %>% 
-        # 2. We now want to save to a new column the sign of the weights
-        mutate(sign = case_when(mean_imp<0 ~ "negative",
-                                mean_imp>0 ~ "positive",
-                                mean_imp==0 ~ "zero")) 
-      # 3. We change all the percent changes to their absolute value
-      #       Because we want to see which are the largest weigths
-      correlated_data$mean_imp <- abs(correlated_data$mean_imp)
+        summarise(mean_imp = mean(new_auc), sd_imp = sd(new_auc)) 
       # 4.  a) Order the dataframe from largest weights to smallest.
       #     b) Select the largest 10 
       #     c) Put the signs back to weights
       #     d) select the OTU names, mean weights with their signs and the sd
       imp_means <- correlated_data %>% 
-        arrange(desc(mean_imp)) %>% 
-        head(n=10) %>% 
-        mutate(mean_imp = case_when(sign=="negative" ~ mean_imp*-1,
-                                    sign=="positive"~ mean_imp)) %>% 
-        select(-sign)
+        arrange(mean_imp)
     }
     else{
       # The file doesn't have "names" column which means these are correlated OTU groups
@@ -117,8 +106,7 @@ get_interp_info <- function(data, model_name){
       #       We have the mean percent auc change for each correlated group of OTUs in a row
       #       We will also have all the OTU names in the group in the same row.
       imp_means <- correlated_data %>% 
-        arrange(-mean_imp) %>% 
-        head(n=10) %>% 
+        arrange(mean_imp) %>% 
         inner_join(data, by="X1") %>% # order the largest 10 
         unique() %>% 
         select(-new_auc, -model)
@@ -165,7 +153,17 @@ for(file_name in non_cor_files){
 }
 # -------------------------------------------------------------------->
 
+# Read in the cvAUCs, testAUCs for 100 splits as base test_aucs
+best_files <- list.files(path= 'data/process', pattern='combined_best.*', full.names = TRUE)
 
+
+logit <- read_files(best_files[4])
+l2svm <- read_files(best_files[3])
+l1svm <- read_files(best_files[2])
+rbf <- read_files(best_files[6])
+rf <- read_files(best_files[5])
+dt <- read_files(best_files[1])
+xgboost <- read_files(best_files[7])
 
 ######################################################################
 #-------------- Plot the weights of linear models ----------#
@@ -202,8 +200,8 @@ l1svm <- read.delim("data/process/L1_Linear_SVM_non_cor_importance.tsv", header=
 
 l1svm_plot <- base_plot(l1svm, x=l1svm$key,y=l1svm$mean_weights) +
   scale_y_continuous(name="L1 linear kernel SVM feature weights",
-                    limits = c(-3, 3),
-                    breaks = seq(-3, 3, 0.5)) +
+                     limits = c(-3, 3),
+                     breaks = seq(-3, 3, 0.5)) +
   geom_errorbar(aes(ymin=l1svm$mean_weights-l1svm$sd_weights, 
                     ymax=l1svm$mean_weights+l1svm$sd_weights), 
                 width=.01) 
@@ -240,16 +238,25 @@ logit_plot <- base_plot(logit, x=logit$key, y=logit$mean_weights) +
 
 # ----------------- SVM with radial basis function------------------------>
 # Plot correlated OTUs importance rbf svm
-rbf_cor_results <- read.delim("data/process/RBF_SVM_cor_importance.tsv", header=T, sep='\t') %>% 
-  filter(!mean_imp==0) 
+rbf_base <- rbf %>% 
+  summarise(mean_imp = mean(test_aucs), sd_imp = sd(test_aucs)) %>% 
+  mutate(names="base_auc")
 
-rbf_plot <- read.delim("data/process/RBF_SVM_non_cor_importance.tsv", header=T, sep='\t') %>% 
-  ggplot(aes(x=reorder(names, mean_imp), y=mean_imp, label=mean_imp)) +
+rbf_cor_results <- read.delim("data/process/RBF_SVM_cor_importance.tsv", header=T, sep='\t') %>% 
+  filter(!mean_imp==rbf_base$mean_imp) 
+
+rbf_full <- read.delim("data/process/RBF_SVM_non_cor_importance.tsv", header=T, sep='\t') %>%
+  head(n=5) %>% 
+  bind_rows(rbf_base) 
+
+rbf_plot <- ggplot(rbf_full, aes(x=reorder(names, mean_imp), y=mean_imp, label=mean_imp)) +
   geom_bar(stat='identity')+
   coord_flip() +
   theme_classic() +
-  scale_y_continuous(name = "Normalized mean feature importance ") +
-  scale_x_discrete(name = "Random forest ") +
+  scale_y_continuous(name = " AUROC with the OTU permuted randomly", 
+                     limits = c(0,1), 
+                     expand=c(0,0)) +
+  scale_x_discrete(name = "RBF SVM ") +
   theme(legend.position="none",
         axis.title = element_text(size=14),
         axis.text = element_text(size=12),
@@ -258,46 +265,64 @@ rbf_plot <- read.delim("data/process/RBF_SVM_non_cor_importance.tsv", header=T, 
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         axis.text.x=element_text(size = 12, colour='black'),
-        axis.text.y=element_text(size = 10, colour='black'))
+        axis.text.y=element_text(size = 10, colour='black')) +
+  geom_errorbar(aes(ymin=mean_imp-sd_imp, ymax=mean_imp+sd_imp), width=.001)
 # ----------------------------------------------------------------------->
 
 # Plot decision tree
 #dt <- read.delim("data/process/Decision_Tree_importance.tsv", header=T, sep='\t') %>% 
 #base_plot_nonlin(names, mean_imp)
+# Plot random forest
+dt_base <- dt %>% 
+  summarise(mean_imp = mean(test_aucs), sd_imp = sd(test_aucs)) %>% 
+  mutate(names="base_auc")
+
 dt_cor_results <- read.delim("data/process/Decision_Tree_cor_importance.tsv", header=T, sep='\t') %>% 
-  filter(!mean_imp==0) 
-  
-dt_plot <- read.delim("data/process/Decision_Tree_non_cor_importance.tsv", header=T, sep='\t') %>% 
+  filter(!mean_imp==dt_base$mean_imp) 
+
+dt_full <- read.delim("data/process/Decision_Tree_non_cor_importance.tsv", header=T, sep='\t') %>%
   head(n=5) %>% 
-  ggplot(aes(x=reorder(names, mean_imp), y=mean_imp, label=mean_imp)) +
+  bind_rows(dt_base) 
+
+dt_plot <- ggplot(dt_full, aes(x=reorder(names, mean_imp), y=mean_imp, label=mean_imp)) +
   geom_bar(stat='identity')+
   coord_flip() +
   theme_classic() +
-  scale_y_continuous(name = "Percent AUROC decrease", 
-                     limits = c(0, 100)) +
-  scale_x_discrete(name = "Decision tree ") +
+  scale_y_continuous(name = " AUROC with the OTU permuted randomly", 
+                     limits = c(0,1), 
+                     expand=c(0,0)) +
+  scale_x_discrete(name = "Decision Tree ") +
   theme(legend.position="none",
-        axis.title = element_text(size=10),
-        axis.text = element_text(size=10),
+        axis.title = element_text(size=14),
+        axis.text = element_text(size=12),
         panel.border = element_rect(colour = "black", fill=NA, size=1), 
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
-        axis.text.x=element_text(size = 10, colour='black'),
-        axis.text.y=element_text(size = 10, colour='black'))
+        axis.text.x=element_text(size = 12, colour='black'),
+        axis.text.y=element_text(size = 10, colour='black')) +
+  geom_errorbar(aes(ymin=mean_imp-sd_imp, ymax=mean_imp+sd_imp), width=.001)
 # ----------------------------------------------------------------------->
 
 # Plot random forest
+rf_base <- rf %>% 
+  summarise(mean_imp = mean(test_aucs), sd_imp = sd(test_aucs)) %>% 
+  mutate(names="base_auc")
 
 rf_cor_results <- read.delim("data/process/Random_Forest_cor_importance.tsv", header=T, sep='\t') %>% 
-  filter(!mean_imp==0) 
+  filter(!mean_imp==rf_base$mean_imp) 
 
-rf_plot <- read.delim("data/process/Random_Forest_non_cor_importance.tsv", header=T, sep='\t') %>% 
-  ggplot(aes(x=reorder(names, mean_imp), y=mean_imp, label=mean_imp)) +
+rf_full <- read.delim("data/process/Random_Forest_non_cor_importance.tsv", header=T, sep='\t') %>%
+  head(n=5) %>% 
+  bind_rows(rf_base) 
+
+rf_plot <- ggplot(rf_full, aes(x=reorder(names, mean_imp), y=mean_imp, label=mean_imp)) +
   geom_bar(stat='identity')+
   coord_flip() +
   theme_classic() +
-  scale_y_continuous(name = "Normalized mean feature importance ") +
+  scale_y_continuous(name = " AUROC with the OTU permuted randomly", 
+                     limits = c(0,1), 
+                     expand=c(0,0))+
   scale_x_discrete(name = "Random forest ") +
   theme(legend.position="none",
         axis.title = element_text(size=14),
@@ -307,9 +332,10 @@ rf_plot <- read.delim("data/process/Random_Forest_non_cor_importance.tsv", heade
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         axis.text.x=element_text(size = 12, colour='black'),
-        axis.text.y=element_text(size = 10, colour='black'))
+        axis.text.y=element_text(size = 10, colour='black')) +
+  geom_errorbar(aes(ymin=mean_imp-sd_imp, ymax=mean_imp+sd_imp), width=.001)
 
-  
+
 
 # Plot xgboost
 xgboost_cor_results <- read.delim("data/process/XGBoost_cor_importance.tsv", header=T, sep='\t') %>% 
@@ -343,9 +369,9 @@ linear <- plot_grid(logit_plot, l1svm_plot, l2svm_plot, labels = c("A", "B", "C"
 
 ggsave("Figure_3a.pdf", plot = linear, device = 'pdf', path = 'results/figures', width = 18, height = 10)
 
-non_lin <- plot_grid(dt_plot, labels = c("A"))
+non_lin <- plot_grid(rbf_plot, dt_plot, rf_plot, labels = c("A", "B", "C"))
 
-ggsave("Figure_3b.pdf", plot = non_lin, device = 'pdf', path = 'results/figures', width = 5, height = 2)
+ggsave("Figure_3b.pdf", plot = non_lin, device = 'pdf', path = 'results/figures', width = 10, height = 5)
 
 
 
