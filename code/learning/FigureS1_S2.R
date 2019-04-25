@@ -147,9 +147,11 @@ rbf_plot <- ggplot(rbf_data, aes(x = sigma, y = C, fill = mean_AUC)) +
   scale_y_log10(name="SVM RBF kernel
   C",
                 breaks = c(0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1, 10), 
-                expand = c(0, 0)) +
+                expand = c(0, 0), 
+                labels=trans_format('log10',math_format(10^.x))) +
   scale_x_log10(breaks = c(0.00000001, 0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1), 
-                expand = c(0, 0)) +
+                expand = c(0, 0), 
+                labels=trans_format('log10',math_format(10^.x))) +
   theme(legend.background = element_rect(size=0.5, linetype="solid", color="black"),
         legend.box.margin=margin(c(1,1,1,1)),
         legend.text=element_text(size=6),
