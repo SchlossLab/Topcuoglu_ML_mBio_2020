@@ -211,8 +211,8 @@ l1svm_plot <- base_plot(l1svm, x=l1svm$key,y=l1svm$mean_weights) +
 l2svm <- read.delim("data/process/L2_Linear_SVM_non_cor_importance.tsv", header=T, sep='\t') 
 l2svm_plot <- base_plot(l2svm, x=l2svm$key,y=l2svm$mean_weights) +
   scale_y_continuous(name="L2 linear kernel SVM feature weights",
-                     limits = c(-1, 1),
-                     breaks = seq(-1, 1, 0.5)) +    
+                     limits = c(-3, 3),
+                     breaks = seq(-3, 3, 0.5)) +    
   geom_errorbar(aes(ymin=l2svm$mean_weights-l2svm$sd_weights, 
                     ymax=l2svm$mean_weights+l2svm$sd_weights), 
                 width=.01) 
@@ -223,8 +223,8 @@ l2svm_plot <- base_plot(l2svm, x=l2svm$key,y=l2svm$mean_weights) +
 logit <- read.delim("data/process/L2_Logistic_Regression_non_cor_importance.tsv", header=T, sep='\t') 
 logit_plot <- base_plot(logit, x=logit$key, y=logit$mean_weights) +
   scale_y_continuous(name="L2 logistic regression coefficients",
-                     limits = c(-1, 1),
-                     breaks = seq(-1, 1, 0.5)) +   
+                     limits = c(-3, 3),
+                     breaks = seq(-3, 3, 0.5)) +   
   geom_errorbar(aes(ymin=logit$mean_weights-logit$sd_weights, 
                     ymax=logit$mean_weights+logit$sd_weights), 
                 width=.01)
