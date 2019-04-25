@@ -185,7 +185,8 @@ rbf_plot <- base_two_plot(rbf_data, rbf_data$sigma, rbf_data$C, rbf_data$mean_AU
                 breaks = c(0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1, 10), 
                 expand = c(0, 0), 
                 labels=scales::trans_format('log10',math_format(10^.x))) +
-  scale_x_log10(breaks = c(0.00000001, 0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1), 
+  scale_x_log10(name = "sigma",
+                breaks = c(0.00000001, 0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1), 
                 expand = c(0, 0), 
                 labels=scales::trans_format('log10',math_format(10^.x)))
 # ----------------------------------------------------------------------->
@@ -200,7 +201,8 @@ xgboost_plot <- base_two_plot(xgboost_data, xgboost$eta, xgboost$subsample, xgbo
                      subsample",
                      breaks = c(0.4, 0.5, 0.6, 0.7),
                      expand=c(0,0)) +
-  scale_x_log10(breaks = c(0.001, 0.01, 0.1, 1),
+  scale_x_log10(name = "eta",
+                breaks = c(0.001, 0.01, 0.1, 1),
                 expand = c(0, 0),
                 labels=scales::trans_format('log10',math_format(10^.x))) 
 # ----------------------------------------------------------------------->
