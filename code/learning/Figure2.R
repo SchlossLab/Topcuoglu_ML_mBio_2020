@@ -47,14 +47,14 @@ performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC), y = AUC
                      breaks = seq(0.5, 1, 0.02),
                      limits=c(0.5, 1),
                      expand=c(0,0)) +
-  scale_x_discrete(name = "") +
-  #                 labels=c("L2 Linear SVM",
-   #                         "RBF SVM",
-    #                        "L2 Logistic Regression",
-     #                       "Decision Tree",
-      #                      "L1 Linear SVM",
-       #                     "XGBoost",
-        #                    "Random Forest")) +
+  scale_x_discrete(name = "",
+                   labels=c("Decision Tree",
+                            "L1 Linear SVM",
+                            "RBF SVM",
+                            "L2 Linear SVM",
+                            "XGBoost",
+                            "L2 Logistic Regression",
+                            "Random Forest")) +
   theme_bw() +
   theme(legend.title = element_blank(),
         legend.background = element_rect(size=0.5, linetype="solid", color="black"),
