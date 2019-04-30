@@ -243,7 +243,7 @@ base_nonlin_plot <-  function(data, name){
     mutate(names="base_auc")
   
   data_full <- read.delim(paste0("data/process/", name,"_non_cor_importance.tsv"), header=T, sep='\t') %>%
-    head(n=5) %>% 
+    head(n=10) %>% 
     bind_rows(data_base) 
   
   plot <- ggplot(data_full, aes(x=reorder(names, mean_imp), y=mean_imp, label=mean_imp)) +
