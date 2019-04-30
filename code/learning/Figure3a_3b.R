@@ -56,7 +56,7 @@ get_interp_info <- function(data, model_name){
     weights <- data %>% 
       select(-Bias, -model) %>% 
       gather(factor_key=TRUE) %>% 
-    # 2. Group by the OTU name and compute mean and sd for each OTU
+      # 2. Group by the OTU name and compute mean and sd for each OTU
       group_by(key) %>% 
       summarise(mean_weights = mean(value), sd_weights = sd(value)) %>% 
       # 2. We now want to save to a new column the sign of the weights
@@ -70,7 +70,7 @@ get_interp_info <- function(data, model_name){
     #     b) Select the largest 10 
     #     c) Put the signs back to weights
     #     d) select the OTU names, mean weights with their signs and the sd
-    imp_means <- weights %>% 
+    imp <- weights %>% 
       arrange(desc(mean_weights)) %>% 
       head(n=10) %>% 
       mutate(mean_weights = case_when(sign=="negative" ~ mean_weights*-1,
@@ -82,15 +82,15 @@ get_interp_info <- function(data, model_name){
   else{ 
     if("names" %in% colnames(data)){ # If the file has non-correlated OTUs 
       correlated_data <- data %>% 
-        # 1. Group by the OTU names and calculate mean and sd for auc change 
+        # 1. Group by the OTU names and calculate median and sd for auc change 
         group_by(names) %>% 
-        summarise(mean_imp = mean(new_auc), sd_imp = sd(new_auc)) 
+        summarise(imp = median(new_auc), sd_imp = sd(new_auc)) 
       # 4.  a) Order the dataframe from largest weights to smallest.
       #     b) Select the largest 10 
       #     c) Put the signs back to weights
-      #     d) select the OTU names, mean weights with their signs and the sd
-      imp_means <- correlated_data %>% 
-        arrange(mean_imp)
+      #     d) select the OTU names, median weights with their signs and the sd
+      imp <- correlated_data %>% 
+        arrange(imp)
     }
     else{
       # The file doesn't have "names" column which means these are correlated OTU groups
@@ -101,18 +101,18 @@ get_interp_info <- function(data, model_name){
       #     2. We then get the mean percent auc change of that correlated OTU group
       correlated_data <- data %>% 
         group_by(X1) %>% 
-        summarise(mean_imp = mean(new_auc), sd_imp = sd(new_auc))
+        summarise(imp = median(new_auc), sd_imp = sd(new_auc))
       #     3. We will now only take the first 10 and add the other OTUs to the row.
       #       We have the mean percent auc change for each correlated group of OTUs in a row
       #       We will also have all the OTU names in the group in the same row.
-      imp_means <- correlated_data %>% 
-        arrange(mean_imp) %>% 
+      imp <- correlated_data %>% 
+        arrange(imp) %>% 
         inner_join(data, by="X1") %>% # order the largest 10 
         unique() %>% 
         select(-new_auc, -model)
     }
   }
-  return(imp_means)
+  return(imp)
 }
 # -------------------------------------------------------------------->
 
@@ -237,21 +237,41 @@ logit_plot <- base_plot(logit, x=logit$key, y=logit$mean_weights) +
 # -----------------------Base plot function -------------------------->
 # Define the base plot for the non-linear modeling methods
 base_nonlin_plot <-  function(data, name){
-  
+  # Grab the base test auc values for 100 datasplits
   data_base <- data %>% 
-    summarise(mean_imp = mean(test_aucs), sd_imp = sd(test_aucs)) %>% 
+    select(-cv_aucs) %>% 
+    mutate(new_auc = test_aucs) %>% 
+    mutate(names="base_auc") %>% 
+    select(-test_aucs)
+  # Have a median base auc value for h-line and for correlated testing
+  data_base_means <- data %>% 
+    summarise(imp = median(test_aucs), sd_imp = sd(test_aucs)) %>% 
     mutate(names="base_auc")
-  
-  data_full <- read.delim(paste0("data/process/", name,"_non_cor_importance.tsv"), header=T, sep='\t') %>%
-    head(n=10) %>% 
-    bind_rows(data_base) 
-  
-  plot <- ggplot(data_full, aes(x=reorder(names, mean_imp), y=mean_imp, label=mean_imp)) +
-    geom_bar(stat='identity')+
+  # Grab the names of the OTUs that have the lowest median AUC when they are permuted
+  data_first_ten <- read.delim(paste0("data/process/", name, "_non_cor_importance.tsv"), header=T, sep='\t') %>%
+    arrange(imp) %>% 
+    head(5)
+  # Get the new test aucs for 100 datasplits for each OTU permuted
+  data_full <- read_files(paste0("data/process/combined_all_imp_features_non_cor_results_", name, ".csv")) %>%
+    # Only keep the OTUs and their AUCs for the ones that are in the top 5 changed (decreased the most) ones
+    filter(names %in% data_first_ten$names) %>% 
+    # Add the base test auc to the dataframe
+    bind_rows(data_base) %>% 
+    group_by(names)
+  # Keep the 5 OTU names as a list to use in the plot as factors
+  otus <- data_first_ten$names %>% 
+    droplevels() %>% 
+    as.character()
+  # Base auc at the top, then followed by the most changed OTU, followed by others ordered by median
+  data_full$names <- factor(data_full$names,levels = c(otus[5], otus[4], otus[3], otus[2], otus[1], "base_auc"))
+  # Plot boxplot
+  plot <- ggplot(data_full, aes(x=names, y=new_auc)) +
+    geom_boxplot(alpha=0.7, fill="#E69F00") +
+    geom_hline(yintercept = data_base_means$imp , linetype="dashed") +
     coord_flip() +
     theme_classic() +
     scale_y_continuous(name = " AUROC with the OTU permuted randomly", 
-                       limits = c(0,1), 
+                       limits = c(0.5,1), 
                        expand=c(0,0)) +
     theme(legend.position="none",
           axis.title = element_text(size=14),
@@ -261,12 +281,12 @@ base_nonlin_plot <-  function(data, name){
           panel.grid.minor = element_blank(),
           panel.background = element_blank(),
           axis.text.x=element_text(size = 12, colour='black'),
-          axis.text.y=element_text(size = 10, colour='black')) +
-    geom_errorbar(aes(ymin=mean_imp-sd_imp, ymax=mean_imp+sd_imp), width=.001)
+          axis.text.y=element_text(size = 10, colour='black')) 
   
   # Check if correlated OTUs make a difference in AUROC
+
   data_cor_results <- read.delim(paste0("data/process/", name, "_cor_importance.tsv"), header=T, sep='\t') %>%
-    filter(!mean_imp==data_base$mean_imp) 
+    filter(!imp==data_base_means$imp) 
   if(nrow(data_cor_results)==0) {
     print("Correlation dataframe empty. No need to plot correlated OTUs. Plot only non-correlated OTUs.")
   }else{
