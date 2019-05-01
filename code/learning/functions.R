@@ -41,8 +41,18 @@ get_model_name <- function(files){
   names <- sub(pat2, "", name_files)
   return(names)
 }
-
+# Summarise walltime 
 summarise_walltime <- function(files){
   summarized_walltimes <- summarise(files, mean_walltime = mean(files[,1]), sd_AUC = sd(files[,1])) 
   return(summarized_walltimes)
 }
+
+# Calculate unpaired two-samples Wilcoxon test to see if models differ from one another signigicantly
+wilcoxon_test <- function(data, model_name_1, model_name_2){
+  wilcox_result <- wilcox.test((data %>% filter(model==model_name_1))$test_aucs, (data %>% filter(model==model_name_2))$test_aucs)
+  return(wilcox_result)
+}
+
+
+
+
