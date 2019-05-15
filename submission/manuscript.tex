@@ -172,15 +172,15 @@ and how much model interpretibility is necessary for the study (11--14).
 The lack of transparency on modeling methodology and model selection
 negatively impact model reproducibility and reliability. We need to
 strive toward better machine learning practices by (1) implementing
-consistent and correct machine learning pipelines; (2) selecting ML
+consistent and reliable machine learning pipelines; (2) selecting ML
 models that reflect the goal of the study as it will inform our
 expectations of model accuracy, complexity, interpretibility and
 computational efficiency.
 
-To showcase reliable ML methodologies and to shed light on how much ML
-model selection can affect modeling results, we performed an empirical
+To showcase reliable ML pipeline and to shed light on how much ML model
+selection can affect modeling results, we performed an empirical
 analysis comparing several different ML models using the same dataset
-and a robust ML pipeline. We used a previously published colorectal
+and with a robust ML pipeline. We used a previously published colorectal
 cancer (CRC) study (3) which had fecal 16S rRNA gene sequences from 490
 patients. We built ML models using fecal 16S rRNA gene sequences to
 predict patients with normal colons or patients with colonic tumors
@@ -188,17 +188,16 @@ which are called screen relevant neoplasias (SRN). The study had 261
 normal and 229 SRN samples. We established modeling pipelines for
 L2-regularized logistic regression, L1 and L2 support vector machines
 (SVM) with linear and radial basis function kernels, a decision tree,
-random forest and XGBoost which are ML models that increase in
-complexity respectively. Our ML pipeline utilized held-out test data to
-evaluate generalization and prediction performance of each ML model. The
-mean test AUROC varied from 0.598 (std ± 0.044) to 0.697 (std ± 0.037).
-Random forest had the highest mean AUROC for detecting SRN. Despite the
-simplicity, the L2-regularized logistic regression followed random
-forest in performance. In terms of computational efficiency, L2 logistic
-regression trained the fastest (0.202 hours, std ± 0.019), while XGBoost
-took the longest (162.843 hours, std ± 10.018). We found that mean
-cross-validation and testing AUROC varied only 0.01, which highlights
-the importance of a seperate held-out test set and consistent
+random forest and XGBoost. Our ML pipeline utilized held-out test data
+to evaluate generalization and prediction performance of each ML model.
+The mean test AUROC varied from 0.598 (std ± 0.044) to 0.697 (std ±
+0.037). Random forest had the highest mean AUROC for detecting SRN.
+Despite the simplicity, the L2-regularized logistic regression followed
+random forest in performance. In terms of computational efficiency, L2
+logistic regression trained the fastest (0.202 hours, std ± 0.019),
+while XGBoost took the longest (162.843 hours, std ± 3.986). We found
+that mean cross-validation and testing AUROC varied only 0.01, which
+highlights the importance of a seperate held-out test set and consistent
 preprocessing of the data prior to evaluation. Aside from evaluating
 generalization and classification performances for each of these models,
 this study established standards for modeling pipelines of
@@ -209,174 +208,145 @@ microbiome-associated machine learning models.
 \textbf{Model selection and construction}
 
 The data has 6920 features (6920 OTUs) and a two-class label that
-defines the colonic health of the patients (SRN or normal). We
-established modeling pipelines for binary classification with
-L2-regularized logistic regression, L1 and L2 support vector machines
-(SVM) with linear and radial basis function kernels, a decision tree,
-random forest and XGBoost to emphasize the differences in model
-accuracy, complexity, interpretibility and computational efficiency due
-to model selection. We randomly split the data into stratified
-training/validation and test sets 100 times with a 80/20 proportion
-{[}Figure 1{]}. For each data-split, training/validation set consisted
-of 393 patients (209 SRN), while the test set was composed of 97
-patients (52 SRN). The training/validation data was used for training
-purposes and validation of hyperparameter selection, and the test set
-was used for evaluation purposes. Validation of hyperparameter selection
-was performed by randomly splitting the training/validation set into
-stratified training and validation sets 100 times with a 80/20
-proportion {[}Figure 1{]}. For L2-regularized logistic regression, L1
-and L2 support vector machines (SVM) with linear and radial basis
-function kernels we tuned the \textbf{cost} hyperparameter which
-determines the regularization strength where smaller values specify
-stronger regularization. For SVM with radial basis function kernel we
-also tuned \textbf{sigma} hyperparameter which determines the reach of a
-single training instance where for a high value of sigma, the SVM
-decision boundary will be dependent on the points that are closest to
-the decision boundary. For the decision tree model, we tuned the
-\textbf{depth of the tree} where deeper the tree, the more splits it
-has. For random forest, we tuned the \textbf{number of features} to
-consider when looking for the best tree split. For xgboost, we tuned for
-\textbf{learning rate} and the \textbf{fraction of samples} to be used
-for fitting the individual base learners. We validated the prediction
-performances of each hyperparameter setting (Figure S1{]}.
+defines the colonic health of the patients (SRN or normal). All the
+cases were independently labeled through colonoscopies. We established
+modeling pipelines for a binary prediction task with L2-regularized
+logistic regression, L1 and L2 support vector machines (SVM) with linear
+and radial basis function kernels, a decision tree, random forest and
+XGBoost to emphasize the differences in model accuracy, complexity,
+interpretibility and computational efficiency due to model selection. We
+randomly split the data into training/validation and test sets 100 times
+with a 80/20 proportion {[}Figure 1{]}. Since the colonic health is not
+uniformly represented in the data, data-splits are stratified to
+maintain the overall label distribution on the training set. For each
+data-split, training/validation set consisted of 393 patients (209 SRN),
+while the test set was composed of 97 patients (52 SRN). The
+training/validation data was used for training purposes and validation
+of hyperparameter selection, and the test set was used for evaluation
+purposes. Validation of hyperparameter selection was performed using 100
+randomizations of five-fold cross-validation on the training/validation
+set {[}Figure 1{]}. Similar to the initial data-split, five-fold
+cross-validation was also stratified to maintain the overall label
+distribution on the training and validation sets. We validated the
+cross-validation performances of each hyperparameter setting over the
+100 randomizations and selected the best performing hyper-parameter
+setting to train the full training/validation dataset {[}Figures S1 and
+S2{]}. We then used the held-out test set to evaluate the prediction
+performance of each ML model.
 
 \textbf{The prediction and generalization performance of classifiers
 during cross-validation and when applied to the held-out test data.}
 
 We evaluated the prediction performance of seven binary classification
-models when applied to held-out test data over 100 data-splits using
-AUROC as classification performance metric. Random Forest had the
-highest mean AUROC for detecting SRN, 0.697 (std ± 0.037) {[}Figure
-2{]}. L2 logistic regression and XGBoost had significantly lower AUROC
-values, 0.676 (std ± 0.042) and 0.678 (std ± 0.04) {[}Figure 2{]}.
-Random forest also had significanly higher performances than L2 linear
-SVM, RBF SVM and decision tree which had mean AUROC values of 0.671 (std
-± 0.045), 0.663 (std ± 0.044), and 0.598 (std ± 0.044), respectively
-{[}Figure 2{]}. We also evaluated the generalization performance of each
-classifier by comparing their mean cross-validation AUROC and mean
-testing AUROC. We found that mean cross-validation and testing AUROC
-difference for each model was below 0.01.
+models when applied to held-out test data over 100 data-splits using the
+area under the receiver operating characteristic curve (AUROC) as the
+discriminative performance metric. Random Forest had the highest mean
+AUROC for detecting SRN, 0.697 (std ± 0.037) {[}Figure 2{]}. L2 logistic
+regression and XGBoost had significantly lower AUROC values, 0.676 (std
+± 0.042) and 0.678 (std ± 0.04) {[}Figure 2{]}. Random forest also had
+significanly higher performances than L2 linear SVM, RBF SVM and
+decision tree which had mean AUROC values of 0.671 (std ± 0.045), 0.663
+(std ± 0.044), and 0.598 (std ± 0.044), respectively {[}Figure 2{]}. We
+also evaluated the generalization performance of each classifier by
+comparing their mean cross-validation AUROC and mean testing AUROC. We
+found that mean cross-validation and testing AUROC difference for each
+model was below 0.01.
 
 \textbf{The complexity and interpretibility of each classifier.}
 
 We interpreted the feature weights of L1 and L2 SVM with linear kernel
 and regression coefficients of L2 logistic regression using the training
-data. To get a sense of the most important features in linear models, we
-calculated the mean weights of all the features over the 100 data-splits
-for each model. {[}Figure 4{]}. In the three linear models, FIT was the
-feature that drove the detection of SRNs, followed by eight OTUs which
-belong to family \emph{Lachnospiraceae} and \emph{Ruminococcaceae} (four
-with positive signs; Otu01239, Otu00742, Otu00008, Otu00659, and four
-with negative signs; Otu00015, Otu000150, Otu00609, Otu00629). To get
-the importance of features in a decision tree, we used gini importance
-which allows us to use the improvement in the split-criterion is the
-importance measure attributed to the splitting variable
+data. We calculated the mean weights of all the features fromt the 100
+randomizations of five-fold cross-validation {[}Figure 3a{]}. In the
+three linear models, OTUs that drove the detection of SRNs belong to
+family \emph{Lachnospiraceae} and \emph{Ruminococcaceae} (OTUs x, y, z).
+To explain the importance of features in non-linear models, we used
+permutation importance on the held-out test data {[}Figure 3b{]}.
+Perfectly correlated OTUs were grouped and permuted together to get a
+better representation of their effect in the prediction performance of
+the model. Non-correlated OTUs were permuted individually.
 
 \textbf{The computational efficiency of each classifier.}
 
 Linear models trained faster than non-linear models. L2 logistic
 Rregression and L1 and L2 SVM with linear kernel had training times of
-13.2 min, (std ± 1.8), 563.4 min, (std ± 46.8) and 12.6 min, (std ± 1.8)
-respectively. Whereas, SVM with radial basis function kernel, decision
-tree, random forest and xgboost had training times of 101.32 hrs, (std ±
-10.02), 162.84 hrs, (std ± 3.99), 0.2 hrs, (std ± 0.02) and 64.71 hrs,
-(std ± 9.85), respectively {[}Figure 4{]}.
+0.2 hours, (std ± 0.02), 0.2 hours, (std ± 0.03), and 0.2 hours, (std ±
+0.03), respectively. Whereas, SVM with radial basis function kernel,
+decision tree, random forest and xgboost had training times of 9.4
+hours, (std ± 0.8), 64.7 hours, (std ± 9.9), 101.3 hours, (std ± 10) and
+162.8 hours, (std ± 4), respectively {[}Figure 4{]}.
 
 \subsection{Conclusions}\label{conclusions}
 
 \subsection{Materials and Methods}\label{materials-and-methods}
 
-The classification models were built to classify normal versus adenoma,
-normal versus carcinoma, and high versus low SCFA concentrations. The
-regression models were built to classify the SCFA concentrations of
-acetate, butyrate, and propionate regardless of disease status. The
-featThe bacterial abundances are the features used to predict colonic
-disease status. Bacterial abundances are discrete data in the form of
-Operational Taxonomic Unit (OTU) counts. There are 6920 OTUs for each
-sample. FIT levels are continuous data present for each sample. Because
-the data are in different scales, features are transformd by scaling
-each feature to a {[}0-1{]} range
+\paragraph{Data collection and study
+population}\label{data-collection-and-study-population}
 
-To evaluate the model performances, we randomly split the data into
-training/validation and test sets 100 times with a 80/20 proportion.
-Data-splits were stratified for diagnosis or SCFA concentration levels
-in classification models. For each data-split, training/validation set
-consisted of x patients (x carcinoma, y adenoma, z normal), while the
-test set was composed of x patients (x carcinoma, y adenoma, z normal).
-The training/validation data was used for training purposes and
-validation of hyperparameter selection, and the test set was used for
-evaluation purposes. Validation of hyperparameter selection was
-performed by randomly splitting the training/validation set into
-stratified training and validation sets 100 times with a 80/20
-proportion {[}Figure 1{]}.
-
-\paragraph{Data collection}\label{data-collection}
-
-The data used for this analysis are stool bacterial abundances, stool
-hemoglobin levels and clinical information of the patients recruited by
-Great Lakes-New England Early Detection Research Network study. These
-data were obtained from Sze et al (15). The stool samples were provided
-by recruited adult participants who were undergoing scheduled screening
-or surveillance colonoscopy. Colonoscopies were performed and fecal
-samples were collected from participants in four locations: Toronto (ON,
-Canada), Boston (MA, USA), Houston (TX, USA), and Ann Arbor (MI, USA).
-Patients' colonic disease status was defined by colonoscopy with
-adequate preparation and tissue histopathology of all resected lesions.
-Patients with an adenoma greater than 1 cm, more than three adenomas of
-any size, or an adenoma with villous histology were classified as
-advanced adenoma. Study had 172 patients with normal colonoscopies, 198
-with adenomas and 120 with carcinomas. Of the 198 adenomas, 109 were
+The data used for this analysis are stool bacterial abundances and
+clinical information of the patients recruited by Great Lakes-New
+England Early Detection Research Network study. These data were obtained
+from Sze et al (15). The stool samples were provided by recruited adult
+participants who were undergoing scheduled screening or surveillance
+colonoscopy. Colonoscopies were performed and fecal samples were
+collected from participants in four locations: Toronto (ON, Canada),
+Boston (MA, USA), Houston (TX, USA), and Ann Arbor (MI, USA). Patients'
+colonic disease status was defined by colonoscopy with adequate
+preparation and tissue histopathology of all resected lesions. Patients
+with an adenoma greater than 1 cm, more than three adenomas of any size,
+or an adenoma with villous histology were classified as advanced
+adenoma. Study had 172 patients with normal colonoscopies, 198 with
+adenomas and 120 with carcinomas. Of the 198 adenomas, 109 were
 identified as advanced adenomas. Stool provided by the patients was used
-for Fecal Immunological Tests (FIT) which measure human hemoglobin
-concentrations and for 16S rRNA gene sequencing to measure bacterial
-population abundances. The bacterial abundance data was generated by Sze
-et al, by processing 16S rRNA sequences in Mothur (v1.39.3) using the
-default quality filtering methods, identifying and removing chimeric
-sequences using VSEARCH and assigning to OTUs at 97\% similarity using
-the OptiClust algorithm (16--18).
+for 16S rRNA gene sequencing to measure bacterial population abundances.
+The bacterial abundance data was generated by Sze et al, by processing
+16S rRNA sequences in Mothur (v1.39.3) using the default quality
+filtering methods, identifying and removing chimeric sequences using
+VSEARCH and assigning to OTUs at 97\% similarity using the OptiClust
+algorithm (16--18).
 
 \paragraph{Data definitions and
 pre-processing}\label{data-definitions-and-pre-processing}
 
-The colonic disease status is re-defined as two encompassing classes;
-Normal or Screen Relevant Neoplasias (SRNs). Normal class includes
-patients with non-advanced adenomas or normal colons whereas SRN class
-includes patients with advanced adenomas or carcinomas. Colonic disease
-status is the label predicted with each classifier. The bacterial
-abundances and FIT results are the features used to predict colonic
-disease status. Bacterial abundances are discrete data in the form of
-Operational Taxonomic Unit (OTU) counts. There are 6920 OTUs for each
-sample. FIT levels are continuous data present for each sample. Because
-the data are in different scales, features are transformd by scaling
-each feature to a {[}0-1{]} range (Table 1).
+The colonic health of the patient was defined as two encompassing
+classes; Normal or Screen Relevant Neoplasias (SRNs). Normal class
+includes patients with non-advanced adenomas or normal colons whereas
+SRN class includes patients with advanced adenomas or carcinomas. The
+bacterial abundances are the features used to predict colonic health of
+the patients. Bacterial abundances are discrete data in the form of
+Operational Taxonomic Unit (OTU) counts. OTU counts were set to the size
+of our smallest sample and were subsampled at the same distances. They
+were then transformd by scaling to a {[}0-1{]} range.
 
-\paragraph{Learning the Classifier}\label{learning-the-classifier}
+\paragraph{Model training and
+evaluation}\label{model-training-and-evaluation}
 
-To train and validate our model, labeled data is randomly split 80/20
-into a training set and testing set. Then, seven binary class
-classifiers, L2 logistic regression, L1 and L2 linear suppor vector
-machines (SVM), radial basis function SVM, decision tree, random forest
-and XGBoost, are learned. The training set is used for training purposes
-and validation of hyperparameter selection, and the test set is used for
-evaluation purposes. Hyperparameters are selected using 5-fold
-cross-validation with 100-repeats on the training set. Since the colonic
-disease status are not uniformly represented in the data, 5-fold splits
-are stratified to maintain the overall label distribution on the
-training set.
+For L2-regularized logistic regression, L1 and L2 support vector
+machines (SVM) with linear and radial basis function kernels we tuned
+the \textbf{cost} hyperparameter which determines the regularization
+strength where smaller values specify stronger regularization. For SVM
+with radial basis function kernel we also tuned \textbf{sigma}
+hyperparameter which determines the reach of a single training instance
+where for a high value of sigma, the SVM decision boundary will be
+dependent on the points that are closest to the decision boundary. For
+the decision tree model, we tuned the \textbf{depth of the tree} where
+deeper the tree, the more splits it has. For random forest, we tuned the
+\textbf{number of features} to consider when looking for the best tree
+split. For xgboost, we tuned for \textbf{learning rate} and the
+\textbf{fraction of samples} to be used for fitting the individual base
+learners. Models were trained using the machine learning wrapper caret
+package (v.6.0.81) in R (v.3.5.0).
 
-\paragraph{Classifier Performance}\label{classifier-performance}
+\textbf{Statistical analysis workflow.} Data summaries, statistical
+analysis, and data visualizations were performed using R (v.3.5.0) with
+the tidyverse package (v.1.2.1). We compared the AUROC values of the
+seven ML models by Wilcoxon rank sum tests to determine the best
+discriminative performance.
 
-The classification performance of learned classifier is evaluated on the
-labeled held-out testing set. The optimal classifier with optimal
-hyperparameters selected in the cross-validation step is used to produce
-a prediction for the testing set. The performance of this prediction is
-measured in terms of the sensitivity and specificity, in addition to
-Area Under the Curve (AUC) metrics. This process of splitting the data,
-learning a classifier with cross-validation, and testing the classifier
-is repeated on 100 different splits. In the end cross-validation AUC and
-testing AUC averaged over the 100 different training/test splits are
-reported. Hyperparameter budget and performance for each split is also
-reported.
+\textbf{Code availability.} The code for all sequence curation and
+analysis steps including an Rmarkdown version of this manuscript is
+available at
+\url{https://github.com/SchlossLab/Topcuoglu_ML_XXXX_2019/}.
 
 \newpage
 

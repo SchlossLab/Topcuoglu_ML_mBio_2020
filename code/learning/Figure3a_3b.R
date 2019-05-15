@@ -255,19 +255,24 @@ base_nonlin_plot <-  function(data, name){
   data_full <- read_files(paste0("data/process/combined_all_imp_features_non_cor_results_", name, ".csv")) %>%
     # Only keep the OTUs and their AUCs for the ones that are in the top 5 changed (decreased the most) ones
     filter(names %in% data_first_ten$names) %>% 
-    # Add the base test auc to the dataframe
-    bind_rows(data_base) %>% 
     group_by(names)
   # Keep the 5 OTU names as a list to use in the plot as factors
   otus <- data_first_ten$names %>% 
     droplevels() %>% 
     as.character()
   # Base auc at the top, then followed by the most changed OTU, followed by others ordered by median
-  data_full$names <- factor(data_full$names,levels = c(otus[5], otus[4], otus[3], otus[2], otus[1], "base_auc"))
+  data_full$names <- factor(data_full$names,levels = c(otus[5], otus[4], otus[3], otus[2], otus[1]))
   # Plot boxplot
-  plot <- ggplot(data_full, aes(x=names, y=new_auc)) +
-    geom_boxplot(alpha=0.7, fill="#E69F00") +
+  lowerq = quantile(data_base$new_auc)[2]
+  upperq = quantile(data_base$new_auc)[4]
+
+  plot <- ggplot() +
+    geom_boxplot(data=data_full, aes(x=names, y=new_auc), fill="#E69F00") +
+    geom_rect(aes(ymin=lowerq, ymax=upperq, xmin=0, xmax=Inf), fill="grey") +
+    geom_boxplot(data=data_full, aes(x=names, y=new_auc), fill="#E69F00") +
     geom_hline(yintercept = data_base_means$imp , linetype="dashed") +
+    #geom_hline(yintercept = upperq, alpha=0.5) +
+    #geom_hline(yintercept = lowerq, alpha=0.5) +
     coord_flip() +
     theme_classic() +
     scale_y_continuous(name = " AUROC with the OTU permuted randomly", 
