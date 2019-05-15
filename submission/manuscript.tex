@@ -149,56 +149,57 @@ rRNA gene sequences have allowed rapid exploration of human associated
 microbiome and its health implications. Currently, the human microbiome
 field is growing at an unprecedented rate and as a result, there is an
 increasing demand for methods that identify associations between members
-of the microbiome and human health. However, this is an undertaking as
-human associated microbial communities are remarkably complex and
-uneven. It is unlikely that a single species can explain a disease.
-Instead, subsets of those communities, in relation to one another and to
-their host, account for the differences in health outcomes. Machine
-learning (ML) methods are effective at recognizing and highlighting
-patterns in complex microbial datasets. Therefore, researchers have
-started to explore the utility of ML models that use microbiota
-associated biomarkers to predict human health and to understand the
-microbial ecology of diseases such as liver cirrhosis, colorectal
-cancer, inflammatory bowel diseases (IBD), obesity, and type 2 diabetes
-(1--11). However, currently the field's use of ML lacks clarity and
-consistency on which methods are used and how these methods are
-implemented. Moreover, there is a lack of deliberation on why a
-particular ML model is utilized. Recently, there is a trend towards
-using more complex ML models such as random forest, extreme gradient
-boosting and neural networks without a discussion on if and how much
-model interpretibility is necessary for the study (11--14). The lack of
-transparency on modeling methodology and model selection negatively
-impact model reproducibility and reliability. We need to strive toward
-better machine learning practices by (1) implementing consistent,
-accessible and transparent machine learning methods; (2) selecting ML
+of the microbiome and human health. However, this is difficult as human
+associated microbial communities are remarkably complex and uneven. It
+is unlikely that a single species can explain a disease. Instead,
+subsets of those communities, in relation to one another and to their
+host, account for the differences in health outcomes. Machine learning
+(ML) methods are effective at recognizing and highlighting patterns in
+complex microbial datasets. Therefore, researchers have started to
+explore the utility of ML models that use microbiota associated
+biomarkers to predict human health and to understand the microbial
+ecology of diseases such as liver cirrhosis, colorectal cancer,
+inflammatory bowel diseases (IBD), obesity, and type 2 diabetes (1--11).
+However, currently the field's use of ML lacks clarity and consistency
+on which methods are used and how these methods are implemented. Most
+notably, there are misleading practices of using ``leaky'' ML pipelines
+where models are tested on training data or reporting the best outcome
+of different iterations of cross-validation. Moreover, there is a lack
+of discussion on why a particular ML model is utilized. Recently, there
+is a trend towards using more complex ML models such as random forest,
+extreme gradient boosting and neural networks without a discussion on if
+and how much model interpretibility is necessary for the study (11--14).
+The lack of transparency on modeling methodology and model selection
+negatively impact model reproducibility and reliability. We need to
+strive toward better machine learning practices by (1) implementing
+consistent and correct machine learning pipelines; (2) selecting ML
 models that reflect the goal of the study as it will inform our
 expectations of model accuracy, complexity, interpretibility and
 computational efficiency.
 
-To showcase transparent ML methodologies and to shed light on how much
-ML model selection can affect modeling results, we performed an
-empirical analysis comparing several different ML models using the same
-dataset. We used a previously published colorectal cancer (CRC) study
-(3) which had fecal 16S rRNA gene sequences and human hemoglobin
-concentrations from 490 patients. We built ML models using fecal 16S
-rRNA gene sequences and human hemoglobin concentrations to predict
-patients with normal colons or patients with colonic tumors which are
-called screen relevant neoplasias (SRN). The study had 261 normal and
-229 SRN samples. We established modeling pipelines for L2-regularized
-logistic regression, L1 and L2 support vector machines (SVM) with linear
-and radial basis function kernels, a decision tree, random forest and
-XGBoost which are ML models that increase in complexity respectively.
-Our ML pipeline utilized held-out test data to evaluate generalization
-and prediction performance of each ML model. The mean test AUROC varied
-from 0.73 (std ± 0.04) to 0.82 (std ± 0.03). Random Forest and XGBoost
-had the highest mean AUROC for detecting SRN. Despite the simplicity,
-the L1-regularized linear kernel SVM followed Random Forest and XGBoost
-in performance. In terms of computational efficiency, L2 logistic
-regression trained the fastest (0.001 hours, std ± 0.001), while XGBoost
-took the longest (0.231 hours, std ± 0). We found that mean
-cross-validation and testing AUROC varied only 0.007, which highlights
+To showcase reliable ML methodologies and to shed light on how much ML
+model selection can affect modeling results, we performed an empirical
+analysis comparing several different ML models using the same dataset
+and a robust ML pipeline. We used a previously published colorectal
+cancer (CRC) study (3) which had fecal 16S rRNA gene sequences from 490
+patients. We built ML models using fecal 16S rRNA gene sequences to
+predict patients with normal colons or patients with colonic tumors
+which are called screen relevant neoplasias (SRN). The study had 261
+normal and 229 SRN samples. We established modeling pipelines for
+L2-regularized logistic regression, L1 and L2 support vector machines
+(SVM) with linear and radial basis function kernels, a decision tree,
+random forest and XGBoost which are ML models that increase in
+complexity respectively. Our ML pipeline utilized held-out test data to
+evaluate generalization and prediction performance of each ML model. The
+mean test AUROC varied from 0.598 (std ± 0.044) to 0.697 (std ± 0.037).
+Random forest had the highest mean AUROC for detecting SRN. Despite the
+simplicity, the L2-regularized logistic regression followed random
+forest in performance. In terms of computational efficiency, L2 logistic
+regression trained the fastest (0.202 hours, std ± 0.019), while XGBoost
+took the longest (162.843 hours, std ± 10.018). We found that mean
+cross-validation and testing AUROC varied only 0.01, which highlights
 the importance of a seperate held-out test set and consistent
-preprocessing/splitting data for evaluation. Aside from evaluating
+preprocessing of the data prior to evaluation. Aside from evaluating
 generalization and classification performances for each of these models,
 this study established standards for modeling pipelines of
 microbiome-associated machine learning models.
@@ -207,8 +208,8 @@ microbiome-associated machine learning models.
 
 \textbf{Model selection and construction}
 
-The data has 6921 features (6920 OTUs and FIT) and a two-class label
-that defines the colonic health of the patients (SRN or normal). We
+The data has 6920 features (6920 OTUs) and a two-class label that
+defines the colonic health of the patients (SRN or normal). We
 established modeling pipelines for binary classification with
 L2-regularized logistic regression, L1 and L2 support vector machines
 (SVM) with linear and radial basis function kernels, a decision tree,
@@ -244,14 +245,13 @@ during cross-validation and when applied to the held-out test data.}
 
 We evaluated the prediction performance of seven binary classification
 models when applied to held-out test data over 100 data-splits using
-AUROC as classification performance metric. Random Forest and XGBoost
-had the highest mean AUROC for detecting SRN, 0.82 (std ± 0.033) and
-0.814 (std ± 0.04) respectively {[}Figure 2{]}. L1 linear SVM had
-significantly lower AUROC values, 0.76 (std ± 0.054) and 0.742 (std ±
-0.04) {[}Figure 2{]}. However, it also had significanly higher
-performances than L2 linear SVM, RBF SVM, L2 logistic regression and
-decision tree which had mean AUROC values of 0.74 (std ± 0.045), 0.73
-(std ± 0.041), 0.745 (std ± 0.039) and 0.742 (std ± 0.04), respectively
+AUROC as classification performance metric. Random Forest had the
+highest mean AUROC for detecting SRN, 0.697 (std ± 0.037) {[}Figure
+2{]}. L2 logistic regression and XGBoost had significantly lower AUROC
+values, 0.676 (std ± 0.042) and 0.678 (std ± 0.04) {[}Figure 2{]}.
+Random forest also had significanly higher performances than L2 linear
+SVM, RBF SVM and decision tree which had mean AUROC values of 0.671 (std
+± 0.045), 0.663 (std ± 0.044), and 0.598 (std ± 0.044), respectively
 {[}Figure 2{]}. We also evaluated the generalization performance of each
 classifier by comparing their mean cross-validation AUROC and mean
 testing AUROC. We found that mean cross-validation and testing AUROC
@@ -266,22 +266,49 @@ calculated the mean weights of all the features over the 100 data-splits
 for each model. {[}Figure 4{]}. In the three linear models, FIT was the
 feature that drove the detection of SRNs, followed by eight OTUs which
 belong to family \emph{Lachnospiraceae} and \emph{Ruminococcaceae} (four
-with positive signs; Otu01239, Otu00742, Otu00008 Otu00659, and four
+with positive signs; Otu01239, Otu00742, Otu00008, Otu00659, and four
 with negative signs; Otu00015, Otu000150, Otu00609, Otu00629). To get
-the importance of features in non-linear models, we
+the importance of features in a decision tree, we used gini importance
+which allows us to use the improvement in the split-criterion is the
+importance measure attributed to the splitting variable
 
 \textbf{The computational efficiency of each classifier.}
 
 Linear models trained faster than non-linear models. L2 logistic
-Rregression and L1 and L2 SVM with linear kernel had training times of 0
-min, (std ± 0), 13.8 min, (std ± 1.2) and 0 min, (std ± 0) respectively.
-Whereas, SVM with radial basis function kernel, decision tree, random
-forest and xgboost had training times of 0 hrs, (std ± 0), 0 hrs, (std ±
-0), 0 hrs, (std ± 0) and 0 hrs, (std ± 0), respectively {[}Figure 4{]}.
+Rregression and L1 and L2 SVM with linear kernel had training times of
+13.2 min, (std ± 1.8), 563.4 min, (std ± 46.8) and 12.6 min, (std ± 1.8)
+respectively. Whereas, SVM with radial basis function kernel, decision
+tree, random forest and xgboost had training times of 101.32 hrs, (std ±
+10.02), 162.84 hrs, (std ± 3.99), 0.2 hrs, (std ± 0.02) and 64.71 hrs,
+(std ± 9.85), respectively {[}Figure 4{]}.
 
 \subsection{Conclusions}\label{conclusions}
 
 \subsection{Materials and Methods}\label{materials-and-methods}
+
+The classification models were built to classify normal versus adenoma,
+normal versus carcinoma, and high versus low SCFA concentrations. The
+regression models were built to classify the SCFA concentrations of
+acetate, butyrate, and propionate regardless of disease status. The
+featThe bacterial abundances are the features used to predict colonic
+disease status. Bacterial abundances are discrete data in the form of
+Operational Taxonomic Unit (OTU) counts. There are 6920 OTUs for each
+sample. FIT levels are continuous data present for each sample. Because
+the data are in different scales, features are transformd by scaling
+each feature to a {[}0-1{]} range
+
+To evaluate the model performances, we randomly split the data into
+training/validation and test sets 100 times with a 80/20 proportion.
+Data-splits were stratified for diagnosis or SCFA concentration levels
+in classification models. For each data-split, training/validation set
+consisted of x patients (x carcinoma, y adenoma, z normal), while the
+test set was composed of x patients (x carcinoma, y adenoma, z normal).
+The training/validation data was used for training purposes and
+validation of hyperparameter selection, and the test set was used for
+evaluation purposes. Validation of hyperparameter selection was
+performed by randomly splitting the training/validation set into
+stratified training and validation sets 100 times with a 80/20
+proportion {[}Figure 1{]}.
 
 \paragraph{Data collection}\label{data-collection}
 
