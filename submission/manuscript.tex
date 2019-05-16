@@ -210,57 +210,57 @@ microbiome-associated machine learning models.
 
 \textbf{Model selection and pipeline construction}
 
-We used a cohort of 490 patients with 261 cases of SRN. For each patient
-fecal sample, we had 6920 features (6920 OTUs) and a two-class label
-that defines the colonic health of the patients (SRN or normal). All the
-cases were independently labeled through colonoscopies. We established
-modeling pipelines for a binary prediction task with L2-regularized
-logistic regression, L1 and L2 support vector machines (SVM) with linear
-and radial basis function kernels, a decision tree, random forest and
-XGBoost to emphasize the differences in model accuracy, complexity,
-interpretibility and computational efficiency due to model selection. We
-randomly split the data into training/validation and test sets so that
-the training/validation set consisted of 80\% of the full dataset while
-the test set was composed of the remaining data {[}Figure 1{]}. Since
-the cases are not uniformly represented in the data, the initial
-data-split was stratified to maintain the overall label distribution on
-the training set. Training/validation set consisted of 393 patients (209
-SRN), while the test set was composed of 97 patients (52 SRN). The
-training/validation data was used for training purposes and validation
-of hyperparameter selection, and the test set was used for evaluation
-purposes. Validation of hyperparameter selection was performed using 100
-randomizations of five-fold cross-validation on the training/validation
-set {[}Figure 1{]}. Similar to the initial data-split, five-fold
-cross-validation was also stratified to maintain the overall label
-distribution on the training and validation sets. We validated the
-cross-validation performances of each hyperparameter setting over the
-100 randomizations and selected the best performing hyper-parameter
-setting to train the full training/validation dataset {[}Figures S1 and
-S2{]}. We then used the held-out test set to evaluate the prediction
-performance of each ML model. The data-split, hyperparameter selection,
-training and testing steps were repeated 100 times to get a reliable and
-robust reading of model prediction performance {[}Figure 1{]}.
+We used a cohort of 490 patients with 261 cases of SRN. For each
+patient, we had 6920 features (fecal bacterial abundances) and a
+two-class label that defines their colonic health (SRN or normal). All
+the cases were independently labeled through colonoscopies. We
+established modeling pipelines for a binary prediction task with
+L2-regularized logistic regression, L1 and L2 support vector machines
+(SVM) with linear and radial basis function kernels, a decision tree,
+random forest and XGBoost to emphasize the differences in model
+accuracy, complexity, interpretibility and computational efficiency due
+to model selection. We randomly split the data into training/validation
+and test sets so that the training/validation set consisted of 80\% of
+the full dataset while the test set was composed of the remaining data
+{[}Figure 1{]}. Since the cases are not uniformly represented in the
+data, the initial data-split was stratified to maintain the overall
+label distribution on both the training/validation and test sets.
+Training/validation set consisted of 393 patients (209 SRN), while the
+test set was composed of 97 patients (52 SRN). The training/validation
+data was used for training purposes and validation of hyperparameter
+selection, and the test set was used for evaluation purposes. Validation
+of hyperparameter selection was performed using 100 randomizations of
+five-fold cross-validation on the training/validation set {[}Figure
+1{]}. Similar to the initial data-split, five-fold cross-validation was
+also stratified to maintain the overall label distribution on the
+training and validation sets. We validated the cross-validation
+performances of each hyperparameter setting over the 100 randomizations
+and selected the best performing hyper-parameter setting to train the
+full training/validation dataset {[}Figures S1 and S2{]}. We then used
+the held-out test set to evaluate the prediction performance of each ML
+model. The data-split, hyperparameter selection, training and testing
+steps were repeated 100 times to get a reliable and robust reading of
+model prediction performance {[}Figure 1{]}.
 
-\textbf{The prediction and generalization performance of classifiers
+\textbf{The prediction and generalization performance of seven ML models
 during cross-validation and when applied to the held-out test data.}
 
 We evaluated the prediction performance of seven binary classification
 models when applied to held-out test data over 100 data-splits using the
 area under the receiver operating characteristic curve (AUROC) as the
-discriminative performance metric. Random Forest had the highest mean
-AUROC for detecting SRN, 0.697 (std ± 0.037) {[}Figure 2{]}. L2 logistic
-regression and XGBoost followed random forest however they had
-significantly lower AUROC values, 0.676 (std ± 0.042) and 0.678 (std ±
-0.04) {[}Figure 2{]}. Random forest also had significanly higher
-performances than L2 linear SVM, RBF SVM and decision tree which had
-mean AUROC values of 0.671 (std ± 0.045), 0.663 (std ± 0.044), and 0.598
-(std ± 0.044), respectively {[}Figure 2{]}. We also evaluated the
-generalization performance of each classifier by comparing their mean
-cross-validation AUROC and mean testing AUROC. We found that mean
-cross-validation and testing AUROC difference for each model was below
-0.01.
+discriminative performance metric. Random forest had the highest mean
+AUROC for detecting SRN, 0.697 (std ± 0.037) followed by L2 logistic
+regression and XGBoost with mean AUROC values of 0.676 (std ± 0.042) and
+0.678 (std ± 0.04) respectively {[}Figure 2{]}. Random forest had
+significanly higher predictive performances than those as well as L2
+linear SVM, RBF SVM and decision tree which had mean AUROC values of
+0.671 (std ± 0.045), 0.663 (std ± 0.044), and 0.598 (std ± 0.044),
+respectively {[}Figure 2{]}. We also evaluated the generalization
+performance of each ML model by comparing their mean cross-validation
+AUROC and mean testing AUROC. We found that mean cross-validation and
+testing AUROC difference for each model was below 0.01.
 
-\textbf{The complexity and interpretibility of each classifier.}
+\textbf{The complexity and interpretibility of each ML model.}
 
 The ML models we built using L2-regularized logistic regression, L1 and
 L2 support vector machines (SVM) with linear and radial basis function
@@ -286,7 +286,7 @@ model was followed by a \emph{Lachnospiraceae} species (OTU00058) (0.6
 base testing AUROC median to 0.58) {[}Figure 4B{]}. Other OTUs had none
 to minimal effect on the predictive performance.
 
-\textbf{The computational efficiency of each classifier.}
+\textbf{The computational efficiency of each ML model.}
 
 Linear models trained faster than non-linear models. L2 logistic
 Rregression and L1 and L2 SVM with linear kernel had training times of
@@ -405,7 +405,7 @@ Unit. \newpage
 non-linear ML models.} (A) SVM with radial basis kernel (B) decision
 tree (C) random forest (D) XGboost feaure importances were explanied
 using permutation importance using held-out test set. For all the
-tree-based models, a \textbf{Peptostreptococcus} species (OTU00367) had
+tree-based models, a \emph{Peptostreptococcus} species (OTU00367) had
 the largest impact on predictive performance of the model.
 Abbreviations: SVM, support vector machine; OTU, Operational Taxonomic
 Unit; RBF, radial basis kernel; OTU, Operational Taxonomic Unit.
