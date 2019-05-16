@@ -120,8 +120,8 @@ Running title: Machine learning methods in microbiome studies
 
 \vspace{35mm}
 
-Begüm D. Topçuoğlu\({^1}\), Jenna Wiens\({^2}\), Patrick D.
-Schloss\textsuperscript{1\(\dagger\)}
+Begüm D. Topçuoğlu\({^1}\), Mack Ruffin\({^2}\), Jenna Wiens\({^3}\),
+Patrick D. Schloss\textsuperscript{1\(\dagger\)}
 
 \vspace{40mm}
 
@@ -131,7 +131,10 @@ Schloss\textsuperscript{1\(\dagger\)}
 1. Department of Microbiology and Immunology, University of Michigan,
 Ann Arbor, MI 48109
 
-2. Department of Computer Science and Engineering, University or
+2. Department of Family Medicine and Community Medicine, Penn State
+Hershey Medical Center, Hershey, PA
+
+3. Department of Computer Science and Engineering, University or
 Michigan, Ann Arbor, MI 49109
 
 \newpage
@@ -205,22 +208,24 @@ microbiome-associated machine learning models.
 
 \subsection{Results}\label{results}
 
-\textbf{Model selection and construction}
+\textbf{Model selection and pipeline construction}
 
-The data has 6920 features (6920 OTUs) and a two-class label that
-defines the colonic health of the patients (SRN or normal). All the
+We used a cohort of 490 patients with 261 cases of SRN. For each patient
+fecal sample, we had 6920 features (6920 OTUs) and a two-class label
+that defines the colonic health of the patients (SRN or normal). All the
 cases were independently labeled through colonoscopies. We established
 modeling pipelines for a binary prediction task with L2-regularized
 logistic regression, L1 and L2 support vector machines (SVM) with linear
 and radial basis function kernels, a decision tree, random forest and
 XGBoost to emphasize the differences in model accuracy, complexity,
 interpretibility and computational efficiency due to model selection. We
-randomly split the data into training/validation and test sets 100 times
-with a 80/20 proportion {[}Figure 1{]}. Since the colonic health is not
-uniformly represented in the data, data-splits are stratified to
-maintain the overall label distribution on the training set. For each
-data-split, training/validation set consisted of 393 patients (209 SRN),
-while the test set was composed of 97 patients (52 SRN). The
+randomly split the data into training/validation and test sets so that
+the training/validation set consisted of 80\% of the full dataset while
+the test set was composed of the remaining data {[}Figure 1{]}. Since
+the cases are not uniformly represented in the data, the initial
+data-split was stratified to maintain the overall label distribution on
+the training set. Training/validation set consisted of 393 patients (209
+SRN), while the test set was composed of 97 patients (52 SRN). The
 training/validation data was used for training purposes and validation
 of hyperparameter selection, and the test set was used for evaluation
 purposes. Validation of hyperparameter selection was performed using 100
@@ -232,7 +237,9 @@ cross-validation performances of each hyperparameter setting over the
 100 randomizations and selected the best performing hyper-parameter
 setting to train the full training/validation dataset {[}Figures S1 and
 S2{]}. We then used the held-out test set to evaluate the prediction
-performance of each ML model.
+performance of each ML model. The data-split, hyperparameter selection,
+training and testing steps were repeated 100 times to get a reliable and
+robust reading of model prediction performance {[}Figure 1{]}.
 
 \textbf{The prediction and generalization performance of classifiers
 during cross-validation and when applied to the held-out test data.}
@@ -242,29 +249,42 @@ models when applied to held-out test data over 100 data-splits using the
 area under the receiver operating characteristic curve (AUROC) as the
 discriminative performance metric. Random Forest had the highest mean
 AUROC for detecting SRN, 0.697 (std ± 0.037) {[}Figure 2{]}. L2 logistic
-regression and XGBoost had significantly lower AUROC values, 0.676 (std
-± 0.042) and 0.678 (std ± 0.04) {[}Figure 2{]}. Random forest also had
-significanly higher performances than L2 linear SVM, RBF SVM and
-decision tree which had mean AUROC values of 0.671 (std ± 0.045), 0.663
-(std ± 0.044), and 0.598 (std ± 0.044), respectively {[}Figure 2{]}. We
-also evaluated the generalization performance of each classifier by
-comparing their mean cross-validation AUROC and mean testing AUROC. We
-found that mean cross-validation and testing AUROC difference for each
-model was below 0.01.
+regression and XGBoost followed random forest however they had
+significantly lower AUROC values, 0.676 (std ± 0.042) and 0.678 (std ±
+0.04) {[}Figure 2{]}. Random forest also had significanly higher
+performances than L2 linear SVM, RBF SVM and decision tree which had
+mean AUROC values of 0.671 (std ± 0.045), 0.663 (std ± 0.044), and 0.598
+(std ± 0.044), respectively {[}Figure 2{]}. We also evaluated the
+generalization performance of each classifier by comparing their mean
+cross-validation AUROC and mean testing AUROC. We found that mean
+cross-validation and testing AUROC difference for each model was below
+0.01.
 
 \textbf{The complexity and interpretibility of each classifier.}
 
-We interpreted the feature weights of L1 and L2 SVM with linear kernel
-and regression coefficients of L2 logistic regression using the training
-data. We calculated the mean weights of all the features fromt the 100
-randomizations of five-fold cross-validation {[}Figure 3a{]}. In the
-three linear models, OTUs that drove the detection of SRNs belong to
-family \emph{Lachnospiraceae} and \emph{Ruminococcaceae} (OTUs x, y, z).
-To explain the importance of features in non-linear models, we used
-permutation importance on the held-out test data {[}Figure 3b{]}.
-Perfectly correlated OTUs were grouped and permuted together to get a
-better representation of their effect in the prediction performance of
-the model. Non-correlated OTUs were permuted individually.
+The ML models we built using L2-regularized logistic regression, L1 and
+L2 support vector machines (SVM) with linear and radial basis function
+kernels, a decision tree, random forest and XGBoost increase in
+complexity as they decrase in interpretibility, respectively. We
+interpreted L1 and L2 SVM with linear kernel using the feature weights
+and L2 logistic regression using regression coefficients of the trained
+models. We calculated the mean weights and coefficients of all the
+features over the 100 data-splits. In the three linear models, OTUs that
+had the largest mean weights and drove the detection of SRNs belong to
+family \emph{Lachnospiraceae}, and \emph{Ruminococcaceae} (OTU01239,
+OTU00659, OTU00742, OTU00012, OTU00050, OTU00015, OTU00768, OTU00822,
+OTU00609, OTU01212, OTU00629) and genera \emph{Gamella} (OTU00426)
+{[}Figure 3{]}. We explained the feature importances in non-linear
+models using permutation importance on the held-out test data. For the
+tree-based models, permuting \emph{Peptostreptococcus} (OTU00367)
+abundances randomly, dropped the predictive performances the most.
+Decision tree, random forest and XGBoost models' predictive performance
+dropped from 0.6 base testing AUROC median to 0.52, from 0.69 to 0.68
+and from 0.68 to 0.65, respectively {[}Figure 4{]}. The negative
+predictive impact of \emph{Peptostreptococcus} in the decision tree
+model was followed by a \emph{Lachnospiraceae} species (OTU00058) (0.6
+base testing AUROC median to 0.58) {[}Figure 4B{]}. Other OTUs had none
+to minimal effect on the predictive performance.
 
 \textbf{The computational efficiency of each classifier.}
 
@@ -276,7 +296,7 @@ decision tree, random forest and xgboost had training times of 9.4
 hours, (std ± 0.8), 64.7 hours, (std ± 9.9), 101.3 hours, (std ± 10) and
 162.8 hours, (std ± 4), respectively {[}Figure 4{]}.
 
-\subsection{Conclusions}\label{conclusions}
+\subsection{Discussion}\label{discussion}
 
 \subsection{Materials and Methods}\label{materials-and-methods}
 
@@ -350,13 +370,57 @@ available at
 
 \newpage
 
-\textbf{Figure 1. Generalization and classification performance of
-modeling methods } AUC values of all cross validation and testing
-performances. The boxplot shows quartiles at the box ends and the
+\includegraphics{Figure_1} \textbf{Figure 1. Machine learning pipeline
+showing predictive model training and evaluation flowchart. } We split
+the data 80\%/20\% stratified to maintain the overall label
+distribution, performed five-fold cross-validation on the training data
+to select the best hyperparameter setting and then using these
+hyperparameters to train all of the training data. The model was
+evaluated on a held-out set of data (not used in selecting the model).
+Abbreviations: AUROC, area under the receiver operating characteristic
+curve \newpage
+\includegraphics{Figure_2.png} \textbf{Figure 2. Generalization and
+classification performance of ML models using AUROC values of all cross
+validation and testing performances. } The median AUROC for diagnosing
+individuals with SRN using bacterial abundances was higher than chance
+(depicted by horizontal line at 0.50) for all the ML models.
+Discriminative performance of random forest model was higher than other
+ML models. The boxplot shows quartiles at the box ends and the
 statistical median as the horizontal line in the box. The whiskers show
 the farthest points that are not outliers. Outliers are data points that
-are not within 3/2 times the interquartile ranges.
-
+are not within 3/2 times the interquartile ranges. Abbreviations: SRN,
+screen-relevant neoplasias; AUROC, area under the receiver operating
+characteristic curve; SVM, support vector machine; XGBoost, extreme
+gradient boosting \newpage
+\includegraphics{Figure_3.png} \textbf{Figure 3. Interpretation of the
+linear ML models.} (A) L2 logistic regression coefficients (B) L1 SVM
+with linear kernel feature weights (C) L2 SVM with linear kernel feature
+weights. The means weights and coefficients of the most important five
+OTUs for each model are shown here with the standard deviation over 100
+data-splits. Similar OTUs had the largest impact on the predictive
+performance of L2 logistic regression and L2 SVM with linear kernel.
+Abbreviations: SVM, support vector machine; OTU, Operational Taxonomic
+Unit. \newpage
+\includegraphics{Figure_4.png} \textbf{Figure 4. Explanation of the
+non-linear ML models.} (A) SVM with radial basis kernel (B) decision
+tree (C) random forest (D) XGboost feaure importances were explanied
+using permutation importance using held-out test set. For all the
+tree-based models, a \textbf{Peptostreptococcus} species (OTU00367) had
+the largest impact on predictive performance of the model.
+Abbreviations: SVM, support vector machine; OTU, Operational Taxonomic
+Unit; RBF, radial basis kernel; OTU, Operational Taxonomic Unit.
+\newpage
+\includegraphics{Figure_5.png} \textbf{Figure 5. Computational
+efficiency of seven ML models.} The walltimes for training and testing
+of each data-split showed the differences in computational efficieny of
+the seven models. The median walltime in hours was the highest for
+XGBoost and shortest for L2 logistic regression. The boxplot shows
+quartiles at the box ends and the statistical median as the horizontal
+line in the box. The whiskers show the farthest points that are not
+outliers. Outliers are data points that are not within 3/2 times the
+interquartile ranges. Abbreviations: AUROC, area under the receiver
+operating characteristic curve; SVM, support vector machine; XGBoost,
+extreme gradient boosting.\\
 \newpage
 
 \subsection{References}\label{references}

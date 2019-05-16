@@ -66,88 +66,23 @@ source("../code/learning/functions.R")
 source("../code/learning/load_data.R")
 
 ######################################################################
-#--------- Load .csv data to get mean test AUC for 7 models--------#
+#----------------- Load feature importance data -----------------#
+# Median of base testing AUC for each model
+# 100 datasplit permutation importances new testing AUC for top 5 features
 ######################################################################
 
-# Read in the cvAUCs, testAUCs for 100 splits.
-best_files <- list.files(path= '../data/process', pattern='combined_best.*', full.names = TRUE)
-all <- map_df(best_files, read_files) 
-
-# Get the The unpaired two-samples Wilcoxon test to see if models differ from one another signigicantly
-
-rf_xgboost <- wilcoxon_test(all, "Random_Forest", "XGBoost")
-rf_logit <- wilcoxon_test(all, "Random_Forest", "L2_Logistic_Regression")
-rf_L2svm <- wilcoxon_test(all, "Random_Forest", "L2_Linear_SVM")
-xgboost_L2svm <- wilcoxon_test(all, "XGBoost", "L2_Linear_SVM")
-logit_L2svm <- wilcoxon_test(all, "L2_Logistic_Regression", "L2_Linear_SVM")
-
-# Bind them together and summarise mean testAUC by model
-test_all <- all %>%
-  melt_data() %>% 
-  select(-variable) %>% 
-  group_by(model, Performance) %>% 
-  summarise(mean_AUC = mean(AUC), sd_AUC = sd(AUC)) %>% 
-  filter(Performance=="testing") 
-
-# Get the order index from small to large meanAUC
-performance_index <- order(test_all$mean_AUC)
-
-# Bind them together and summarise mean cvAUC by model
-cv_all <- all %>%
-  melt_data() %>% 
-  select(-variable) %>% 
-  group_by(model, Performance) %>% 
-  summarise(mean_AUC = mean(AUC), sd_AUC = sd(AUC)) %>% 
-  filter(Performance=="cross-validation") 
-
-# Get the difference between mean cvAUC and testAUC for each model
-difference <- cv_all$mean_AUC - test_all$mean_AUC[match(cv_all$model, test_all$model)]
-difference_model <- data.frame(difference, test_all$model)
-# Get the order index from small to large of the differences
-difference_index <- order(abs(difference_model$difference))
+source("../code/learning/load_imp_data.R")
 
 ######################################################################
-#---------- Load .csv datato get mean walltime for 7 models-------#
+#-------------------------- Load walltime data -----------------#
 ######################################################################
+source("../code/learning/load_walltime.R")
 
-# Read in the walltime for each split.
-walltime_files <- list.files(path= '../data/process', pattern='walltime*', full.names = TRUE) 
-
-# ------- 1. In a loop read the files as delim
-# --------2. get the model name for each with get_model_name() 
-#---------3. Add a column with model name to each delim
-result <- list()
-
-for(file in walltime_files){
-  model_walltime <- read_files(file) %>%  
-  #summarise_walltime() %>% 
-  mutate(model=get_model_name(file))
-  result[[length(result)+1]] <- model_walltime
-}
-
-
-# ------- 1. If models are L1 or L2 Linear SVM or L2 Logit then the walltime is in minutes
-# --------2. If models are Random Forest or XGBoost then the walltime is in days
-#---------3. If other models, the walltime is in hours.
-#---------4. This loop converts all to hours.
-min_fixed_result <- list() 
-
-for(i in result){
-  i$x <- i$x/3600 # The walltimes were saved as seconds we covert to hours
-  min_fixed_result[[length(min_fixed_result)+1]] <- i
-}
-# Bind all delims with model name and walltime together
-# Summarise mean walltime
-walltime_df <- bind_rows(min_fixed_result) %>% 
-  group_by(model) %>% 
-  summarise(mean_walltime=mean(x), sd_walltime=sd(x))
-
-# Get the sorted mean walltime for each model small to large
-walltime_index <- order(walltime_df$mean_walltime) 
-  
-
+######################################################################
+#---------------------- Load AUROC performance data -----------------#
+######################################################################
+source("../code/learning/load_AUROC_data.R")
 ```
-
 \vspace{35mm}
 
 Running title: Machine learning methods in microbiome studies
@@ -155,7 +90,7 @@ Running title: Machine learning methods in microbiome studies
 \vspace{35mm}
 
 
-Begüm D. Topçuoğlu${^1}$, Jenna Wiens${^2}$, Patrick D. Schloss^1$\dagger$^
+Begüm D. Topçuoğlu${^1}$, Mack Ruffin${^2}$, Jenna Wiens${^3}$, Patrick D. Schloss^1$\dagger$^
 
 \vspace{40mm}
 
@@ -163,7 +98,9 @@ $\dagger$ To whom correspondence should be addressed: pschloss@umich.edu
 
 1\. Department of Microbiology and Immunology, University of Michigan, Ann Arbor, MI 48109
 
-2\. Department of Computer Science and Engineering, University or Michigan, Ann Arbor, MI 49109
+2\. Department of Family Medicine and Community Medicine, Penn State Hershey Medical Center, Hershey, PA
+
+3\. Department of Computer Science and Engineering, University or Michigan, Ann Arbor, MI 49109
 
 
 \newpage
@@ -183,29 +120,24 @@ To showcase reliable ML pipeline and to shed light on how much ML model selectio
 
 ## Results 
 
-__Model selection and construction__
+__Model selection and pipeline construction__
 
-The data has `r paste(ncol(data)-1)` features (`r paste(ncol(data)-1)` OTUs) and a two-class label that defines the colonic health of the patients (SRN or normal). All the cases were independently labeled through colonoscopies. We established modeling pipelines for a binary prediction task with L2-regularized logistic regression, L1 and L2 support vector machines (SVM) with linear and radial basis function kernels, a decision tree, random forest and XGBoost to emphasize the differences in  model accuracy, complexity, interpretibility and computational efficiency due to  model selection. We randomly split the data into training/validation and test sets 100 times with a 80/20 proportion [Figure 1]. Since the colonic health is not uniformly represented in the data, data-splits are stratified to maintain the overall label distribution on the training set. For each data-split, training/validation set consisted of 393 patients (209 SRN), while the test set was composed of 97 patients (52 SRN). The training/validation data was used for training purposes and validation of hyperparameter selection, and the test set was used for evaluation purposes. Validation of hyperparameter selection was performed using 100 randomizations of five-fold cross-validation on the training/validation set [Figure 1]. Similar to the initial data-split, five-fold cross-validation was also stratified to maintain the overall label distribution on the training and validation sets. We validated the cross-validation performances of each hyperparameter setting over the 100 randomizations and selected the best performing hyper-parameter setting to train the full training/validation dataset [Figures S1 and S2]. We then used the held-out test set to evaluate the prediction performance of each ML model. 
+We used a cohort of 490 patients with 261 cases of SRN. For each patient fecal sample, we had `r paste(ncol(data)-1)` features (`r paste(ncol(data)-1)` OTUs) and a two-class label that defines the colonic health of the patients (SRN or normal). All the cases were independently labeled through colonoscopies. We established modeling pipelines for a binary prediction task with L2-regularized logistic regression, L1 and L2 support vector machines (SVM) with linear and radial basis function kernels, a decision tree, random forest and XGBoost to emphasize the differences in  model accuracy, complexity, interpretibility and computational efficiency due to  model selection. We randomly split the data into training/validation and test sets so that the training/validation set consisted of 80% of the full dataset while the test set was composed of the remaining data [Figure 1]. Since the cases are not uniformly represented in the data, the initial data-split was stratified to maintain the overall label distribution on the training set. Training/validation set consisted of 393 patients (209 SRN), while the test set was composed of 97 patients (52 SRN). The training/validation data was used for training purposes and validation of hyperparameter selection, and the test set was used for evaluation purposes. Validation of hyperparameter selection was performed using 100 randomizations of five-fold cross-validation on the training/validation set [Figure 1]. Similar to the initial data-split, five-fold cross-validation was also stratified to maintain the overall label distribution on the training and validation sets. We validated the cross-validation performances of each hyperparameter setting over the 100 randomizations and selected the best performing hyper-parameter setting to train the full training/validation dataset [Figures S1 and S2]. We then used the held-out test set to evaluate the prediction performance of each ML model. The data-split, hyperparameter selection, training and testing steps were repeated 100 times to get a reliable and robust reading of model prediction performance [Figure 1].
 
 __The prediction and generalization performance of classifiers during cross-validation and when applied to the held-out test data.__
 
-We evaluated the prediction performance of seven binary classification models when applied to held-out test data over 100 data-splits using the area under the receiver operating characteristic curve (AUROC) as the discriminative performance metric. Random Forest had the highest mean AUROC for detecting SRN, `r paste(round(mean((all %>% filter(model=="Random_Forest"))$test_aucs), 3))` (std ± `r paste(round(sd((all %>% filter(model=="Random_Forest"))$test_aucs), 3))`) [Figure 2]. L2 logistic regression and XGBoost had significantly lower AUROC values, `r paste(round(mean((all %>% filter(model=="L2_Logistic_Regression"))$test_aucs), 3))` (std ± `r paste(round(sd((all %>% filter(model=="L2_Logistic_Regression"))$test_aucs), 3))`) and `r paste(round(mean((all %>% filter(model=="XGBoost"))$test_aucs), 3))` (std ± `r paste(round(sd((all %>% filter(model=="XGBoost"))$test_aucs), 3))`) [Figure 2]. Random forest also had significanly higher performances than L2 linear SVM, RBF SVM and decision tree which had mean AUROC values of `r paste(round(mean((all %>% filter(model=="L2_Linear_SVM"))$test_aucs), 3))` (std ± `r paste(round(sd((all %>% filter(model=="L2_Linear_SVM"))$test_aucs), 3))`),  `r paste(round(mean((all %>% filter(model=="RBF_SVM"))$test_aucs), 3))` (std ± `r paste(round(sd((all %>% filter(model=="RBF_SVM"))$test_aucs), 3))`), and `r paste(round(mean((all %>% filter(model=="Decision_Tree"))$test_aucs), 3))` (std ± `r paste(round(sd((all %>% filter(model=="Decision_Tree"))$test_aucs), 3))`), respectively [Figure 2]. We also evaluated the generalization performance of each classifier by comparing their mean cross-validation AUROC and mean testing AUROC. We found that mean cross-validation and testing AUROC difference for each model was below 0.01. 
+We evaluated the prediction performance of seven binary classification models when applied to held-out test data over 100 data-splits using the area under the receiver operating characteristic curve (AUROC) as the discriminative performance metric. Random Forest had the highest mean AUROC for detecting SRN, `r paste(round(mean((all %>% filter(model=="Random_Forest"))$test_aucs), 3))` (std ± `r paste(round(sd((all %>% filter(model=="Random_Forest"))$test_aucs), 3))`) [Figure 2]. L2 logistic regression and XGBoost followed random forest however they had significantly lower AUROC values, `r paste(round(mean((all %>% filter(model=="L2_Logistic_Regression"))$test_aucs), 3))` (std ± `r paste(round(sd((all %>% filter(model=="L2_Logistic_Regression"))$test_aucs), 3))`) and `r paste(round(mean((all %>% filter(model=="XGBoost"))$test_aucs), 3))` (std ± `r paste(round(sd((all %>% filter(model=="XGBoost"))$test_aucs), 3))`) [Figure 2]. Random forest also had significanly higher performances than L2 linear SVM, RBF SVM and decision tree which had mean AUROC values of `r paste(round(mean((all %>% filter(model=="L2_Linear_SVM"))$test_aucs), 3))` (std ± `r paste(round(sd((all %>% filter(model=="L2_Linear_SVM"))$test_aucs), 3))`),  `r paste(round(mean((all %>% filter(model=="RBF_SVM"))$test_aucs), 3))` (std ± `r paste(round(sd((all %>% filter(model=="RBF_SVM"))$test_aucs), 3))`), and `r paste(round(mean((all %>% filter(model=="Decision_Tree"))$test_aucs), 3))` (std ± `r paste(round(sd((all %>% filter(model=="Decision_Tree"))$test_aucs), 3))`), respectively [Figure 2]. We also evaluated the generalization performance of each classifier by comparing their mean cross-validation AUROC and mean testing AUROC. We found that mean cross-validation and testing AUROC difference for each model was below 0.01. 
 
 __The complexity and interpretibility of each classifier.__
 
-We interpreted the feature weights of L1 and L2 SVM with linear kernel and regression coefficients of L2 logistic regression using the training data. We calculated the mean weights of all the features fromt the 100 randomizations of five-fold cross-validation [Figure 3a]. In the three linear models, OTUs that drove the detection of SRNs belong to family *Lachnospiraceae* and *Ruminococcaceae* (OTUs x, y, z). To explain the importance of features in non-linear models, we used permutation importance on the held-out test data [Figure 3b]. Perfectly correlated OTUs were grouped and permuted together to get a better representation of their effect in the prediction performance of the model. Non-correlated OTUs were permuted individually. 
+The ML models we built using L2-regularized logistic regression, L1 and L2 support vector machines (SVM) with linear and radial basis function kernels, a decision tree, random forest and XGBoost increase in complexity as they decrase in interpretibility, respectively. We interpreted L1 and L2 SVM with linear kernel using the feature weights and L2 logistic regression using regression coefficients of the trained models. We calculated the mean weights and coefficients of all the features over the 100 data-splits. In the three linear models, OTUs that had the largest mean weights and drove the detection of SRNs belong to family *Lachnospiraceae*,  and *Ruminococcaceae* (OTU01239, OTU00659, OTU00742, OTU00012, OTU00050, OTU00015, OTU00768, OTU00822, OTU00609, OTU01212, OTU00629) and genera *Gamella*  (OTU00426) [Figure 3]. We explained the feature importances in non-linear models using permutation importance on the held-out test data. For the tree-based models, permuting *Peptostreptococcus* (OTU00367) abundances randomly, dropped the predictive performances the most. Decision tree, random forest and XGBoost models' predictive performance dropped from `r paste(round(dt_median, 2))` base testing AUROC median to `r paste(round(median((dt_imp %>% filter(names=="Otu00367"))$new_auc), 2))`, from `r paste(round(rf_median, 2))` to `r paste(round(median((rf_imp %>% filter(names=="Otu00367"))$new_auc), 2))` and from `r paste(round(xgboost_median, 2))` to `r paste(round(median((xgboost_imp %>% filter(names=="Otu00367"))$new_auc), 2))`, respectively [Figure 4]. The negative predictive impact of *Peptostreptococcus* in the decision tree model was followed by a *Lachnospiraceae* species (OTU00058) (`r paste(round(dt_median, 2))` base testing AUROC median to `r paste(round(median((dt_imp %>% filter(names=="Otu00058"))$new_auc), 2))`) [Figure 4B]. Other OTUs had none to minimal effect on the predictive performance.  
 
 
 __The computational efficiency of each classifier.__
 
 Linear models trained faster than non-linear models. L2 logistic Rregression and L1 and L2 SVM with linear kernel had training times of `r paste(round(walltime_df[walltime_index[1],2], 1))` hours, (std ± `r paste(round(walltime_df[walltime_index[1],3], 2))`), `r paste(round(walltime_df[walltime_index[2],2], 1))` hours, (std ± `r paste(round(walltime_df[walltime_index[2],3],2))`), and `r paste(round(walltime_df[walltime_index[3],2], 1))` hours, (std ± `r paste(round(walltime_df[walltime_index[3],3], 2))`), respectively. Whereas, SVM with radial basis function kernel, decision tree, random forest and xgboost had training times of `r paste(round(walltime_df[walltime_index[4],2], 1))` hours, (std ± `r paste(round(walltime_df[walltime_index[4],3], 1))`), `r paste(round(walltime_df[walltime_index[5],2], 1))` hours, (std ± `r paste(round(walltime_df[walltime_index[5],3], 1))`), `r paste(round(walltime_df[walltime_index[6],2], 1))` hours, (std ± `r paste(round(walltime_df[walltime_index[6],3], 1))`) and `r paste(round(walltime_df[walltime_index[7],2], 1))` hours, (std ± `r paste(round(walltime_df[walltime_index[7],3], 1))`), respectively [Figure 4].
 
-
-
-
-
-
-## Conclusions
+## Discussion
 
 
 
@@ -228,14 +160,28 @@ Models were trained using the machine learning wrapper caret package (v.6.0.81) 
 
 **Code availability.** The code for all sequence curation and analysis steps including an Rmarkdown version of this manuscript is available at https://github.com/SchlossLab/Topcuoglu_ML_XXXX_2019/.
 
- 
+\newpage
+\includegraphics{Figure_1}
+**Figure 1. Machine learning pipeline showing predictive model training and evaluation flowchart.  **  We split the data 80%/20% stratified to maintain the overall label distribution, performed five-fold cross-validation on the training data to select the best hyperparameter setting and then using these hyperparameters to train all of the training data. The model was evaluated on a held-out set of data (not used in selecting the model).
+Abbreviations: AUROC, area under the receiver operating characteristic curve
+\newpage
+\includegraphics{Figure_2.png}
+**Figure 2. Generalization and classification performance of ML models using AUROC values of all cross validation and testing performances. **   The median AUROC for diagnosing individuals with SRN using bacterial abundances was higher than chance (depicted by horizontal line at 0.50) for all the ML models. Discriminative performance of random forest model was higher than other ML models. The boxplot shows quartiles at the box ends and the statistical median as the horizontal line in the box. The whiskers show the farthest points that are not outliers. Outliers are data points that are not within 3/2 times the interquartile ranges. 
+Abbreviations: SRN, screen-relevant neoplasias; AUROC, area under the receiver operating characteristic curve; SVM, support vector machine; XGBoost, extreme gradient boosting
+\newpage
+\includegraphics{Figure_3.png}
+**Figure 3. Interpretation of the linear ML models.** (A) L2 logistic regression coefficients  (B) L1 SVM with linear kernel feature weights (C) L2 SVM with linear kernel feature weights. The means weights and coefficients of the most important five OTUs for each model are shown here with the standard deviation over 100 data-splits. Similar OTUs had the largest impact on the predictive performance of L2 logistic regression and L2 SVM with linear kernel. 
+Abbreviations: SVM, support vector machine; OTU, Operational Taxonomic Unit.
+\newpage
+\includegraphics{Figure_4.png}
+**Figure 4. Explanation of the non-linear ML models.** (A) SVM with radial basis kernel (B) decision tree (C) random forest (D) XGboost feaure importances were explanied using permutation importance using held-out test set. For all the tree-based models, a **Peptostreptococcus** species (OTU00367) had the largest impact on predictive performance of the model. 
+Abbreviations: SVM, support vector machine; OTU, Operational Taxonomic Unit; RBF, radial basis kernel; OTU, Operational Taxonomic Unit.
+\newpage
+\includegraphics{Figure_5.png}
+**Figure 5. Computational efficiency of seven ML models.** The walltimes for training and testing of each data-split showed the differences in computational efficieny of the seven models. The median walltime in hours was the highest for XGBoost and shortest for L2 logistic regression. The boxplot shows quartiles at the box ends and the statistical median as the horizontal line in the box. The whiskers show the farthest points that are not outliers. Outliers are data points that are not within 3/2 times the interquartile ranges. 
+Abbreviations: AUROC, area under the receiver operating characteristic curve; SVM, support vector machine; XGBoost, extreme gradient boosting.  
 \newpage
 
-
-
-**Figure 1. Generalization and classification performance of modeling methods ** AUC values of all cross validation and testing performances. The boxplot shows quartiles at the box ends and the statistical median as the horizontal line in the box. The whiskers show the farthest points that are not outliers. Outliers are data points that are not within 3/2 times the interquartile ranges. 
-
-\newpage
 
 ## References
 
