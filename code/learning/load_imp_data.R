@@ -14,13 +14,13 @@ for (dep in deps){
 ######################################################################
 # Read in non-linear model's base test AUC median
 
-rbf_median <- read.delim('RBF_SVM_non_linear_base_median.tsv', header=T, sep='\t')$. 
-dt_median <- read.delim('Decision_Tree_non_linear_base_median.tsv', header=T, sep='\t')$. 
-rf_median <- read.delim('Random_Forest_non_linear_base_median.tsv', header=T, sep='\t')$. 
-xgboost_median <- read.delim('XGBoost_non_linear_base_median.tsv', header=T, sep='\t')$. 
+rbf_median <- read.delim('../data/process/RBF_SVM_non_linear_base_median.tsv', header=T, sep='\t')$. 
+dt_median <- read.delim('../data/process/Decision_Tree_non_linear_base_median.tsv', header=T, sep='\t')$. 
+rf_median <- read.delim('../data/process/Random_Forest_non_linear_base_median.tsv', header=T, sep='\t')$. 
+xgboost_median <- read.delim('../data/process/XGBoost_non_linear_base_median.tsv', header=T, sep='\t')$. 
 
 # Read in non-linear model's top 5 feature importances
-rbf_imp <- read.delim('RBF_SVM_non_linear_top_five_importance.tsv', header=T, sep='\t')
-dt_imp <- read.delim('Decision_Tree_non_linear_top_five_importance.tsv', header=T, sep='\t')
-rf_imp <- read.delim('Random_Forest_non_linear_top_five_importance.tsv', header=T, sep='\t')
-xgboost_imp <- read.delim('XGBoost_non_linear_top_five_importance.tsv', header=T, sep='\t')
+rbf_imp <- read.delim('../data/process/RBF_SVM_non_linear_top_five_importance.tsv', header=T, sep='\t')
+dt_imp <- read.delim('../data/process/Decision_Tree_non_linear_top_five_importance.tsv', header=T, sep='\t')
+rf_imp <- read.delim('../data/process/Random_Forest_non_linear_top_five_importance.tsv', header=T, sep='\t')
+xgboost_imp <- read.delim('../data/process/XGBoost_non_linear_top_five_importance.tsv', header=T, sep='\t')

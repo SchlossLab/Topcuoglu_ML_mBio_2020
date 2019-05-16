@@ -293,8 +293,8 @@ base_nonlin_plot <-  function(data, name){
   
   #-----------------------Save median info ------------------------ #
   #-----------------------Save top 5 features ------------------------ #
-  write_tsv(data_full, paste0("submission/", name, "_non_linear_top_five_importance.tsv"))
-  write_tsv(median, paste0("submission/", name, "_non_linear_base_median.tsv"))
+  write_tsv(data_full, paste0("data/process/", name, "_non_linear_top_five_importance.tsv"))
+  write_tsv(median, paste0("data/process/", name, "_non_linear_base_median.tsv"))
   
   # Check if correlated OTUs make a difference in AUROC
 
