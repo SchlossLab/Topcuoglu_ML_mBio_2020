@@ -120,7 +120,7 @@ Running title: Machine learning methods in microbiome studies
 
 \vspace{35mm}
 
-Begüm D. Topçuoğlu\({^1}\), Mack Ruffin\({^2}\), Jenna Wiens\({^3}\),
+Begüm D. Topçuoğlu\({^1}\), Jenna Wiens\({^2}\), Mack Ruffin\({^3}\),
 Patrick D. Schloss\textsuperscript{1\(\dagger\)}
 
 \vspace{40mm}
@@ -131,11 +131,11 @@ Patrick D. Schloss\textsuperscript{1\(\dagger\)}
 1. Department of Microbiology and Immunology, University of Michigan,
 Ann Arbor, MI 48109
 
-2. Department of Family Medicine and Community Medicine, Penn State
-Hershey Medical Center, Hershey, PA
-
-3. Department of Computer Science and Engineering, University or
+2. Department of Computer Science and Engineering, University or
 Michigan, Ann Arbor, MI 49109
+
+3. Department of Family Medicine and Community Medicine, Penn State
+Hershey Medical Center, Hershey, PA
 
 \newpage
 
@@ -193,14 +193,14 @@ L2-regularized logistic regression, L1 and L2 support vector machines
 (SVM) with linear and radial basis function kernels, a decision tree,
 random forest and XGBoost. Our ML pipeline utilized held-out test data
 to evaluate generalization and prediction performance of each ML model.
-The mean test AUROC varied from 0.598 (std ± 0.044) to 0.697 (std ±
-0.037). Random forest had the highest mean AUROC for detecting SRN.
-Despite the simplicity, the L2-regularized logistic regression followed
-random forest in performance. In terms of computational efficiency, L2
-logistic regression trained the fastest (0.202 hours, std ± 0.019),
-while XGBoost took the longest (162.843 hours, std ± 3.986). We found
-that mean cross-validation and testing AUROC varied only 0.01, which
-highlights the importance of a seperate held-out test set and consistent
+The median test AUROC varied from 0.601 to 0.695. Random forest had the
+highest median AUROC for detecting SRN. Despite the simplicity, the
+L2-regularized logistic regression followed random forest in
+performance. In terms of computational efficiency, L2 logistic
+regression trained the fastest (0.202 hours, std ± 0.019), while XGBoost
+took the longest (162.843 hours, std ± 3.986). We found that median
+cross-validation and testing AUROC varied only 0.021, which highlights
+the importance of a seperate held-out test set and consistent
 preprocessing of the data prior to evaluation. Aside from evaluating
 generalization and classification performances for each of these models,
 this study established standards for modeling pipelines of
@@ -242,49 +242,58 @@ model. The data-split, hyperparameter selection, training and testing
 steps were repeated 100 times to get a reliable and robust reading of
 model prediction performance {[}Figure 1{]}.
 
-\textbf{The prediction and generalization performance of seven ML models
-during cross-validation and when applied to the held-out test data.}
+\textbf{Random forest has the highest prediction performance when
+applied to the held-out test data compared the other six ML models .}
 
-We evaluated the prediction performance of seven binary classification
-models when applied to held-out test data over 100 data-splits using the
-area under the receiver operating characteristic curve (AUROC) as the
-discriminative performance metric. Random forest had the highest mean
-AUROC for detecting SRN, 0.697 (std ± 0.037) followed by L2 logistic
-regression and XGBoost with mean AUROC values of 0.676 (std ± 0.042) and
-0.678 (std ± 0.04) respectively {[}Figure 2{]}. Random forest had
-significanly higher predictive performances than those as well as L2
-linear SVM, RBF SVM and decision tree which had mean AUROC values of
-0.671 (std ± 0.045), 0.663 (std ± 0.044), and 0.598 (std ± 0.044),
-respectively {[}Figure 2{]}. We also evaluated the generalization
-performance of each ML model by comparing their mean cross-validation
-AUROC and mean testing AUROC. We found that mean cross-validation and
-testing AUROC difference for each model was below 0.01.
+We evaluated the prediction performances of seven binary classification
+models when applied to held-out test data using the area under the
+receiver operating characteristic curve (AUROC) as the discriminative
+performance metric. Random forest had significantly higher test AUROC
+values than the other models for detecting SRNs. The median AUROC of
+random forest was 0.695 (IQR 0.044). L2 logistic regression, XGBoost, L2
+SVM with linear and radial basis function kernel AUROC values were not
+significantly different from one another. They had median AUROC values
+of 0.68 (IQR 0.055), 0.679 (IQR 0.053), 0.678 (IQR 0.056) and 0.668 (IQR
+0.056) respectively. L1 SVM with linear kernel and decision tree had
+significantly lower AUROC values than the other ML models with median
+AUROC of 0.65 (IQR 0.066) and 0.601 (IQR 0.059), respectively {[}Figure
+2{]}.
+
+\textbf{Predictive performances of the seven ML models during
+cross-validation and when applied to the held-out test data do not show
+large differences.}
+
+We evaluated the generalization performance of each ML model by
+comparing their median cross-validation AUROC and median testing AUROC.
+The largest difference between the two was 0.021 in L1 SVM with linear
+kernel followed by SVM with radial basis function kernel and decision
+tree with a difference of 0.007 and 0.006, respectively.
 
 \textbf{The complexity and interpretibility of each ML model.}
 
 The ML models we built using L2-regularized logistic regression, L1 and
 L2 support vector machines (SVM) with linear and radial basis function
 kernels, a decision tree, random forest and XGBoost increase in
-complexity as they decrase in interpretibility, respectively. We
-interpreted L1 and L2 SVM with linear kernel using the feature weights
-and L2 logistic regression using regression coefficients of the trained
-models. We calculated the mean weights and coefficients of all the
-features over the 100 data-splits. In the three linear models, OTUs that
-had the largest mean weights and drove the detection of SRNs belong to
-family \emph{Lachnospiraceae}, and \emph{Ruminococcaceae} (OTU01239,
-OTU00659, OTU00742, OTU00012, OTU00050, OTU00015, OTU00768, OTU00822,
-OTU00609, OTU01212, OTU00629) and genera \emph{Gamella} (OTU00426)
-{[}Figure 3{]}. We explained the feature importances in non-linear
-models using permutation importance on the held-out test data. For the
-tree-based models, permuting \emph{Peptostreptococcus} (OTU00367)
-abundances randomly, dropped the predictive performances the most.
-Decision tree, random forest and XGBoost models' predictive performance
-dropped from 0.6 base testing AUROC median to 0.52, from 0.69 to 0.68
-and from 0.68 to 0.65, respectively {[}Figure 4{]}. The negative
-predictive impact of \emph{Peptostreptococcus} in the decision tree
-model was followed by a \emph{Lachnospiraceae} species (OTU00058) (0.6
-base testing AUROC median to 0.58) {[}Figure 4B{]}. Other OTUs had none
-to minimal effect on the predictive performance.
+complexity as they decrase in interpretibility. We interpreted L1 and L2
+SVM with linear kernel using the feature weights and L2 logistic
+regression using regression coefficients of the trained models. We
+calculated the mean weights and coefficients of all the features over
+the 100 data-splits. In the three linear models, OTUs that had the
+largest mean weights and drove the detection of SRNs belong to family
+\emph{Lachnospiraceae}, and \emph{Ruminococcaceae} (OTU01239, OTU00659,
+OTU00742, OTU00012, OTU00050, OTU00015, OTU00768, OTU00822, OTU00609,
+OTU01212, OTU00629) and genera \emph{Gamella} (OTU00426) {[}Figure 3{]}.
+We explained the feature importances in non-linear models using
+permutation importance on the held-out test data. For the tree-based
+models, permuting \emph{Peptostreptococcus} (OTU00367) abundances
+randomly, dropped the predictive performances the most. Decision tree,
+random forest and XGBoost models' predictive performance dropped from
+0.6 base testing AUROC median to 0.52, from 0.69 to 0.68 and from 0.68
+to 0.65, respectively {[}Figure 4{]}. The negative predictive impact of
+\emph{Peptostreptococcus} in the decision tree model was followed by a
+\emph{Lachnospiraceae} species (OTU00058) (0.6 base testing AUROC median
+to 0.58) {[}Figure 4B{]}. Other OTUs had none to minimal effect on the
+predictive performance.
 
 \textbf{The computational efficiency of each ML model.}
 
@@ -311,19 +320,19 @@ participants who were undergoing scheduled screening or surveillance
 colonoscopy. Colonoscopies were performed and fecal samples were
 collected from participants in four locations: Toronto (ON, Canada),
 Boston (MA, USA), Houston (TX, USA), and Ann Arbor (MI, USA). Patients'
-colonic disease status was defined by colonoscopy with adequate
-preparation and tissue histopathology of all resected lesions. Patients
-with an adenoma greater than 1 cm, more than three adenomas of any size,
-or an adenoma with villous histology were classified as advanced
-adenoma. Study had 172 patients with normal colonoscopies, 198 with
-adenomas and 120 with carcinomas. Of the 198 adenomas, 109 were
-identified as advanced adenomas. Stool provided by the patients was used
-for 16S rRNA gene sequencing to measure bacterial population abundances.
-The bacterial abundance data was generated by Sze et al, by processing
-16S rRNA sequences in Mothur (v1.39.3) using the default quality
-filtering methods, identifying and removing chimeric sequences using
-VSEARCH and assigning to OTUs at 97\% similarity using the OptiClust
-algorithm (16--18).
+colonic health was labeled by colonoscopy with adequate preparation and
+tissue histopathology of all resected lesions. Patients with an adenoma
+greater than 1 cm, more than three adenomas of any size, or an adenoma
+with villous histology were classified as advanced adenoma. Study had
+172 patients with normal colonoscopies, 198 with adenomas and 120 with
+carcinomas. Of the 198 adenomas, 109 were identified as advanced
+adenomas. Stool provided by the patients was used for 16S rRNA gene
+sequencing to measure bacterial population abundances. The bacterial
+abundance data was generated by Sze et al, by processing 16S rRNA
+sequences in Mothur (v1.39.3) using the default quality filtering
+methods, identifying and removing chimeric sequences using VSEARCH and
+assigning to OTUs at 97\% similarity using the OptiClust algorithm
+(16--18).
 
 \paragraph{Data definitions and
 pre-processing}\label{data-definitions-and-pre-processing}
@@ -404,12 +413,13 @@ Unit. \newpage
 \includegraphics{Figure_4.png} \textbf{Figure 4. Explanation of the
 non-linear ML models.} (A) SVM with radial basis kernel (B) decision
 tree (C) random forest (D) XGboost feaure importances were explanied
-using permutation importance using held-out test set. For all the
-tree-based models, a \emph{Peptostreptococcus} species (OTU00367) had
-the largest impact on predictive performance of the model.
-Abbreviations: SVM, support vector machine; OTU, Operational Taxonomic
-Unit; RBF, radial basis kernel; OTU, Operational Taxonomic Unit.
-\newpage
+using permutation importance using held-out test set. The gray rectangle
+and the dashed line show the IQR range and median of the base testing
+AUROC without any permutation performed. For all the tree-based models,
+a \emph{Peptostreptococcus} species (OTU00367) had the largest impact on
+predictive performance of the model. Abbreviations: SVM, support vector
+machine; OTU, Operational Taxonomic Unit; RBF, radial basis kernel; OTU,
+Operational Taxonomic Unit. \newpage
 \includegraphics{Figure_5.png} \textbf{Figure 5. Computational
 efficiency of seven ML models.} The walltimes for training and testing
 of each data-split showed the differences in computational efficieny of

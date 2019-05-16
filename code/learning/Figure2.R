@@ -41,7 +41,7 @@ best_performance <- bind_rows(logit, l2svm, rbf, dt, xgboost, rf, l1svm)%>%
 
 
 performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC), y = AUC, fill = Performance)) +
-  geom_boxplot(alpha=0.7) +
+  geom_boxplot() +
   geom_hline(yintercept = 0.5, linetype="dashed") +
   scale_fill_manual(values=c("#999999", "#E69F00")) +
   scale_y_continuous(name = "AUROC",
