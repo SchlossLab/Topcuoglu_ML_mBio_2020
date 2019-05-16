@@ -205,6 +205,6 @@ non_linear_models <- plot_grid(dt_plot, rf_plot, rbf_plot, xgboost_plot, labels 
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 
-ggsave("Figure_S1.pdf", plot = linear_models, device = 'pdf', path = 'results/figures', width = 8, height = 2.5)
+ggsave("Figure_S1.png", plot = linear_models, device = 'png', path = 'submission', width = 8, height = 2.5)
 
-ggsave("Figure_S2.pdf", plot = non_linear_models, device = 'pdf', path = 'results/figures', width = 7, height = 6)
+ggsave("Figure_S2.png", plot = non_linear_models, device = 'png', path = 'submission', width = 7, height = 6)

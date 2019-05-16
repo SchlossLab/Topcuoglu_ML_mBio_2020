@@ -72,7 +72,7 @@ get_interp_info <- function(data, model_name){
     #     d) select the OTU names, mean weights with their signs and the sd
     imp <- weights %>% 
       arrange(desc(mean_weights)) %>% 
-      head(n=10) %>% 
+      head(n=5) %>% 
       mutate(mean_weights = case_when(sign=="negative" ~ mean_weights*-1,
                                       sign=="positive"~ mean_weights)) %>% 
       select(key, mean_weights, sd_weights)
@@ -200,8 +200,8 @@ l1svm <- read.delim("data/process/L1_Linear_SVM_non_cor_importance.tsv", header=
 
 l1svm_plot <- base_plot(l1svm, x=l1svm$key,y=l1svm$mean_weights) +
   scale_y_continuous(name="L1 linear kernel SVM feature weights",
-                    limits = c(-3, 3),
-                    breaks = seq(-3, 3, 0.5)) +
+                    limits = c(-2, 2),
+                    breaks = seq(-2, 2, 0.5)) +
   geom_errorbar(aes(ymin=l1svm$mean_weights-l1svm$sd_weights, 
                     ymax=l1svm$mean_weights+l1svm$sd_weights), 
                 width=.01) 
@@ -211,8 +211,8 @@ l1svm_plot <- base_plot(l1svm, x=l1svm$key,y=l1svm$mean_weights) +
 l2svm <- read.delim("data/process/L2_Linear_SVM_non_cor_importance.tsv", header=T, sep='\t') 
 l2svm_plot <- base_plot(l2svm, x=l2svm$key,y=l2svm$mean_weights) +
   scale_y_continuous(name="L2 linear kernel SVM feature weights",
-                     limits = c(-3, 3),
-                     breaks = seq(-3, 3, 0.5)) +    
+                     limits = c(-2, 2),
+                     breaks = seq(-2, 2, 0.5)) +    
   geom_errorbar(aes(ymin=l2svm$mean_weights-l2svm$sd_weights, 
                     ymax=l2svm$mean_weights+l2svm$sd_weights), 
                 width=.01) 
@@ -223,8 +223,8 @@ l2svm_plot <- base_plot(l2svm, x=l2svm$key,y=l2svm$mean_weights) +
 logit <- read.delim("data/process/L2_Logistic_Regression_non_cor_importance.tsv", header=T, sep='\t') 
 logit_plot <- base_plot(logit, x=logit$key, y=logit$mean_weights) +
   scale_y_continuous(name="L2 logistic regression coefficients",
-                     limits = c(-3, 3),
-                     breaks = seq(-3, 3, 0.5)) +   
+                     limits = c(-2, 2),
+                     breaks = seq(-2, 2, 0.5)) +   
   geom_errorbar(aes(ymin=logit$mean_weights-logit$sd_weights, 
                     ymax=logit$mean_weights+logit$sd_weights), 
                 width=.01)
@@ -256,15 +256,18 @@ base_nonlin_plot <-  function(data, name){
     # Only keep the OTUs and their AUCs for the ones that are in the top 5 changed (decreased the most) ones
     filter(names %in% data_first_ten$names) %>% 
     group_by(names)
-  # Keep the 5 OTU names as a list to use in the plot as factors
+    # Keep the 5 OTU names as a list to use in the plot as factors
   otus <- data_first_ten$names %>% 
     droplevels() %>% 
     as.character()
   # Base auc at the top, then followed by the most changed OTU, followed by others ordered by median
   data_full$names <- factor(data_full$names,levels = c(otus[5], otus[4], otus[3], otus[2], otus[1]))
   # Plot boxplot
-  lowerq = quantile(data_base$new_auc)[2]
-  upperq = quantile(data_base$new_auc)[4]
+  lowerq <-  quantile(data_base$new_auc)[2]
+  upperq <-  quantile(data_base$new_auc)[4]
+  median <-  median(data_base$new_auc) %>% 
+    data.frame()
+  
 
   plot <- ggplot() +
     geom_boxplot(data=data_full, aes(x=names, y=new_auc), fill="#E69F00") +
@@ -287,6 +290,11 @@ base_nonlin_plot <-  function(data, name){
           panel.background = element_blank(),
           axis.text.x=element_text(size = 12, colour='black'),
           axis.text.y=element_text(size = 10, colour='black')) 
+  
+  #-----------------------Save median info ------------------------ #
+  #-----------------------Save top 5 features ------------------------ #
+  write_tsv(data_full, paste0("submission/", name, "_non_linear_top_five_importance.tsv"))
+  write_tsv(median, paste0("submission/", name, "_non_linear_base_median.tsv"))
   
   # Check if correlated OTUs make a difference in AUROC
 
@@ -332,11 +340,11 @@ xgboost_plot <- base_nonlin_plot(xgboost, "XGBoost")+
 #combine with cowplot
 linear <- plot_grid(logit_plot, l1svm_plot, l2svm_plot, labels = c("A", "B", "C"))
 
-ggsave("Figure_3a.pdf", plot = linear, device = 'pdf', path = 'results/figures', width = 18, height = 10)
+ggsave("Figure_3.png", plot = linear, device = 'png', path = 'submission', width = 10, height = 10)
 
 non_lin <- plot_grid(rbf_plot, dt_plot, rf_plot, xgboost_plot, labels = c("A", "B", "C", "D"))
 
-ggsave("Figure_3b.pdf", plot = non_lin, device = 'pdf', path = 'results/figures', width = 10, height = 5)
+ggsave("Figure_4.png", plot = non_lin, device = 'png', path = 'submission', width = 10, height = 5)
 
 
 

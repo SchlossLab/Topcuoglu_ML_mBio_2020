@@ -59,8 +59,8 @@ walltime_plot <- ggplot(walltime_df, aes(x = fct_reorder(model, x), y = x)) +
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         text = element_text(size = 12),
-        axis.text.x=element_text(size = 12, colour='black'),
-        axis.text.y=element_text(size = 12, colour='black'),
+        axis.text.x=element_text(size = 16, colour='black'),
+        axis.text.y=element_text(size = 16, colour='black'),
         axis.title.y=element_text(size = 20),
         axis.title.x=element_text(size = 20), 
         panel.border = element_rect(colour = "black", fill=NA, size=1)) 
@@ -69,7 +69,7 @@ walltime_plot <- ggplot(walltime_df, aes(x = fct_reorder(model, x), y = x)) +
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 
-ggsave("Figure_4.pdf", plot = walltime_plot, device = 'pdf', path = 'results/figures', width = 15, height = 10)
+ggsave("Figure_5.png", plot = walltime_plot, device = 'png', path = 'submission', width = 15, height = 10)
 
 
             
