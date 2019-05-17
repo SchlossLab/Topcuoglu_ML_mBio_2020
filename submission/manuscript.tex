@@ -120,8 +120,8 @@ Running title: Machine learning methods in microbiome studies
 
 \vspace{35mm}
 
-Begüm D. Topçuoğlu\({^1}\), Jenna Wiens\({^2}\), Mack Ruffin\({^3}\),
-Patrick D. Schloss\textsuperscript{1\(\dagger\)}
+Begüm D. Topçuoğlu\({^1}\), Nick Lesniak\({^1}\), Jenna Wiens\({^2}\),
+Mack Ruffin\({^3}\), Patrick D. Schloss\textsuperscript{1\(\dagger\)}
 
 \vspace{40mm}
 
@@ -162,26 +162,29 @@ complex microbial datasets. Therefore, researchers have started to
 explore the utility of ML models that use microbiota associated
 biomarkers to predict human health and to understand the microbial
 ecology of diseases such as liver cirrhosis, colorectal cancer,
-inflammatory bowel diseases (IBD), obesity, and type 2 diabetes (1--11).
-However, currently the field's use of ML lacks clarity and consistency
-on which methods are used and how these methods are implemented. Most
-notably, there are misleading practices of using ``leaky'' ML pipelines
-where models are tested on training data or reporting the best outcome
-of different iterations of cross-validation. Moreover, there is a lack
+inflammatory bowel diseases (IBD), obesity, type 2 diabetes and others
+(1--11). However, currently the field's use of ML lacks clarity and
+consistency on which methods are used and how these methods are
+implemented {[}(12); . Most notably, there are misleading practices of
+using ``leaky'' ML pipelines where models are tested on training data,
+reporting few or only the best outcomes of different randomizations of
+cross-validation and showing a disregard for large differences between
+cross-validation and testing performances as well as large confidence
+intervals of testing performances (4, 13--18). Moreover, there is a lack
 of discussion on why a particular ML model is utilized. Recently, there
 is a trend towards using more complex ML models such as random forest,
 extreme gradient boosting and neural networks without a discussion on if
-and how much model interpretibility is necessary for the study (11--14).
-The lack of transparency on modeling methodology and model selection
-negatively impact model reproducibility and reliability. We need to
-strive toward better machine learning practices by (1) implementing
-consistent and reliable machine learning pipelines; (2) selecting ML
-models that reflect the goal of the study as it will inform our
-expectations of model accuracy, complexity, interpretibility and
+and how much model interpretibility is necessary for the study (11,
+19--21). The lack of transparency on modeling methodology and model
+selection negatively impact model reproducibility and reliability. We
+need to strive toward better machine learning practices by (1)
+implementing consistent and reliable machine learning pipelines; (2)
+selecting ML models that reflect the goal of the study as it will inform
+our expectations of model accuracy, complexity, interpretibility and
 computational efficiency.
 
-To showcase reliable ML pipeline and to shed light on how much ML model
-selection can affect modeling results, we performed an empirical
+To showcase a reliable ML pipeline and to shed light on how much ML
+model selection can affect modeling results, we performed an empirical
 analysis comparing several different ML models using the same dataset
 and with a robust ML pipeline. We used a previously published colorectal
 cancer (CRC) study (3) which had fecal 16S rRNA gene sequences from 490
@@ -307,6 +310,30 @@ hours, (std ± 0.8), 64.7 hours, (std ± 9.9), 101.3 hours, (std ± 10) and
 
 \subsection{Discussion}\label{discussion}
 
+\paragraph{Interpretation of results}\label{interpretation-of-results}
+
+Our results show that Suprisingly, l2 logistic.. computational
+efficiency and interp of logistic vs random forest decision tree and l1
+why so low?
+
+\paragraph{Consideration of possible
+weaknesses}\label{consideration-of-possible-weaknesses}
+
+What happens with imbalanced data What happens with smaller datasets
+Does the code work on any microbiome data? Why did we use only one
+dataset? Becuase we are comparing several methods on 1 dataset. What
+will the future data look like?
+
+\paragraph{Relationship of results to previous literature and broader
+implications of having answered research
+question}\label{relationship-of-results-to-previous-literature-and-broader-implications-of-having-answered-research-question}
+
+\paragraph{Prospects for future
+progress}\label{prospects-for-future-progress}
+
+Subsample dataset and refit see how method behaves for 7 methods.
+(500-\textgreater{}250-\textgreater{}50)
+
 \subsection{Materials and Methods}\label{materials-and-methods}
 
 \paragraph{Data collection and study
@@ -315,7 +342,7 @@ population}\label{data-collection-and-study-population}
 The data used for this analysis are stool bacterial abundances and
 clinical information of the patients recruited by Great Lakes-New
 England Early Detection Research Network study. These data were obtained
-from Sze et al (15). The stool samples were provided by recruited adult
+from Sze et al (22). The stool samples were provided by recruited adult
 participants who were undergoing scheduled screening or surveillance
 colonoscopy. Colonoscopies were performed and fecal samples were
 collected from participants in four locations: Toronto (ON, Canada),
@@ -332,7 +359,7 @@ abundance data was generated by Sze et al, by processing 16S rRNA
 sequences in Mothur (v1.39.3) using the default quality filtering
 methods, identifying and removing chimeric sequences using VSEARCH and
 assigning to OTUs at 97\% similarity using the OptiClust algorithm
-(16--18).
+(23--25).
 
 \paragraph{Data definitions and
 pre-processing}\label{data-definitions-and-pre-processing}
@@ -524,33 +551,95 @@ learning tools for human microbiome big data, pp. 265--275. \emph{In}
 Balas, VE, Jain, LC, Balas, MM (eds.), Soft computing applications.
 Springer International Publishing.
 
+\hypertarget{ref-thaiss_persistent_2016}{}
+12. \textbf{Thaiss CA}, \textbf{Itav S}, \textbf{Rothschild D},
+\textbf{Meijer MT}, \textbf{Levy M}, \textbf{Moresi C},
+\textbf{Dohnalová L}, \textbf{Braverman S}, \textbf{Rozin S},
+\textbf{Malitsky S}, \textbf{Dori-Bachash M}, \textbf{Kuperman Y},
+\textbf{Biton I}, \textbf{Gertler A}, \textbf{Harmelin A},
+\textbf{Shapiro H}, \textbf{Halpern Z}, \textbf{Aharoni A},
+\textbf{Segal E}, \textbf{Elinav E}. 2016. Persistent microbiome
+alterations modulate the rate of post-dieting weight regain. Nature
+\textbf{540}:544--551.
+doi:\href{https://doi.org/10.1038/nature20796}{10.1038/nature20796}.
+
+\hypertarget{ref-flemer_oral_2018}{}
+13. \textbf{Flemer B}, \textbf{Warren RD}, \textbf{Barrett MP},
+\textbf{Cisek K}, \textbf{Das A}, \textbf{Jeffery IB}, \textbf{Hurley
+E}, \textbf{O`Riordain M}, \textbf{Shanahan F}, \textbf{O`Toole PW}.
+2018. The oral microbiota in colorectal cancer is distinctive and
+predictive. Gut \textbf{67}:1454--1463.
+doi:\href{https://doi.org/10.1136/gutjnl-2017-314814}{10.1136/gutjnl-2017-314814}.
+
+\hypertarget{ref-dai_multi-cohort_2018}{}
+14. \textbf{Dai Z}, \textbf{Coker OO}, \textbf{Nakatsu G}, \textbf{Wu
+WKK}, \textbf{Zhao L}, \textbf{Chen Z}, \textbf{Chan FKL},
+\textbf{Kristiansen K}, \textbf{Sung JJY}, \textbf{Wong SH}, \textbf{Yu
+J}. 2018. Multi-cohort analysis of colorectal cancer metagenome
+identified altered bacteria across populations and universal bacterial
+markers. Microbiome \textbf{6}:70.
+doi:\href{https://doi.org/10.1186/s40168-018-0451-2}{10.1186/s40168-018-0451-2}.
+
+\hypertarget{ref-montassier_pretreatment_2016}{}
+15. \textbf{Montassier E}, \textbf{Al-Ghalith GA}, \textbf{Ward T},
+\textbf{Corvec S}, \textbf{Gastinne T}, \textbf{Potel G}, \textbf{Moreau
+P}, \textbf{Cochetiere MF de la}, \textbf{Batard E}, \textbf{Knights D}.
+2016. Pretreatment gut microbiome predicts chemotherapy-related
+bloodstream infection. Genome Medicine \textbf{8}:49.
+doi:\href{https://doi.org/10.1186/s13073-016-0301-4}{10.1186/s13073-016-0301-4}.
+
+\hypertarget{ref-papa_non-invasive_2012}{}
+16. \textbf{Papa E}, \textbf{Docktor M}, \textbf{Smillie C},
+\textbf{Weber S}, \textbf{Preheim SP}, \textbf{Gevers D},
+\textbf{Giannoukos G}, \textbf{Ciulla D}, \textbf{Tabbaa D},
+\textbf{Ingram J}, \textbf{Schauer DB}, \textbf{Ward DV},
+\textbf{Korzenik JR}, \textbf{Xavier RJ}, \textbf{Bousvaros A},
+\textbf{Alm EJ}. 2012. Non-invasive mapping of the gastrointestinal
+microbiota identifies children with inflammatory bowel disease. PLOS ONE
+\textbf{7}:e39242.
+doi:\href{https://doi.org/10.1371/journal.pone.0039242}{10.1371/journal.pone.0039242}.
+
+\hypertarget{ref-mossotto_classification_2017}{}
+17. \textbf{Mossotto E}, \textbf{Ashton JJ}, \textbf{Coelho T},
+\textbf{Beattie RM}, \textbf{MacArthur BD}, \textbf{Ennis S}. 2017.
+Classification of paediatric inflammatory bowel disease using machine
+learning. Scientific Reports \textbf{7}.
+doi:\href{https://doi.org/10.1038/s41598-017-02606-2}{10.1038/s41598-017-02606-2}.
+
+\hypertarget{ref-ai_systematic_2017}{}
+18. \textbf{Ai L}, \textbf{Tian H}, \textbf{Chen Z}, \textbf{Chen H},
+\textbf{Xu J}, \textbf{Fang J-Y}. 2017. Systematic evaluation of
+supervised classifiers for fecal microbiota-based prediction of
+colorectal cancer. Oncotarget \textbf{8}:9546--9556.
+doi:\href{https://doi.org/10.18632/oncotarget.14488}{10.18632/oncotarget.14488}.
+
 \hypertarget{ref-galkin_human_2018}{}
-12. \textbf{Galkin F}, \textbf{Aliper A}, \textbf{Putin E},
+19. \textbf{Galkin F}, \textbf{Aliper A}, \textbf{Putin E},
 \textbf{Kuznetsov I}, \textbf{Gladyshev VN}, \textbf{Zhavoronkov A}.
 2018. Human microbiome aging clocks based on deep learning and tandem of
 permutation feature importance and accumulated local effects. bioRxiv.
 doi:\href{https://doi.org/10.1101/507780}{10.1101/507780}.
 
 \hypertarget{ref-reiman_using_2017}{}
-13. \textbf{Reiman D}, \textbf{Metwally A}, \textbf{Dai Y}. 2017. Using
+20. \textbf{Reiman D}, \textbf{Metwally A}, \textbf{Dai Y}. 2017. Using
 convolutional neural networks to explore the microbiome, pp. 4269--4272.
 \emph{In} 2017 39th annual international conference of the IEEE
 engineering in medicine and biology society (EMBC).
 
 \hypertarget{ref-fioravanti_phylogenetic_2017}{}
-14. \textbf{Fioravanti D}, \textbf{Giarratano Y}, \textbf{Maggio V},
+21. \textbf{Fioravanti D}, \textbf{Giarratano Y}, \textbf{Maggio V},
 \textbf{Agostinelli C}, \textbf{Chierici M}, \textbf{Jurman G},
 \textbf{Furlanello C}. 2017. Phylogenetic convolutional neural networks
 in metagenomics. arXiv:170902268 {[}cs, q-bio{]}.
 
 \hypertarget{ref-sze_leveraging_2018}{}
-15. \textbf{Sze MA}, \textbf{Schloss PD}. 2018. Leveraging existing 16S
+22. \textbf{Sze MA}, \textbf{Schloss PD}. 2018. Leveraging existing 16S
 rRNA gene surveys to identify reproducible biomarkers in individuals
 with colorectal tumors. mBio \textbf{9}:e00630--18.
 doi:\href{https://doi.org/10.1128/mBio.00630-18}{10.1128/mBio.00630-18}.
 
 \hypertarget{ref-schloss_introducing_2009}{}
-16. \textbf{Schloss PD}, \textbf{Westcott SL}, \textbf{Ryabin T},
+23. \textbf{Schloss PD}, \textbf{Westcott SL}, \textbf{Ryabin T},
 \textbf{Hall JR}, \textbf{Hartmann M}, \textbf{Hollister EB},
 \textbf{Lesniewski RA}, \textbf{Oakley BB}, \textbf{Parks DH},
 \textbf{Robinson CJ}, \textbf{Sahl JW}, \textbf{Stres B},
@@ -560,13 +649,13 @@ Community-Supported Software for Describing and Comparing Microbial
 Communities. ApplEnvironMicrobiol \textbf{75}:7537--7541.
 
 \hypertarget{ref-westcott_opticlust_2017}{}
-17. \textbf{Westcott SL}, \textbf{Schloss PD}. 2017. OptiClust, an
+24. \textbf{Westcott SL}, \textbf{Schloss PD}. 2017. OptiClust, an
 Improved Method for Assigning Amplicon-Based Sequence Data to
 Operational Taxonomic Units. mSphere \textbf{2}.
 doi:\href{https://doi.org/10.1128/mSphereDirect.00073-17}{10.1128/mSphereDirect.00073-17}.
 
 \hypertarget{ref-rognes_vsearch_2016}{}
-18. \textbf{Rognes T}, \textbf{Flouri T}, \textbf{Nichols B},
+25. \textbf{Rognes T}, \textbf{Flouri T}, \textbf{Nichols B},
 \textbf{Quince C}, \textbf{Mahé F}. 2016. VSEARCH: A versatile open
 source tool for metagenomics. PeerJ \textbf{4}:e2584.
 doi:\href{https://doi.org/10.7717/peerj.2584}{10.7717/peerj.2584}.
