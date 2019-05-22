@@ -165,23 +165,24 @@ ecology of diseases such as liver cirrhosis, colorectal cancer,
 inflammatory bowel diseases (IBD), obesity, type 2 diabetes and others
 (1--11). However, currently the field's use of ML lacks clarity and
 consistency on which methods are used and how these methods are
-implemented {[}(12); . Most notably, there are misleading practices of
-using ``leaky'' ML pipelines where models are tested on training data,
-reporting few or only the best outcomes of different randomizations of
-cross-validation and showing a disregard for large differences between
-cross-validation and testing performances as well as large confidence
-intervals of testing performances (4, 13--18). Moreover, there is a lack
-of discussion on why a particular ML model is utilized. Recently, there
-is a trend towards using more complex ML models such as random forest,
-extreme gradient boosting and neural networks without a discussion on if
-and how much model interpretibility is necessary for the study (11,
-19--21). The lack of transparency on modeling methodology and model
-selection negatively impact model reproducibility and reliability. We
-need to strive toward better machine learning practices by (1)
-implementing consistent and reliable machine learning pipelines; (2)
-selecting ML models that reflect the goal of the study as it will inform
-our expectations of model accuracy, complexity, interpretibility and
-computational efficiency.
+implemented {[}(12); . More notably, flawed ML practices are prevalent
+such as using ML pipelines where there is no seperate held-out test
+dataset to evaulate model performance, reporting few or only the best
+outcomes of different randomizations of cross-validation and showing a
+disregard for large differences between cross-validation and testing
+performances as well as large confidence intervals of testing
+performances (4, 13--19). Moreover, there is a lack of discussion on why
+a particular ML model is utilized. Recently, there is a trend towards
+using more complex ML models such as random forest, extreme gradient
+boosting and neural networks without a discussion on if and how much
+model interpretibility is necessary for the study (11, 20--22). The lack
+of transparency on modeling methodology and model selection negatively
+impact model reproducibility and reliability. We need to strive toward
+better machine learning practices by (1) implementing consistent and
+reliable machine learning pipelines; (2) selecting ML models that
+reflect the goal of the study as it will inform our expectations of
+model accuracy, complexity, interpretibility and computational
+efficiency.
 
 To showcase a reliable ML pipeline and to shed light on how much ML
 model selection can affect modeling results, we performed an empirical
@@ -220,33 +221,48 @@ the cases were independently labeled through colonoscopies. We
 established modeling pipelines for a binary prediction task with
 L2-regularized logistic regression, L1 and L2 support vector machines
 (SVM) with linear and radial basis function kernels, a decision tree,
-random forest and XGBoost to emphasize the differences in model
-accuracy, complexity, interpretibility and computational efficiency due
-to model selection. We randomly split the data into training/validation
-and test sets so that the training/validation set consisted of 80\% of
-the full dataset while the test set was composed of the remaining data
-{[}Figure 1{]}. Since the cases are not uniformly represented in the
-data, the initial data-split was stratified to maintain the overall
-label distribution on both the training/validation and test sets.
-Training/validation set consisted of 393 patients (209 SRN), while the
-test set was composed of 97 patients (52 SRN). The training/validation
-data was used for training purposes and validation of hyperparameter
-selection, and the test set was used for evaluation purposes. Validation
-of hyperparameter selection was performed using 100 randomizations of
-five-fold cross-validation on the training/validation set {[}Figure
-1{]}. Similar to the initial data-split, five-fold cross-validation was
-also stratified to maintain the overall label distribution on the
-training and validation sets. We validated the cross-validation
-performances of each hyperparameter setting over the 100 randomizations
-and selected the best performing hyper-parameter setting to train the
-full training/validation dataset {[}Figures S1 and S2{]}. We then used
-the held-out test set to evaluate the prediction performance of each ML
-model. The data-split, hyperparameter selection, training and testing
-steps were repeated 100 times to get a reliable and robust reading of
-model prediction performance {[}Figure 1{]}.
+random forest and extreme gradient boosted decision tree (XGBoost) to
+emphasize the differences in model accuracy, complexity,
+interpretibility and computational efficiency due to model selection.
 
-\textbf{Random forest has the highest prediction performance when
-applied to the held-out test data compared the other six ML models .}
+For regularized logistic regression and SVM with linear kernel we used
+L2 regularization to keep all potentially important features. For
+comparison, we also trained an L1 regularized SVM model with linear
+kernel. L1-regularization on microbiome data lead to a sparser solution
+(i.e., force many coefficients to zero), removing features that could be
+correlated with other important features, making it more difficult
+include the relationships between the microbes and possibly dropping
+features that are important in detecting SRNs. Finally, to explore the
+potential for non-linear relationships among features and the outcome of
+interest, we trained tree based models, decision tree, random forest and
+XGboost, as well as an SVM with non-linear kernel.
+
+We established a robust and reliable ML pipeline where we train and
+validate each of the seven models {[}Figure 1{]}. We randomly split the
+data into training/validation and test sets so that the
+training/validation set consisted of 80\% of the full dataset while the
+test set was composed of the remaining data {[}Figure 1{]}. Since the
+cases are not uniformly represented in the data, the initial data-split
+was stratified to maintain the overall label distribution on both the
+training/validation and test sets. Training/validation set consisted of
+393 patients (209 SRN), while the test set was composed of 97 patients
+(52 SRN). The training/validation data was used for training purposes
+and validation of hyperparameter selection, and the test set was used
+for evaluation purposes. Validation of hyperparameter selection was
+performed using 100 randomizations of five-fold cross-validation on the
+training/validation set {[}Figure 1{]}. Similar to the initial
+data-split, five-fold cross-validation was also stratified to maintain
+the overall label distribution on the training and validation sets. We
+validated the cross-validation performances of each hyperparameter
+setting over the 100 randomizations and selected the best performing
+hyper-parameter setting to train the full training/validation dataset
+{[}Figures S1 and S2{]}. We then used the held-out test set to evaluate
+the prediction performance of each ML model. The data-split,
+hyperparameter selection, training and testing steps were repeated 100
+times to get a reliable and robust reading of model prediction
+performance {[}Figure 1{]}.
+
+\textbf{Model performance and generalizability.}
 
 We evaluated the prediction performances of seven binary classification
 models when applied to held-out test data using the area under the
@@ -262,17 +278,15 @@ significantly lower AUROC values than the other ML models with median
 AUROC of 0.65 (IQR 0.066) and 0.601 (IQR 0.059), respectively {[}Figure
 2{]}.
 
-\textbf{Predictive performances of the seven ML models during
-cross-validation and when applied to the held-out test data do not show
-large differences.}
-
 We evaluated the generalization performance of each ML model by
 comparing their median cross-validation AUROC and median testing AUROC.
-The largest difference between the two was 0.021 in L1 SVM with linear
-kernel followed by SVM with radial basis function kernel and decision
-tree with a difference of 0.007 and 0.006, respectively.
+This difference should be low to suggest the model is not overfitting
+despite the large number of features. The largest difference between the
+two was 0.021 in L1 SVM with linear kernel followed by SVM with radial
+basis function kernel and decision tree with a difference of 0.007 and
+0.006, respectively {[}Figure 2{]}.
 
-\textbf{The complexity and interpretibility of each ML model.}
+\textbf{Interpretation of each ML model.}
 
 The ML models we built using L2-regularized logistic regression, L1 and
 L2 support vector machines (SVM) with linear and radial basis function
@@ -280,19 +294,21 @@ kernels, a decision tree, random forest and XGBoost increase in
 complexity as they decrase in interpretibility. We interpreted L1 and L2
 SVM with linear kernel using the feature weights and L2 logistic
 regression using regression coefficients of the trained models. We
-calculated the mean weights and coefficients of all the features over
-the 100 data-splits. In the three linear models, OTUs that had the
-largest mean weights and drove the detection of SRNs belong to family
-\emph{Lachnospiraceae}, and \emph{Ruminococcaceae} (OTU01239, OTU00659,
-OTU00742, OTU00012, OTU00050, OTU00015, OTU00768, OTU00822, OTU00609,
-OTU01212, OTU00629) and genera \emph{Gamella} (OTU00426) {[}Figure 3{]}.
-We explained the feature importances in non-linear models using
-permutation importance on the held-out test data. For the tree-based
-models, permuting \emph{Peptostreptococcus} (OTU00367) abundances
-randomly, dropped the predictive performances the most. Decision tree,
-random forest and XGBoost models' predictive performance dropped from
-0.6 base testing AUROC median to 0.52, from 0.69 to 0.68 and from 0.68
-to 0.65, respectively {[}Figure 4{]}. The negative predictive impact of
+examined the 5 predictive (highest weight) and protective (lowest
+weight) features identified by the model. We calculated the mean weights
+and coefficients of these features over the 100 data-splits. In the
+three linear models, OTUs that had the largest mean weights and drove
+the detection of SRNs belong to family \emph{Lachnospiraceae}, and
+\emph{Ruminococcaceae} (OTU01239, OTU00659, OTU00742, OTU00012,
+OTU00050, OTU00015, OTU00768, OTU00822, OTU00609, OTU01212, OTU00629)
+and genera \emph{Gamella} (OTU00426) {[}Figure 3{]}. We explained the
+feature importances in non-linear models using permutation importance on
+the held-out test data. For the tree-based models, permuting
+\emph{Peptostreptococcus} (OTU00367) abundances randomly, dropped the
+predictive performances the most. Decision tree, random forest and
+XGBoost models' predictive performance dropped from 0.6 base testing
+AUROC median to 0.52, from 0.69 to 0.68 and from 0.68 to 0.65,
+respectively {[}Figure 4{]}. The negative predictive impact of
 \emph{Peptostreptococcus} in the decision tree model was followed by a
 \emph{Lachnospiraceae} species (OTU00058) (0.6 base testing AUROC median
 to 0.58) {[}Figure 4B{]}. Other OTUs had none to minimal effect on the
@@ -312,7 +328,21 @@ hours, (std ± 0.8), 64.7 hours, (std ± 9.9), 101.3 hours, (std ± 10) and
 
 \paragraph{Interpretation of results}\label{interpretation-of-results}
 
-Our results show that Suprisingly, l2 logistic.. computational
+In this study we established a robust ML pipeline to use 16S rRNA
+sequence counts to predict a binary health outcome. We showed the
+importance of held-out test set and reporting the results of many
+iterations of cross-validation and testing. Each data-split has a weight
+that comes from random splitting. Seeing that testing and
+cross-validation median differences being low show that the models are
+generalizable and the pipeline works. Our results also show that we can
+choose different models for different reasons. Getting feature
+importances as weights and regression coefficients is the fastest and
+easiest interpratation. Similarly, linear models require less
+computational burden, fastest to train. THinking about the
+applicability, and actionability of a model in clinical setting, we
+might want faster results.
+
+Suprisingly, l2 logistic regression does really well. computational
 efficiency and interp of logistic vs random forest decision tree and l1
 why so low?
 
@@ -321,8 +351,9 @@ weaknesses}\label{consideration-of-possible-weaknesses}
 
 What happens with imbalanced data What happens with smaller datasets
 Does the code work on any microbiome data? Why did we use only one
-dataset? Becuase we are comparing several methods on 1 dataset. What
-will the future data look like?
+dataset? Why not validate on other data instead of held-out testing set?
+Becuase we are comparing several methods on 1 dataset. What will the
+future data look like?
 
 \paragraph{Relationship of results to previous literature and broader
 implications of having answered research
@@ -342,7 +373,7 @@ population}\label{data-collection-and-study-population}
 The data used for this analysis are stool bacterial abundances and
 clinical information of the patients recruited by Great Lakes-New
 England Early Detection Research Network study. These data were obtained
-from Sze et al (22). The stool samples were provided by recruited adult
+from Sze et al (23). The stool samples were provided by recruited adult
 participants who were undergoing scheduled screening or surveillance
 colonoscopy. Colonoscopies were performed and fecal samples were
 collected from participants in four locations: Toronto (ON, Canada),
@@ -359,7 +390,7 @@ abundance data was generated by Sze et al, by processing 16S rRNA
 sequences in Mothur (v1.39.3) using the default quality filtering
 methods, identifying and removing chimeric sequences using VSEARCH and
 assigning to OTUs at 97\% similarity using the OptiClust algorithm
-(23--25).
+(24--26).
 
 \paragraph{Data definitions and
 pre-processing}\label{data-definitions-and-pre-processing}
@@ -459,6 +490,10 @@ interquartile ranges. Abbreviations: AUROC, area under the receiver
 operating characteristic curve; SVM, support vector machine; XGBoost,
 extreme gradient boosting.\\
 \newpage
+\includegraphics{Figure_S1.png} \textbf{Figure S1. Hyperparameter
+setting performances for linear models.} Abbreviations: \newpage
+\includegraphics{Figure_S2.png} \textbf{Figure S2. Hyperparameter
+setting performances for non-linear models.} Abbreviations: \newpage
 
 \subsection{References}\label{references}
 
@@ -613,33 +648,43 @@ supervised classifiers for fecal microbiota-based prediction of
 colorectal cancer. Oncotarget \textbf{8}:9546--9556.
 doi:\href{https://doi.org/10.18632/oncotarget.14488}{10.18632/oncotarget.14488}.
 
+\hypertarget{ref-wong_quantitation_2017}{}
+19. \textbf{Wong SH}, \textbf{Kwong TNY}, \textbf{Chow T-C}, \textbf{Luk
+AKC}, \textbf{Dai RZW}, \textbf{Nakatsu G}, \textbf{Lam TYT},
+\textbf{Zhang L}, \textbf{Wu JCY}, \textbf{Chan FKL}, \textbf{Ng SSM},
+\textbf{Wong MCS}, \textbf{Ng SC}, \textbf{Wu WKK}, \textbf{Yu J},
+\textbf{Sung JJY}. 2017. Quantitation of faecal fusobacterium improves
+faecal immunochemical test in detecting advanced colorectal neoplasia.
+Gut \textbf{66}:1441--1448.
+doi:\href{https://doi.org/10.1136/gutjnl-2016-312766}{10.1136/gutjnl-2016-312766}.
+
 \hypertarget{ref-galkin_human_2018}{}
-19. \textbf{Galkin F}, \textbf{Aliper A}, \textbf{Putin E},
+20. \textbf{Galkin F}, \textbf{Aliper A}, \textbf{Putin E},
 \textbf{Kuznetsov I}, \textbf{Gladyshev VN}, \textbf{Zhavoronkov A}.
 2018. Human microbiome aging clocks based on deep learning and tandem of
 permutation feature importance and accumulated local effects. bioRxiv.
 doi:\href{https://doi.org/10.1101/507780}{10.1101/507780}.
 
 \hypertarget{ref-reiman_using_2017}{}
-20. \textbf{Reiman D}, \textbf{Metwally A}, \textbf{Dai Y}. 2017. Using
+21. \textbf{Reiman D}, \textbf{Metwally A}, \textbf{Dai Y}. 2017. Using
 convolutional neural networks to explore the microbiome, pp. 4269--4272.
 \emph{In} 2017 39th annual international conference of the IEEE
 engineering in medicine and biology society (EMBC).
 
 \hypertarget{ref-fioravanti_phylogenetic_2017}{}
-21. \textbf{Fioravanti D}, \textbf{Giarratano Y}, \textbf{Maggio V},
+22. \textbf{Fioravanti D}, \textbf{Giarratano Y}, \textbf{Maggio V},
 \textbf{Agostinelli C}, \textbf{Chierici M}, \textbf{Jurman G},
 \textbf{Furlanello C}. 2017. Phylogenetic convolutional neural networks
 in metagenomics. arXiv:170902268 {[}cs, q-bio{]}.
 
 \hypertarget{ref-sze_leveraging_2018}{}
-22. \textbf{Sze MA}, \textbf{Schloss PD}. 2018. Leveraging existing 16S
+23. \textbf{Sze MA}, \textbf{Schloss PD}. 2018. Leveraging existing 16S
 rRNA gene surveys to identify reproducible biomarkers in individuals
 with colorectal tumors. mBio \textbf{9}:e00630--18.
 doi:\href{https://doi.org/10.1128/mBio.00630-18}{10.1128/mBio.00630-18}.
 
 \hypertarget{ref-schloss_introducing_2009}{}
-23. \textbf{Schloss PD}, \textbf{Westcott SL}, \textbf{Ryabin T},
+24. \textbf{Schloss PD}, \textbf{Westcott SL}, \textbf{Ryabin T},
 \textbf{Hall JR}, \textbf{Hartmann M}, \textbf{Hollister EB},
 \textbf{Lesniewski RA}, \textbf{Oakley BB}, \textbf{Parks DH},
 \textbf{Robinson CJ}, \textbf{Sahl JW}, \textbf{Stres B},
@@ -649,13 +694,13 @@ Community-Supported Software for Describing and Comparing Microbial
 Communities. ApplEnvironMicrobiol \textbf{75}:7537--7541.
 
 \hypertarget{ref-westcott_opticlust_2017}{}
-24. \textbf{Westcott SL}, \textbf{Schloss PD}. 2017. OptiClust, an
+25. \textbf{Westcott SL}, \textbf{Schloss PD}. 2017. OptiClust, an
 Improved Method for Assigning Amplicon-Based Sequence Data to
 Operational Taxonomic Units. mSphere \textbf{2}.
 doi:\href{https://doi.org/10.1128/mSphereDirect.00073-17}{10.1128/mSphereDirect.00073-17}.
 
 \hypertarget{ref-rognes_vsearch_2016}{}
-25. \textbf{Rognes T}, \textbf{Flouri T}, \textbf{Nichols B},
+26. \textbf{Rognes T}, \textbf{Flouri T}, \textbf{Nichols B},
 \textbf{Quince C}, \textbf{Mahé F}. 2016. VSEARCH: A versatile open
 source tool for metagenomics. PeerJ \textbf{4}:e2584.
 doi:\href{https://doi.org/10.7717/peerj.2584}{10.7717/peerj.2584}.

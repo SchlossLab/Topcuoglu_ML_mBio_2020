@@ -51,6 +51,7 @@ base_plot <-  function(data, x_axis, y_axis){
   geom_line() +
   geom_point() +
   theme_bw() +
+  geom_hline(yintercept = 0.5, linetype="dashed") +
   theme(legend.text=element_text(size=10),
         legend.title=element_text(size=10),
         panel.grid.major = element_blank(),
@@ -75,7 +76,7 @@ l1svm_plot <- base_plot(l1svm, l1svm$cost, l1svm$mean_AUC) +
   scale_y_continuous(name="L1 linear SVM
 mean cvAUROC",
                      limits = c(0.30, 1),
-                     breaks = seq(0.3, 1, 0.05)) +
+                     breaks = seq(0.3, 1, 0.1)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.001)
 
 
@@ -89,7 +90,7 @@ l2svm_plot <- base_plot(l2svm, l2svm$cost, l2svm$mean_AUC) +
   scale_y_continuous(name="L2 linear SVM
 mean cvAUROC",
                      limits = c(0.30, 1),
-                     breaks = seq(0.3, 1, 0.05)) +
+                     breaks = seq(0.3, 1, 0.1)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.001)
 
 logit <- logit_all %>%
@@ -102,7 +103,7 @@ logit_plot <- base_plot(logit, logit$cost, logit$mean_AUC) +
   scale_y_continuous(name="L2 logistic regression
 mean cvAUROC",
                      limits = c(0.30, 1),
-                     breaks = seq(0.3, 1, 0.05)) +
+                     breaks = seq(0.3, 1, 0.1)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.001)
 
 
@@ -115,7 +116,7 @@ scale_x_continuous(name="max depth") +
   scale_y_continuous(name="Decision tree
 mean cvAUROC",
                      limits = c(0.30, 1),
-                     breaks = seq(0.3, 1, 0.05)) +
+                     breaks = seq(0.3, 1, 0.1)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.001)
 
 rf <- rf_all %>%
@@ -128,7 +129,7 @@ scale_x_continuous(name="mtry",
   scale_y_continuous(name="Random forest
 mean cvAUROC",
                      limits = c(0.30, 1),
-                     breaks = seq(0.3, 1, 0.05)) +
+                     breaks = seq(0.3, 1, 0.1)) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=1)
 
 # Start plotting models with 2 hyper-parameters individually
@@ -183,6 +184,7 @@ subsample",
   scale_x_log10(breaks = c(0.001, 0.01, 0.1, 1),
                 expand = c(0, 0),
                 labels=trans_format('log10',math_format(10^.x))) +
+  guides(fill=guide_colourbar(barwidth = 8, barheight = 1)) + 
   theme(axis.title = element_text(size=10),
         axis.text = element_text(size=10),
         panel.border = element_rect(colour = "black", fill=NA, size=3),

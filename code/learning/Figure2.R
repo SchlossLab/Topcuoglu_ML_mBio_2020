@@ -41,36 +41,39 @@ best_performance <- bind_rows(logit, l2svm, rbf, dt, xgboost, rf, l1svm)%>%
 
 
 performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC), y = AUC, fill = Performance)) +
-  geom_boxplot() +
+  geom_boxplot(alpha=0.5, fatten = 4) +
   geom_hline(yintercept = 0.5, linetype="dashed") +
-  scale_fill_manual(values=c("#999999", "#E69F00")) +
+  scale_fill_manual(values=c("blue4", "springgreen4")) +
+  coord_flip() +
   scale_y_continuous(name = "AUROC",
-                     breaks = seq(0.3, 1, 0.02),
-                     limits=c(0.3, 1),
+                     breaks = seq(0.4, 1, 0.1),
+                     limits=c(0.4, 1),
                      expand=c(0,0)) +
   scale_x_discrete(name = "",
-                   labels=c("Decision Tree",
-                           "L1 Linear SVM",
-                            "RBF SVM",
-                            "L2 Linear SVM",
+                   labels=c("Decision tree",
+                           "L1 linear SVM",
+                            "SVM RBF",
+                            "L2 linear SVM",
                             "XGBoost",
-                            "L2 Logistic Regression",
-                            "Random Forest")) +
+                            "L2 logistic regression",
+                            "Random forest")) +
   theme_bw() +
-  theme(legend.title = element_blank(),
+  theme(plot.margin=unit(c(1.1,1.1,1.1,1.1),"cm"),
+        legend.justification=c(1,0),
+        legend.position=c(1,0),
+        #legend.position="bottom",
+        legend.title = element_blank(),
         legend.background = element_rect(size=0.5, linetype="solid", color="black"),
-        legend.justification=c(0,1),
-        legend.position=c(0,1),
-        legend.box.margin=margin(c(10,10,10,10)),
-        legend.text=element_text(size=20),
+        legend.box.margin=margin(c(12,12,12, 12)),
+        legend.text=element_text(size=12),
         #legend.title=element_text(size=22),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         text = element_text(size = 12),
         axis.text.x=element_text(size = 15, colour='black'),
-        axis.text.y=element_text(size = 12, colour='black'),
-        axis.title.y=element_text(size = 30),
+        axis.text.y=element_text(size = 15, colour='black'),
+        axis.title.y=element_text(size = 20),
         axis.title.x=element_text(size = 20),
         panel.border = element_rect(colour = "black", fill=NA, size=1))
 
@@ -78,4 +81,4 @@ performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC), y = AUC
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 
-ggsave("Figure_2.png", plot = performance, device = 'png', path = 'submission', width = 15, height = 10)
+ggsave("Figure_2.png", plot = performance, device = 'png', path = 'submission', width = 8, height = 6)

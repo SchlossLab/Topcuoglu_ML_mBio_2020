@@ -43,33 +43,34 @@ walltime_df <- bind_rows(min_fixed_result)
 
 
 walltime_plot <- ggplot(walltime_df, aes(x = fct_reorder(model, x), y = x)) +
-  geom_boxplot(fill="darkgoldenrod1") +
+  geom_boxplot(fill="#0072B2", alpha=0.5, fatten = 1.5) +
+  coord_flip() +
   scale_y_continuous(name = "Walltime (hours)") +
   scale_x_discrete(name = "",
-                   labels=c("L2 Logistic Regression",
-                     "L1 Linear SVM",
-                     "L2 Linear SVM",
-                     "Decision Tree",
+                   labels=c("L2 logistic regression",
+                     "L1 linear SVM",
+                     "L2 linear SVM",
+                     "Decision tree",
                      "RBF SVM",
-                      "Random Forest", 
+                      "Random forest", 
                      "XGBoost")) +
   theme_bw() +
-  theme(legend.title=element_text(size=22),
+  theme(legend.title=element_text(size=15),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
-        text = element_text(size = 12),
-        axis.text.x=element_text(size = 16, colour='black'),
-        axis.text.y=element_text(size = 16, colour='black'),
-        axis.title.y=element_text(size = 20),
-        axis.title.x=element_text(size = 20), 
+        text = element_text(size = 10),
+        axis.text.x=element_text(size = 8, colour='black'),
+        axis.text.y=element_text(size = 8, colour='black'),
+        axis.title.y=element_text(size = 10),
+        axis.title.x=element_text(size = 10), 
         panel.border = element_rect(colour = "black", fill=NA, size=1)) 
 
 ######################################################################
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 
-ggsave("Figure_5.png", plot = walltime_plot, device = 'png', path = 'submission', width = 15, height = 7)
+ggsave("Figure_5.png", plot = walltime_plot, device = 'png', path = 'submission', width = 3, height = 2)
 
 
             

@@ -174,7 +174,8 @@ xgboost <- read_files(best_files[7])
 # Define the base plot for the linear modeling methods
 base_plot <-  function(data, x_axis, y_axis){
   plot <- ggplot(data, aes(fct_reorder(x_axis, -abs(y_axis)), y_axis)) +
-    geom_point(colour = "brown2", size = 3) +
+    geom_point(colour = "#D55E00", size = 3) +
+    coord_flip() +
     theme_classic() +
     scale_x_discrete(name = "") +
     theme(legend.text=element_text(size=18),
@@ -199,9 +200,9 @@ base_plot <-  function(data, x_axis, y_axis){
 l1svm <- read.delim("data/process/L1_Linear_SVM_non_cor_importance.tsv", header=T, sep='\t') 
 
 l1svm_plot <- base_plot(l1svm, x=l1svm$key,y=l1svm$mean_weights) +
-  scale_y_continuous(name="L1 linear kernel SVM feature weights",
+  scale_y_continuous(name="L1 linear SVM feature weights",
                     limits = c(-2, 2),
-                    breaks = seq(-2, 2, 0.5)) +
+                    breaks = seq(-2, 2, 1)) +
   geom_errorbar(aes(ymin=l1svm$mean_weights-l1svm$sd_weights, 
                     ymax=l1svm$mean_weights+l1svm$sd_weights), 
                 width=.01) 
@@ -210,9 +211,9 @@ l1svm_plot <- base_plot(l1svm, x=l1svm$key,y=l1svm$mean_weights) +
 # ------------------L2 SVM with linear kernel---------------------------->
 l2svm <- read.delim("data/process/L2_Linear_SVM_non_cor_importance.tsv", header=T, sep='\t') 
 l2svm_plot <- base_plot(l2svm, x=l2svm$key,y=l2svm$mean_weights) +
-  scale_y_continuous(name="L2 linear kernel SVM feature weights",
+  scale_y_continuous(name="L2 linear SVM feature weights",
                      limits = c(-2, 2),
-                     breaks = seq(-2, 2, 0.5)) +    
+                     breaks = seq(-2, 2, 1)) +    
   geom_errorbar(aes(ymin=l2svm$mean_weights-l2svm$sd_weights, 
                     ymax=l2svm$mean_weights+l2svm$sd_weights), 
                 width=.01) 
@@ -224,7 +225,7 @@ logit <- read.delim("data/process/L2_Logistic_Regression_non_cor_importance.tsv"
 logit_plot <- base_plot(logit, x=logit$key, y=logit$mean_weights) +
   scale_y_continuous(name="L2 logistic regression coefficients",
                      limits = c(-2, 2),
-                     breaks = seq(-2, 2, 0.5)) +   
+                     breaks = seq(-2, 2, 1)) +   
   geom_errorbar(aes(ymin=logit$mean_weights-logit$sd_weights, 
                     ymax=logit$mean_weights+logit$sd_weights), 
                 width=.01)
@@ -270,9 +271,9 @@ base_nonlin_plot <-  function(data, name){
   
 
   plot <- ggplot() +
-    geom_boxplot(data=data_full, aes(x=names, y=new_auc), fill="#E69F00") +
+    geom_boxplot(data=data_full, aes(x=names, y=new_auc), fill="#E69F00",  alpha=0.8) +
     geom_rect(aes(ymin=lowerq, ymax=upperq, xmin=0, xmax=Inf), fill="grey") +
-    geom_boxplot(data=data_full, aes(x=names, y=new_auc), fill="#E69F00") +
+    geom_boxplot(data=data_full, aes(x=names, y=new_auc), fill="#E69F00", alpha=0.8) +
     geom_hline(yintercept = data_base_means$imp , linetype="dashed") +
     #geom_hline(yintercept = upperq, alpha=0.5) +
     #geom_hline(yintercept = lowerq, alpha=0.5) +
@@ -281,7 +282,8 @@ base_nonlin_plot <-  function(data, name){
     scale_y_continuous(name = " AUROC with the OTU permuted randomly", 
                        limits = c(0.5,1), 
                        expand=c(0,0)) +
-    theme(legend.position="none",
+    theme(plot.margin=unit(c(1.5,3,1.5,3),"mm"),
+          legend.position="none",
           axis.title = element_text(size=14),
           axis.text = element_text(size=12),
           panel.border = element_rect(colour = "black", fill=NA, size=1), 
@@ -289,7 +291,8 @@ base_nonlin_plot <-  function(data, name){
           panel.grid.minor = element_blank(),
           panel.background = element_blank(),
           axis.text.x=element_text(size = 12, colour='black'),
-          axis.text.y=element_text(size = 10, colour='black')) 
+          axis.text.y=element_text(size = 10, colour='black'), 
+          axis.title.x=element_blank()) 
   
   #-----------------------Save median info ------------------------ #
   #-----------------------Save top 5 features ------------------------ #
@@ -319,13 +322,13 @@ rbf_plot <- base_nonlin_plot(rbf, "RBF_SVM") +
 # --------------------------- Decision Tree ----------------------------->
 # Plot most important 5 features effect on AUROC
 dt_plot <- base_nonlin_plot(dt, "Decision_Tree") +
-  scale_x_discrete(name = "Decision Tree ") 
+  scale_x_discrete(name = "Decision tree ") 
 # ----------------------------------------------------------------------->
 
 # --------------------------- Random Forest ----------------------------->
 # Plot most important 5 features effect on AUROC
 rf_plot <- base_nonlin_plot(rf, "Random_Forest") +
-  scale_x_discrete(name = "Random Forest ") 
+  scale_x_discrete(name = "Random forest ") 
 # ----------------------------------------------------------------------->
 
 # --------------------------- XGBoost ----------------------------->
@@ -338,13 +341,14 @@ xgboost_plot <- base_nonlin_plot(xgboost, "XGBoost")+
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 #combine with cowplot
-linear <- plot_grid(logit_plot, l1svm_plot, l2svm_plot, labels = c("A", "B", "C"))
+linear <- plot_grid(l1svm_plot, l2svm_plot, logit_plot, labels = c("A", "B", "C"), align = 'h', ncol = 3)
 
-ggsave("Figure_3.png", plot = linear, device = 'png', path = 'submission', width = 10, height = 8)
+ggsave("Figure_3.png", plot = linear, device = 'png', path = 'submission', width = 11, height = 2.5)
 
 non_lin <- plot_grid(rbf_plot, dt_plot, rf_plot, xgboost_plot, labels = c("A", "B", "C", "D"))
+ggdraw(add_sub(non_lin, "AUROC with the OTU permuted randomly", vpadding=grid::unit(0,"lines"), y=5, x=0.5, vjust=4.5))
 
-ggsave("Figure_4.png", plot = non_lin, device = 'png', path = 'submission', width = 10, height = 5)
+ggsave("Figure_4.png", plot = last_plot(), device = 'png', path = 'submission', width = 8, height = 6)
 
 
 
