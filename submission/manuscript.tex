@@ -143,6 +143,36 @@ Hershey Medical Center, Hershey, PA
 
 \subsection{Abstract}\label{abstract}
 
+Members of the human microbiota have been implicated in a wide range of
+chronic diseases and can be used as biomarkers to diagnose them.
+However, identifying a set of biomarkers and making generalizable
+disease diagnoses is challenging because human-associated microbiome is
+high-dimensional and uneven within and between individuals with the same
+disease. Machine learning (ML) modeling of human-associated microbial
+communities is used to overcome this challenge. Progress has been made
+towards developing ML models that predict health outcomes from bacterial
+abundances, but reliable and reproducible ML models are scarce due to
+the flawed modeling methods and a lack of transparency in application
+and selection of ML models. We established a standard for ML modeling
+pipelines that use 16 rRNA gene sequences to predict diseases. We used
+fecal 16S rRNA sequences to predict the presence/absence of colorectal
+cancer (CRC) lesions in patients (N=490) from a previously published CRC
+study. We developed seven ML models with different classification
+algorithms (L2-regularized logistic regression, L1 and L2 support vector
+machines (SVM) with linear and radial basis function kernels, a decision
+tree, random forest and extreme gradient boosted decision tree
+(XGBoost)) to show the effect of model selection on model accuracy,
+interpretability and computational efficiency. Random forest model was
+best at detecting CRC lesions but it was slow to train and hard to
+interpret. Despite the simplicity, the L2-regularized logistic
+regression followed random forest in predictive performance and it
+trained the fastest. Our results in comparing seven ML models with one
+dataset, showed the importance of model selection in ML model
+development. It also showcased a robust ML pipeline that creates
+generalizable and reproducible ML models.
+
+\subsection{Importance}\label{importance}
+
 \newpage
 
 \subsection{Introduction}\label{introduction}
@@ -267,16 +297,16 @@ performance {[}Figure 1{]}.
 We evaluated the prediction performances of seven binary classification
 models when applied to held-out test data using the area under the
 receiver operating characteristic curve (AUROC) as the discriminative
-performance metric. Random forest had significantly higher test AUROC
-values than the other models for detecting SRNs. The median AUROC of
-random forest was 0.695 (IQR 0.044). L2 logistic regression, XGBoost, L2
-SVM with linear and radial basis function kernel AUROC values were not
-significantly different from one another. They had median AUROC values
-of 0.68 (IQR 0.055), 0.679 (IQR 0.053), 0.678 (IQR 0.056) and 0.668 (IQR
-0.056) respectively. L1 SVM with linear kernel and decision tree had
-significantly lower AUROC values than the other ML models with median
-AUROC of 0.65 (IQR 0.066) and 0.601 (IQR 0.059), respectively {[}Figure
-2{]}.
+performance metric {[}Figure 1{]}. Random forest had significantly
+higher test AUROC values than the other models for detecting SRNs. The
+median AUROC of random forest was 0.695 (IQR 0.044). L2 logistic
+regression, XGBoost, L2 SVM with linear and radial basis function kernel
+AUROC values were not significantly different from one another. They had
+median AUROC values of 0.68 (IQR 0.055), 0.679 (IQR 0.053), 0.678 (IQR
+0.056) and 0.668 (IQR 0.056) respectively. L1 SVM with linear kernel and
+decision tree had significantly lower AUROC values than the other ML
+models with median AUROC of 0.65 (IQR 0.066) and 0.601 (IQR 0.059),
+respectively {[}Figure 2{]}.
 
 We evaluated the generalization performance of each ML model by
 comparing their median cross-validation AUROC and median testing AUROC.
