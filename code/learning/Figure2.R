@@ -43,6 +43,10 @@ best_performance <- bind_rows(logit, l2svm, rbf, dt, xgboost, rf, l1svm)%>%
 performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC), y = AUC, fill = Performance)) +
   geom_boxplot(alpha=0.5, fatten = 4) +
   geom_hline(yintercept = 0.5, linetype="dashed") +
+  #geom_hline(yintercept = 0.6, linetype="dashed") +
+  #geom_hline(yintercept = 0.7, linetype="dashed") +
+  #geom_hline(yintercept = 0.8, linetype="dashed") +
+  #geom_hline(yintercept = 0.9, linetype="dashed") +
   scale_fill_manual(values=c("blue4", "springgreen4")) +
   coord_flip() +
   scale_y_continuous(name = "AUROC",
@@ -67,7 +71,8 @@ performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC), y = AUC
         legend.box.margin=margin(c(12,12,12, 12)),
         legend.text=element_text(size=12),
         #legend.title=element_text(size=22),
-        panel.grid.major = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.major.x = element_line( size=0.6),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         text = element_text(size = 12),
