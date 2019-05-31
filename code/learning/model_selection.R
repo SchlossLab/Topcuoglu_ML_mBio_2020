@@ -153,7 +153,7 @@ tuning_grid <- function(train_data, model){
     method <-"rpart2"
   }
   else if (model=="Random_Forest"){
-    grid <-  expand.grid(mtry = c(80,500,1000,1500))
+    grid <-  expand.grid(mtry = c(77))
     method = "rf"
   }
   else if (model=="XGBoost"){
