@@ -50,7 +50,7 @@ get_results <- function(dataset, models, split_number){
   aucs_dataframe <- data.frame(aucs) %>% 
     rename(cv_aucs=X1, test_aucs=X2) %>% 
     mutate(model=models) %>% 
-    write_csv(path = paste0("data/temp/best_hp_results_", models,"_", split_number, ".csv"))
+    write_csv(path = paste0("data/temp/best_hp_results_default_", models,"_", split_number, ".csv"))
   # ------------------------------------------------------------------   
 
   # ------------------------------------------------------------------   
@@ -59,7 +59,7 @@ get_results <- function(dataset, models, split_number){
   # Convert to dataframe and add a column noting the model name
   dataframe <- data.frame(all_results) %>% 
     mutate(model=models) %>% 
-    write_csv(path=paste0("data/temp/all_hp_results_", models,"_", split_number, ".csv"))
+    write_csv(path=paste0("data/temp/all_hp_results_default_", models,"_", split_number, ".csv"))
   # ------------------------------------------------------------------ 
   
   # ------------------------------------------------------------------   
@@ -68,7 +68,7 @@ get_results <- function(dataset, models, split_number){
   # Convert to dataframe and add a column noting the model name
   dataframe <- data.frame(imp_features) %>% 
     mutate(model=models) %>% 
-    write_csv(path=paste0("data/temp/all_imp_features_non_cor_results_", models,"_", split_number, ".csv"))
+    write_csv(path=paste0("data/temp/all_imp_features_non_cor_results_default_", models,"_", split_number, ".csv"))
   # ------------------------------------------------------------------ 
   
   # Save all correlated feature importance of the model for 1 datasplit
@@ -76,7 +76,7 @@ get_results <- function(dataset, models, split_number){
   # Convert to dataframe and add a column noting the model name
   dataframe <- data.frame(corr_imp_features) %>% 
     mutate(model=models) %>% 
-    write_csv(path=paste0("data/temp/all_imp_features_cor_results_", models,"_", split_number, ".csv"), col_names = TRUE)
+    write_csv(path=paste0("data/temp/all_imp_features_cor_results_default_", models,"_", split_number, ".csv"), col_names = TRUE)
 
 }
 
