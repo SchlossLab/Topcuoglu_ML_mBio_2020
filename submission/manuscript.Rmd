@@ -213,6 +213,8 @@ Linear models trained faster than non-linear models. L2 logistic Rregression and
 **Model training and evaluation.**
 
 For L2-regularized logistic regression, L1 and L2 support vector machines (SVM) with linear and radial basis function kernels we tuned the __cost__ hyperparameter which determines the regularization strength where smaller values specify stronger regularization. For SVM with radial basis function kernel we also tuned __sigma__ hyperparameter which determines the reach of a single training instance where for a high value of sigma, the SVM decision boundary will be dependent on the points that are closest to the decision boundary. For the decision tree model, we tuned the __depth of the tree__ where deeper the tree, the more splits it has. For random forest, we tuned the __number of features__ to consider when looking for the best tree split. For xgboost, we tuned for __learning rate__ and the __fraction of samples__ to be used for fitting the individual base learners.
+
+Hyperparameter selection is very important. We start with a granular grid search by then narrow and refine. Range of the grid depends on the problem. We can use hyper-band to help us with our hyperparameter selection. If not a full grid search is done, there could be a lot of variability in testing performance.
 Models were trained using the machine learning wrapper caret package (v.6.0.81) in R (v.3.5.0). 
 
 **Permutation importance workflow.**
