@@ -102,7 +102,7 @@ pipeline <- function(dataset, model){
                               trControl = cv,
                               metric = "ROC",
                               tuneGrid = grid,
-                              ntree=500) # not tuning ntree
+                              ntree=50) # not tuning ntree
   }
   else{
     print(model)
