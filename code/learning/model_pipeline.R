@@ -37,38 +37,38 @@
 ######################################################################
 
 
-pipeline <- function(dataset, model){
+pipeline <- function(dataset, model, split_number){
 
-  # ------------------Pre-process the full Dataset------------------------->    
+  # ------------------Pre-process the full Dataset------------------------->
   # We are doing the pre-processing to the full dataset and then splitting 80-20
   # Scale all features between 0-1
   preProcValues <- preProcess(dataset, method = "range")
   dataTransformed <- predict(preProcValues, dataset)
-  # ----------------------------------------------------------------------->   
-  
-  # ------------------80-20 Datasplit for each seed-------------------------> 
+  # ----------------------------------------------------------------------->
+
+  # ------------------80-20 Datasplit for each seed------------------------->
   # Do the 80-20 data-split
   # Stratified data partitioning %80 training - %20 testing
   inTraining <- createDataPartition(dataTransformed$dx, p = .80, list = FALSE)
   trainTransformed <- dataTransformed[ inTraining,]
   testTransformed  <- dataTransformed[-inTraining,]
-  # ----------------------------------------------------------------------->    
-  
-  # -------------Define hyper-parameter and cv settings--------------------> 
+  # ----------------------------------------------------------------------->
+
+  # -------------Define hyper-parameter and cv settings-------------------->
   # Define hyper-parameter tuning grid and the training method
   grid <- tuning_grid(trainTransformed, model)[[1]]
   method <- tuning_grid(trainTransformed, model)[[2]]
   cv <- tuning_grid(trainTransformed, model)[[3]]
-  # ----------------------------------------------------------------------->   
-  
-  # ---------------------------Train the model ---------------------------->   
+  # ----------------------------------------------------------------------->
+
+  # ---------------------------Train the model ---------------------------->
   # ------------------------------- 1. -------------------------------------
   # - We train on the 80% of the full dataset.
   # - We use the cross-validation and hyper-parameter settings defined above to train
   # ------------------------------- 2. -------------------------------------
   # We use ROC metric for all the models
   # To do that I had to make changes to the caret package functions.
-  # The files 'data/caret_models/svmLinear3.R and svmLinear5.R are my functions. 
+  # The files 'data/caret_models/svmLinear3.R and svmLinear5.R are my functions.
   # I added 1 line to get Decision Values for linear SVMs:
   #
   #           prob = function(modelFit, newdata, submodels = NULL){
@@ -83,7 +83,9 @@ pipeline <- function(dataset, model){
   # - If the model is logistic regression, we need to add a family=binomial parameter.
   # - If the model is random forest, we need to add a ntree=1000 parameter.
   #         We chose ntree=1000 empirically.
-  # ----------------------------------------------------------------------->   
+  # ----------------------------------------------------------------------->
+  # Start walltime for training model
+  tic("train")
   if(model=="L2_Logistic_Regression"){
   print(model)
   trained_model <-  train(dx ~ ., # label
@@ -102,7 +104,7 @@ pipeline <- function(dataset, model){
                               trControl = cv,
                               metric = "ROC",
                               tuneGrid = grid,
-                              ntree=50) # not tuning ntree
+                              ntree=1000) # not tuning ntree
   }
   else{
     print(model)
@@ -113,27 +115,33 @@ pipeline <- function(dataset, model){
                             metric = "ROC",
                             tuneGrid = grid)
   }
-  
-  # ------------- Output the cvAUC and testAUC for 1 datasplit ----------------------> 
+  # Stop walltime for running model
+  seconds <- toc()
+  # Save elapsed time
+  train_time <- seconds$toc-seconds$tic
+  # Save wall-time
+  write.csv(train_time, file=paste0("data/temp/traintime_", model, "_", split_number, ".csv"), row.names=F)
+  # ------------- Output the cvAUC and testAUC for 1 datasplit ---------------------->
   # Mean cv AUC value over repeats of the best cost parameter during training
   cv_auc <- getTrainPerf(trained_model)$TrainROC
   # Save all results of hyper-parameters and their corresponding meanAUCs over 100 internal repeats
   results_individual <- trained_model$results
-  # ---------------------------------------------------------------------------------->       
-   
-  # -------------------------- Feature importances ----------------------------------->       
-  #   Output the weights of features of linear models 
-  #   Output the feature importances based on random permutation for non-linear models    
+  # ---------------------------------------------------------------------------------->
+
+  # -------------------------- Feature importances ----------------------------------->
+  #   Output the weights of features of linear models
+  #   Output the feature importances based on random permutation for non-linear models
   # Here we look at the top 10 important features
   if(model=="L1_Linear_SVM" || model=="L2_Linear_SVM" || model=="L2_Logistic_Regression"){
-    # Predict on the test set and get predicted probabilities or decision values
-    rpartProbs <- predict(trained_model, testTransformed, type="prob")
-    # Calculate the ROC for each model
-    test_roc <- roc(ifelse(testTransformed$dx == "cancer", 1, 0), rpartProbs[[1]])
-    # Get the AUROC value for test set
-    test_auc <- test_roc$auc
+    # We will use the permutation_importance function here to:
+    #     1. Predict held-out test-data
+    #     2. Calculate ROC and AUROC values on this prediction
+    #     3. Get the feature importances for correlated and uncorrelated feautures
+    roc_results <- permutation_importance(trained_model, testTransformed)
+    test_auc <- roc_results[[1]]
+    # Predict the test importance
+    feature_importance_non_cor <- roc_results[2]
     # Get feature weights
-    feature_importance_non_cor <- trained_model$finalModel$W
     feature_importance_cor <- trained_model$finalModel$W
   }
   else{
@@ -147,9 +155,9 @@ pipeline <- function(dataset, model){
     feature_importance_non_cor <- roc_results[2]
     feature_importance_cor <- roc_results[3]
   }
-  # ---------------------------------------------------------------------------------->  
-  
-  # ----------------------------Save metrics as vector ------------------------------->  
+  # ---------------------------------------------------------------------------------->
+
+  # ----------------------------Save metrics as vector ------------------------------->
   # Return all the metrics
   results <- list(cv_auc, test_auc, results_individual, feature_importance_non_cor, feature_importance_cor, trained_model)
   return(results)

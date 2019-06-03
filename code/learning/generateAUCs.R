@@ -36,7 +36,7 @@
 ######################################################################
 get_results <- function(dataset, models, split_number){
   # Save results of the modeling pipeline as a list
-  results <- pipeline(dataset, models) 
+  results <- pipeline(dataset, models, split_number) 
   # These results have
   # 1. cv_auc, 
   # 2. test_auc

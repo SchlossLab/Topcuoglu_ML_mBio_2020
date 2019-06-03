@@ -17,7 +17,7 @@ source('code/learning/functions.R')
 ######################################################################
 
 # Read in the walltime for each split.
-walltime_files <- list.files(path= 'data/process', pattern='walltime*', full.names = TRUE) 
+walltime_files <- list.files(path= 'data/process', pattern='traintime*', full.names = TRUE) 
 
 result <- list()
 
