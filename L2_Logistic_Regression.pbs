@@ -1,6 +1,6 @@
 #!/bin/sh
 #PBS -l procs=1,pmem=4gb
-#PBS -l walltime=10:00:00
+#PBS -l walltime=20:00:00
 #PBS -j oe
 #PBS -m a
 #PBS -V
