@@ -16,6 +16,6 @@ cp $SEARCH_DIR/L2_Logistic_Regression_"$DATA"_201.tsv $FINAL_DIR/combined_L2_Log
 #        "tail -n +2" makes tail print lines from 2nd line to the end
 #        "-q" tells it to not print the header with the file name
 #        ">>" adds all the tail stuff from every file to the combined file
-tail -n +2 -q $SEARCH_DIR/L1_Linear_SVM__"$DATA"_{2..100}.tsv >> $FINAL_DIR/combined_L1_Linear_SVM_"$DATA".tsv
-tail -n +2 -q $SEARCH_DIR/L2_Linear_SVM__"$DATA"_{102..200}.tsv >> $FINAL_DIR/combined_L2_Linear_SVM_"$DATA".tsv
+tail -n +2 -q $SEARCH_DIR/L1_Linear_SVM_"$DATA"_{2..100}.tsv >> $FINAL_DIR/combined_L1_Linear_SVM_"$DATA".tsv
+tail -n +2 -q $SEARCH_DIR/L2_Linear_SVM_"$DATA"_{102..200}.tsv >> $FINAL_DIR/combined_L2_Linear_SVM_"$DATA".tsv
 tail -n +2 -q $SEARCH_DIR/L2_Logistic_Regression_"$DATA"_{202..300}.tsv >> $FINAL_DIR/combined_L2_Logistic_Regression_"$DATA".tsv
