@@ -1,8 +1,0 @@
-Method	Hyper-parameter	Inner CV	Scaling	Inner CV	Sklearn Function
-L2 Logistic Regression	C	"5-fold, 100-repeats"	MinMax	100-repeats	LogisticRegression
-L1 SVM Linear Kernel	C	"5-fold, 100-repeats"	MinMax	100-repeats	LinearSVC
-L2 SVM Linear Kernel	C	"5-fold, 100-repeats"	MinMax	100-repeats	LinearSVC
-SVM RBF Kernel	"C, gamma"	"5-fold, 100-repeats"	MinMax	100-repeats	SVC
-Decision Tree	"max_depth, min_samples_split"	"5-fold, 100-repeats"	MinMax	100-repeats	DecisionTreeClassifier
-Random Forest	"n_estimators, max_features"	"5-fold, 100-repeats"	MinMax	100-repeats	RandomForestClassifier
-XGBoost	"n_estimators, colsample_bytree, learning_rate, subsample, max_depth, min_child_weight"	"5-fold, 100-repeats"	MinMax	100-repeats	XGBClassifier
