@@ -55,7 +55,7 @@ get_interp_info <- function(data, model_name){
     imp <- data %>% 
       # 2. Group by the OTU name and compute mean and sd for each OTU
       group_by(key) %>% 
-      summarise(mean_rank = mean(rank)) %>% 
+      summarise(mean_rank = median(rank)) %>% 
       arrange(mean_rank) %>% 
       head(n=20) %>% 
       select(key, mean_rank)
@@ -75,7 +75,7 @@ get_interp_info <- function(data, model_name){
       imp <- correlated_data %>% 
         arrange(imp)
     }
-    else{
+    else if("X1" %in% colnames(data)){
       # The file doesn't have "names" column which means these are correlated OTU groups
       # The file has correlated OTUs and their total percent auc change per group in one row
       # Each row has different groups of OTUs that are correlated together
@@ -94,6 +94,11 @@ get_interp_info <- function(data, model_name){
         unique() %>% 
         select(-new_auc, -model)
     }
+      else{
+        print("linear model")
+        imp <- NULL
+        }
+    
   }
   return(imp)
 }
@@ -143,11 +148,23 @@ get_feature_ranked_files <- function(file_name, model_name){
     write_tsv(., paste0("data/process/", model_name, "_rank_importance.tsv"))
 }
 
-L1_SVM_imp <- get_feature_ranked_files("data/process/combined_L1_Linear_SVM_feature_ranking.tsv", "L1_Linear_SVM")
+L1_SVM_imp <- get_feature_ranked_files("data/process/combined_L1_Linear_SVM_feature_ranking.tsv", "L1_Linear_SVM") %>% 
+  arrange(mean_rank) %>% 
+  mutate(rank = 1:nrow(.)) %>% 
+  select(key, rank) %>% 
+  head(10)
 
-L2_SVM_imp <- get_feature_ranked_files("data/process/combined_L2_Linear_SVM_feature_ranking.tsv", "L2_Linear_SVM")
+L2_SVM_imp <- get_feature_ranked_files("data/process/combined_L2_Linear_SVM_feature_ranking.tsv", "L2_Linear_SVM") %>% 
+  arrange(mean_rank) %>% 
+  mutate(rank = 1:nrow(.)) %>% 
+  select(key, rank) %>% 
+  head(10)
 
-logit_imp <- get_feature_ranked_files("data/process/combined_L2_Logistic_Regression_feature_ranking.tsv", "L2_Logistic_Regression")
+logit_imp <- get_feature_ranked_files("data/process/combined_L2_Logistic_Regression_feature_ranking.tsv", "L2_Logistic_Regression") %>% 
+  arrange(mean_rank) %>% 
+  mutate(rank = 1:nrow(.)) %>% 
+  select(key, rank) %>% 
+  head(10)
 # -------------------------------------------------------------------->
 
 # Read in the cvAUCs, testAUCs for 100 splits as base test_aucs
@@ -162,71 +179,7 @@ rf <- read_files(best_files[5])
 dt <- read_files(best_files[1])
 xgboost <- read_files(best_files[7])
 
-######################################################################
-#-------------- Plot the weights of linear models ----------#
-######################################################################
 
-# -----------------------Base plot function -------------------------->
-# We will plot the mean feature weights for top 10 OTUs
-# Define the base plot for the linear modeling methods
-base_plot <-  function(data, x_axis, y_axis){
-  plot <- ggplot(data, aes(fct_reorder(x_axis, -abs(y_axis)), y_axis)) +
-    geom_point(colour = "#D55E00", size = 3) +
-    coord_flip() +
-    theme_classic() +
-    scale_x_discrete(name = "") +
-    theme(legend.text=element_text(size=18),
-          legend.title=element_text(size=22),
-          panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank(),
-          panel.background = element_blank(),
-          text = element_text(size = 12),
-          axis.text.x=element_text(size = 12, colour='black'),
-          axis.text.y=element_text(size = 12, colour='black'),
-          axis.title.y=element_text(size = 13),
-          axis.title.x=element_text(size = 13), 
-          panel.border = element_rect(colour = "black", fill=NA, size=1)) +
-    geom_hline(yintercept=0, linetype="dashed", 
-               color = "black")
-  return(plot)
-}
-# ----------------------------------------------------------------------->
-
-
-# ------------------L1 SVM with linear kernel---------------------------->
-l1svm <- read.delim("data/process/L1_Linear_SVM_non_cor_importance.tsv", header=T, sep='\t') 
-
-l1svm_plot <- base_plot(l1svm, x=l1svm$key,y=l1svm$mean_weights) +
-  scale_y_continuous(name="L1 linear SVM feature weights",
-                    limits = c(-2, 2),
-                    breaks = seq(-2, 2, 1)) +
-  geom_errorbar(aes(ymin=l1svm$mean_weights-l1svm$sd_weights, 
-                    ymax=l1svm$mean_weights+l1svm$sd_weights), 
-                width=.01) 
-# ----------------------------------------------------------------------->
-
-# ------------------L2 SVM with linear kernel---------------------------->
-l2svm <- read.delim("data/process/L2_Linear_SVM_non_cor_importance.tsv", header=T, sep='\t') 
-l2svm_plot <- base_plot(l2svm, x=l2svm$key,y=l2svm$mean_weights) +
-  scale_y_continuous(name="L2 linear SVM feature weights",
-                     limits = c(-2, 2),
-                     breaks = seq(-2, 2, 1)) +    
-  geom_errorbar(aes(ymin=l2svm$mean_weights-l2svm$sd_weights, 
-                    ymax=l2svm$mean_weights+l2svm$sd_weights), 
-                width=.01) 
-# ----------------------------------------------------------------------->
-
-
-# ------------------- L2 logistic regression ---------------------------->
-logit <- read.delim("data/process/L2_Logistic_Regression_non_cor_importance.tsv", header=T, sep='\t') 
-logit_plot <- base_plot(logit, x=logit$key, y=logit$mean_weights) +
-  scale_y_continuous(name="L2 logistic regression coefficients",
-                     limits = c(-2, 2),
-                     breaks = seq(-2, 2, 1)) +   
-  geom_errorbar(aes(ymin=logit$mean_weights-logit$sd_weights, 
-                    ymax=logit$mean_weights+logit$sd_weights), 
-                width=.01)
-# ----------------------------------------------------------------------->
 
 
 ######################################################################
@@ -248,7 +201,7 @@ base_nonlin_plot <-  function(data, name){
   # Grab the names of the OTUs that have the lowest median AUC when they are permuted
   data_first_ten <- read.delim(paste0("data/process/", name, "_non_cor_importance.tsv"), header=T, sep='\t') %>%
     arrange(imp) %>% 
-    head(5)
+    head(10)
   # Get the new test aucs for 100 datasplits for each OTU permuted
   data_full <- read_files(paste0("data/process/combined_all_imp_features_non_cor_results_", name, ".csv")) %>%
     # Only keep the OTUs and their AUCs for the ones that are in the top 5 changed (decreased the most) ones
@@ -259,7 +212,7 @@ base_nonlin_plot <-  function(data, name){
     droplevels() %>% 
     as.character()
   # Base auc at the top, then followed by the most changed OTU, followed by others ordered by median
-  data_full$names <- factor(data_full$names,levels = c(otus[5], otus[4], otus[3], otus[2], otus[1]))
+  data_full$names <- factor(data_full$names,levels = c(otus[10], otus[9], otus[8], otus[7], otus[6], otus[5], otus[4], otus[3], otus[2], otus[1]))
   # Plot boxplot
   lowerq <-  quantile(data_base$new_auc)[2]
   upperq <-  quantile(data_base$new_auc)[4]
@@ -298,17 +251,28 @@ base_nonlin_plot <-  function(data, name){
   
   # Check if correlated OTUs make a difference in AUROC
 
-  data_cor_results <- read.delim(paste0("data/process/", name, "_cor_importance.tsv"), header=T, sep='\t') %>%
-    filter(!imp==data_base_means$imp) 
-  if(nrow(data_cor_results)==0) {
-    print("Correlation dataframe empty. No need to plot correlated OTUs. Plot only non-correlated OTUs.")
-  }else{
-    print("Investigate correlated OTUs effect and plot both.")
-  }
+  #data_cor_results <- read.delim(paste0("data/process/", name, "_cor_importance.tsv"), header=T, sep='\t') %>%
+   # filter(!imp==data_base_means$imp) 
+  #if(nrow(data_cor_results)==0) {
+  #  print("Correlation dataframe empty. No need to plot correlated OTUs. Plot only non-correlated OTUs.")
+  #}else{
+   # print("Investigate correlated OTUs effect and plot both.")
+  #}
   return(plot)
 }
 # ----------------------------------------------------------------------->
 
+
+logit_plot <- base_nonlin_plot(logit, "L2_Logistic_Regression") +
+  scale_x_discrete(name = "L2 Logistic Regression ") 
+
+l1_plot <- base_nonlin_plot(l1svm, "L1_Linear_SVM") +
+  scale_x_discrete(name = "L1 Linear SVM") 
+
+l2_plot <- base_nonlin_plot(l2svm, "L2_Linear_SVM") +
+  scale_x_discrete(name = "L2 Linear SVM ") 
+
+# ----------------------------------------------------------------------->
 
 # ----------------- SVM with radial basis function------------------------>
 # Plot most important 5 features effect on AUROC
