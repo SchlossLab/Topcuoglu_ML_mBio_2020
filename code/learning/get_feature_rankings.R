@@ -41,10 +41,9 @@ read_files <- function(filenames){
 # ----------- Read in saved weights for linear models in temp folder ---------->
 # List the important features files by defining a pattern in the path
 # Correlated files are:
-cor_files <- list.files(path= 'data/temp', pattern='all_imp_features_cor_.*', full.names = TRUE)
+cor_files <- list.files(path= 'data/temp', pattern='all_imp_features_cor_results_L.*', full.names = TRUE)
 
 get_interp_info <- function(data, model_name){ 
-  if("Bias" %in% colnames(data)){ 
     # If the models are linear, we saved the weights of every OTU for each datasplit
     # We want to plot the ranking of OTUs for linear models. 
     # 1. Get dataframe transformed into long form
@@ -64,14 +63,14 @@ get_interp_info <- function(data, model_name){
     #     b) Select the largest 10 
     #     c) Put the signs back to weights
     #     d) select the OTU names, mean weights with their signs and the sd
-    imp <- weights %>% 
+    ranks <- weights %>% 
       arrange(desc(value)) %>% 
       mutate(rank = 1:nrow(weights)) %>% 
       mutate(value = case_when(sign=="negative" ~ value*-1,
-                              sign=="positive"~ value)) %>% 
+                              sign=="positive"~ value, 
+                              sign=="zero" ~ value)) %>% 
       select(key, value, rank)
-  }
-  else {print("Not a linear model weights file")}
+
   return(ranks)
 }
 
@@ -82,6 +81,6 @@ for(file_name in cor_files){
   model_name <- as.character(importance_data$model[1])# get the model name from table
   get_interp_info(importance_data, model_name) %>% 
     as.data.frame() %>% 
-    write_tsv(., paste0("data/process/", model_name, "_feature_ranking_", i, ".tsv"))
+    write_tsv(., paste0("data/temp/", model_name, "_feature_ranking_", i, ".tsv"))
 }
     

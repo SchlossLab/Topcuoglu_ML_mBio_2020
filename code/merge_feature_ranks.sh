@@ -7,7 +7,7 @@ MODEL=$1
 DATA=feature_ranking
 
 # Define the directories we will use in the script
-SEARCH_DIR=data/process
+SEARCH_DIR=data/temp
 FINAL_DIR=data/process
 
 # 1. Keep the first line of File0 and remove the first line of all the other files (File[0-99]) and
