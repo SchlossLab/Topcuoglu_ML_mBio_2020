@@ -46,36 +46,19 @@ read_files <- function(filenames){
 #         - Top 10 features or feature groups will be listed
 #         - Mean percent AUROC change from original AUROC after permutation
 get_interp_info <- function(data, model_name){ 
-  if("Bias" %in% colnames(data)){ 
+  if("key" %in% colnames(data)){ 
     # If the models are linear, we saved the weights of every OTU for each datasplit
     # We want to plot the ranking of OTUs for linear models. 
     # 1. Get dataframe transformed into long form
     #         The OTU names are in 1 column(repeated for 100 datasplits)
     #         The weight value are in 1 column(for each of the datasplits)
-    weights <- data %>% 
-      select(-Bias, -model) %>% 
-      gather(factor_key=TRUE) %>% 
+    imp <- data %>% 
       # 2. Group by the OTU name and compute mean and sd for each OTU
       group_by(key) %>% 
-      summarise(mean_weights = mean(value), sd_weights = sd(value)) %>% 
-      # 2. We now want to save to a new column the sign of the weights
-      mutate(sign = case_when(mean_weights<0 ~ "negative",
-                              mean_weights>0 ~ "positive",
-                              mean_weights==0 ~ "zero")) 
-    # 3. We change all the weights to their absolute value
-    #       Because we want to see which weights are the largest 
-    weights$mean_weights <- abs(weights$mean_weights)
-    # 4.  a) Order the dataframe from largest weights to smallest.
-    #     b) Select the largest 10 
-    #     c) Put the signs back to weights
-    #     d) select the OTU names, mean weights with their signs and the sd
-    imp <- weights %>% 
-      arrange(desc(mean_weights)) %>% 
-      head(n=5) %>% 
-      mutate(mean_weights = case_when(sign=="negative" ~ mean_weights*-1,
-                                      sign=="positive"~ mean_weights)) %>% 
-      select(key, mean_weights, sd_weights)
-    
+      summarise(mean_rank = mean(rank)) %>% 
+      arrange(mean_rank) %>% 
+      head(n=20) %>% 
+      select(key, mean_rank)
   }
   # If we want to calculate the permutation importance results
   # Then we use the files without the weight information but the permutation results
@@ -152,6 +135,19 @@ for(file_name in non_cor_files){
     as.data.frame() %>% 
     write_tsv(., paste0("data/process/", model_name, "_non_cor_importance.tsv"))
 }
+
+get_feature_ranked_files <- function(file_name, model_name){
+  importance_data <- read_tsv(file_name)
+  get_interp_info(importance_data, model_name) %>% 
+    as.data.frame() %>% 
+    write_tsv(., paste0("data/process/", model_name, "_rank_importance.tsv"))
+}
+
+L1_SVM_imp <- get_feature_ranked_files("data/process/combined_L1_Linear_SVM_feature_ranking.tsv", "L1_Linear_SVM")
+
+L2_SVM_imp <- get_feature_ranked_files("data/process/combined_L2_Linear_SVM_feature_ranking.tsv", "L2_Linear_SVM")
+
+logit_imp <- get_feature_ranked_files("data/process/combined_L2_Logistic_Regression_feature_ranking.tsv", "L2_Logistic_Regression")
 # -------------------------------------------------------------------->
 
 # Read in the cvAUCs, testAUCs for 100 splits as base test_aucs
