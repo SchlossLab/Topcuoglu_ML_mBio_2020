@@ -46,10 +46,9 @@ read_files <- function(filenames){
 #         - Top 10 features or feature groups will be listed
 #         - Mean percent AUROC change from original AUROC after permutation
 get_interp_info <- function(data, model_name){ 
-  if(model_name=="L2_Logistic_Regression" || 
-     model_name=="L1_Linear_SVM" || 
-     model_name=="L2_Linear_SVM"){
+  if("Bias" %in% colnames(data)){ 
     # If the models are linear, we saved the weights of every OTU for each datasplit
+    # We want to plot the ranking of OTUs for linear models. 
     # 1. Get dataframe transformed into long form
     #         The OTU names are in 1 column(repeated for 100 datasplits)
     #         The weight value are in 1 column(for each of the datasplits)
@@ -78,7 +77,8 @@ get_interp_info <- function(data, model_name){
       select(key, mean_weights, sd_weights)
     
   }
-  # If models are not linear then we will read in permutation importance results
+  # If we want to calculate the permutation importance results
+  # Then we use the files without the weight information but the permutation results
   else{ 
     if("names" %in% colnames(data)){ # If the file has non-correlated OTUs 
       correlated_data <- data %>% 
@@ -136,9 +136,10 @@ non_cor_files <-  list.files(path= 'data/process', pattern='combined_all_imp_fea
 #   2. Get the model name from the file
 #   3. Use te get_interp_info() for each model. 
 #   4. Save the top 10 features and their mean, sd importance value in a .tsv file
+
 for(file_name in cor_files){
   importance_data <- read_files(file_name)
-  model_name <- as.character(importance_data$model[1]) # get the model name from table
+  model_name <- as.character(importance_data$model[1])# get the model name from table
   get_interp_info(importance_data, model_name) %>% 
     as.data.frame() %>% 
     write_tsv(., paste0("data/process/", model_name, "_cor_importance.tsv"))
@@ -233,10 +234,10 @@ logit_plot <- base_plot(logit, x=logit$key, y=logit$mean_weights) +
 
 
 ######################################################################
-#-------------- Plot the importance of non-linear models ----------#
+#-------------- Plot the permutation importance of all models ----------#
 ######################################################################
 # -----------------------Base plot function -------------------------->
-# Define the base plot for the non-linear modeling methods
+# Define the base plot 
 base_nonlin_plot <-  function(data, name){
   # Grab the base test auc values for 100 datasplits
   data_base <- data %>% 
