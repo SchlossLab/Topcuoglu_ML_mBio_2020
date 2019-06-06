@@ -30,27 +30,28 @@ grab_importance <-  function(name){
   # Grab the names of the OTUs that have the lowest median AUC when they are permuted
   data_first_10 <- read.delim(paste0("data/process/", name, "_non_cor_importance.tsv"), header=T, sep='\t') %>%
     arrange(imp) %>% 
-    head(10) %>%
+    head(5) %>%
     mutate(rank = 1:nrow(.)) %>% 
     mutate(model=name)
     
   return(data_first_10)
 }
 
-rbf <- grab_importance("RBF_SVM")
-dt <- grab_importance("Decision_Tree")
-rf <- grab_importance("Random_Forest")
-xgboost <-  grab_importance("XGBoost")
+x <- list("Random_Forest", "XGBoost")
 
-total <- bind_rows(dt, rf, xgboost) %>% 
-  group_by(model)
-
+total <- map_df(x, grab_importance) %>% group_by(model)
 
 # Grouped
-ggplot(total, aes(y=rank, x=names, color=model)) + 
-  geom_point(position=position_dodge(width = 0.90), size=3) +
-  geom_segment(aes(xend=names), yend=0, position=position_dodge(width = 0.90), size=1) +
-  expand_limits(y=0) +
-  scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9")) +
-  coord_flip() 
+ggplot(total, aes(y=rank, x=names, fill=model)) +
+  geom_bar(stat="identity", width=0.2, position = position_dodge2(preserve = "single")) +
+  geom_point(position = position_dodge(width=0.15), size=1, aes(color=model)) +
+  scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9", "black")) +
+  scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9", "black")) +
+  coord_flip() +
+  scale_x_discrete(name="Top 5 OTUs") +
+  scale_y_continuous(name="ranked importance based on 
+  permutation importance effect on AUROC") +
+  theme_classic() 
+
+ggsave("Figure_S3.png", plot = last_plot(), device = 'png', path = 'submission', width = 5, height = 2)  
 
