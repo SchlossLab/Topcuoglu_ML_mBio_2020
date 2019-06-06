@@ -2,7 +2,7 @@
 # Date: 2018-02-13
 #
 ######################################################################
-# This script looks at the model interpretation
+# This script plots permutation importance results 
 ######################################################################
 
 
@@ -17,94 +17,10 @@ for (dep in deps){
   library(dep, verbose=FALSE, character.only=TRUE)
 }
 ######################################################################
-#----------------- Define the functions we will use -----------------#
+#----------------- Call the functions we will use -----------------#
 ######################################################################
 
-
-# -------------------- Read files ------------------------------------>
-# This function:
-#     1. takes a list of files(with their path)
-#     2. reads them as delim files with comma seperator
-#     3. returns the dataframe
-read_files <- function(filenames){
-  for(file in filenames){
-    # Read the files generated in main.R 
-    # These files have cvAUCs and testAUCs for 100 data-splits
-    data <- read.delim(file, header=T, sep=',')
-  }
-  return(data)
-}
-# -------------------------------------------------------------------->
-
-
-# ------------------- Re-organize feature importance  ----------------->
-# This function:
-#     1. Takes in a dataframe (different data for each model) and the model name
-#     2. If the models are linear, returns the mean and sd weights of highest weight 10 features
-#     3. If the models are not linear, returns the permutation importance results for:
-#         - Correlated and non-correlated OTUs:
-#         - Top 10 features or feature groups will be listed
-#         - Mean percent AUROC change from original AUROC after permutation
-get_interp_info <- function(data, model_name){ 
-  if("key" %in% colnames(data)){ 
-    # If the models are linear, we saved the weights of every OTU for each datasplit
-    # We want to plot the ranking of OTUs for linear models. 
-    # 1. Get dataframe transformed into long form
-    #         The OTU names are in 1 column(repeated for 100 datasplits)
-    #         The weight value are in 1 column(for each of the datasplits)
-    imp <- data %>% 
-      # 2. Group by the OTU name and compute mean and sd for each OTU
-      group_by(key) %>% 
-      summarise(mean_rank = median(rank)) %>% 
-      arrange(mean_rank) %>% 
-      head(n=20) %>% 
-      select(key, mean_rank)
-  }
-  # If we want to calculate the permutation importance results
-  # Then we use the files without the weight information but the permutation results
-  else{ 
-    if("names" %in% colnames(data)){ # If the file has non-correlated OTUs 
-      correlated_data <- data %>% 
-        # 1. Group by the OTU names and calculate median and sd for auc change 
-        group_by(names) %>% 
-        summarise(imp = median(new_auc), sd_imp = sd(new_auc)) 
-      # 4.  a) Order the dataframe from largest weights to smallest.
-      #     b) Select the largest 10 
-      #     c) Put the signs back to weights
-      #     d) select the OTU names, median weights with their signs and the sd
-      imp <- correlated_data %>% 
-        arrange(imp)
-    }
-    else if("X1" %in% colnames(data)){
-      # The file doesn't have "names" column which means these are correlated OTU groups
-      # The file has correlated OTUs and their total percent auc change per group in one row
-      # Each row has different groups of OTUs that are correlated together
-      #     1. We will group by the first OTU (since it is only present in one group only)
-      #         This will group all the datasplits for that OTU group together
-      #     2. We then get the mean percent auc change of that correlated OTU group
-      correlated_data <- data %>% 
-        group_by(X1) %>% 
-        summarise(imp = median(new_auc), sd_imp = sd(new_auc))
-      #     3. We will now only take the first 10 and add the other OTUs to the row.
-      #       We have the mean percent auc change for each correlated group of OTUs in a row
-      #       We will also have all the OTU names in the group in the same row.
-      imp <- correlated_data %>% 
-        arrange(imp) %>% 
-        inner_join(data, by="X1") %>% # order the largest 10 
-        unique() %>% 
-        select(-new_auc, -model)
-    }
-      else{
-        print("linear model")
-        imp <- NULL
-        }
-    
-  }
-  return(imp)
-}
-# -------------------------------------------------------------------->
-
-
+source("code/learning/functions.R")
 
 ######################################################################
 #--------------Run the functions and plot importance ----------#
@@ -112,9 +28,15 @@ get_interp_info <- function(data, model_name){
 
 # ----------- Read in saved combined feature importances ---------->
 # List the important features files by defining a pattern in the path
+
 # Correlated files are:
+# For linear models these files have the feature weights and coefficients.
+# For non-linear models these files have the correlated OTUs grouped together
 cor_files <- list.files(path= 'data/process', pattern='combined_all_imp_features_cor_.*', full.names = TRUE)
+
 # Non-correlated files are:
+# For linear models these files have the non-correlated OTUs permutation importance results
+# For non-linear models these files have non-correlated OTUs permutation importance results
 non_cor_files <-  list.files(path= 'data/process', pattern='combined_all_imp_features_non_cor_.*', full.names = TRUE)
 # -------------------------------------------------------------------->
 
@@ -141,31 +63,7 @@ for(file_name in non_cor_files){
     write_tsv(., paste0("data/process/", model_name, "_non_cor_importance.tsv"))
 }
 
-get_feature_ranked_files <- function(file_name, model_name){
-  importance_data <- read_tsv(file_name)
-  get_interp_info(importance_data, model_name) %>% 
-    as.data.frame() %>% 
-    write_tsv(., paste0("data/process/", model_name, "_rank_importance.tsv"))
-}
 
-L1_SVM_imp <- get_feature_ranked_files("data/process/combined_L1_Linear_SVM_feature_ranking.tsv", "L1_Linear_SVM") %>% 
-  arrange(mean_rank) %>% 
-  mutate(rank = 1:nrow(.)) %>% 
-  select(key, rank) %>% 
-  head(10)
-
-L2_SVM_imp <- get_feature_ranked_files("data/process/combined_L2_Linear_SVM_feature_ranking.tsv", "L2_Linear_SVM") %>% 
-  arrange(mean_rank) %>% 
-  mutate(rank = 1:nrow(.)) %>% 
-  select(key, rank) %>% 
-  head(10)
-
-logit_imp <- get_feature_ranked_files("data/process/combined_L2_Logistic_Regression_feature_ranking.tsv", "L2_Logistic_Regression") %>% 
-  arrange(mean_rank) %>% 
-  mutate(rank = 1:nrow(.)) %>% 
-  select(key, rank) %>% 
-  head(10)
-# -------------------------------------------------------------------->
 
 # Read in the cvAUCs, testAUCs for 100 splits as base test_aucs
 best_files <- list.files(path= 'data/process', pattern='combined_best.*', full.names = TRUE)
@@ -262,7 +160,7 @@ base_nonlin_plot <-  function(data, name){
 }
 # ----------------------------------------------------------------------->
 
-
+# --------------------- Linear models ----------------------------------->
 logit_plot <- base_nonlin_plot(logit, "L2_Logistic_Regression") +
   scale_x_discrete(name = "L2 Logistic Regression ") 
 
