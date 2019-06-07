@@ -234,6 +234,7 @@ Hyperparameter selection is very important. We start with a granular grid search
 Models were trained using the machine learning wrapper caret package (v.6.0.81) in R (v.3.5.0). 
 
 **Permutation importance workflow.**
+We created a Spearman's rank-order correlation matrix, corrected for multiple pairwise comparisons. We then defined correlated OTUs as having perfect correlation (correlation coef=1 and p<0.01).Other OTUs were permuted individually to get permutation importance but the correlated ones are grouped together and permuted at the same time. The reported OTUs that have impact on testing AUROC are reported in Figures xxx. If we want we can decrease the correlation coefficient to consider OTUs that are correlated with ecological consequences but this was out of the scope of this study but will be followed up in further analyses. 
  
 **Statistical analysis workflow.** Data summaries, statistical analysis, and data visualizations were performed using R (v.3.5.0) with the tidyverse package (v.1.2.1). We compared the AUROC values of the seven ML models by Wilcoxon rank sum tests to determine the best discriminative performance. 
 

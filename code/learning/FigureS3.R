@@ -37,14 +37,14 @@ grab_importance <-  function(name){
   return(data_first_10)
 }
 
-x <- list("Random_Forest", "XGBoost")
+x <- list("Decision_Tree", "Random_Forest", "XGBoost")
 
 total <- map_df(x, grab_importance) %>% group_by(model)
 
 # Grouped
 ggplot(total, aes(y=rank, x=names, fill=model)) +
-  geom_bar(stat="identity", width=0.2, position = position_dodge2(preserve = "single")) +
-  geom_point(position = position_dodge(width=0.15), size=1, aes(color=model)) +
+  geom_bar(stat="identity", width=0.35, position = position_dodge2(preserve = "single")) +
+  geom_point(position = position_dodge(width=0.25), size=1, aes(color=model)) +
   scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9", "black")) +
   scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9", "black")) +
   coord_flip() +
