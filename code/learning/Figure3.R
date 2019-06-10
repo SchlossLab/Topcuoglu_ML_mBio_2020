@@ -34,20 +34,20 @@ get_feature_ranked_files <- function(file_name, model_name){
 plot_feature_ranks <- function(data){
   plot <- ggplot(data, aes(fct_reorder(data$key, data$rank), data$rank)) +
     geom_point(color = 'orange1') +
-    stat_summary(fun.y = "median", colour = 'orangered2', geom = "point", size = 2.5) +
+    stat_summary(fun.y = "median", colour = 'orangered4', geom = "point", size = 2.5) +
     coord_flip() +
-    scale_y_continuous(limits=c(0, 500)) +
+    scale_y_continuous(limits=c(0, 200)) +
     theme_classic() +
     theme(plot.margin=unit(c(1.5,3,1.5,3),"mm"),
           legend.position="none",
-          axis.title = element_text(size=14),
-          axis.text = element_text(size=12),
+          axis.title = element_text(size=10),
+          axis.text = element_text(size=10),
           panel.border = element_rect(colour = "black", fill=NA, size=1),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.background = element_blank(),
-          axis.text.x=element_text(size = 12, colour='black'),
-          axis.text.y=element_text(size = 10, colour='black'),
+          axis.text.x=element_text(size = 8, colour='black'),
+          axis.text.y=element_text(size = 8, colour='black'),
           axis.title.x=element_blank())
   return(plot)
 }
@@ -67,7 +67,8 @@ l2_svm_graph <- plot_feature_ranks(L2_SVM_imp)+
 
 logit_imp <- get_feature_ranked_files("data/process/combined_L2_Logistic_Regression_feature_ranking.tsv", "L2_Logistic_Regression")
 logit_graph <- plot_feature_ranks(logit_imp) +
-  scale_x_discrete(name = "L2 Logistic Regression ")
+  scale_x_discrete(name = "L2 Logistic 
+Regression ")
 # -------------------------------------------------------------------->
 
 
@@ -77,6 +78,7 @@ logit_graph <- plot_feature_ranks(logit_imp) +
 #combine with cowplot
 
 linear <- plot_grid(logit_graph, l1_svm_graph, l2_svm_graph, labels = c("A", "B", "C"), align = 'v', ncol = 1)
-ggdraw(add_sub(linear, "Feature Rankings", vpadding=grid::unit(0,"lines")))
 
-ggsave("Figure_3.png", plot = last_plot(), device = 'png', path = 'submission', width = 6, height = 8)
+ggdraw(add_sub(linear, "Feature Ranks", vpadding=grid::unit(0,"lines"), size=10, x=0.6))
+
+ggsave("Figure_3.png", plot = last_plot(), device = 'png', path = 'submission', width = 3, height = 5)

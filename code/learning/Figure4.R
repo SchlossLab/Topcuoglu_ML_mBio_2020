@@ -180,14 +180,14 @@ base_nonlin_plot <-  function(data, name, list){
                        expand=c(0,0)) +
     theme(plot.margin=unit(c(1.5,3,1.5,3),"mm"),
           legend.position="none",
-          axis.title = element_text(size=14),
-          axis.text = element_text(size=12),
-          panel.border = element_rect(colour = "black", fill=NA, size=1), 
+          axis.title = element_text(size=20),
+          axis.text = element_text(size=20),
+          panel.border = element_rect(colour = "black", fill=NA, size=2), 
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.background = element_blank(),
-          axis.text.x=element_text(size = 12, colour='black'),
-          axis.text.y=element_text(size = 10, colour='black'), 
+          axis.text.x=element_text(size = 16, colour='black'),
+          axis.text.y=element_text(size = 16, colour='black'), 
           axis.title.x=element_blank()) 
   
   #-----------------------Save median info ------------------------ #
@@ -257,10 +257,10 @@ ggdraw(add_sub(perm_non_tree_based, "AUROC with the OTU permuted randomly", vpad
 
 ggsave("Figure_S4.png", plot = last_plot(), device = 'png', path = 'submission', width = 8, height = 6)
 
-perm_tree_based <- plot_grid(rbf_plot, dt_plot, rf_plot, xgboost_plot, labels = c("A", "B", "C", "D"), cols=4)
-ggdraw(add_sub(perm_tree_based, "AUROC with the OTU permuted randomly", vpadding=grid::unit(0,"lines"), y=5, x=0.5, vjust=4.5))
+perm_tree_based <- plot_grid(rbf_plot, dt_plot, rf_plot, xgboost_plot, labels = c("A", "B", "C", "D"), cols=2)
+ggdraw(add_sub(perm_tree_based, "AUROC with the OTU permuted randomly", size=20, vpadding=grid::unit(0,"lines"), y=5, x=0.5, vjust=4.75))
 
-ggsave("Figure_4.png", plot = last_plot(), device = 'png', path = 'submission', width = 20, height = 5)
+ggsave("Figure_4.png", plot = last_plot(), device = 'png', path = 'submission', width = 10, height = 10)
 
 
 

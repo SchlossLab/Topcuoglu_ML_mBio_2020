@@ -72,7 +72,7 @@ get_interp_info <- function(data, model_name){
       group_by(key) %>%
       summarise(median_rank = median(rank)) %>%
       arrange(median_rank) %>%
-      head(n=10) %>%
+      head(n=5) %>%
       select(key, median_rank)
 
     imp <- data %>%
