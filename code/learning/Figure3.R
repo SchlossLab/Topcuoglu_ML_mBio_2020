@@ -2,7 +2,7 @@
 # Date: 2018-06-06
 #
 ######################################################################
-# This script plots the feature rankings
+# This script plots the feature rankings for linear models
 ######################################################################
 
 
@@ -23,7 +23,14 @@ for (dep in deps){
 source("code/learning/functions.R")
 
 
+######################################################################
+#----------------- Define the functions we will use -----------------#
+######################################################################
 
+# ------------------- Re-organize feature importance  ----------------->
+# This function:
+#     1. Takes in a combined (100 split) feature rankings for each model) and the model name
+#     2. Returns the top 5 ranked (1-5 lowest rank) OTUs (ranks of the OTU for 100 splits)
 get_feature_ranked_files <- function(file_name, model_name){
   importance_data <- read_tsv(file_name)
   ranks <- get_interp_info(importance_data, model_name) %>%
@@ -31,26 +38,31 @@ get_feature_ranked_files <- function(file_name, model_name){
   return(ranks)
 }
 
+# This function:
+#     1. Top 5 ranked (1-5 lowest rank) OTUs (ranks of the OTU for 100 splits)
+#     2. Returns a plot. Each datapoint is the rank of the OTU at one datasplit.
+                        
 plot_feature_ranks <- function(data){
-  
-  otus <- data %>% 
+    
+    # Grab the names of the top 5 OTUs in the order of their median rank  
+    otus <- data %>% 
     group_by(key) %>% 
     summarise(imp = median(rank)) %>% 
     arrange(imp) 
   
-  otus <- otus$key %>% 
+    otus <- otus$key %>% 
         as.character()
   
-  # Most changed OTU at the top, followed by others ordered by median
-  data$key <- factor(data$key,levels = c(otus[5], otus[4], otus[3], otus[2], otus[1]))
+    # Lowest ranked OTU at the top, followed by others ordered by median
+    data$key <- factor(data$key,levels = c(otus[5], otus[4], otus[3], otus[2], otus[1]))
   
-  plot <- ggplot(data, aes(data$key, data$rank)) +
-    geom_point(color = 'orange1') +
-    stat_summary(fun.y = "median", colour = 'orangered4', geom = "point", size = 2.5) +
-    coord_flip() +
-    scale_y_continuous(limits=c(0, 100)) +
-    theme_classic() +
-    theme(plot.margin=unit(c(1.5,3,1.5,3),"mm"),
+    plot <- ggplot(data, aes(data$key, data$rank)) +
+      geom_point(color = 'orange1') + # datapoints lighter color
+      stat_summary(fun.y = "median", colour = 'orangered4', geom = "point", size = 2.5) + # Median darker
+      coord_flip() +
+      scale_y_continuous(limits=c(0, 100)) + # Only keep the first 100 ranks (truncated)
+      theme_classic() +
+      theme(plot.margin=unit(c(1.5,3,1.5,3),"mm"),
           legend.position="none",
           axis.title = element_text(size=10),
           axis.text = element_text(size=10),
@@ -61,7 +73,7 @@ plot_feature_ranks <- function(data){
           axis.text.x=element_text(size = 8, colour='black'),
           axis.text.y=element_text(size = 8, colour='black'),
           axis.title.x=element_blank())
-  return(plot)
+    return(plot)
 }
 
 ######################################################################
