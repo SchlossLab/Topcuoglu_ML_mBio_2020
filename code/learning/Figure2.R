@@ -55,7 +55,7 @@ performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC), y = AUC
         legend.position=c(1,0),
         #legend.position="bottom",
         legend.title = element_blank(),
-        legend.background = element_rect(size=0.5, linetype="solid", color="black"),
+        legend.background = element_rect(linetype="solid", color="black", size=0.5),
         legend.box.margin=margin(c(12,12,12, 12)),
         legend.text=element_text(size=12),
         #legend.title=element_text(size=22),
@@ -64,11 +64,11 @@ performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC), y = AUC
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         text = element_text(size = 12),
-        axis.text.x=element_text(size = 15, colour='black'),
-        axis.text.y=element_text(size = 15, colour='black'),
-        axis.title.y=element_text(size = 20),
-        axis.title.x=element_text(size = 20),
-        panel.border = element_rect(colour = "black", fill=NA, size=1))
+        axis.text.x=element_text(size = 20, colour='black'),
+        axis.text.y=element_text(size = 20, colour='black'),
+        axis.title.y=element_text(size = 24),
+        axis.title.x=element_text(size = 24),
+        panel.border = element_rect(linetype="solid", colour = "black", fill=NA, size=1.5))
 
 ######################################################################
 #-----------------------Save figure as .pdf ------------------------ #
