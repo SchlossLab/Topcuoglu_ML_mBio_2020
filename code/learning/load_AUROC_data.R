@@ -1,6 +1,6 @@
 
 ######################################################################
-#--------- Load .tsv data to get mean test AUC for 7 models--------#
+#--------- Load cv and test AUROCs of 7 models for 100 datasplits--------#
 ######################################################################
 
 # Read in the cvAUCs, testAUCs for 100 splits.
@@ -8,7 +8,7 @@ best_files <- list.files(path= '../data/process', pattern='combined_best.*', ful
 all <- map_df(best_files, read_files) 
 
 # Get the The unpaired two-samples Wilcoxon test to see if test_aucs of models differ from one another signigicantly
-
+# Load the wilcoxon test function from ../code/learning/functions.R
 rf_xgboost <- wilcoxon_test(all, "Random_Forest", "XGBoost")
 rf_logit <- wilcoxon_test(all, "Random_Forest", "L2_Logistic_Regression")
 rf_L2svm <- wilcoxon_test(all, "Random_Forest", "L2_Linear_SVM")
