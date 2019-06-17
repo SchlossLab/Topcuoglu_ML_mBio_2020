@@ -41,9 +41,10 @@ cd DeepLearning
 2. Our dependencies:
 
 	* R version 3.5.0 
-	* The R packages which needs to be installed in our environment: "caret" ,"rpart", "xgboost", "randomForest", "kernlab","LiblineaR", "pROC", "tidyverse", "cowplot", "ggplot2", "vegan","gtools", "reshape2". 
+	* The R packages which needs to be installed in our environment: `caret` ,`rpart`, `xgboost`, `randomForest`, `kernlab`,`LiblineaR`, `pROC`, `tidyverse`, `cowplot`, `ggplot2`, `vegan`,`gtools`, `reshape2`. 
 	* Everything needs to be run from project directory.
 	* We get the OTU abundances, FIT results and Colonoscopy diagnosis from Marc's Meta study using the script ```code/learning/load_datasets.batch``` (which is included in the Makefile).
+	* We update the `caret` package with my modifications using the script ```code/learning/load_caret_models.R``` . Take a look at this script to change the R packages directory where `caret` is installed. 
 
 ### How to regenerate this repository in python (in progress)
 
