@@ -72,7 +72,7 @@ new_total <- map_df(x, get_delta_auc) %>%
   # Grouped
 ggplot(new_total, aes(y=delta, x=model, fill = model)) +
   geom_dotplot(binaxis = 'y', stackdir = "center", stackratio=1.5, dotsize=0.3, binpositions = "all" ) +
-  scale_fill_brewer(palette="Dark2") +
+  scale_fill_brewer(palette="Set3") +
   theme_bw() +
   geom_label_repel(aes(label = names),
                    data = subset(new_total, delta>0.013),

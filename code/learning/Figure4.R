@@ -163,12 +163,12 @@ base_nonlin_plot <-  function(data, name, list){
   median <-  median(data_base$new_auc) %>% 
     data.frame()
   
-  cols <- c("same1" = "orange", "same2" = "lightblue", "same3" = "darkseagreen3", "same4"="red", "same5" = "lightsalmon", "same6" = "hotpink" , "diff"="white")
+  cols <- c("same1" = "darkgoldenrod1", "same2" = "darkgoldenrod1", "same3" = "darkgoldenrod1", "same4"="darkgoldenrod1", "same5" = "darkgoldenrod1", "same6" = "darkgoldenrod1" , "diff"="darkgoldenrod1")
 
   plot <- ggplot() +
-    geom_boxplot(data=data_full, aes(x=names, y=new_auc, fill=factor(common_otus)), alpha=0.8) +
+    geom_boxplot(data=data_full, aes(x=names, y=new_auc, fill=factor(common_otus)), alpha=0.7) +
     geom_rect(aes(ymin=lowerq, ymax=upperq, xmin=0, xmax=Inf), fill="grey") +
-    geom_boxplot(data=data_full, aes(x=names, y=new_auc, fill=factor(common_otus)), alpha=0.8) +
+    geom_boxplot(data=data_full, aes(x=names, y=new_auc, fill=factor(common_otus)), alpha=0.7) +
     scale_fill_manual(values=cols) +
     geom_hline(yintercept = data_base_means$imp , linetype="dashed") +
     #geom_hline(yintercept = upperq, alpha=0.5) +
