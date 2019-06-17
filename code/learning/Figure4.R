@@ -212,17 +212,6 @@ base_nonlin_plot <-  function(data, name, list){
 }
 # ----------------------------------------------------------------------->
 
-# --------------------- Linear models ----------------------------------->
-logit_plot <- base_nonlin_plot(logit, "L2_Logistic_Regression", list2) +
-  scale_x_discrete(name = "L2 Logistic Regression ") 
-
-l1_plot <- base_nonlin_plot(l1svm, "L1_Linear_SVM", list2) +
-  scale_x_discrete(name = "L1 Linear SVM") 
-
-l2_plot <- base_nonlin_plot(l2svm, "L2_Linear_SVM", list2) +
-  scale_x_discrete(name = "L2 Linear SVM ") 
-
-# ----------------------------------------------------------------------->
 
 # ----------------- SVM with radial basis function------------------------>
 # Plot most important 5 features effect on AUROC
@@ -252,11 +241,6 @@ xgboost_plot <- base_nonlin_plot(xgboost, "XGBoost", list1)+
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 #combine with cowplot
-perm_non_tree_based <- plot_grid(logit_plot, l1_plot, l2_plot, rbf_plot, labels = c("A", "B", "C", "D"))
-ggdraw(add_sub(perm_non_tree_based, "AUROC with the OTU permuted randomly", vpadding=grid::unit(0,"lines"), y=5, x=0.5, vjust=4.5))
-
-ggsave("Figure_S4.png", plot = last_plot(), device = 'png', path = 'submission', width = 8, height = 6)
-
 perm_tree_based <- plot_grid(rbf_plot, dt_plot, rf_plot, xgboost_plot, labels = c("A", "B", "C", "D"), cols=2)
 ggdraw(add_sub(perm_tree_based, "AUROC with the OTU permuted randomly", size=20, vpadding=grid::unit(0,"lines"), y=5, x=0.5, vjust=4.75))
 

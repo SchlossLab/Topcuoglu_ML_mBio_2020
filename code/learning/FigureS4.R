@@ -78,8 +78,6 @@ dt <- read_files(best_files[1])
 xgboost <- read_files(best_files[7])
 
 
-
-
 ######################################################################
 #-------------- Plot the permutation importance of all models ----------#
 ######################################################################
@@ -162,7 +160,8 @@ base_nonlin_plot <-  function(data, name){
 
 # --------------------- Linear models ----------------------------------->
 logit_plot <- base_nonlin_plot(logit, "L2_Logistic_Regression") +
-  scale_x_discrete(name = "L2 Logistic Regression ") 
+  scale_x_discrete(name = "L2 Logistic 
+Regression ") 
 
 l1_plot <- base_nonlin_plot(l1svm, "L1_Linear_SVM") +
   scale_x_discrete(name = "L1 Linear SVM") 
@@ -172,42 +171,15 @@ l2_plot <- base_nonlin_plot(l2svm, "L2_Linear_SVM") +
 
 # ----------------------------------------------------------------------->
 
-# ----------------- SVM with radial basis function------------------------>
-# Plot most important 5 features effect on AUROC
-rbf_plot <- base_nonlin_plot(rbf, "RBF_SVM") +
-  scale_x_discrete(name = "RBF SVM ") 
-# ----------------------------------------------------------------------->
-
-# --------------------------- Decision Tree ----------------------------->
-# Plot most important 5 features effect on AUROC
-dt_plot <- base_nonlin_plot(dt, "Decision_Tree") +
-  scale_x_discrete(name = "Decision tree ") 
-# ----------------------------------------------------------------------->
-
-# --------------------------- Random Forest ----------------------------->
-# Plot most important 5 features effect on AUROC
-rf_plot <- base_nonlin_plot(rf, "Random_Forest") +
-  scale_x_discrete(name = "Random forest ") 
-# ----------------------------------------------------------------------->
-
-# --------------------------- XGBoost ----------------------------->
-# Plot most important 5 features effect on AUROC
-xgboost_plot <- base_nonlin_plot(xgboost, "XGBoost")+
-  scale_x_discrete(name = "XGBoost ") 
-# ----------------------------------------------------------------------->
-
 ######################################################################
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 #combine with cowplot
-linear <- plot_grid(l1svm_plot, l2svm_plot, logit_plot, labels = c("A", "B", "C"), align = 'h', ncol = 3)
+linear <- plot_grid(l1_plot, l2_plot, logit_plot, labels = c("A", "B", "C"), align = 'h', ncol = 3)
 
-ggsave("Figure_3.png", plot = linear, device = 'png', path = 'submission', width = 11, height = 2.5)
+ggsave("Figure_S4.png", plot = linear, device = 'png', path = 'submission', width = 11, height = 2.5)
 
-non_lin <- plot_grid(rbf_plot, dt_plot, rf_plot, xgboost_plot, labels = c("A", "B", "C", "D"))
-ggdraw(add_sub(non_lin, "AUROC with the OTU permuted randomly", vpadding=grid::unit(0,"lines"), y=5, x=0.5, vjust=4.5))
 
-ggsave("Figure_4.png", plot = last_plot(), device = 'png', path = 'submission', width = 8, height = 6)
 
 
 
