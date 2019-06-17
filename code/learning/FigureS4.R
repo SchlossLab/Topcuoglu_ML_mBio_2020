@@ -2,7 +2,7 @@
 # Date: 2018-02-13
 #
 ######################################################################
-# This script plots permutation importance results 
+# This script plots permutation importance results of linear models
 ######################################################################
 
 

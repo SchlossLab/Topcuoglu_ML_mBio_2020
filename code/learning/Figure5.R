@@ -2,9 +2,8 @@
 # Date: 2018-02-12
 #
 ######################################################################
-# This script plots Figure 1:
-#   1. cvAUC (means of 100 repeats for the best hp) of 100 datasplits
-#   2. testAUC of 100 datasplits
+# This script plots Figure 5:
+#   The training times of 7 models
 ######################################################################
 
 ######################################################################
@@ -16,36 +15,36 @@ source('code/learning/functions.R')
 # Load .csv data generated with modeling pipeline 
 ######################################################################
 
-# Read in the walltime for each split.
-walltime_files <- list.files(path= 'data/process', pattern='traintime*', full.names = TRUE) 
+# Read in the traintime for each split.
+traintime_files <- list.files(path= 'data/process', pattern='traintime*', full.names = TRUE) 
 
 result <- list()
 
-for(file in walltime_files){
-  model_walltime <- read_files(file) %>%  
-  #summarise_walltime() %>% 
+for(file in traintime_files){
+  model_traintime <- read_files(file) %>%  
+  #summarise_traintime() %>% 
   mutate(model=get_model_name(file))
-  result[[length(result)+1]] <- model_walltime
+  result[[length(result)+1]] <- model_traintime
 }
 
 min_fixed_result <- list()
 for(i in result){
-  i$x <- i$x/3600 # The walltimes were saved as seconds we covert to hours
+  i$x <- i$x/3600 # The traintimes were saved as seconds we covert to hours
   min_fixed_result[[length(min_fixed_result)+1]] <- i
 }
 
 
-walltime_df <- bind_rows(min_fixed_result)
+traintime_df <- bind_rows(min_fixed_result)
 
 ######################################################################
 #Plot the wall-time values for each model #
 ######################################################################
 
 
-walltime_plot <- ggplot(walltime_df, aes(x = fct_reorder(model, x), y = x)) +
+traintime_plot <- ggplot(traintime_df, aes(x = fct_reorder(model, x), y = x)) +
   geom_boxplot(fill="#0072B2", alpha=0.5, fatten = 1.5) +
   coord_flip() +
-  scale_y_continuous(name = "Walltime (hours)") +
+  scale_y_continuous(name = "traintime (hours)") +
   scale_x_discrete(name = "",
                    labels=c("L2 logistic regression",
                      "L1 linear SVM",
@@ -70,7 +69,7 @@ walltime_plot <- ggplot(walltime_df, aes(x = fct_reorder(model, x), y = x)) +
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 
-ggsave("Figure_5.png", plot = walltime_plot, device = 'png', path = 'submission', width = 3, height = 2)
+ggsave("Figure_5.png", plot = traintime_plot, device = 'png', path = 'submission', width = 3, height = 2)
 
 
             

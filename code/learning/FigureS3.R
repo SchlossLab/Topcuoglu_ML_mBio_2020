@@ -2,7 +2,7 @@
 # Date: 2018-06-05
 #
 ######################################################################
-# This script plots permutation importances of 7 models
+# This script plots permutation importances of 7 models as a dotplot
 ######################################################################
 
 
