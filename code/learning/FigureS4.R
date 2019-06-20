@@ -117,9 +117,9 @@ base_nonlin_plot <-  function(data, name){
   
 
   plot <- ggplot() +
-    geom_boxplot(data=data_full, aes(x=names, y=new_auc), fill="#E69F00",  alpha=0.8) +
+    geom_boxplot(data=data_full, aes(x=names, y=new_auc), fill="darkgoldenrod1",  alpha=0.7) +
     geom_rect(aes(ymin=lowerq, ymax=upperq, xmin=0, xmax=Inf), fill="grey") +
-    geom_boxplot(data=data_full, aes(x=names, y=new_auc), fill="#E69F00", alpha=0.8) +
+    geom_boxplot(data=data_full, aes(x=names, y=new_auc), fill="darkgoldenrod1", alpha=0.7) +
     geom_hline(yintercept = data_base_means$imp , linetype="dashed") +
     #geom_hline(yintercept = upperq, alpha=0.5) +
     #geom_hline(yintercept = lowerq, alpha=0.5) +
@@ -175,9 +175,9 @@ l2_plot <- base_nonlin_plot(l2svm, "L2_Linear_SVM") +
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 #combine with cowplot
-linear <- plot_grid(l1_plot, l2_plot, logit_plot, labels = c("A", "B", "C"), align = 'h', ncol = 3)
+linear <- plot_grid(l1_plot, l2_plot, logit_plot, labels = c("A", "B", "C"), align = 'h', ncol = 1)
 
-ggsave("Figure_S4.png", plot = linear, device = 'png', path = 'submission', width = 11, height = 2.5)
+ggsave("Figure_S4.png", plot = linear, device = 'png', path = 'submission', width = 4, height = 10)
 
 
 
