@@ -56,6 +56,7 @@ pipeline <- function(dataset, model, split_number){
 
   # -------------Define hyper-parameter and cv settings-------------------->
   # Define hyper-parameter tuning grid and the training method
+  # Uses function tuning_grid() in file ('code/learning/model_selection.R')
   grid <- tuning_grid(trainTransformed, model)[[1]]
   method <- tuning_grid(trainTransformed, model)[[2]]
   cv <- tuning_grid(trainTransformed, model)[[3]]
