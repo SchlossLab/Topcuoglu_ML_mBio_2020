@@ -95,6 +95,7 @@
 \usepackage{threeparttablex}
 \usepackage[normalem]{ulem}
 \usepackage{makecell}
+\usepackage{caption}
 
 \usepackage{helvet} % Helvetica font
 \renewcommand*\familydefault{\sfdefault} % Use the sans serif version of the font
@@ -143,31 +144,39 @@ Hershey Medical Center, Hershey, PA
 
 \subsection{Abstract}\label{abstract}
 
-Machine learning (ML) modeling of the human microbiome is used to
-identify the microbial biomarkers and aid in diagnosis of many chronic
-diseases such as inflammatory bowel disease, diabetes and colorectal
-cancer. Progress has been made towards developing ML models that predict
-health outcomes from bacterial abundances, but reliable ML models are
-scarce in part due to the flawed modeling methods. Furthermore, using
+Machine learning (ML) modeling of the human microbiome has the potential
+to identify the microbial biomarkers and aid in diagnosis of many
+chronic diseases such as inflammatory bowel disease, diabetes and
+colorectal cancer. Progress has been made towards developing ML models
+that predict health outcomes from bacterial abundances, but rigourous ML
+models are scarce due to the flawed modeling methods that call into
+question the validity of developed ML models. Furthermore, the use of
 black box ML models has hindered the validation of microbial biomarkers.
 To overcome these challenges, we benchmarked seven different ML models
 that use fecal 16S rRNA sequences to predict the presence/absence of
 colorectal cancer (CRC) lesions (n=490 patients, 261 controls and 229
-cases). To show the effect of model selection, we assessed the accuracy,
-interpretability, and computational efficiency of the following models:
-L2-regularized logistic regression, L1 and L2 support vector machines
-(SVM) with linear and radial basis function kernels, a decision tree,
-random forest, and extreme gradient boosting (XGBoost). The random
-forest model was best at detecting CRC lesions with an AUROC of 0.695
-but it was slow to train (101.3 h) and hard to interpret. Despite its
-simplicity, L2-regularized logistic regression followed random forest in
-predictive performance with an AUROC of 0.680, and it trained the
-fastest (12 min). This study showed that we should choose ML models
-based on our expectations of performance and interpretability as well as
-our computational resources. It also established standards for modeling
-pipelines of microbiome-associated ML models.
+cases). To show the effect of model selection, we assessed the
+predictive performance, interpretability, and computational efficiency
+of the following models: L2-regularized logistic regression, L1 and L2
+support vector machines (SVM) with linear and radial basis function
+kernels, a decision tree, random forest, and extreme gradient boosting
+(XGBoost). The random forest model was best at detecting CRC lesions
+with an AUROC of 0.695 but it was slow to train (101.3 h) and hard to
+interpret. Despite its simplicity, L2-regularized logistic regression
+followed random forest in predictive performance with an AUROC of 0.680,
+and it trained much faster (12 min). This study showed that we should
+choose ML models based on our expectations of predictive performance,
+interpretability and our computational resources. It also established
+standards for modeling pipelines of microbiome-associated ML models.
 
 \subsection{Importance}\label{importance}
+
+Prediction of health outcomes using ML is rapidly being adopted by
+human-associated microbiome studies. However, the developed ML so far
+are overoptimistic in terms of predictive performance and validity.
+Without rigorous ML pipelines, we cannot trust ML models. Before we can
+speed up progress, we need to slow down, define and start using good ML
+practices.
 
 \newpage
 
@@ -193,54 +202,59 @@ understand the microbial ecology of diseases such as liver cirrhosis,
 colorectal cancer, inflammatory bowel diseases (IBD), obesity, type 2
 diabetes and others (1--11). However, currently the field's use of ML
 lacks clarity and consistency on which methods are used and how these
-methods are implemented {[}(12); dadkhah\_gut\_2019{]}. More notably,
-flawed ML practices are prevalent such as using ML pipelines where there
-is no seperate held-out test dataset to evaluate model performance,
-reporting few or only the best outcomes of different randomizations of
-cross-validation and showing a disregard for large differences between
-cross-validation and testing performances as well as large confidence
-intervals of testing performances (4, 13--19). Moreover, there is a lack
-of discussion on why a particular ML model is utilized. Recently, there
-is a trend towards using more complex ML models such as random forest,
-extreme gradient boosting and neural networks without a discussion on if
-and how much model interpretibility is necessary for the study (11,
-20--22).
+methods are implemented {[}(12); dadkhah\_gut\_2019{]}. More notably, we
+commonly see ML practices such as using ML pipelines where there is no
+seperate held-out test dataset to evaluate model performance or
+reporting few or only the best outcomes of cross-validation. Even when
+there are seperate testing sets to evaluate model performance, we
+observe large differences between cross-validation and testing
+performances that indicate overfitting as well as large confidence
+intervals for testing performances (4, 13--19). Moreover, there is a
+lack of discussion on why a particular ML model is utilized. Recently,
+there is a trend towards using more complex ML models such as random
+forest, extreme gradient boosting and neural networks without a
+discussion on if and how much model interpretibility is necessary for
+the study (11, 20--22). Black box machine learning models require
+posthoc explanations to determine the importances of features in making
+a prediction. These explanations can be misleading and at times
+unreliable when making high-stake decisions about someone's health (23).
+The lack of transparency on modeling methodology, model interpretation
+and model selection negatively impact model reproducibility and
+validity. We need to strive toward better machine learning practices by
+(1) implementing consistent and rigourous machine learning pipelines and
+(2) selecting ML models that reflect the goal of the study as it will
+inform our expectations of model accuracy, complexity, interpretibility
+and computational efficiency.
 
-The lack of transparency on modeling methodology and model selection
-negatively impact model reproducibility and reliability. We need to
-strive toward better machine learning practices by (1) implementing
-consistent and reliable machine learning pipelines and (2) selecting ML
-models that reflect the goal of the study as it will inform our
-expectations of model accuracy, complexity, interpretibility and
-computational efficiency.
-
-To showcase a reliable ML pipeline and to shed light on how much ML
+To showcase a rigorous ML pipeline and to shed light on how much ML
 model selection can affect modeling results, we performed an empirical
 analysis comparing several different ML models using the same dataset
-and with a robust ML pipeline. We used a previously published colorectal
+and the same ML pipeline. We used a previously published colorectal
 cancer (CRC) study (3) which had fecal 16S rRNA gene sequences from 490
-patients. CRC is the third most common form of cancer worldwide in which
-the human-associated human microbiome is hypothesized to directly
-contribute to its development. We built ML models using fecal 16S rRNA
-gene sequences to predict patients with normal colons or patients with
-colonic tumors which are called screen relevant neoplasias (SRN). The
-study had 261 normal and 229 SRN samples. We established modeling
-pipelines for L2-regularized logistic regression, L1 and L2 support
-vector machines (SVM) with linear and radial basis function kernels, a
-decision tree, random forest and XGBoost. Our ML pipeline utilized
-held-out test data to evaluate generalization performance of each ML
-model. The median test AUROC varied from 0.601 to 0.695. Random forest
-had the highest median AUROC for detecting SRN. Despite its simplicity,
-the L2-regularized logistic regression followed random forest in
-performance. In terms of computational efficiency, L2 logistic
-regression trained the fastest (0.202 hours, std ± 0.019), while XGBoost
-took the longest (162.843 hours, std ± 3.986). We found that median
-cross-validation and testing AUROC varied 0.021, which highlights the
-importance of a seperate held-out test set and consistent preprocessing
-of the data prior to evaluation. Aside from evaluating generalization
-and classification performances for each of these models, this study
-established standards for modeling pipelines of microbiome-associated
-machine learning models.
+patients. CRC is a type of cancer which the human-associated human
+microbiome is hypothesized to directly contribute to its development
+therefore fecal 16S rRNA gene sequences can be used to detect CRC. We
+built ML models using fecal 16S rRNA gene sequences to predict healthy
+patients versus patients with colorectal lesions that were identified by
+colonoscopy as screen relevant neoplasias (SRN). The study had 261
+normal and 229 SRN samples. We established modeling pipelines for
+L2-regularized logistic regression, L1 and L2 support vector machines
+(SVM) with linear and radial basis function kernels, a decision tree,
+random forest and XGBoost. Our ML pipeline utilized held-out test data
+to evaluate predictive performance and generalizability of each ML
+model. We used the area under the receiver operating characteristic
+curve (AUROC) as the predictive performance metric. The median test
+AUROC varied from 0.601 to 0.695. Random forest had the highest median
+AUROC for detecting SRN. Despite its simplicity, the L2-regularized
+logistic regression was second best in predictive performance. In terms
+of computational efficiency, L1 SVM with linear kernel trained the
+fastest (0.202 hours, std ± 0.028), while XGBoost took the longest
+(155.104 hours, std ± 0.959). We also found that depending on how the
+data is split to create a held-out test set, the AUROC values of a ML
+model can vary up to 0.295 which highlighted the importance of
+performing many randomized modeling runs. This study established
+standards for microbiome-associated ML models and underscored the
+importance of model selection.
 
 \subsection{Results}\label{results}
 
@@ -261,68 +275,67 @@ For regularized logistic regression and SVM with linear kernel we used
 L2 regularization to keep all potentially important features. For
 comparison, we also trained an L1 regularized SVM model with linear
 kernel. L1-regularization on microbiome data lead to a sparser solution
-(i.e., force many coefficients to zero), removing features that could be
-correlated with other important features. Finally, to explore the
+(i.e., force many coefficients to zero). Finally, to explore the
 potential for non-linear relationships among features and the outcome of
 interest, we trained tree based models, decision tree, random forest and
 XGboost, as well as an SVM with non-linear kernel.
 
-We established a robust and reliable ML pipeline where we train and
-validate each of the seven models {[}Figure 1{]}. We randomly split the
-data into training/validation and test sets so that the
-training/validation set consisted of 80\% of the full dataset while the
-test set was composed of the remaining data {[}Figure 1{]}. Since the
-cases are not uniformly represented in the data, the initial data-split
-was stratified to maintain the overall label distribution in both the
-training/validation and test sets. Training/validation set consisted of
-393 patients (209 SRN), while the test set was composed of 97 patients
-(52 SRN). The training/validation data was used for training purposes
-and validation of hyperparameter selection (i.e.~model selection), and
-the test set was used for evaluation purposes. Validation of
-hyperparameter selection was performed using repeated five-fold
-cross-validation on the training/validation set {[}Figure 1{]}. Similar
-to the initial data-split, five-fold cross-validation was also
-stratified to maintain the overall label distribution on the training
-and validation sets. We validated the cross-validation performances of
-each hyperparameter setting over the 100 randomizations and selected the
-best performing hyper-parameter setting in terms of AUROC to train the
-full training/validation dataset {[}Figures S1 and S2{]}. We then used
-the held-out test set to evaluate the prediction performance of each ML
+We established a robust ML pipeline where we train and validate each of
+the seven models {[}Figure 1{]}. We randomly split the data into
+training/validation and test sets so that the training/validation set
+consisted of 80\% of the full dataset while the test set was composed of
+the remaining data {[}Figure 1{]}. Since the cases are not uniformly
+represented in the data, the initial data-split was stratified to
+maintain the overall label distribution in both the training/validation
+and test sets. Training/validation set consisted of 393 patients (209
+SRN), while the test set was composed of 97 patients (52 SRN). The
+training/validation data was used for training purposes and validation
+of hyperparameter selection (i.e.~model selection), and the test set was
+used for evaluation purposes. Validation of hyperparameter selection was
+performed using repeated five-fold cross-validation on the
+training/validation set {[}Figure 1{]}. Similar to the initial
+data-split, five-fold cross-validation was also stratified to maintain
+the overall label distribution on the training and validation sets. We
+validated the cross-validation performances of each hyperparameter
+setting over the 100 randomizations and selected the best performing
+hyper-parameter setting in terms of AUROC to train the full
+training/validation dataset {[}Figures S1 and S2{]}. We then used the
+held-out test set to evaluate the prediction performance of each ML
 model. The data-split, hyperparameter selection, training and testing
 steps were repeated 100 times to get a reliable and robust reading of
 model prediction performance {[}Figure 1{]}.
 
-\textbf{Discriminative performance of the seven models.}
+\textbf{Discriminative performance and generalizability of the seven
+models.}
 
 We evaluated the prediction performances of seven binary classification
-models when applied to held-out test data using the area under the
-receiver operating characteristic curve (AUROC) as the discriminative
-performance metric {[}Figure 1{]}. Random forest had significantly
-higher test AUROC values than the other models for detecting SRNs when
-AUROC values were compared to the other six by Wilcoxon rank sum test (p
-= 0.0011). The median AUROC of therandom forest model was 0.695 (IQR
-0.044). L2-regularized logistic regression, XGBoost, L2-regularized SVM
-with linear and radial basis function kernel AUROC values were not
-significantly different from one another. They had median AUROC values
-of 0.68 (IQR 0.055), 0.679 (IQR 0.053), 0.678 (IQR 0.056) and 0.668 (IQR
-0.056) respectively. L1 SVM with linear kernel and decision tree had
-significantly lower AUROC values than the other ML models with median
-AUROC of 0.65 (IQR 0.066) and 0.601 (IQR 0.059), respectively {[}Figure
-2{]}.
+models when applied to held-out test data using AUROC metric {[}Figure
+1{]}. Random forest had significantly higher test AUROC values than the
+other models for detecting SRNs when AUROC values were compared to the
+other six by Wilcoxon rank sum test (p \textless{} 0.01). The median
+AUROC of the random forest model was 0.695 (IQR 0.044). L2-regularized
+logistic regression, XGBoost, L2-regularized SVM with linear and radial
+basis function kernel AUROC values were not significantly different from
+one another. They had median AUROC values of 0.68 (IQR 0.055), 0.679
+(IQR 0.052), 0.678 (IQR 0.056) and 0.668 (IQR 0.056) respectively. L1
+SVM with linear kernel and decision tree had significantly lower AUROC
+values than the other ML models with median AUROC of 0.65 (IQR 0.066)
+and 0.601 (IQR 0.059), respectively {[}Figure 2{]}.
 
-\textbf{Generalizability of the seven models.}
-
-We compared the median cross-validation AUROC and median testing AUROC
-for each model. This difference should be low to suggest the model is
-not overfitting despite the large number of features. The largest
-difference between the two was 0.021 in L1 SVM with linear kernel
-followed by SVM with radial basis function kernel and decision tree with
-a difference of 0.007 and 0.006, respectively {[}Figure 2{]}.
+For each model, we compared the median cross-validation AUROC to the
+median testing AUROC. The difference between the two should be low to
+suggest the model is not overfitting despite the large number of
+features. The largest difference between the two was in L1 SVM with
+linear kernel, 0.021, followed by SVM with radial basis function kernel
+and decision tree with a difference of 0.007 and 0.006, respectively
+{[}Figure 2{]}.
 
 We reported the testing AUROC values over 100 random splits of the full
-dataset {[}Figure 1{]}. The testing AUROC values varied 0.23 on average,
-depending on the data-split. For instance, the lowest AUROC value of the
-random forest model was 0.59 whereas the highest was 0.81.
+dataset which showed that depending on the data-split, the testing AUROC
+value showed great variability {[}Figure 2{]}. The testing AUROC values
+within each model varied 0.23 on average across the seven models. For
+instance, the lowest AUROC value of the random forest model was 0.59
+whereas the highest was 0.81.
 
 \textbf{Interpretation of each ML model.}
 
@@ -330,88 +343,111 @@ The ML models we built using L2-regularized logistic regression, L1 and
 L2 support vector machines (SVM) with linear and radial basis function
 kernels, a decision tree, random forest and XGBoost decrease in
 interpretibility as they increase in complexity. We interpreted L1 and
-L2 SVM with linear kernel using the feature weights and L2 logistic
-regression using regression coefficients of the trained models. We
-examined the 5 predictive (highest weight) and protective (lowest
-weight) features identified by the model. We calculated the mean weights
-and coefficients of these features over the 100 data-splits. In the
-three linear models, OTUs that had the largest mean weights and drove
-the detection of SRNs belong to family \emph{Lachnospiraceae}, and
-\emph{Ruminococcaceae} (OTU01239, OTU00659, OTU00742, OTU00012,
-OTU00050, OTU00015, OTU00768, OTU00822, OTU00609, OTU01212, OTU00629)
-and genera \emph{Gamella} (OTU00426) {[}Figure 3{]}. We explained the
-feature importances in non-linear models using permutation importance on
-the held-out test data where we permuted groups of correlated features
-(see methods). For the tree-based models, permuting
+L2 SVM with linear kernel and L2 logistic regression using the feature
+weights of the trained models. We ranked the absolute weights of all the
+OTUs for each data-split. We calculated the median ranks of these
+features over the 100 data-splits. In the three linear models, OTUs that
+had the largest median ranks and drove the detection of SRNs belong to
+family \emph{Lachnospiraceae}, and \emph{Ruminococcaceae} (OTU01239,
+OTU00659, OTU00742, OTU00012, OTU00015, OTU00768, OTU00822, OTU00609),
+genera \emph{Gamella} (OTU00426) and genera \emph{Peptostreptococcus}
+(OTU00367) {[}Figure 3{]}. Some of the OTUs with the highest ranks were
+shared among the linear models. We explained the feature importances in
+non-linear models using permutation importance on the held-out test data
+where we randomly permuted non-correlated features individually and
+groups of correlated features together (see methods) to calculate the
+effect of permuted OTUs or group of OTUs on testing AUROC. The top 5
+OTUs with the largest negative impact on testing AUROC overlapped in
+tree-based models {[}Figure 4{]}. Specifically, permuting
 \emph{Peptostreptococcus} (OTU00367) abundances randomly, dropped the
-predictive performances the most. Decision tree, random forest and
-XGBoost models' predictive performance dropped from 0.6 base testing
-AUROC median to 0.52, from 0.69 to 0.68 and from 0.68 to 0.65,
-respectively {[}Figure 4{]}. The negative predictive impact of
+predictive performances the most for all tree-based methods {[}Figure
+S3{]}. Decision tree, random forest and XGBoost models' predictive
+performance dropped from 0.6 base testing AUROC median to 0.52, from
+0.69 to 0.68 and from 0.68 to 0.65, respectively {[}Figure 4{]}.
+Decision tree was more susceptible to The negative predictive impact of
 \emph{Peptostreptococcus} in the decision tree model was followed by a
 \emph{Lachnospiraceae} species (OTU00058) (0.6 base testing AUROC median
-to 0.58) {[}Figure 4B{]}. Other OTUs had none to minimal effect on the
-predictive performance.
+to 0.58) {[}Figure 4B{]}.
 
 \textbf{The computational efficiency of each ML model.}
 
-Linear models trained faster than non-linear models. L2 logistic
-Rregression and L1 and L2 SVM with linear kernel had training times of
-0.2 hours, (std ± 0.02), 0.2 hours, (std ± 0.03), and 0.2 hours, (std ±
-0.03), respectively. Whereas, SVM with radial basis function kernel,
-decision tree, random forest and xgboost had training times of 9.4
-hours, (std ± 0.8), 64.7 hours, (std ± 9.9), 101.3 hours, (std ± 10) and
-162.8 hours, (std ± 4), respectively {[}Figure 4{]}.
+As the complexity of a ML model increased {[}Table S1{]}, its training
+times increased as well {[}Figure 5{]}. Additionally, the more
+hyperparameters a model had {[}Table S1{]}, the longer it took to train
+{[}Figure 5{]}. Linear models trained faster than non-linear models. L2
+logistic Rregression and L1 and L2 SVM with linear kernel had training
+times of 0.2 hours, (std ± 0.03), 0.2 hours, (std ± 0.02), and 0.2
+hours, (std ± 0.02), respectively. Whereas, SVM with radial basis
+function kernel, decision tree, random forest and xgboost had training
+times of 4.4 hours, (std ± 0.3), 59.6 hours, (std ± 8.8), 83.2 hours,
+(std ± 11.3) and 155.1 hours, (std ± 1), respectively {[}Figure 5{]}.
 
 \subsection{Discussion}\label{discussion}
 
-\paragraph{Interpretation of results}\label{interpretation-of-results}
+In this study we established a robust ML pipeline to use 16S rRNA
+sequence counts to predict a binary health outcome. We used a held-out
+test set to illustrate the difference between cross-validation and
+testing AUROC values. When the differences between cross-validation and
+test performance is low, this suggets the models will perform similar
+with similar data. In all seven models, the differences in
+cross-validation and testing AUROC values did not exceed 0.021 which
+suggests that these models will be able to test similar new data.
 
-\begin{itemize}
-\item
-  In this study we established a robust ML pipeline to use 16S rRNA
-  sequence counts to predict a binary health outcome. We used a held-out
-  test set to illustrate the difference between cross-validation and
-  testing AUROC values. When the differences between cross-validation
-  and test performance is low, this suggets the models will perform
-  similar with similar data. In all seven models, the differences in
-  cross-validation and testing AUROC values did not exceed 0.021 which
-  suggests that these models will be able to test similar new data.
-\item
-  We also reported the results of 100 random dataset splits because
-  there are differences in AUROC values of each of the seven models
-  between different random data-splits. Our results showed that the
-  testing AUROC values varied 0.23 on average, depending on the
-  data-split. This result shows that you can get ``lucky'' in terms of
-  prediction performance depending on the random split. Therefore, it is
-  crucial to report all the findings over many random data-splits to get
-  reliable performance metrics.
-\item
-  Our results also showed that we can choose different models for
-  different reasons. Getting feature importances as weights and
-  regression coefficients is the fastest and easiest interpratation.
-  Similarly, linear models require less computational burden, fastest to
-  train. Thinking about the applicability, and actionability of a model
-  in clinical setting, we might want faster results.
-\item
-\item
-  Suprisingly, l2 logistic regression does really well.
-\item
-  Computational efficiency and interp of logistic vs random forest
-\item
-  decision tree and l1 why so low?
-\end{itemize}
+In our ML pipeline we performed the 80\%-20\% random datasplit 100
+times. The repetition of the initial data-split to create a held-out
+test set is a crucial step in the ML pipeline to develop generalizable
+ML models and to report reliable performance metrics for a ML model.
+Depending on the data-split, there is the chance of being overoptimistic
+about the predictive performance of a model. In our study, we showed
+that there are differences in AUROC values between different random
+data-splits in each of the models we tested. Our results showed that the
+testing AUROC values varied 0.23 on average, depending on the
+data-split.
+
+Our results also showed that we should choose to use ML models based on
+the goal of the study and our expectations of predictive performance,
+interpretibility and computational burden. In terms of predictive
+performance, all models except a decision tree and L1-regularized SVM
+with linear kernel behaved similarly. Random forest model had testing
+AUROC values statistically significantly larger than others. However the
+second best model was L2-regularized logistic regression following
+random forest with a median AUROC difference of only 0.015. The decision
+tree model performed poorly because it had no regularization.
+L1-regularized SVM with linear kernel also performed poorly possibly
+because it was more sensitive to hyper-parameter tuning. In terms of
+interpretation, random forest is a more complex ML model and it can only
+be explained using methods such as permutation importance. On the other
+hand, L2-regularized logistic regression is easy to interpret
+(i.e.~regression coefficients of the trained model). If the goal of the
+study is to learn the ecology behind a disease and to identify
+biomarkers, then easily interpretable models could be a better fit. It
+is also important to consider the computational burden of developing ML
+models. Random forest model was slow to train with upto \texttt{r} hours
+whereas L2-regularized logistic regression trained in \texttt{r}
+minutes.
+
+Our study underscored the importance of performing a full grid search
+for hyperparameter settings when building a ML model. We first performed
+a granular grid search and then a full grid search on the limited range
+of possible hyperparameter settings. In the example of L1-regularized
+SVM with linear kernel, the model showed variability between different
+regularization coefficients (C).
 
 \paragraph{Consideration of possible
 weaknesses}\label{consideration-of-possible-weaknesses}
 
 \begin{itemize}
 \item
-  What happens with imbalanced data
+  What happens with imbalanced data The metric you use as the
+  discriminative performance becomes important. Don't use accuracy.
+  AUROC is good and random at 0.5 always.
 \item
-  What happens with smaller datasets
+  What happens with smaller datasets Generalization performance depends
+  on size. The more complex the model, more data you will need. Use
+  linear models if you have little data.
 \item
-  Does the code work on any microbiome data?
+  Does the code work on any microbiome data? So if yu have a new sample,
+  do you have the same OTUs? NO
 \item
   Why did we use only one dataset?
 \item
@@ -436,7 +472,7 @@ Subsample dataset and refit see how method behaves for 7 methods.
 \textbf{Data collection and study population.} The data used for this
 analysis are stool bacterial abundances and clinical information of the
 patients recruited by Great Lakes-New England Early Detection Research
-Network study. These data were obtained from Sze et al (23). The stool
+Network study. These data were obtained from Sze et al (24). The stool
 samples were provided by recruited adult participants who were
 undergoing scheduled screening or surveillance colonoscopy.
 Colonoscopies were performed and fecal samples were collected from
@@ -454,7 +490,7 @@ abundance data was generated by Sze et al, by processing 16S rRNA
 sequences in Mothur (v1.39.3) using the default quality filtering
 methods, identifying and removing chimeric sequences using VSEARCH and
 assigning to OTUs at 97\% similarity using the OptiClust algorithm
-(24--26).
+(25--27).
 
 \textbf{Data definitions and pre-processing.}
 
@@ -470,6 +506,14 @@ were then transformd by scaling to a {[}0-1{]} range.
 
 \textbf{Model training and evaluation.}
 
+Models were trained using the machine learning wrapper caret package
+(v.6.0.81) in R (v.3.5.0). Within the caret package, we have made
+modifications to L2-regularized SVM with linear kernel function
+\textbf{svmLinear3} and developed a L1-regularized SVM with linear
+kernel function \textbf{svmLinear4} to calculate decision values instead
+of predicted probabilities. These changes are available at
+\url{https://github.com/SchlossLab/Topcuoglu_ML_XXXX_2019/}.
+
 For L2-regularized logistic regression, L1 and L2 support vector
 machines (SVM) with linear and radial basis function kernels we tuned
 the \textbf{cost} hyperparameter which determines the regularization
@@ -481,12 +525,32 @@ dependent on the points that are closest to the decision boundary. For
 the decision tree model, we tuned the \textbf{depth of the tree} where
 deeper the tree, the more splits it has. For random forest, we tuned the
 \textbf{number of features} to consider when looking for the best tree
-split. For xgboost, we tuned for \textbf{learning rate} and the
+split. For XGBoost, we tuned for \textbf{learning rate} and the
 \textbf{fraction of samples} to be used for fitting the individual base
-learners. Models were trained using the machine learning wrapper caret
-package (v.6.0.81) in R (v.3.5.0).
+learners.For hyperparameter selection, we started with a granular grid
+search. Then we narrowed and fine-tuned the range of each
+hyperparameter. The range of the grid depends on the ML task and ML
+model. A full grid search needs to be performed to avoid variability in
+testing performance. We can use hyper-band to help us with our
+hyperparameter selection (28).
 
-\textbf{Permutation importance workflow.}
+The computational burden during model training due to model complexity
+was reduced by parallelizing segments of the ML pipeline. In this study
+we have parallelized each data-split which allowed 100 data-splits to be
+processed through the ML pipeline at the same time for each model. We
+can further parallelize the cross-validation step for each
+hyper-parameter setting.
+
+\textbf{Permutation importance workflow.} We created a Spearman's
+rank-order correlation matrix, corrected for multiple pairwise
+comparisons. We then defined correlated OTUs as having perfect
+correlation (correlation coef=1 and p\textless{}0.01).Other OTUs were
+permuted individually to get permutation importance but the correlated
+ones are grouped together and permuted at the same time. The reported
+OTUs that have impact on testing AUROC are reported in Figures xxx. If
+we want we can decrease the correlation coefficient to consider OTUs
+that are correlated with ecological consequences but this was out of the
+scope of this study but will be followed up in further analyses.
 
 \textbf{Statistical analysis workflow.} Data summaries, statistical
 analysis, and data visualizations were performed using R (v.3.5.0) with
@@ -543,9 +607,9 @@ predictive performance of the model. Abbreviations: SVM, support vector
 machine; OTU, Operational Taxonomic Unit; RBF, radial basis kernel; OTU,
 Operational Taxonomic Unit. \newpage
 \includegraphics{Figure_5.png} \textbf{Figure 5. Computational
-efficiency of seven ML models.} The walltimes for training and testing
+efficiency of seven ML models.} The traintimes for training and testing
 of each data-split showed the differences in computational efficieny of
-the seven models. The median walltime in hours was the highest for
+the seven models. The median traintime in hours was the highest for
 XGBoost and shortest for L2 logistic regression. The boxplot shows
 quartiles at the box ends and the statistical median as the horizontal
 line in the box. The whiskers show the farthest points that are not
@@ -741,14 +805,18 @@ engineering in medicine and biology society (EMBC).
 \textbf{Furlanello C}. 2017. Phylogenetic convolutional neural networks
 in metagenomics. arXiv:170902268 {[}cs, q-bio{]}.
 
+\hypertarget{ref-rudin_please_2018}{}
+23. \textbf{Rudin C}. 2018. Please stop explaining black box models for
+high stakes decisions. arXiv:181110154 {[}cs, stat{]}.
+
 \hypertarget{ref-sze_leveraging_2018}{}
-23. \textbf{Sze MA}, \textbf{Schloss PD}. 2018. Leveraging existing 16S
+24. \textbf{Sze MA}, \textbf{Schloss PD}. 2018. Leveraging existing 16S
 rRNA gene surveys to identify reproducible biomarkers in individuals
 with colorectal tumors. mBio \textbf{9}:e00630--18.
 doi:\href{https://doi.org/10.1128/mBio.00630-18}{10.1128/mBio.00630-18}.
 
 \hypertarget{ref-schloss_introducing_2009}{}
-24. \textbf{Schloss PD}, \textbf{Westcott SL}, \textbf{Ryabin T},
+25. \textbf{Schloss PD}, \textbf{Westcott SL}, \textbf{Ryabin T},
 \textbf{Hall JR}, \textbf{Hartmann M}, \textbf{Hollister EB},
 \textbf{Lesniewski RA}, \textbf{Oakley BB}, \textbf{Parks DH},
 \textbf{Robinson CJ}, \textbf{Sahl JW}, \textbf{Stres B},
@@ -758,16 +826,22 @@ Community-Supported Software for Describing and Comparing Microbial
 Communities. ApplEnvironMicrobiol \textbf{75}:7537--7541.
 
 \hypertarget{ref-westcott_opticlust_2017}{}
-25. \textbf{Westcott SL}, \textbf{Schloss PD}. 2017. OptiClust, an
+26. \textbf{Westcott SL}, \textbf{Schloss PD}. 2017. OptiClust, an
 Improved Method for Assigning Amplicon-Based Sequence Data to
 Operational Taxonomic Units. mSphere \textbf{2}.
 doi:\href{https://doi.org/10.1128/mSphereDirect.00073-17}{10.1128/mSphereDirect.00073-17}.
 
 \hypertarget{ref-rognes_vsearch_2016}{}
-26. \textbf{Rognes T}, \textbf{Flouri T}, \textbf{Nichols B},
+27. \textbf{Rognes T}, \textbf{Flouri T}, \textbf{Nichols B},
 \textbf{Quince C}, \textbf{Mahé F}. 2016. VSEARCH: A versatile open
 source tool for metagenomics. PeerJ \textbf{4}:e2584.
 doi:\href{https://doi.org/10.7717/peerj.2584}{10.7717/peerj.2584}.
+
+\hypertarget{ref-li_hyperband:_2016}{}
+28. \textbf{Li L}, \textbf{Jamieson K}, \textbf{DeSalvo G},
+\textbf{Rostamizadeh A}, \textbf{Talwalkar A}. 2016. Hyperband: A novel
+bandit-based approach to hyperparameter optimization. arXiv:160306560
+{[}cs, stat{]}.
 
 
 \end{document}
