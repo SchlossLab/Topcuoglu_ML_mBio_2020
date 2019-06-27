@@ -215,16 +215,16 @@ there is a trend towards using more complex ML models such as random
 forest, extreme gradient boosting and neural networks without a
 discussion on if and how much model interpretibility is necessary for
 the study (11, 20--22). Black box machine learning models require
-posthoc explanations to determine the importances of features in making
-a prediction. These explanations can be misleading and at times
-unreliable when making high-stake decisions about someone's health (23).
-The lack of transparency on modeling methodology, model interpretation
-and model selection negatively impact model reproducibility and
-validity. We need to strive toward better machine learning practices by
-(1) implementing consistent and rigourous machine learning pipelines and
-(2) selecting ML models that reflect the goal of the study as it will
-inform our expectations of model accuracy, complexity, interpretibility
-and computational efficiency.
+posthoc explanations to determine the feature importances in making a
+prediction. These explanations can be misleading and at times unreliable
+when making high-stake decisions about someone's health (23). The lack
+of transparency on model selection and interpretation as well as flawed
+modeling methods negatively impact model validity and reproducibiliyu.
+We need to strive toward better machine learning practices by (1)
+implementing rigourous machine learning pipelines and (2) selecting ML
+models that reflect the goal of the study as it will inform our
+expectations of model accuracy, complexity, interpretibility and
+computational efficiency.
 
 To showcase a rigorous ML pipeline and to shed light on how much ML
 model selection can affect modeling results, we performed an empirical
@@ -280,8 +280,8 @@ potential for non-linear relationships among features and the outcome of
 interest, we trained tree based models, decision tree, random forest and
 XGboost, as well as an SVM with non-linear kernel.
 
-We established a robust ML pipeline where we train and validate each of
-the seven models {[}Figure 1{]}. We randomly split the data into
+We established a ML pipeline where we train and validate each of the
+seven models {[}Figure 1{]}. We randomly split the data into
 training/validation and test sets so that the training/validation set
 consisted of 80\% of the full dataset while the test set was composed of
 the remaining data {[}Figure 1{]}. Since the cases are not uniformly
@@ -303,7 +303,7 @@ training/validation dataset {[}Figures S1 and S2{]}. We then used the
 held-out test set to evaluate the prediction performance of each ML
 model. The data-split, hyperparameter selection, training and testing
 steps were repeated 100 times to get a reliable and robust reading of
-model prediction performance {[}Figure 1{]}.
+model performance {[}Figure 1{]}.
 
 \textbf{Discriminative performance and generalizability of the seven
 models.}
@@ -330,12 +330,12 @@ linear kernel, 0.021, followed by SVM with radial basis function kernel
 and decision tree with a difference of 0.007 and 0.006, respectively
 {[}Figure 2{]}.
 
-We reported the testing AUROC values over 100 random splits of the full
-dataset which showed that depending on the data-split, the testing AUROC
-value showed great variability {[}Figure 2{]}. The testing AUROC values
-within each model varied 0.23 on average across the seven models. For
-instance, the lowest AUROC value of the random forest model was 0.59
-whereas the highest was 0.81.
+We reported the testing AUROC values over 100 randomizations of the
+initial data-split. The results showed that depending on the data-split,
+the testing AUROC value showed great variability {[}Figure 2{]}. The
+testing AUROC values within each model varied 0.23 on average across the
+seven models. For instance, the lowest AUROC value of the random forest
+model was 0.59 whereas the highest was 0.81.
 
 \textbf{Interpretation of each ML model.}
 
