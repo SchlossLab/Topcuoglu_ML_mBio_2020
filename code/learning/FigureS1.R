@@ -106,6 +106,7 @@ logit_plot <- base_plot(logit, logit$cost, logit$mean_AUC) +
 ######################################################################
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
+linear_models <- plot_grid(logit_plot, l1svm_plot, l2svm_plot, labels = c("A", "B", "C"), ncol=3)
 
 ggsave("Figure_S1.png", plot = linear_models, device = 'png', path = 'submission', width = 8, height = 2.5)
 
