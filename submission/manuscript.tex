@@ -366,6 +366,14 @@ models' predictive performance dropped from 0.6 base testing AUROC
 median to 0.52, from 0.69 to 0.68 and from 0.68 to 0.65, respectively
 {[}Figure 4{]}.
 
+We also used permutation importance to interpret linear models to show
+the differences between the two interpretation methods {[}Figure S3{]}.
+L1-regularized SVM with linear kernel picked out the same OTUs as the
+most important features in methods that use feature rankings {[}Figure
+3{]} as well as permutation importance {[}Figure S3{]}. However,
+L2-regularized models had different feature importances in the two
+methods of interpretation due to collinearity in microbial communities.
+
 \textbf{The computational efficiency of each ML model.}
 
 As the complexity of a ML model and the number of tuned hyperparameter
@@ -433,6 +441,14 @@ complex the model, the more data it will need. The dataset we used for
 our study had 490 samples, however microbiome studies that have smaller
 sample sizes would benefit from using less complex models such as
 L2-regularized logistic regression.
+
+ML model interpretation methods in the previous studies microbiome
+studies lacked clarity and transparency. The studies that made the model
+interpreatation code publicly available, used default functions in
+previously built packages in R, python and matlab. In this study we used
+two methods to interpret our models. Feature weights of trained models
+ad permutation importance. the differences between the two
+interpretation methods
 
 \subsection{Materials and Methods}\label{materials-and-methods}
 
@@ -555,34 +571,39 @@ screen-relevant neoplasias; AUROC, area under the receiver operating
 characteristic curve; SVM, support vector machine; XGBoost, extreme
 gradient boosting \newpage
 \includegraphics{Figure_3.png} \textbf{Figure 3. Interpretation of the
-linear ML models.} (A) L2 logistic regression coefficients (B) L1 SVM
-with linear kernel feature weights (C) L2 SVM with linear kernel feature
-ranks. The feature ranks of the most important five OTUs in each
-data-split are shown here. Similar OTUs had the largest impact on the
-predictive performance of L2 logistic regression and L2 SVM with linear
-kernel. Abbreviations: SVM, support vector machine; OTU, Operational
-Taxonomic Unit. \newpage
+linear ML models.} The absolute feature weights of (A) L2 logistic
+regression coefficients (B) L1 SVM with linear kernel (C) L2 SVM with
+linear kernel were ranked from highest rank 1 to 100 for each
+data-split. The feature ranks of the highest ranked five OTUs based on
+their median ranks are shown here. Similar OTUs had the largest impact
+on the predictive performance of L2 logistic regression and L2 SVM with
+linear kernel. Abbreviations: SVM, support vector machine; OTU,
+Operational Taxonomic Unit. \newpage
 \includegraphics{Figure_4.png} \textbf{Figure 4. Explanation of the
 non-linear ML models.} (A) SVM with radial basis kernel (B) decision
 tree (C) random forest (D) XGboost feaure importances were explanied
 using permutation importance using held-out test set. The gray rectangle
 and the dashed line show the IQR range and median of the base testing
-AUROC without any permutation performed. For all the tree-based models,
-a \emph{Peptostreptococcus} species (OTU00367) had the largest impact on
-predictive performance of the model. Abbreviations: SVM, support vector
-machine; OTU, Operational Taxonomic Unit; RBF, radial basis kernel; OTU,
-Operational Taxonomic Unit. \newpage
+AUROC without any permutation performed. The colors of the boxplots
+stand for the unique OTUs that are shared among the different models;
+pink for OTU0008, salmon for OTU0050, yellow for OTU00367, blue for
+OTU00110, green for OTU00361 and red for OTU00882. For all the
+tree-based models, a \emph{Peptostreptococcus} species (OTU00367) had
+the largest impact on predictive performance of the model.
+Abbreviations: SVM, support vector machine; OTU, Operational Taxonomic
+Unit; RBF, radial basis kernel; OTU, Operational Taxonomic Unit.
+\newpage
 \includegraphics{Figure_5.png} \textbf{Figure 5. Computational
-efficiency of seven ML models.} The training times for training and
-testing of each data-split showed the differences in computational
-efficieny of the seven models. The median traintime in hours was the
-highest for XGBoost and shortest for L2 logistic regression. The boxplot
-shows quartiles at the box ends and the statistical median as the
-horizontal line in the box. The whiskers show the farthest points that
-are not outliers. Outliers are data points that are not within 3/2 times
-the interquartile ranges. Abbreviations: AUROC, area under the receiver
-operating characteristic curve; SVM, support vector machine; XGBoost,
-extreme gradient boosting.\\
+efficiency of seven ML models.} The training times for of each
+data-split showed the differences in computational efficieny of the
+seven models. The median training time in hours was the highest for
+XGBoost and shortest for L1-regularized SVM with linear kernel. The
+boxplot shows quartiles at the box ends and the statistical median as
+the horizontal line in the box. The whiskers show the farthest points
+that are not outliers. Outliers are data points that are not within 3/2
+times the interquartile ranges. Abbreviations: AUROC, area under the
+receiver operating characteristic curve; SVM, support vector machine;
+XGBoost, extreme gradient boosting.\\
 \newpage
 \includegraphics{Figure_S1.png} \textbf{Figure S1. Hyperparameter
 setting performances for linear models.} (A) L2 logistic regression (B)
@@ -601,9 +622,16 @@ cross-validation AUROC values when different hyperparameters are used in
 training the model. The differences in AUROC values when hyperparameters
 change show that hyperparameter tuning is a crucial step in building a
 ML model. \newpage
-
-\includegraphics{TableS1.pdf} \textbf{Table S1. ML model complexity and
-hyperparameter range.} \newpage
+\includegraphics{Figure_S4.png} \textbf{Figure S3. Interpretation of the
+linear ML models with permutation importance.} (A) L1-regularized SVM
+with linear kernel (B) L2-regularized SVM with linear kernel and (C)
+L2-regularized logistic regression were interpreted using permutation
+importance using held-out test set. The gray rectangle and the dashed
+line show the IQR range and median of the base testing AUROC without any
+permutation performed. Abbreviations: SVM, support vector machine; OTU,
+Operational Taxonomic Unit; RBF, radial basis kernel; OTU, Operational
+Taxonomic Unit. \includegraphics{TableS1.pdf} \textbf{Table S1. ML model
+complexity and hyperparameter range.} \newpage
 
 \subsection{References}\label{references}
 
