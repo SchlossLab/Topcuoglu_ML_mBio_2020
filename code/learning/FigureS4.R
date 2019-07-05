@@ -97,7 +97,7 @@ base_nonlin_plot <-  function(data, name){
   # Grab the names of the OTUs that have the lowest median AUC when they are permuted
   data_first_ten <- read.delim(paste0("data/process/", name, "_non_cor_importance.tsv"), header=T, sep='\t') %>%
     arrange(imp) %>% 
-    head(10)
+    head(5)
   # Get the new test aucs for 100 datasplits for each OTU permuted
   data_full <- read_files(paste0("data/process/combined_all_imp_features_non_cor_results_", name, ".csv")) %>%
     # Only keep the OTUs and their AUCs for the ones that are in the top 5 changed (decreased the most) ones
@@ -117,9 +117,9 @@ base_nonlin_plot <-  function(data, name){
   
 
   plot <- ggplot() +
-    geom_boxplot(data=data_full, aes(x=names, y=new_auc), fill="darkgoldenrod1",  alpha=0.7) +
+    geom_boxplot(data=data_full, aes(x=names, y=new_auc), fill="white",  alpha=0.8) +
     geom_rect(aes(ymin=lowerq, ymax=upperq, xmin=0, xmax=Inf), fill="grey") +
-    geom_boxplot(data=data_full, aes(x=names, y=new_auc), fill="darkgoldenrod1", alpha=0.7) +
+    geom_boxplot(data=data_full, aes(x=names, y=new_auc), fill="white", alpha=0.8) +
     geom_hline(yintercept = data_base_means$imp , linetype="dashed") +
     #geom_hline(yintercept = upperq, alpha=0.5) +
     #geom_hline(yintercept = lowerq, alpha=0.5) +

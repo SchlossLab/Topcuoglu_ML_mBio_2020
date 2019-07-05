@@ -163,7 +163,7 @@ base_nonlin_plot <-  function(data, name, list){
   median <-  median(data_base$new_auc) %>% 
     data.frame()
   
-  cols <- c("same1" = "darkgoldenrod1", "same2" = "darkgoldenrod1", "same3" = "darkgoldenrod1", "same4"="darkgoldenrod1", "same5" = "darkgoldenrod1", "same6" = "darkgoldenrod1" , "diff"="darkgoldenrod1")
+  cols <- c("same1" = "orange", "same2" = "lightblue", "same3" = "darkseagreen3", "same4"="red", "same5" = "lightsalmon", "same6" = "hotpink" , "diff"="white")
 
   plot <- ggplot() +
     geom_boxplot(data=data_full, aes(x=names, y=new_auc, fill=factor(common_otus)), alpha=0.7) +
@@ -244,7 +244,7 @@ xgboost_plot <- base_nonlin_plot(xgboost, "XGBoost", list1)+
 perm_tree_based <- plot_grid(rbf_plot, dt_plot, rf_plot, xgboost_plot, labels = c("A", "B", "C", "D"), cols=2)
 ggdraw(add_sub(perm_tree_based, "AUROC with the OTU permuted randomly", size=20, vpadding=grid::unit(0,"lines"), y=5, x=0.5, vjust=4.75))
 
-ggsave("Figure_4.png", plot = last_plot(), device = 'png', path = 'submission', width = 10, height = 10)
+ggsave("Figure_4.png", plot = last_plot(), device = 'png', path = 'submission', width = 10, height = 8)
 
 
 

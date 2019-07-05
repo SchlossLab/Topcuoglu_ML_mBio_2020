@@ -136,7 +136,7 @@ tuning_grid <- function(train_data, model){
   else if (model=="L1_Linear_SVM"){ #
     grid <- expand.grid(cost = c(0.0001, 0.001, 0.01, 0.015, 0.025, 0.05, 0.1, 0.5, 1),
                         Loss = "L2")
-    method <- "svmLinear5" # I wrote this function in caret
+    method <- "svmLinear4" # I wrote this function in caret
   }
   else if (model=="L2_Linear_SVM"){
     grid <- expand.grid(cost = c(0.0001, 0.0005, 0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.1, 0.5, 1),
