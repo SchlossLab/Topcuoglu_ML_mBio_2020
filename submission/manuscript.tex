@@ -169,16 +169,16 @@ choose ML models based on our expectations of predictive performance,
 interpretability and our computational resources. It also established
 standards for modeling pipelines of microbiome-associated ML models.
 
+\newpage
+
 \subsection{Importance}\label{importance}
 
 Prediction of health outcomes using ML is rapidly being adopted by
-human-associated microbiome studies. However, the developed ML so far
-are overoptimistic in terms of predictive performance and validity.
+human-associated microbiome studies. However, the developed ML models so
+far are overoptimistic in terms of validity and predictive performance.
 Without rigorous ML pipelines, we cannot trust ML models. Before we can
 speed up progress, we need to slow down, define and start using good ML
-practices.
-
-\newpage
+practices. \newpage
 
 \subsection{Background}\label{background}
 
@@ -202,22 +202,22 @@ understand the microbial ecology of diseases such as liver cirrhosis,
 colorectal cancer, inflammatory bowel diseases (IBD), obesity, type 2
 diabetes and others (1--11). However, currently the field's use of ML
 lacks clarity and consistency on which methods are used and how these
-methods are implemented {[}(12); dadkhah\_gut\_2019{]}. More notably, we
-commonly see ML practices such as using ML pipelines where there is no
-seperate held-out test dataset to evaluate model performance or
-reporting few or only the best outcomes of cross-validation. Even when
-there are seperate testing sets to evaluate model performance, there are
-large differences between cross-validation and testing performances that
-indicate overfitting as well as large confidence intervals for testing
-performances (4, 13--19). Moreover, there is a lack of discussion on why
+methods are implemented (12, 13). More notably, we commonly see flawed
+ML practices such as using ML pipelines where there is no seperate
+held-out test dataset to evaluate model performance or reporting few or
+only the best outcomes of cross-validation. Even when there are seperate
+testing sets to evaluate model performance, there are large differences
+between cross-validation and testing performances that indicate
+overfitting as well as large confidence intervals for testing
+performances (4, 14--20). Moreover, there is a lack of discussion on why
 a particular ML model is utilized. Recently, there is a trend towards
 using more complex ML models such as random forest, extreme gradient
 boosting and neural networks without a discussion on if and how much
-model interpretibility is necessary for the study (11, 20--22). Black
+model interpretibility is necessary for the study (11, 21--23). Black
 box machine learning models require posthoc explanations to determine
 the feature importances in making a prediction. These explanations can
 be misleading and at times unreliable when making high-stake decisions
-about someone's health (23). The lack of transparency on model selection
+about someone's health (24). The lack of transparency on model selection
 and interpretation as well as flawed modeling methods negatively impact
 model validity and reproducibiliy. We need to strive toward better
 machine learning practices by (1) implementing rigourous machine
@@ -232,9 +232,9 @@ and the same ML pipeline. We used a previously published colorectal
 cancer (CRC) study (3) which had fecal 16S rRNA gene sequences from 490
 patients. CRC is a type of cancer which the human-associated human
 microbiome is hypothesized to directly contribute to its development and
-fecal 16S rRNA gene sequences have been used to detect CRC. We built ML
-models using fecal 16S rRNA gene sequences to predict healthy patients
-versus patients with colorectal lesions that were identified by
+fecal 16S rRNA gene sequences have been used to detect CRC. We built
+seven ML models using fecal 16S rRNA gene sequences to predict healthy
+patients versus patients with colorectal lesions that were identified by
 colonoscopy as screen relevant neoplasias (SRN). The study had 261
 normal and 229 SRN samples. We established modeling pipelines for
 L2-regularized logistic regression, L1 and L2 support vector machines
@@ -261,7 +261,7 @@ importance of model selection.
 
 We used a cohort of 490 patients with 261 cases of SRN. For each
 patient, we had 6920 features (fecal bacterial abundances) and a
-two-class label that defines their colonic health (having colorectal
+two-class label that defines their colorectal health (having colorectal
 lesions that are identified as SRN or normal). All the cases were
 independently labeled through colonoscopies. We established modeling
 pipelines for a binary prediction task with L2-regularized logistic
@@ -298,7 +298,7 @@ data-split, five-fold cross-validation was also stratified to maintain
 the overall label distribution on the training and validation sets. We
 validated the cross-validation performances of each hyperparameter
 setting over 100 randomizations and selected the best performing
-hyper-parameter setting in terms of AUROC metric and trained the full
+hyperparameter setting in terms of AUROC metric and trained the full
 training/validation dataset {[}Figures S1 and S2{]}. We then used the
 held-out test set to evaluate the prediction performance of each ML
 model. The data-split, hyperparameter selection, training and testing
@@ -310,7 +310,7 @@ models.}
 
 We evaluated the prediction performances of seven binary classification
 models when applied to held-out test data using AUROC metric {[}Figure
-1{]}. Random forest had significantly higher test AUROC values than the
+2{]}. Random forest had significantly higher test AUROC values than the
 other models for detecting SRNs when AUROC values were compared to the
 other six by Wilcoxon rank sum test (p \textless{} 0.01). The median
 AUROC of the random forest model was 0.695 (IQR 0.044). L2-regularized
@@ -325,8 +325,8 @@ and 0.601 (IQR 0.059), respectively {[}Figure 2{]}.
 For each model, we compared the median cross-validation AUROC to the
 median testing AUROC. The difference between the two should be low to
 suggest the model is not overfitting despite the large number of
-features. The largest difference between the two was in L1 SVM with
-linear kernel, 0.021, followed by SVM with radial basis function kernel
+features. The largest difference between the two was 0.021 in L1 SVM
+with linear kernel, followed by SVM with radial basis function kernel
 and decision tree with a difference of 0.007 and 0.006, respectively
 {[}Figure 2{]}.
 
@@ -345,25 +345,26 @@ kernels, a decision tree, random forest and XGBoost decrease in
 interpretibility as they increase in complexity. We interpreted L1 and
 L2 SVM with linear kernel and L2 logistic regression using the feature
 weights of the trained models. We ranked the absolute weights of all the
-OTUs for each data-split. We calculated the median ranks of these
-features over the 100 data-splits. In the three linear models, OTUs that
-had the largest median ranks and drove the detection of SRNs belong to
-families \emph{Lachnospiraceae}, and \emph{Ruminococcaceae} (OTU01239,
-OTU00659, OTU00742, OTU00012, OTU00015, OTU00768, OTU00822, OTU00609),
-genera \emph{Gamella} (OTU00426) and genera \emph{Peptostreptococcus}
-(OTU00367) {[}Figure 3{]}. Some of the OTUs with the highest ranks were
-shared among the linear models. We explained the feature importances in
-non-linear models using permutation importance on the held-out test data
-where we randomly permuted non-correlated features individually and
-groups of correlated features together (see methods) to calculate the
-effect of permuted OTUs or group of OTUs on testing AUROC. The top 5
-OTUs with the largest negative impact on testing AUROC overlapped in
-tree-based models {[}Figure 4{]}. Specifically, permuting
-\emph{Peptostreptococcus} (OTU00367) abundances randomly, dropped the
-predictive performances the most in all tree-based methods {[}Figure
-S3{]}. Decision tree, random forest and XGBoost models' predictive
-performance dropped from 0.6 base testing AUROC median to 0.52, from
-0.69 to 0.68 and from 0.68 to 0.65, respectively {[}Figure 4{]}.
+OTUs for each data-split {[}Figure 3{]}. We calculated the median ranks
+of these features over the 100 data-splits. In the three linear models,
+OTUs that had the largest median ranks and drove the detection of SRNs
+belonged to families \emph{Lachnospiraceae}, and \emph{Ruminococcaceae}
+(OTU01239, OTU00659, OTU00742, OTU00012, OTU00015, OTU00768, OTU00822,
+OTU00609), genera \emph{Gamella} (OTU00426) and genera
+\emph{Peptostreptococcus} (OTU00367) {[}Figure 3{]}. Some of the OTUs
+with the highest ranks were shared among the linear models. We explained
+the feature importances in non-linear models using permutation
+importance on the held-out test data where we randomly permuted
+non-correlated features individually and groups of correlated features
+together (see methods) to calculate the effect of permuted OTUs or group
+of OTUs on testing AUROC. The top 5 OTUs with the largest negative
+impact on testing AUROC overlapped in tree-based models {[}Figure 4{]}.
+Specifically, permuting \emph{Peptostreptococcus} (OTU00367) abundances
+randomly, dropped the predictive performances the most in all tree-based
+methods {[}Figure S3{]}. Decision tree, random forest and XGBoost
+models' predictive performance dropped from 0.6 base testing AUROC
+median to 0.52, from 0.69 to 0.68 and from 0.68 to 0.65, respectively
+{[}Figure 4{]}.
 
 \textbf{The computational efficiency of each ML model.}
 
@@ -381,33 +382,34 @@ times of 4.4 hours, (std ± 0.3), 59.6 hours, (std ± 8.8), 83.2 hours,
 
 In this study we established a rigorous ML pipeline to use 16S rRNA
 sequence counts to predict a binary health outcome. We set-up standards
-for developing and evaluating ML models for microbiome data. We used a
-held-out test set to illustrate the difference between cross-validation
-and testing AUROC values. When the differences between cross-validation
-and test performance is low, this suggets the models are not overfit and
-that they will perform similar with similar data. In all seven models,
-the differences in cross-validation and testing AUROC values did not
-exceed 0.021 which suggests that these models will be able to test
-similar new data. We performed the initial 80\%-20\% random datasplit
-100 times in our ML pipeline. The repetition of the initial data-split
-to create a held-out test set is a crucial step in the ML pipeline to
-develop generalizable ML models and to report reliable performance
-metrics for a ML model. Depending on the data-split, there is the chance
-of being overoptimistic about the predictive performance of a model. In
-our study, we showed that there was variability in AUROC values between
-different random data-splits in each of the models we tested. Our
-results showed that the testing AUROC values varied 0.23 on average,
-depending on the data-split. We used AUROC metric instead of accuracy in
-our study to evaluate predictive performance of the ML models. AUROC is
-always random at the value 0.5 and is a robust metric when a dataset is
-imbalanced. We performed a full grid search for hyperparameter settings
-when building a ML model. It is not enough to use the default
-hyperparameter settings when using previously developed ML packages in
-programming languages like R, Python and Matlab. In the example of
-L1-regularized SVM with linear kernel (Figure S1), the model showed
-large variability between different regularization coefficients (C) and
-was susceptible to performing poorly if the wrong regularization
-coefficient was assigned to the model by default.
+for developing and evaluating ML models for microbiome data. First, we
+used a held-out test set to illustrate the difference between
+cross-validation and testing AUROC values. When the differences between
+cross-validation and test performance is low, this suggets the models
+are not overfit and that they will perform similar with similar data. In
+all seven models, the differences in cross-validation and testing AUROC
+values did not exceed 0.021 which suggests that these models will be
+able to test similar new data. Second, we performed the initial
+80\%-20\% random datasplit 100 times in our ML pipeline. The
+randomization of the initial data-split to create a held-out test set is
+a crucial step in the ML pipeline to develop generalizable ML models and
+to report reliable performance metrics for a ML model. Depending on the
+data-split, there is the chance of being overoptimistic about the
+predictive performance of a model. In our study, we showed that there
+was variability in AUROC values between different random data-splits in
+each of the models we tested. Our results showed that the testing AUROC
+values varied 0.23 on average, depending on the data-split.Third, we
+used AUROC metric instead of accuracy in our study to evaluate
+predictive performance of the ML models. AUROC is always random at the
+value 0.5 and is a robust metric when a dataset is imbalanced. We also
+performed a full grid search for hyperparameter settings when building a
+ML model. It is not enough to use the default hyperparameter settings
+when using previously developed ML packages in programming languages
+such as R, Python and Matlab. In the example of L1-regularized SVM with
+linear kernel (Figure S1), the model showed large variability between
+different regularization coefficients (C) and was susceptible to
+performing poorly if the wrong regularization coefficient was assigned
+to the model by default.
 
 Our results showed that we should choose to use ML models based on the
 goal of the study and our expectations of predictive performance,
@@ -425,19 +427,19 @@ biomarkers of a disease, then easily interpretable models would be
 better suited. It is also important to consider the computational burden
 of developing ML models. Random forest model was slow to train 83.2
 hours whereas L2-regularized logistic regression trained in 12 minutes.
-The dataset we used for our study had 490 samples. Another criteria when
-choosing a ML model is the generalizability of it. The generalization
-performance of ML models depends on size. The more complex the model,
-the more data it will need. Microbiome studies that have small sample
-sizes should use less complex models such as L2-regularized logistic
-regression.
+Another criteria when choosing a ML model is generalizability. The
+generalization performance of ML models depends on size. The more
+complex the model, the more data it will need. The dataset we used for
+our study had 490 samples, however microbiome studies that have smaller
+sample sizes would benefit from using less complex models such as
+L2-regularized logistic regression.
 
 \subsection{Materials and Methods}\label{materials-and-methods}
 
 \textbf{Data collection and study population.} The data used for this
 analysis are stool bacterial abundances and clinical information of the
 patients recruited by Great Lakes-New England Early Detection Research
-Network study. These data were obtained from Sze et al (24). The stool
+Network study. These data were obtained from Sze et al (25). The stool
 samples were provided by recruited adult participants who were
 undergoing scheduled screening or surveillance colonoscopy.
 Colonoscopies were performed and fecal samples were collected from
@@ -455,11 +457,11 @@ abundance data was generated by Sze et al, by processing 16S rRNA
 sequences in Mothur (v1.39.3) using the default quality filtering
 methods, identifying and removing chimeric sequences using VSEARCH and
 assigning to OTUs at 97\% similarity using the OptiClust algorithm
-(25--27).
+(26--28).
 
 \textbf{Data definitions and pre-processing.}
 
-The colonic health of the patient was defined as two encompassing
+The colorectal health of the patient was defined as two encompassing
 classes; Normal or Screen Relevant Neoplasias (SRNs). Normal class
 includes patients with non-advanced adenomas or normal colons whereas
 SRN class includes patients with advanced adenomas or carcinomas. The
@@ -497,14 +499,14 @@ search. Then we narrowed and fine-tuned the range of each
 hyperparameter. The range of the grid depends on the ML task and ML
 model. A full grid search needs to be performed to avoid variability in
 testing performance. We can use hyper-band to help us with our
-hyperparameter selection (28).
+hyperparameter selection (29).
 
 The computational burden during model training due to model complexity
 was reduced by parallelizing segments of the ML pipeline. In this study
 we have parallelized each data-split which allowed 100 data-splits to be
 processed through the ML pipeline at the same time for each model. We
 can further parallelize the cross-validation step for each
-hyper-parameter setting.
+hyperparameter setting.
 
 \textbf{Permutation importance workflow.} We created a Spearman's
 rank-order correlation matrix, corrected for multiple pairwise
@@ -583,9 +585,25 @@ operating characteristic curve; SVM, support vector machine; XGBoost,
 extreme gradient boosting.\\
 \newpage
 \includegraphics{Figure_S1.png} \textbf{Figure S1. Hyperparameter
-setting performances for linear models.} Abbreviations: \newpage
+setting performances for linear models.} (A) L2 logistic regression (B)
+L1 SVM with linear kernel (C) L2 SVM with linear kernel mean
+cross-validation AUROC values when different hyperparameters are used in
+training the model. The differences in AUROC values when hyperparameters
+change show that hyperparameter tuning is a crucial step in building a
+ML model.
+
+\newpage
+
 \includegraphics{Figure_S2.png} \textbf{Figure S2. Hyperparameter
-setting performances for non-linear models.} Abbreviations: \newpage
+setting performances for non-linear models.} (A) Decision tree (B)
+Random forest (C) SVM with radial basis kernel (D) XGoost mean
+cross-validation AUROC values when different hyperparameters are used in
+training the model. The differences in AUROC values when hyperparameters
+change show that hyperparameter tuning is a crucial step in building a
+ML model. \newpage
+
+\includegraphics{TableS1.pdf} \textbf{Table S1. ML model complexity and
+hyperparameter range.} \newpage
 
 \subsection{References}\label{references}
 
@@ -690,8 +708,16 @@ alterations modulate the rate of post-dieting weight regain. Nature
 \textbf{540}:544--551.
 doi:\href{https://doi.org/10.1038/nature20796}{10.1038/nature20796}.
 
+\hypertarget{ref-dadkhah_gut_2019}{}
+13. \textbf{Dadkhah E}, \textbf{Sikaroodi M}, \textbf{Korman L},
+\textbf{Hardi R}, \textbf{Baybick J}, \textbf{Hanzel D}, \textbf{Kuehn
+G}, \textbf{Kuehn T}, \textbf{Gillevet PM}. 2019. Gut microbiome
+identifies risk for colorectal polyps. BMJ Open Gastroenterology
+\textbf{6}:e000297.
+doi:\href{https://doi.org/10.1136/bmjgast-2019-000297}{10.1136/bmjgast-2019-000297}.
+
 \hypertarget{ref-flemer_oral_2018}{}
-13. \textbf{Flemer B}, \textbf{Warren RD}, \textbf{Barrett MP},
+14. \textbf{Flemer B}, \textbf{Warren RD}, \textbf{Barrett MP},
 \textbf{Cisek K}, \textbf{Das A}, \textbf{Jeffery IB}, \textbf{Hurley
 E}, \textbf{O`Riordain M}, \textbf{Shanahan F}, \textbf{O`Toole PW}.
 2018. The oral microbiota in colorectal cancer is distinctive and
@@ -699,7 +725,7 @@ predictive. Gut \textbf{67}:1454--1463.
 doi:\href{https://doi.org/10.1136/gutjnl-2017-314814}{10.1136/gutjnl-2017-314814}.
 
 \hypertarget{ref-dai_multi-cohort_2018}{}
-14. \textbf{Dai Z}, \textbf{Coker OO}, \textbf{Nakatsu G}, \textbf{Wu
+15. \textbf{Dai Z}, \textbf{Coker OO}, \textbf{Nakatsu G}, \textbf{Wu
 WKK}, \textbf{Zhao L}, \textbf{Chen Z}, \textbf{Chan FKL},
 \textbf{Kristiansen K}, \textbf{Sung JJY}, \textbf{Wong SH}, \textbf{Yu
 J}. 2018. Multi-cohort analysis of colorectal cancer metagenome
@@ -708,7 +734,7 @@ markers. Microbiome \textbf{6}:70.
 doi:\href{https://doi.org/10.1186/s40168-018-0451-2}{10.1186/s40168-018-0451-2}.
 
 \hypertarget{ref-montassier_pretreatment_2016}{}
-15. \textbf{Montassier E}, \textbf{Al-Ghalith GA}, \textbf{Ward T},
+16. \textbf{Montassier E}, \textbf{Al-Ghalith GA}, \textbf{Ward T},
 \textbf{Corvec S}, \textbf{Gastinne T}, \textbf{Potel G}, \textbf{Moreau
 P}, \textbf{Cochetiere MF de la}, \textbf{Batard E}, \textbf{Knights D}.
 2016. Pretreatment gut microbiome predicts chemotherapy-related
@@ -716,7 +742,7 @@ bloodstream infection. Genome Medicine \textbf{8}:49.
 doi:\href{https://doi.org/10.1186/s13073-016-0301-4}{10.1186/s13073-016-0301-4}.
 
 \hypertarget{ref-papa_non-invasive_2012}{}
-16. \textbf{Papa E}, \textbf{Docktor M}, \textbf{Smillie C},
+17. \textbf{Papa E}, \textbf{Docktor M}, \textbf{Smillie C},
 \textbf{Weber S}, \textbf{Preheim SP}, \textbf{Gevers D},
 \textbf{Giannoukos G}, \textbf{Ciulla D}, \textbf{Tabbaa D},
 \textbf{Ingram J}, \textbf{Schauer DB}, \textbf{Ward DV},
@@ -727,21 +753,21 @@ microbiota identifies children with inflammatory bowel disease. PLOS ONE
 doi:\href{https://doi.org/10.1371/journal.pone.0039242}{10.1371/journal.pone.0039242}.
 
 \hypertarget{ref-mossotto_classification_2017}{}
-17. \textbf{Mossotto E}, \textbf{Ashton JJ}, \textbf{Coelho T},
+18. \textbf{Mossotto E}, \textbf{Ashton JJ}, \textbf{Coelho T},
 \textbf{Beattie RM}, \textbf{MacArthur BD}, \textbf{Ennis S}. 2017.
 Classification of paediatric inflammatory bowel disease using machine
 learning. Scientific Reports \textbf{7}.
 doi:\href{https://doi.org/10.1038/s41598-017-02606-2}{10.1038/s41598-017-02606-2}.
 
 \hypertarget{ref-ai_systematic_2017}{}
-18. \textbf{Ai L}, \textbf{Tian H}, \textbf{Chen Z}, \textbf{Chen H},
+19. \textbf{Ai L}, \textbf{Tian H}, \textbf{Chen Z}, \textbf{Chen H},
 \textbf{Xu J}, \textbf{Fang J-Y}. 2017. Systematic evaluation of
 supervised classifiers for fecal microbiota-based prediction of
 colorectal cancer. Oncotarget \textbf{8}:9546--9556.
 doi:\href{https://doi.org/10.18632/oncotarget.14488}{10.18632/oncotarget.14488}.
 
 \hypertarget{ref-wong_quantitation_2017}{}
-19. \textbf{Wong SH}, \textbf{Kwong TNY}, \textbf{Chow T-C}, \textbf{Luk
+20. \textbf{Wong SH}, \textbf{Kwong TNY}, \textbf{Chow T-C}, \textbf{Luk
 AKC}, \textbf{Dai RZW}, \textbf{Nakatsu G}, \textbf{Lam TYT},
 \textbf{Zhang L}, \textbf{Wu JCY}, \textbf{Chan FKL}, \textbf{Ng SSM},
 \textbf{Wong MCS}, \textbf{Ng SC}, \textbf{Wu WKK}, \textbf{Yu J},
@@ -751,36 +777,36 @@ Gut \textbf{66}:1441--1448.
 doi:\href{https://doi.org/10.1136/gutjnl-2016-312766}{10.1136/gutjnl-2016-312766}.
 
 \hypertarget{ref-galkin_human_2018}{}
-20. \textbf{Galkin F}, \textbf{Aliper A}, \textbf{Putin E},
+21. \textbf{Galkin F}, \textbf{Aliper A}, \textbf{Putin E},
 \textbf{Kuznetsov I}, \textbf{Gladyshev VN}, \textbf{Zhavoronkov A}.
 2018. Human microbiome aging clocks based on deep learning and tandem of
 permutation feature importance and accumulated local effects. bioRxiv.
 doi:\href{https://doi.org/10.1101/507780}{10.1101/507780}.
 
 \hypertarget{ref-reiman_using_2017}{}
-21. \textbf{Reiman D}, \textbf{Metwally A}, \textbf{Dai Y}. 2017. Using
+22. \textbf{Reiman D}, \textbf{Metwally A}, \textbf{Dai Y}. 2017. Using
 convolutional neural networks to explore the microbiome, pp. 4269--4272.
 \emph{In} 2017 39th annual international conference of the IEEE
 engineering in medicine and biology society (EMBC).
 
 \hypertarget{ref-fioravanti_phylogenetic_2017}{}
-22. \textbf{Fioravanti D}, \textbf{Giarratano Y}, \textbf{Maggio V},
+23. \textbf{Fioravanti D}, \textbf{Giarratano Y}, \textbf{Maggio V},
 \textbf{Agostinelli C}, \textbf{Chierici M}, \textbf{Jurman G},
 \textbf{Furlanello C}. 2017. Phylogenetic convolutional neural networks
 in metagenomics. arXiv:170902268 {[}cs, q-bio{]}.
 
 \hypertarget{ref-rudin_please_2018}{}
-23. \textbf{Rudin C}. 2018. Please stop explaining black box models for
+24. \textbf{Rudin C}. 2018. Please stop explaining black box models for
 high stakes decisions. arXiv:181110154 {[}cs, stat{]}.
 
 \hypertarget{ref-sze_leveraging_2018}{}
-24. \textbf{Sze MA}, \textbf{Schloss PD}. 2018. Leveraging existing 16S
+25. \textbf{Sze MA}, \textbf{Schloss PD}. 2018. Leveraging existing 16S
 rRNA gene surveys to identify reproducible biomarkers in individuals
 with colorectal tumors. mBio \textbf{9}:e00630--18.
 doi:\href{https://doi.org/10.1128/mBio.00630-18}{10.1128/mBio.00630-18}.
 
 \hypertarget{ref-schloss_introducing_2009}{}
-25. \textbf{Schloss PD}, \textbf{Westcott SL}, \textbf{Ryabin T},
+26. \textbf{Schloss PD}, \textbf{Westcott SL}, \textbf{Ryabin T},
 \textbf{Hall JR}, \textbf{Hartmann M}, \textbf{Hollister EB},
 \textbf{Lesniewski RA}, \textbf{Oakley BB}, \textbf{Parks DH},
 \textbf{Robinson CJ}, \textbf{Sahl JW}, \textbf{Stres B},
@@ -790,19 +816,19 @@ Community-Supported Software for Describing and Comparing Microbial
 Communities. ApplEnvironMicrobiol \textbf{75}:7537--7541.
 
 \hypertarget{ref-westcott_opticlust_2017}{}
-26. \textbf{Westcott SL}, \textbf{Schloss PD}. 2017. OptiClust, an
+27. \textbf{Westcott SL}, \textbf{Schloss PD}. 2017. OptiClust, an
 Improved Method for Assigning Amplicon-Based Sequence Data to
 Operational Taxonomic Units. mSphere \textbf{2}.
 doi:\href{https://doi.org/10.1128/mSphereDirect.00073-17}{10.1128/mSphereDirect.00073-17}.
 
 \hypertarget{ref-rognes_vsearch_2016}{}
-27. \textbf{Rognes T}, \textbf{Flouri T}, \textbf{Nichols B},
+28. \textbf{Rognes T}, \textbf{Flouri T}, \textbf{Nichols B},
 \textbf{Quince C}, \textbf{Mahé F}. 2016. VSEARCH: A versatile open
 source tool for metagenomics. PeerJ \textbf{4}:e2584.
 doi:\href{https://doi.org/10.7717/peerj.2584}{10.7717/peerj.2584}.
 
 \hypertarget{ref-li_hyperband:_2016}{}
-28. \textbf{Li L}, \textbf{Jamieson K}, \textbf{DeSalvo G},
+29. \textbf{Li L}, \textbf{Jamieson K}, \textbf{DeSalvo G},
 \textbf{Rostamizadeh A}, \textbf{Talwalkar A}. 2016. Hyperband: A novel
 bandit-based approach to hyperparameter optimization. arXiv:160306560
 {[}cs, stat{]}.
