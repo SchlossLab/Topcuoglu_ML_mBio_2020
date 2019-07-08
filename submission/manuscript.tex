@@ -195,41 +195,44 @@ Instead, subsets of those communities, in relation to one another and to
 their host, account for differences in health outcomes.
 
 Machine learning (ML) methods are effective at recognizing and
-highlighting patterns in complex microbial datasets. Therefore,
-researchers have started to explore the utility of ML models that use
-microbiota associated biomarkers to predict human health and to
-understand the microbial ecology of diseases such as liver cirrhosis,
-colorectal cancer, inflammatory bowel diseases (IBD), obesity, type 2
-diabetes and others (1--11). However, currently the field's use of ML
-lacks clarity and consistency on which methods are used and how these
-methods are implemented (12, 13). More notably, we commonly see flawed
-ML practices such as using ML pipelines where there is no seperate
-held-out test dataset to evaluate model performance or reporting few or
-only the best outcomes of cross-validation. Even when there are seperate
-testing sets to evaluate model performance, there are large differences
-between cross-validation and testing performances that indicate
-overfitting as well as large confidence intervals for testing
-performances (4, 14--20). Moreover, there is a lack of discussion on why
-a particular ML model is utilized. Recently, there is a trend towards
-using more complex ML models such as random forest, extreme gradient
-boosting and neural networks without a discussion on if and how much
-model interpretibility is necessary for the study (11, 21--23). Black
-box machine learning models require posthoc explanations to determine
-the feature importances in making a prediction. These explanations can
-be misleading and at times unreliable when making high-stake decisions
-about someone's health (24). The lack of transparency on model selection
-and interpretation as well as flawed modeling methods negatively impact
-model validity and reproducibiliy. We need to strive toward better
-machine learning practices by (1) implementing rigourous machine
-learning pipelines and (2) selecting ML models that reflect the goal of
-the study as it will inform our expectations of model accuracy,
-complexity, interpretibility and computational efficiency.
+highlighting patterns in complex microbial datasets. ML models learn
+from existing data to predict the outcomes of new data and allow us to
+infer on the reasons underlying that prediction. Therefore, researchers
+have started to explore the utility of ML models that use microbiota
+associated biomarkers to predict human health and to understand the
+ecological basis of diseases such as liver cirrhosis, colorectal cancer,
+inflammatory bowel diseases (IBD), obesity, type 2 diabetes and others
+(1--11). However, currently the field's use of ML lacks clarity and
+consistency on which methods are used and how these methods are
+implemented (12, 13). More notably, we commonly see flawed ML practices
+such as using ML pipelines where there is no seperate held-out test
+dataset to evaluate model performance or reporting few or only the best
+outcomes of cross-validation. Even when there are seperate testing sets
+to evaluate model performance, there are large differences between
+cross-validation and testing performances that indicate overfitting as
+well as large confidence intervals for testing performances (4, 14--20).
+
+Moreover, there is a lack of discussion on why a particular ML model is
+utilized. Recently, there is a trend towards using more complex ML
+models such as random forest, extreme gradient boosting and neural
+networks without a discussion on if and how much model interpretibility
+is necessary for the study (11, 21--23). Black box machine learning
+models require posthoc explanations to determine the feature importances
+in making a prediction. These explanations can be misleading and at
+times unreliable when making high-stake decisions about someone's health
+(24). The lack of transparency on model selection and interpretation as
+well as flawed modeling methods negatively impact model validity and
+reproducibiliy. We need to strive toward better machine learning
+practices by (1) implementing rigourous machine learning pipelines and
+(2) selecting ML models that reflect the goal of the study as it will
+inform our expectations of model accuracy, complexity, interpretibility
+and computational efficiency.
 
 To showcase a rigorous ML pipeline and to shed light on how much ML
 model selection can affect modeling results, we performed an empirical
 analysis comparing several different ML models using the same dataset
 and the same ML pipeline. We used a previously published colorectal
-cancer (CRC) study (3) which had fecal 16S rRNA gene sequences from 490
+cancer (CRC) study (3) which had fecal 16S rRNA gene sequences of 490
 patients. CRC is a type of cancer which the human-associated human
 microbiome is hypothesized to directly contribute to its development and
 fecal 16S rRNA gene sequences have been used to detect CRC. We built
@@ -308,7 +311,7 @@ model performance {[}Figure 1{]}.
 \textbf{Discriminative performance and generalizability of the seven
 models.}
 
-We evaluated the prediction performances of seven binary classification
+We evaluated the predictive performances of seven binary classification
 models when applied to held-out test data using AUROC metric {[}Figure
 2{]}. Random forest had significantly higher test AUROC values than the
 other models for detecting SRNs when AUROC values were compared to the
@@ -343,36 +346,42 @@ The ML models we built using L2-regularized logistic regression, L1 and
 L2 support vector machines (SVM) with linear and radial basis function
 kernels, a decision tree, random forest and XGBoost decrease in
 interpretibility as they increase in complexity. We interpreted L1 and
-L2 SVM with linear kernel and L2 logistic regression using the feature
-weights of the trained models. We ranked the absolute weights of all the
-OTUs for each data-split {[}Figure 3{]}. We calculated the median ranks
-of these features over the 100 data-splits. In the three linear models,
-OTUs that had the largest median ranks and drove the detection of SRNs
-belonged to families \emph{Lachnospiraceae}, and \emph{Ruminococcaceae}
-(OTU01239, OTU00659, OTU00742, OTU00012, OTU00015, OTU00768, OTU00822,
-OTU00609), genera \emph{Gamella} (OTU00426) and genera
-\emph{Peptostreptococcus} (OTU00367) {[}Figure 3{]}. Some of the OTUs
-with the highest ranks were shared among the linear models. We explained
-the feature importances in non-linear models using permutation
-importance on the held-out test data where we randomly permuted
-non-correlated features individually and groups of correlated features
-together (see methods) to calculate the effect of permuted OTUs or group
-of OTUs on testing AUROC. The top 5 OTUs with the largest negative
-impact on testing AUROC overlapped in tree-based models {[}Figure 4{]}.
-Specifically, permuting \emph{Peptostreptococcus} (OTU00367) abundances
-randomly, dropped the predictive performances the most in all tree-based
-methods {[}Figure S3{]}. Decision tree, random forest and XGBoost
-models' predictive performance dropped from 0.6 base testing AUROC
-median to 0.52, from 0.69 to 0.68 and from 0.68 to 0.65, respectively
-{[}Figure 4{]}.
+L2 SVM with linear kernel and L2 logistic regression using the absolute
+feature weights of the trained models. We ranked the absolute weights of
+all the OTUs for each data-split {[}Figure 3{]}. We calculated the
+median ranks of these features over the 100 data-splits. In the three
+linear models, OTUs that had the largest median ranks and drove the
+detection of SRNs belonged to families \emph{Lachnospiraceae}, and
+\emph{Ruminococcaceae} (OTU01239, OTU00659, OTU00742, OTU00012,
+OTU00015, OTU00768, OTU00822, OTU00609), genera \emph{Gamella}
+(OTU00426) and genera \emph{Peptostreptococcus} (OTU00367) {[}Figure
+3{]}. Some of the OTUs with the highest ranks were shared among the
+linear models.
 
-We also used permutation importance to interpret linear models to show
-the differences between the two interpretation methods {[}Figure S3{]}.
-L1-regularized SVM with linear kernel picked out the same OTUs as the
-most important features in methods that use feature rankings {[}Figure
-3{]} as well as permutation importance {[}Figure S3{]}. However,
-L2-regularized models had different feature importances in the two
-methods of interpretation due to collinearity in microbial communities.
+We explained the feature importances in non-linear models, SVM with
+radial basis kernel, decision tree, random forest and XGBoost, using
+permutation importance on the held-out test data where we randomly
+permuted non-correlated features individually and groups of correlated
+features together (see methods) to calculate the effect of permuted OTUs
+or group of OTUs on testing AUROC. The top 5 OTUs with the largest
+negative impact on testing AUROC overlapped in tree-based models
+{[}Figure 4{]}. Specifically, permuting \emph{Peptostreptococcus}
+(OTU00367) abundances randomly, dropped the predictive performances the
+most in all tree-based methods {[}Figure S3{]}. Decision tree, random
+forest and XGBoost models' predictive performance dropped from 0.6 base
+testing AUROC median to 0.52, from 0.69 to 0.68 and from 0.68 to 0.65,
+respectively {[}Figure 4{]}.
+
+We used permutation importance to interpret linear models as well to
+highlight the differences between the two interpretation methods
+{[}Figure S3{]}. The rankings of OTUs that discriminate between having
+an SRN or not, changed between different interpretation methods.
+L1-regularized SVM with linear kernel picked out some of the same OTUs
+(OTU00822, OTU01239, OTU00609) as important in feature rankings
+{[}Figure 3{]} and permutation importance methods {[}Figure S3{]}.
+However, in general L2-regularized models had different OTUs picked out
+as important in the two methods of interpretation due to collinearity in
+microbial communities.
 
 \textbf{The computational efficiency of each ML model.}
 
@@ -442,13 +451,21 @@ our study had 490 samples, however microbiome studies that have smaller
 sample sizes would benefit from using less complex models such as
 L2-regularized logistic regression.
 
-ML model interpretation methods in the previous studies microbiome
-studies lacked clarity and transparency. The studies that made the model
-interpreatation code publicly available, used default functions in
-previously built packages in R, python and matlab. In this study we used
-two methods to interpret our models. Feature weights of trained models
-ad permutation importance. the differences between the two
-interpretation methods
+Microbiome studies use ML models with a classification task to learn the
+training data to assign labels, healthy or not, to new data (e.g.~new
+samples), but also to learn which features are important enough to
+discriminate between labels. This is a difficult task because we need to
+correctly interpret our ML models. In this study we used two methods to
+interpret our models. Absolute feature weights of trained models and
+permutation importance. When interpreting linear models with the
+differences we observed between the two interpretation methods is
+possibly due to collinearity in the dataset. Collinearity is that one
+OTU is highly correlated with other OTUs which means that the regression
+coefficients/weights are not unique and that they are influenced by each
+other. If they are influenced and not unique then it becomes harder to
+interpret the model. You may want to use different models for prediction
+and one for interpretation/inference, in one you remove highly
+correlated OTUs to interpret and in other keep them all to predict.
 
 \subsection{Materials and Methods}\label{materials-and-methods}
 
@@ -557,28 +574,31 @@ hyperparameters to train all of the training data. The model was
 evaluated on a held-out set of data (not used in selecting the model).
 Abbreviations: AUROC, area under the receiver operating characteristic
 curve \newpage
-\includegraphics{Figure_2.png} \textbf{Figure 2. Generalization and
-classification performance of ML models using AUROC values of all cross
-validation and testing performances. } The median AUROC for diagnosing
-individuals with SRN using bacterial abundances was higher than chance
-(depicted by horizontal line at 0.50) for all the ML models.
-Discriminative performance of random forest model was higher than other
-ML models. The boxplot shows quartiles at the box ends and the
-statistical median as the horizontal line in the box. The whiskers show
-the farthest points that are not outliers. Outliers are data points that
-are not within 3/2 times the interquartile ranges. Abbreviations: SRN,
-screen-relevant neoplasias; AUROC, area under the receiver operating
-characteristic curve; SVM, support vector machine; XGBoost, extreme
-gradient boosting \newpage
-\includegraphics{Figure_3.png} \textbf{Figure 3. Interpretation of the
-linear ML models.} The absolute feature weights of (A) L2 logistic
-regression coefficients (B) L1 SVM with linear kernel (C) L2 SVM with
-linear kernel were ranked from highest rank 1 to 100 for each
-data-split. The feature ranks of the highest ranked five OTUs based on
-their median ranks are shown here. Similar OTUs had the largest impact
-on the predictive performance of L2 logistic regression and L2 SVM with
-linear kernel. Abbreviations: SVM, support vector machine; OTU,
-Operational Taxonomic Unit. \newpage
+\includegraphics{Figure_2.png}
+
+\textbf{Figure 2. Generalization and classification performance of ML
+models using AUROC values of all cross validation and testing
+performances. } The median AUROC for diagnosing individuals with SRN
+using bacterial abundances was higher than chance (depicted by
+horizontal line at 0.50) for all the ML models. Discriminative
+performance of random forest model was higher than other ML models. The
+boxplot shows quartiles at the box ends and the statistical median as
+the horizontal line in the box. The whiskers show the farthest points
+that are not outliers. Outliers are data points that are not within 3/2
+times the interquartile ranges. Abbreviations: SRN, screen-relevant
+neoplasias; AUROC, area under the receiver operating characteristic
+curve; SVM, support vector machine; XGBoost, extreme gradient boosting
+\newpage
+\includegraphics[height=15cm, width=10cm]{Figure_3.png}
+
+\textbf{Figure 3. Interpretation of the linear ML models.} The absolute
+feature weights of (A) L2 logistic regression coefficients (B) L1 SVM
+with linear kernel (C) L2 SVM with linear kernel were ranked from
+highest rank 1 to 100 for each data-split. The feature ranks of the
+highest ranked five OTUs based on their median ranks are shown here.
+Similar OTUs had the largest impact on the predictive performance of L2
+logistic regression and L2 SVM with linear kernel. Abbreviations: SVM,
+support vector machine; OTU, Operational Taxonomic Unit. \newpage
 \includegraphics{Figure_4.png} \textbf{Figure 4. Explanation of the
 non-linear ML models.} (A) SVM with radial basis kernel (B) decision
 tree (C) random forest (D) XGboost feaure importances were explanied

@@ -186,9 +186,10 @@ base_nonlin_plot <-  function(data, name, list){
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.background = element_blank(),
-          axis.text.x=element_text(size = 16, colour='black'),
           axis.text.y=element_text(size = 16, colour='black'), 
-          axis.title.x=element_blank()) 
+          axis.title.x=element_blank(),
+          axis.text.x=element_blank(), 
+          axis.ticks = element_line(colour = "black", size = 1.1)) 
   
   #-----------------------Save median info ------------------------ #
   #-----------------------Save top 5 features ------------------------ #
@@ -228,20 +229,22 @@ dt_plot <- base_nonlin_plot(dt, "Decision_Tree", list1) +
 # --------------------------- Random Forest ----------------------------->
 # Plot most important 5 features effect on AUROC
 rf_plot <- base_nonlin_plot(rf, "Random_Forest", list1) +
-  scale_x_discrete(name = "Random forest ") 
+  scale_x_discrete(name = "Random forest ") +
+  theme(axis.text.x=element_text(size = 16, colour='black'))
 # ----------------------------------------------------------------------->
 
 # --------------------------- XGBoost ----------------------------->
 # Plot most important 5 features effect on AUROC
 xgboost_plot <- base_nonlin_plot(xgboost, "XGBoost", list1)+
-  scale_x_discrete(name = "XGBoost ") 
+  scale_x_discrete(name = "XGBoost ") +
+  theme(axis.text.x=element_text(size = 16, colour='black'))
 # ----------------------------------------------------------------------->
 
 ######################################################################
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 #combine with cowplot
-perm_tree_based <- plot_grid(rbf_plot, dt_plot, rf_plot, xgboost_plot, labels = c("A", "B", "C", "D"), cols=2)
+perm_tree_based <- plot_grid(rbf_plot, dt_plot, rf_plot, xgboost_plot, labels = c("A", "B", "C", "D"), cols=2, scale = 0.97)
 ggdraw(add_sub(perm_tree_based, "AUROC with the OTU permuted randomly", size=20, vpadding=grid::unit(0,"lines"), y=5, x=0.5, vjust=4.75))
 
 ggsave("Figure_4.png", plot = last_plot(), device = 'png', path = 'submission', width = 10, height = 8)

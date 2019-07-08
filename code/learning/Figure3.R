@@ -70,9 +70,9 @@ plot_feature_ranks <- function(data){
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.background = element_blank(),
-          axis.text.x=element_text(size = 8, colour='black'),
-          axis.text.y=element_text(size = 8, colour='black'),
-          axis.title.x=element_blank())
+          axis.title.x=element_blank(),
+          axis.text.x=element_blank(),
+          axis.text.y=element_text(size = 8, colour='black'))
     return(plot)
 }
 
@@ -83,17 +83,20 @@ plot_feature_ranks <- function(data){
 
 L1_SVM_imp <- get_feature_ranked_files("data/process/combined_L1_Linear_SVM_feature_ranking.tsv", "L1_Linear_SVM")
 l1_svm_graph <- plot_feature_ranks(L1_SVM_imp)  +
-  scale_x_discrete(name = "L1 Linear SVM")
+  scale_x_discrete(name = "L1 Linear 
+SVM")
 
 
 L2_SVM_imp <- get_feature_ranked_files("data/process/combined_L2_Linear_SVM_feature_ranking.tsv", "L2_Linear_SVM")
 l2_svm_graph <- plot_feature_ranks(L2_SVM_imp)+
-  scale_x_discrete(name = "L2 Linear SVM ")
+  scale_x_discrete(name = "L2 Linear 
+SVM ")
 
 logit_imp <- get_feature_ranked_files("data/process/combined_L2_Logistic_Regression_feature_ranking.tsv", "L2_Logistic_Regression")
 logit_graph <- plot_feature_ranks(logit_imp) +
   scale_x_discrete(name = "L2 Logistic 
-Regression ")
+Regression ") +
+  theme(axis.text.x=element_text(size = 8, colour='black'))
 # -------------------------------------------------------------------->
 
 
@@ -102,8 +105,8 @@ Regression ")
 ######################################################################
 #combine with cowplot
 
-linear <- plot_grid(logit_graph, l1_svm_graph, l2_svm_graph, labels = c("A", "B", "C"), align = 'v', ncol = 1)
+linear <- plot_grid(l1_svm_graph, l2_svm_graph, logit_graph, labels = c("A", "B", "C"), align = 'v', ncol = 1)
 
 ggdraw(add_sub(linear, "Feature Ranks", vpadding=grid::unit(0,"lines"), size=10, x=0.6))
 
-ggsave("Figure_3.png", plot = last_plot(), device = 'png', path = 'submission', width = 3, height = 5)
+ggsave("Figure_3.png", plot = last_plot(), device = 'png', path = 'submission', width = 2.75, height = 4)
