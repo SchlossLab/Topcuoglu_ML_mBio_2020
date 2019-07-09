@@ -378,10 +378,10 @@ highlight the differences between the two interpretation methods
 an SRN or not, changed between different interpretation methods.
 L1-regularized SVM with linear kernel picked out some of the same OTUs
 (OTU00822, OTU01239, OTU00609) as important in feature rankings
-{[}Figure 3{]} and permutation importance methods {[}Figure S3{]}.
-However, in general L2-regularized models had different OTUs picked out
-as important in the two methods of interpretation due to collinearity in
-microbial communities.
+{[}Figure 3{]} and permutation importance methods {[}Figure S3{]} but
+with different ranks. The difference was more pronounced in
+L2-regularized models as they had mostly different OTUs picked out as
+due to collinearity in microbial communities.
 
 \textbf{The computational efficiency of each ML model.}
 
@@ -405,67 +405,73 @@ cross-validation and testing AUROC values. When the differences between
 cross-validation and test performance is low, this suggets the models
 are not overfit and that they will perform similar with similar data. In
 all seven models, the differences in cross-validation and testing AUROC
-values did not exceed 0.021 which suggests that these models will be
-able to test similar new data. Second, we performed the initial
-80\%-20\% random datasplit 100 times in our ML pipeline. The
-randomization of the initial data-split to create a held-out test set is
-a crucial step in the ML pipeline to develop generalizable ML models and
-to report reliable performance metrics for a ML model. Depending on the
-data-split, there is the chance of being overoptimistic about the
-predictive performance of a model. In our study, we showed that there
-was variability in AUROC values between different random data-splits in
-each of the models we tested. Our results showed that the testing AUROC
-values varied 0.23 on average, depending on the data-split.Third, we
-used AUROC metric instead of accuracy in our study to evaluate
-predictive performance of the ML models. AUROC is always random at the
-value 0.5 and is a robust metric when a dataset is imbalanced. We also
-performed a full grid search for hyperparameter settings when building a
-ML model. It is not enough to use the default hyperparameter settings
-when using previously developed ML packages in programming languages
-such as R, Python and Matlab. In the example of L1-regularized SVM with
-linear kernel (Figure S1), the model showed large variability between
-different regularization coefficients (C) and was susceptible to
-performing poorly if the wrong regularization coefficient was assigned
-to the model by default.
+values did not exceed 0.021 which suggests that these models are
+generalizable and can be used to test similar new data. Second, we
+performed the initial 80\%-20\% random datasplit 100 times in our ML
+pipeline. The randomization of the initial data-split to create a
+held-out test set is a crucial step in the ML pipeline to develop robust
+ML models and to report reliable performance metrics for a ML model.
+Depending on the data-split, there is the chance of being overoptimistic
+about the predictive performance of a model. In our study, we showed
+that there was variability in AUROC values between different random
+data-splits in each of the models we tested. Our results showed that the
+testing AUROC values varied 0.23 on average, depending on the
+data-split. Third, we used AUROC metric instead of accuracy in our study
+to evaluate predictive performance of the ML models. AUROC is always
+random at the value 0.5 and is a robust metric when a dataset is
+imbalanced. We also performed a full grid search for hyperparameter
+settings when building a ML model. It is not enough to use the default
+hyperparameter settings when using previously developed ML packages in
+programming languages such as R, Python and Matlab. In the example of
+L1-regularized SVM with linear kernel (Figure S1), the model showed
+large variability between different regularization coefficients (C) and
+was susceptible to performing poorly if the wrong regularization
+coefficient was assigned to the model by default.
 
-Our results showed that we should choose to use ML models based on the
-goal of the study and our expectations of predictive performance,
-interpretibility and computational burden. In terms of predictive
-performance, random forest model had testing AUROC values statistically
-significantly larger than others. However the second best model was
-L2-regularized logistic regression following random forest with a median
-AUROC difference of only 0.015. In terms of interpretation, random
-forest was a more complex ML model and it could only be explained using
-methods such as permutation importance. On the other hand,
-L2-regularized logistic regression was easy to interpret
-(i.e.~regression coefficients of the trained model). If the goal of a
-study is to learn the ecology behind a disease and to identify microbial
-biomarkers of a disease, then easily interpretable models would be
-better suited. It is also important to consider the computational burden
-of developing ML models. Random forest model was slow to train 83.2
-hours whereas L2-regularized logistic regression trained in 12 minutes.
-Another criteria when choosing a ML model is generalizability. The
-generalization performance of ML models depends on size. The more
-complex the model, the more data it will need. The dataset we used for
-our study had 490 samples, however microbiome studies that have smaller
-sample sizes would benefit from using less complex models such as
-L2-regularized logistic regression.
+In this study, we benchmarked seven ML models with different
+classification algorithms to show that we should use ML models based on
+the goal of the study and our expectations of predictive performance,
+interpretibility and computational burden. Microbiome studies use ML
+models with the classification task to learn the training data to assign
+labels, such as healthy or not, to new data (e.g.~new samples), but also
+to learn which features are important enough to discriminate between
+labels. If the goal of a study is not just to predict a health outcome
+but also to learn the ecology behind a disease and to identify microbial
+biomarkers of a disease, then interpretibility of a ML model is crucial.
+In terms of predictive performance, random forest model had testing
+AUROC values statistically significantly larger than others. However the
+second best model was L2-regularized logistic regression following
+random forest with a median AUROC difference of only 0.015. In terms of
+interpretability, random forest was a more complex ML model and it could
+only be explained using methods such as permutation importance. On the
+other hand, L2-regularized logistic regression was easier to interpret
+(i.e.~ranking absolute regression coefficients of the trained model).
 
-Microbiome studies use ML models with a classification task to learn the
-training data to assign labels, healthy or not, to new data (e.g.~new
-samples), but also to learn which features are important enough to
-discriminate between labels. This is a difficult task because we need to
-correctly interpret our ML models. In this study we used two methods to
-interpret our models. Absolute feature weights of trained models and
-permutation importance. When interpreting linear models with the
-differences we observed between the two interpretation methods is
-possibly due to collinearity in the dataset. Collinearity is that one
-OTU is highly correlated with other OTUs which means that the regression
-coefficients/weights are not unique and that they are influenced by each
-other. If they are influenced and not unique then it becomes harder to
-interpret the model. You may want to use different models for prediction
-and one for interpretation/inference, in one you remove highly
-correlated OTUs to interpret and in other keep them all to predict.
+Even with interpretable models, we need to be careful with how we treat
+the information we get from the models. In this study we used two
+methods to interpret our linear models; absolute feature weights of
+trained models and permutation importance. We observed differences in
+outcome between the two interpretation methods due to collinearity in
+the dataset. Collinearity in a microbial dataset is when one OTU is
+highly correlated with another OTU which causes regression coefficients
+to not be unique. The regression coefficients of correlated OTUs are
+influenced by one another which makes it difficult to interpret a ML
+model. There are ways to make it easier to interpret models.; (1) use
+different models for prediction and interpretation in which highly
+correlated OTUs are removed, (2) get the highly ranked OTUs and check
+what othe OTUs they are correlated with. The interpretation however
+should not be a final answer but should be used to generate hypothesis
+that are tested with followup experiments.
+
+There are other criteria when choosing ML models such as the
+computational burden of developing it, sample size and balance of the
+dataset. In terms of computation burden, random forest model was slow to
+train 83.2 hours whereas L2-regularized logistic regression trained in
+12 minutes. The generalization performance of ML models depends on
+sample size. The more complex the model, the more data it will need. The
+dataset we used for our study had 490 samples, however microbiome
+studies that have smaller sample sizes would benefit from using less
+complex models such as L2-regularized logistic regression.
 
 \subsection{Materials and Methods}\label{materials-and-methods}
 
