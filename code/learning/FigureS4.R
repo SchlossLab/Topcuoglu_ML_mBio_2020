@@ -160,8 +160,7 @@ base_nonlin_plot <-  function(data, name){
 
 # --------------------- Linear models ----------------------------------->
 logit_plot <- base_nonlin_plot(logit, "L2_Logistic_Regression") +
-  scale_x_discrete(name = "L2 Logistic 
-Regression ") 
+  scale_x_discrete(name = "L2 Logistic Regression ") 
 
 l1_plot <- base_nonlin_plot(l1svm, "L1_Linear_SVM") +
   scale_x_discrete(name = "L1 Linear SVM") 
