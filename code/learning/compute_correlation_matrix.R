@@ -24,7 +24,7 @@ shared_corr <- read.delim('data/baxter.0.03.subsample.shared', header=T, sep='\t
 # Merge metadata and OTU table.
 # Group advanced adenomas and cancers together as cancer and normal, high risk normal and non-advanced adenomas as normal
 # Then remove the sample ID column
-data_corr <- inner_join(meta, shared, by=c("sample"="Group")) %>%
+data_corr <- inner_join(meta_corr, shared_corr, by=c("sample"="Group")) %>%
   mutate(dx = case_when(
     Dx_Bin== "Adenoma" ~ "normal",
     Dx_Bin== "Normal" ~ "normal",
@@ -58,4 +58,10 @@ new_r <- flattenCorrMatrix(r$r, r$P) %>%
   filter(p<0.01) %>% 
   write_csv("data/process/sig_flat_corr_matrix.csv")
 
+new_r <- flattenCorrMatrix(r$r, r$P) %>% 
+  filter(p<0.05) %>% 
+  filter(cor>0.4) %>% 
+  write_csv("data/process/sig_0.8_flat_corr_matrix.csv")
 
+new_r %>% 
+  filter(column=="Otu00659")
