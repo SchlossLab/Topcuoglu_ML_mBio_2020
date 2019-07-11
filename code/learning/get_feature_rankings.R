@@ -3,7 +3,7 @@
 #
 ######################################################################
 # This script takes 100 data/temp/*cor_results_*LINEAR_MODELS*
-# It takes the abolute values of weightsand ranks OTUs based on weights
+# It takes the abolute values of weights and ranks OTUs based on weights
 # Saves the ranking information for all of them as individual 100 .csv files
 # To merge them, use code/merge_feature_ranks.sh
 # That will create a combined tsv file for each linear model with 100 datasplits

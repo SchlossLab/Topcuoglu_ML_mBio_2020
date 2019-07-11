@@ -55,44 +55,52 @@ get_model_name <- function(files){
 # ------------------- Re-organize feature importance  ----------------->
 # This function:
 #     1. Takes in a dataframe (different data for each model) and the model name
-#     2. If the models are linear, returns the mean and sd weights of highest weight 10 features
+#     2. If the models are linear, returns the median rank of the top ranked 5 features
 #     3. If the models are not linear, returns the permutation importance results for:
 #         - Correlated and non-correlated OTUs:
-#         - Top 10 features or feature groups will be listed
-#         - Mean percent AUROC change from original AUROC after permutation
+#         - Top 5 features or feature groups will be listed
+#         - New AUROC which will differ from original AUROC after permutation
 get_interp_info <- function(data, model_name){
   if("key" %in% colnames(data)){
-    # If the models are linear, we saved the weights of every OTU for each datasplit
-    # We want to plot the ranking of OTUs for linear models.
-    # 1. Get dataframe transformed into long form
+    # If the models are linear, we used get_feature_rankings.R and then mege_feature_ranks.sh first
+    # The created file after those 2 steps will be used in this function,
+    # Data format is:
     #         The OTU names are in 1 column(repeated for 100 datasplits)
-    #         The weight value are in 1 column(for each of the datasplits)
-    imp_first_20 <- data %>%
-      # 2. Group by the OTU name and compute mean and sd for each OTU
+    #         The ranks based on absolute weights are in 1 column(for each of the datasplits)
+ 	#		  The weight value is on another column
+ 	# We want to use/plot only the top 5 highest ranked OTUs
+ 	# Initial step is to get which are the highest 5 ranked OTUs by looking at their median rank
+    # 1. We group by OTU name to make sure we are taking all the data-splits into account
+    imp_first_5 <- data %>%
+      # 2. Group by the OTU name and compute median rank for each OTU
       group_by(key) %>%
       summarise(median_rank = median(rank)) %>%
+      # 3. Arrange from highest ranked 1, descending
       arrange(median_rank) %>%
+      # 4. Grab only the highest ranked 5
       head(n=5) %>%
       select(key, median_rank)
 
+    # Here we want to only grab the data (rank info from 100 datasplits) of only the top 5 median ranked OTUs
+    # The imp data will be returned for Figure 3 where we plot each rank info for each data-split of the 5 top OTUs
     imp <- data %>%
-      filter(key %in% imp_first_20$key) %>%
+      filter(key %in% imp_first_5$key) %>%
       group_by(key)
 
+
+
   }
-  # If we want to calculate the permutation importance results
+  # If we want to calculate the permutation importance results for interpretation 
   # Then we use the files without the weight information but the permutation results
   else{
     if("names" %in% colnames(data)){ # If the file has non-correlated OTUs
-      correlated_data <- data %>%
+      non_correlated_data <- data %>%
         # 1. Group by the OTU names and calculate median and sd for auc change
         group_by(names) %>%
         summarise(imp = median(new_auc), sd_imp = sd(new_auc))
-      # 4.  a) Order the dataframe from largest weights to smallest.
-      #     b) Select the largest 10
-      #     c) Put the signs back to weights
-      #     d) select the OTU names, median weights with their signs and the sd
-      imp <- correlated_data %>%
+      	# Order the dataframe from smallest new_auc to largest.
+      	# Because the smallest new_auc means that that OTU decreased AUC a lot when permuted
+      imp <- non_correlated_data %>%
         arrange(imp)
     }
     else if("X1" %in% colnames(data)){
@@ -101,17 +109,17 @@ get_interp_info <- function(data, model_name){
       # Each row has different groups of OTUs that are correlated together
       #     1. We will group by the first OTU (since it is only present in one group only)
       #         This will group all the datasplits for that OTU group together
-      #     2. We then get the mean percent auc change of that correlated OTU group
+      #     2. We then get the median percent auc change of that correlated OTU group
       correlated_data <- data %>%
         group_by(X1) %>%
         summarise(imp = median(new_auc), sd_imp = sd(new_auc))
-      #     3. We will now only take the first 10 and add the other OTUs to the row.
-      #       We have the mean percent auc change for each correlated group of OTUs in a row
+      #     3. We will now only take the first 5 and add the other OTUs to the row.
+      #       We have the new_auc for each correlated group of OTUs in a row
       #       We will also have all the OTU names in the group in the same row.
       imp <- correlated_data %>%
         arrange(imp) %>%
-        inner_join(data, by="X1") %>% # order the largest 10
-        unique() %>%
+        head(5) %>% 
+        inner_join(data, by="X1") %>% # Add all the other OTUs in the group back to the data
         select(-new_auc, -model)
     }
       else{

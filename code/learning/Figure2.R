@@ -43,11 +43,11 @@ performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC), y = AUC
                      expand=c(0,0)) +
   scale_x_discrete(name = "",
                    labels=c("Decision tree",
-                           "L1 linear SVM",
-                            "SVM RBF",
-                            "L2 linear SVM",
+                           expression(paste(L[1], "-regularized linear SVM")),
+                            "SVM with radial basis kernel",
+                            expression(paste(L[2], "-regularized linear SVM")),
                             "XGBoost",
-                            "L2 logistic regression",
+                            expression(paste(L[2], "-regularized logistic regression")),
                             "Random forest")) +
   theme_bw() +
   theme(plot.margin=unit(c(1.1,1.1,1.1,1.1),"cm"),
@@ -57,7 +57,7 @@ performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC), y = AUC
         legend.title = element_blank(),
         legend.background = element_rect(linetype="solid", color="black", size=0.5),
         legend.box.margin=margin(c(12,12,12, 12)),
-        legend.text=element_text(size=12),
+        legend.text=element_text(size=18),
         #legend.title=element_text(size=22),
         panel.grid.major.y = element_blank(),
         panel.grid.major.x = element_line( size=0.6),
@@ -74,4 +74,4 @@ performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC), y = AUC
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 
-ggsave("Figure_2.png", plot = performance, device = 'png', path = 'submission', width = 8, height = 6)
+ggsave("Figure_2.png", plot = performance, device = 'png', path = 'submission', width = 12, height = 9)

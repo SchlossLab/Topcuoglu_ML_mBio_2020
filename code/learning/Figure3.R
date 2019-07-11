@@ -30,7 +30,7 @@ source("code/learning/functions.R")
 # ------------------- Re-organize feature importance  ----------------->
 # This function:
 #     1. Takes in a combined (100 split) feature rankings for each model) and the model name
-#     2. Returns the top 5 ranked (1-5 lowest rank) OTUs (ranks of the OTU for 100 splits)
+#     2. Returns the top 5 ranked (1-5 with 1 being the highest ranked) OTUs (ranks of the OTU for 100 splits)
 get_feature_ranked_files <- function(file_name, model_name){
   importance_data <- read_tsv(file_name)
   ranks <- get_interp_info(importance_data, model_name) %>%
@@ -49,13 +49,20 @@ plot_feature_ranks <- function(data){
     group_by(key) %>% 
     summarise(imp = median(rank)) %>% 
     arrange(imp) 
-  
-    otus <- otus$key %>% 
-        as.character()
-  
+    
+    # Use these names as character to create ordering
+    otus_as_character <- otus$key %>% 
+      as.character()
+    
     # Lowest ranked OTU at the top, followed by others ordered by median
-    data$key <- factor(data$key,levels = c(otus[5], otus[4], otus[3], otus[2], otus[1]))
-  
+    data$key <- factor(data$key,levels = c(otus_as_character[5], 
+                                           otus_as_character[4], 
+                                           otus_as_character[3], 
+                                           otus_as_character[2], 
+                                           otus_as_character[1]))
+    
+    # Plot from highest median ranked OTU to least (only top 5) and thir ranks that lay between 1-100
+      # Rank 1 is the highest rank
     plot <- ggplot(data, aes(data$key, data$rank)) +
       geom_point(color = 'orange1') + # datapoints lighter color
       stat_summary(fun.y = "median", colour = 'orangered4', geom = "point", size = 2.5) + # Median darker
@@ -76,6 +83,42 @@ plot_feature_ranks <- function(data){
     return(plot)
 }
 
+# This function:
+#     1. Grabs the taxonomy information for all OTUs
+#     2. Grabs the top 5 important taxa and their feature rankings
+#     3. Merges the 2 tables (taxa and importance) by the OTU name
+#     4. Make a new column that merges taxa info and OTU name
+#     5. Turns that to a list to use as labels in the plot
+
+get_taxa_info_as_labels <- function(data){
+  
+  # Grab the names of the top 5 OTUs in the order of their median rank  
+  otus <- data %>% 
+    group_by(key) %>% 
+    summarise(imp = median(rank)) %>% 
+    arrange(imp) 
+  # Names of the y-axis labels
+  taxa_info <- read.delim('data/baxter.taxonomy', header=T, sep='\t') %>% 
+   select(-Size) %>% 
+    mutate(key=OTU) %>% 
+    select(-OTU)
+
+  taxa_otus <- inner_join(otus, taxa_info, by="key") %>% 
+    mutate(taxa=gsub("(.*);.*","\\1",Taxonomy)) %>% 
+    mutate(taxa=gsub("(.*)_.*","\\1",Taxonomy)) %>% 
+    mutate(taxa=gsub("(.*);.*","\\1",Taxonomy)) %>% 
+    mutate(taxa=gsub(".*;","",taxa)) %>% 
+    mutate(taxa=gsub("(.*)_.*","\\1",taxa)) %>% 
+    mutate(taxa=str_remove_all(taxa, "[(100)]")) %>% 
+    select(key, taxa, imp) %>% 
+    unite(key, taxa, key, sep="-")
+
+  taxa_otus <- taxa_otus$key %>% 
+    as.character()
+  
+  return(taxa_otus)
+}
+
 ######################################################################
 #--------------Run the functions and plot feature ranks ----------#
 ######################################################################
@@ -83,19 +126,19 @@ plot_feature_ranks <- function(data){
 
 L1_SVM_imp <- get_feature_ranked_files("data/process/combined_L1_Linear_SVM_feature_ranking.tsv", "L1_Linear_SVM")
 l1_svm_graph <- plot_feature_ranks(L1_SVM_imp)  +
-  scale_x_discrete(name = "L1 Linear 
-SVM")
+  scale_x_discrete(name = expression(paste(L[1], "-regularized linear SVM")),
+                   labels = get_taxa_info_as_labels(L1_SVM_imp))
 
 
 L2_SVM_imp <- get_feature_ranked_files("data/process/combined_L2_Linear_SVM_feature_ranking.tsv", "L2_Linear_SVM")
 l2_svm_graph <- plot_feature_ranks(L2_SVM_imp)+
-  scale_x_discrete(name = "L2 Linear 
-SVM ")
+  scale_x_discrete(name = expression(paste(L[2], "-regularized linear SVM")),
+                   labels = get_taxa_info_as_labels(L2_SVM_imp))
 
 logit_imp <- get_feature_ranked_files("data/process/combined_L2_Logistic_Regression_feature_ranking.tsv", "L2_Logistic_Regression")
 logit_graph <- plot_feature_ranks(logit_imp) +
-  scale_x_discrete(name = "L2 Logistic 
-Regression ") +
+  scale_x_discrete(name = expression(paste(L[2], "-regularized logisitic regression")),
+                   labels = get_taxa_info_as_labels(logit_imp)) +
   theme(axis.text.x=element_text(size = 8, colour='black'))
 # -------------------------------------------------------------------->
 
@@ -107,6 +150,6 @@ Regression ") +
 
 linear <- plot_grid(l1_svm_graph, l2_svm_graph, logit_graph, labels = c("A", "B", "C"), align = 'v', ncol = 1)
 
-ggdraw(add_sub(linear, "Feature Ranks", vpadding=grid::unit(0,"lines"), size=10, x=0.6))
+ggdraw(add_sub(linear, "Feature Ranks", vpadding=grid::unit(0,"lines"), y=5, x=0.7, vjust=4.75, size=10))
 
-ggsave("Figure_3.png", plot = last_plot(), device = 'png', path = 'submission', width = 2.75, height = 4)
+ggsave("Figure_3.png", plot = last_plot(), device = 'png', path = 'submission', width = 6, height = 8.2)
