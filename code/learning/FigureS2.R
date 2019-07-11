@@ -95,7 +95,7 @@ rbf_data <- rbf_all %>%
 
 rbf_plot <- ggplot(rbf_data, aes(x = sigma, y = C, fill = mean_AUC)) +
   geom_tile() +
-  scale_fill_gradient(name= "SVM RBF Mean cvAUROC",
+  scale_fill_gradient(name= "SVM RBF mean cvAUROC",
                       low = "#FFFFFF",
                       high = "#012345") +
   #coord_fixed(ratio = 0.5) +
@@ -130,10 +130,11 @@ xgboost_data <- xgboost_all %>%
 xgboost_plot <- ggplot(xgboost_data, aes(x = eta, y = subsample, fill = mean_AUC)) +
   geom_tile() +
   #coord_fixed(ratio = 5) +
-  scale_fill_gradient(name= "XGBoost Mean cvAUROC",
+  scale_fill_gradient(name= "XGBoost mean cvAUROC",
                       low = "#FFFFFF",
                       high = "#012345") +
-  scale_y_continuous(name="subsample",
+  scale_y_continuous(name="ratio of the training data
+(subsample)",
     breaks = c(0.4, 0.5, 0.6, 0.7),
     expand=c(0,0)) +
   scale_x_log10(name = "learning rate (eta)",
@@ -160,4 +161,4 @@ non_linear_models <- plot_grid(dt_plot, rf_plot, rbf_plot, xgboost_plot, labels 
 ######################################################################
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
-ggsave("Figure_S2.png", plot = non_linear_models, device = 'png', path = 'submission', width = 8, height = 6)
+ggsave("Figure_S2.png", plot = non_linear_models, device = 'png', path = 'submission', width = 9, height = 7)
