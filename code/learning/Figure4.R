@@ -209,7 +209,7 @@ base_nonlin_plot <-  function(data, name, list){
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.background = element_blank(),
-          axis.text.y=element_text(size = 16, colour='black'), 
+          axis.text.y=element_text(size = 12, colour='black'), 
           axis.title.x=element_blank(),
           axis.text.x=element_blank(), 
           axis.ticks = element_line(colour = "black", size = 1.1)) 
@@ -273,8 +273,9 @@ get_taxa_info_as_labels <- function(name){
     mutate(taxa=gsub("(.*)_.*","\\1",taxa)) %>% 
     mutate(taxa=str_remove_all(taxa, "[(100)]")) %>% 
     select(names, taxa, imp) %>% 
-    unite(names, taxa, names, sep="-") %>% 
-    arrange(desc(imp))
+    unite(names, taxa, names, sep="(") %>% 
+    arrange(desc(imp)) %>% 
+    mutate(names = paste(names, ")", sep=""))
   
   taxa_otus_names <- taxa_otus$names %>% 
     as.character()
@@ -300,8 +301,7 @@ dt_plot <- base_nonlin_plot(dt, "Decision_Tree", list1) +
 # Plot most important 5 features effect on AUROC
 rf_plot <- base_nonlin_plot(rf, "Random_Forest", list1) +
   scale_x_discrete(name = "Random forest ",
-                   labels = get_taxa_info_as_labels("Random_Forest")) +
-  theme(axis.text.x=element_text(size = 16, colour='black'))
+                   labels = get_taxa_info_as_labels("Random_Forest")) 
 # ----------------------------------------------------------------------->
 
 # --------------------------- XGBoost ----------------------------->
@@ -317,9 +317,9 @@ xgboost_plot <- base_nonlin_plot(xgboost, "XGBoost", list1)+
 ######################################################################
 #combine with cowplot
 perm_tree_based <- plot_grid(rbf_plot, dt_plot, rf_plot, xgboost_plot, labels = c("A", "B", "C", "D"), cols=1, scale = 0.97)
-ggdraw(add_sub(perm_tree_based, "AUROC with the OTU permuted randomly", size=20, vpadding=grid::unit(0,"lines"), y=5, x=0.5, vjust=4.75))
+ggdraw(add_sub(perm_tree_based, "AUROC with the OTU permuted randomly", size=18, vpadding=grid::unit(0,"lines"), y=5, x=0.5, vjust=4.75))
 
-ggsave("Figure_4.png", plot = last_plot(), device = 'png', path = 'submission', width = 8, height = 10)
+ggsave("Figure_4.png", plot = last_plot(), device = 'png', path = 'submission', width = 7, height = 10)
 
 
 

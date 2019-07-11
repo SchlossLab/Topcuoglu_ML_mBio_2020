@@ -44,15 +44,15 @@ traintime_df <- bind_rows(min_fixed_result)
 traintime_plot <- ggplot(traintime_df, aes(x = fct_reorder(model, x), y = x)) +
   geom_boxplot(fill="#0072B2", alpha=0.5, fatten = 1.5) +
   coord_flip() +
-  scale_y_continuous(name = "traintime (hours)") +
+  scale_y_continuous(name = "training time (hours)") +
   scale_x_discrete(name = "",
-                   labels=c("L2 logistic regression",
-                     "L1 linear SVM",
-                     "L2 linear SVM",
-                     "Decision tree",
-                     "RBF SVM",
-                      "Random forest", 
-                     "XGBoost")) +
+                   labels=c(expression(paste(L[2], "-regularized logistic regression")),
+                            expression(paste(L[1], "-regularized linear SVM")),
+                            expression(paste(L[2], "-regularized linear SVM")),
+                            "Decision tree",
+                            "SVM with radial basis kernel",
+                            "Random forest", 
+                            "XGBoost")) +
   theme_bw() +
   theme(legend.title=element_text(size=15),
         panel.grid.major = element_blank(),
@@ -69,7 +69,7 @@ traintime_plot <- ggplot(traintime_df, aes(x = fct_reorder(model, x), y = x)) +
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 
-ggsave("Figure_5.png", plot = traintime_plot, device = 'png', path = 'submission', width = 3, height = 2)
+ggsave("Figure_5.png", plot = traintime_plot, device = 'png', path = 'submission', width = 4, height = 2)
 
 
             

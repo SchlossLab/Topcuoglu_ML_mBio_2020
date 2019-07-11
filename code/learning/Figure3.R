@@ -64,22 +64,22 @@ plot_feature_ranks <- function(data){
     # Plot from highest median ranked OTU to least (only top 5) and thir ranks that lay between 1-100
       # Rank 1 is the highest rank
     plot <- ggplot(data, aes(data$key, data$rank)) +
-      geom_point(color = 'orange1') + # datapoints lighter color
-      stat_summary(fun.y = "median", colour = 'orangered4', geom = "point", size = 2.5) + # Median darker
+      geom_point(color = 'orange1', size=3) + # datapoints lighter color
+      stat_summary(fun.y = "median", colour = 'orangered4', geom = "point", size = 4) + # Median darker
       coord_flip() +
       scale_y_continuous(limits=c(0, 100)) + # Only keep the first 100 ranks (truncated)
       theme_classic() +
       theme(plot.margin=unit(c(1.5,3,1.5,3),"mm"),
           legend.position="none",
-          axis.title = element_text(size=10),
-          axis.text = element_text(size=10),
+          axis.title = element_text(size=12),
+          axis.text = element_text(size=12),
           panel.border = element_rect(colour = "black", fill=NA, size=1),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.background = element_blank(),
           axis.title.x=element_blank(),
           axis.text.x=element_blank(),
-          axis.text.y=element_text(size = 8, colour='black'))
+          axis.text.y=element_text(size = 10, colour='black'))
     return(plot)
 }
 
@@ -111,7 +111,9 @@ get_taxa_info_as_labels <- function(data){
     mutate(taxa=gsub("(.*)_.*","\\1",taxa)) %>% 
     mutate(taxa=str_remove_all(taxa, "[(100)]")) %>% 
     select(key, taxa, imp) %>% 
-    unite(key, taxa, key, sep="-")
+    unite(key, taxa, key, sep="(") %>% 
+    mutate(key = paste(key,")", sep=""))
+    
 
   taxa_otus <- taxa_otus$key %>% 
     as.character()
@@ -137,9 +139,9 @@ l2_svm_graph <- plot_feature_ranks(L2_SVM_imp)+
 
 logit_imp <- get_feature_ranked_files("data/process/combined_L2_Logistic_Regression_feature_ranking.tsv", "L2_Logistic_Regression")
 logit_graph <- plot_feature_ranks(logit_imp) +
-  scale_x_discrete(name = expression(paste(L[2], "-regularized logisitic regression")),
+  scale_x_discrete(name = expression(paste(L[2], "-regularized logistic regression")),
                    labels = get_taxa_info_as_labels(logit_imp)) +
-  theme(axis.text.x=element_text(size = 8, colour='black'))
+  theme(axis.text.x=element_text(size = 12, colour='black'))
 # -------------------------------------------------------------------->
 
 
@@ -150,6 +152,6 @@ logit_graph <- plot_feature_ranks(logit_imp) +
 
 linear <- plot_grid(l1_svm_graph, l2_svm_graph, logit_graph, labels = c("A", "B", "C"), align = 'v', ncol = 1)
 
-ggdraw(add_sub(linear, "Feature Ranks", vpadding=grid::unit(0,"lines"), y=5, x=0.7, vjust=4.75, size=10))
+ggdraw(add_sub(linear, "Feature Ranks", vpadding=grid::unit(0,"lines"), y=5, x=0.7, vjust=4.75, size=15))
 
-ggsave("Figure_3.png", plot = last_plot(), device = 'png', path = 'submission', width = 6, height = 8.2)
+ggsave("Figure_3.png", plot = last_plot(), device = 'png', path = 'submission', width = 6, height = 8.5)
