@@ -212,7 +212,7 @@ Abbreviations: AUROC, area under the receiver operating characteristic curve
 **Figure 2. Generalization and classification performance of ML models using AUROC values of all cross validation and testing performances. **   The median AUROC for diagnosing individuals with SRN using bacterial abundances was higher than chance (depicted by horizontal line at 0.50) for all the ML models. Discriminative performance of random forest model was higher than other ML models. The boxplot shows quartiles at the box ends and the statistical median as the horizontal line in the box. The whiskers show the farthest points that are not outliers. Outliers are data points that are not within 3/2 times the interquartile ranges. 
 Abbreviations: SRN, screen-relevant neoplasias; AUROC, area under the receiver operating characteristic curve; SVM, support vector machine; XGBoost, extreme gradient boosting
 \newpage
-\includegraphics[height=15cm, width=10cm]{Figure_3.png}
+\includegraphics[height=17cm, width=12cm]{Figure_3.png}
 
 **Figure 3. Interpretation of the linear ML models.** The absolute feature weights of (A) L2 logistic regression coefficients (B) L1 SVM with linear kernel (C) L2 SVM with linear kernel were ranked from highest rank 1 to 100 for each data-split. The feature ranks of the highest ranked five OTUs based on their median ranks are shown here. Similar OTUs had the largest impact on the predictive performance of L2 logistic regression and L2 SVM with linear kernel. 
 Abbreviations: SVM, support vector machine; OTU, Operational Taxonomic Unit.
@@ -232,7 +232,7 @@ Abbreviations: AUROC, area under the receiver operating characteristic curve; SV
 **Figure S1. Hyperparameter setting performances for linear models.** (A) L2 logistic regression (B) L1 SVM with linear kernel (C) L2 SVM with linear kernel mean cross-validation AUROC values when different hyperparameters are used in training the model. The differences in AUROC values when hyperparameters change show that hyperparameter tuning is a crucial step in building a ML model. 
 
 \newpage
-\includegraphics{Figure_S2.png}
+\includegraphics[height=30cm, width=15cm]{Figure_S2.png}
 
 **Figure S2. Hyperparameter setting performances for non-linear models.** (A) Decision tree (B) Random forest (C) SVM with radial basis kernel (D) XGoost mean cross-validation AUROC values when different hyperparameters are used in training the model. The differences in AUROC values when hyperparameters change show that hyperparameter tuning is a crucial step in building a ML model.
 \newpage
