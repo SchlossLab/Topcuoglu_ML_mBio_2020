@@ -28,6 +28,8 @@ data/metadata.tsv	:	code/learning/load_datasets.batch
 #	Run scripts to perform all the models on the dataset and generate AUC values
 #	Each model has to be submitted seperately.
 #	These will generate 100 datasplit results for 7 models
+#	Submit each rule on the HPC parallelized.
+#	First 7 rules should finish before we move on to combining step at rule 8
 #
 ################################################################################
 $(TEMP)/traintime_XGBoost_%.csv\
