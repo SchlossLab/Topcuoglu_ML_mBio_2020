@@ -127,47 +127,17 @@ $(TEMP)/best_hp_results_L2_Logistic_Regression_%.csv	:	data/baxter.0.03.subsampl
 
 SEEDS=$(shell seq 0 99)
 
-L2_LOGISTIC_REGRESSION_BEST_REPS=$(foreach S,$(SEEDS),$(TEMP)/best_hp_results_L2_Logistic_Regression_$(S).csv)
-L2_LOGISTIC_REGRESSION_ALL_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_hp_results_L2_Logistic_Regression_$(S).csv)
-L2_LOGISTIC_REGRESSION_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_cor_results_L2_Logistic_Regression_$(S).csv)
-L2_LOGISTIC_REGRESSION_NON_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_non_cor_results_L2_Logistic_Regression_$(S).csv)
-L2_LOGISTIC_REGRESSION_TIME_REPS=$(foreach S,$(SEEDS),$(TEMP)/traintime_L2_Logistic_Regression_$(S).csv)
+OBJECTS=L1_Linear_SVM L2_Linear_SVM L2_Logistic_Regression RBF_SVM Decision_Tree Random_Forest XGBoost
 
-L2_LINEAR_SVM_BEST_REPS=$(foreach S,$(SEEDS),$(TEMP)/best_hp_results_L2_Linear_SVM_$(S).csv)
-L2_LINEAR_SVM_ALL_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_hp_results_L2_Linear_SVM_$(S).csv)
-L2_LINEAR_SVM_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_cor_results_L2_Linear_SVM_$(S).csv)
-L2_LINEAR_SVM_NON_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_non_cor_results_L2_Linear_SVM_$(S).csv)
-L2_LINEAR_SVM_TIME_REPS=$(foreach S,$(SEEDS),$(TEMP)/traintime_L2_Linear_SVM_$(S).csv)
+BEST_REPS_FILES = $(foreach S,$(SEEDS),$(foreach O,$(OBJECTS),$(TEMP)/best_hp_results_$(O)_$(S).csv))
 
-L1_LINEAR_SVM_BEST_REPS=$(foreach S,$(SEEDS),$(TEMP)/best_hp_results_L1_Linear_SVM_$(S).csv)
-L1_LINEAR_SVM_ALL_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_hp_results_L1_Linear_SVM_$(S).csv)
-L1_LINEAR_SVM_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_cor_results_L1_Linear_SVM_$(S).csv)
-L1_LINEAR_SVM_NON_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_non_cor_results_L1_Linear_SVM_$(S).csv)
-L1_LINEAR_SVM_TIME_REPS=$(foreach S,$(SEEDS),$(TEMP)/traintime_L1_Linear_SVM_$(S).csv)
+ALL_REPS_FILES = $(foreach S,$(SEEDS),$(foreach O,$(OBJECTS),$(TEMP)/all_hp_results_$(O)_$(S).csv))
 
-RBF_SVM_BEST_REPS=$(foreach S,$(SEEDS),$(TEMP)/best_hp_results_RBF_SVM_$(S).csv)
-RBF_SVM_ALL_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_hp_results_RBF_SVM_$(S).csv)
-RBF_SVM_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_cor_results_RBF_SVM_$(S).csv)
-RBF_SVM_NON_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_non_cor_results_RBF_SVM_$(S).csv)
-RBF_SVM_TIME_REPS=$(foreach S,$(SEEDS),$(TEMP)/traintime_RBF_SVM_$(S).csv)
+COR_IMP_REPS_FILES = $(foreach S,$(SEEDS),$(foreach O,$(OBJECTS),$(TEMP)/all_imp_features_cor_results_$(O)_$(S).csv))
 
-Decision_Tree_BEST_REPS=$(foreach S,$(SEEDS),$(TEMP)/best_hp_results_Decision_Tree_$(S).csv)
-Decision_Tree_ALL_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_hp_results_Decision_Tree_$(S).csv)
-Decision_Tree_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_cor_results_Decision_Tree_$(S).csv)
-Decision_Tree_NON_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_non_cor_results_Decision_Tree_$(S).csv)
-Decision_Tree_TIME_REPS=$(foreach S,$(SEEDS),$(TEMP)/traintime_Decision_Tree_$(S).csv)
+NON_COR_IMP_REPS_FILES = $(foreach S,$(SEEDS),$(foreach O,$(OBJECTS),$(TEMP)/all_imp_features_non_cor_results_$(O)_$(S).csv))
 
-Random_Forest_BEST_REPS=$(foreach S,$(SEEDS),$(TEMP)/best_hp_results_Random_Forest_$(S).csv)
-Random_Forest_ALL_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_hp_results_Random_Forest_$(S).csv)
-Random_Forest_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_cor_results_Random_Forest_$(S).csv)
-Random_Forest_NON_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_non_cor_results_Random_Forest_$(S).csv)
-Random_Forest_TIME_REPS=$(foreach S,$(SEEDS),$(TEMP)/traintime_Random_Forest_$(S).csv)
-
-XGBoost_BEST_REPS=$(foreach S,$(SEEDS),$(TEMP)/best_hp_results_XGBoost_$(S).csv)
-XGBoost_ALL_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_hp_results_XGBoost_$(S).csv)
-XGBoost_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_cor_results_XGBoost_$(S).csv)
-XGBoost_NON_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_non_cor_results_XGBoost_$(S).csv)
-XGBoost_TIME_REPS=$(foreach S,$(SEEDS),$(TEMP)/traintime_XGBoost_$(S).csv)
+TIME_REPS_FILES = $(foreach S,$(SEEDS),$(foreach O,$(OBJECTS),$(TEMP)/traintime_$(O)_$(S).csv))
 
 # Combine all the files generated from each submitted job
 
@@ -205,43 +175,12 @@ $(PROC)/traintime_Decision_Tree.csv\
 $(PROC)/traintime_RBF_SVM.csv\
 $(PROC)/traintime_L1_Linear_SVM.csv\
 $(PROC)/traintime_L2_Linear_SVM.csv\
-$(PROC)/traintime_L2_Logistic_Regression.csv	:	$(L2_LINEAR_SVM_REPS)\
-												$(L2_LOGISTIC_REGRESSION_BEST_REPS)\
-												$(L2_LOGISTIC_REGRESSION_ALL_REPS)\
-												$(L2_LOGISTIC_REGRESSION_COR_IMP_REPS)\
-												$(L2_LOGISTIC_REGRESSION_NON_COR_IMP_REPS)\
-												$(L2_LOGISTIC_REGRESSION_TIME_REPS)\
-												$(L2_LINEAR_SVM_BEST_REPS)\
-												$(L2_LINEAR_SVM_ALL_REPS)\
-												$(L2_LINEAR_SVM_COR_IMP_REPS)\
-												$(L2_LINEAR_SVM_NON_COR_IMP_REPS)\
-												$(L2_LINEAR_SVM_TIME_REPS)\
-												$(L1_LINEAR_SVM_BEST_REPS)\
-												$(L1_LINEAR_SVM_ALL_REPS)\
-												$(L1_LINEAR_SVM_COR_IMP_REPS)\
-												$(L1_LINEAR_SVM_NON_COR_IMP_REPS)\
-												$(L1_LINEAR_SVM_TIME_REPS)\
-												$(RBF_SVM_BEST_REPS)\
-												$(RBF_SVM_ALL_REPS)\
-												$(RBF_SVM_COR_IMP_REPS)\
-												$(RBF_SVM_NON_COR_IMP_REPS)\
-												$(RBF_SVM_TIME_REPS)\
-												$(Decision_Tree_BEST_REPS)\
-												$(Decision_Tree_ALL_REPS)\
-												$(Decision_Tree_COR_IMP_REPS)\
-												$(Decision_Tree_NON_COR_IMP_REPS)\
-												$(Decision_Tree_TIME_REPS)\
-												$(Random_Forest_BEST_REPS)\
-												$(Random_Forest_ALL_REPS)\
-												$(Random_Forest_COR_IMP_REPS)\
-												$(Random_Forest_NON_COR_IMP_REPS)\
-												$(Random_Forest_TIME_REPS)\
-												$(XGBoost_BEST_REPS)\
-												$(XGBoost_ALL_REPS)\
-												$(XGBoost_COR_IMP_REPS)\
-												$(XGBoost_NON_COR_IMP_REPS)\
-												$(XGBoost_TIME_REPS)\
-												code/cat_csv_files.sh
+$(PROC)/traintime_L2_Logistic_Regression.csv	:	$(BEST_REPS_FILES)\
+													$(ALL_REPS_FILES)\
+													$(COR_IMP_REPS_FILES)\
+													$(NON_COR_IMP_REPS_FILES)\
+													$(TIME_REPS_FILES)\
+													code/cat_csv_files.sh
 	bash code/cat_csv_files.sh
 
 # Take the individual correlated importance files and create feature rankings for each datasplit
