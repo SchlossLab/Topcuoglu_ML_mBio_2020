@@ -176,7 +176,7 @@ l2_plot <- base_nonlin_plot(l2svm, "L2_Linear_SVM") +
 #combine with cowplot
 linear <- plot_grid(l1_plot, l2_plot, logit_plot, labels = c("A", "B", "C"), align = 'h', ncol = 1)
 
-ggsave("Figure_S4.png", plot = linear, device = 'png', path = 'submission', width = 4, height = 10)
+ggsave("Figure_S3.png", plot = linear, device = 'png', path = 'submission', width = 4, height = 10)
 
 
 
