@@ -241,6 +241,24 @@ $(PROC)/traintime_L2_Logistic_Regression.csv	:	$(L2_LINEAR_SVM_REPS)\
 												code/cat_csv_files.sh
 	bash code/cat_csv_files.sh
 
+# Take the individual correlated importance files and create feature rankings for each datasplit
+# Then combine each feature ranking into 1 combined file
+DATA=feature_ranking
+
+$(PROC)/combined_L1_Linear_SVM_$(DATA).tsv\
+$(PROC)/combined_L2_Linear_SVM_$(DATA).tsv\
+$(PROC)/combined_L2_Logistic_Regression_$(DATA).tsv	:	$(L2_LOGISTIC_REGRESSION_COR_IMP_REPS)\
+												$(L1_LINEAR_SVM_COR_IMP_REPS)\
+												$(L2_LINEAR_SVM_COR_IMP_REPS)\
+												code/learning/get_feature_rankings.R\
+												code/merge_feature_ranks.sh
+	Rscript code/learning/get_feature_rankings\
+	bash code/merge_feature_ranks.sh
+
+
+
+
+
 ################################################################################
 #
 # Part 3: Figure and table generation
