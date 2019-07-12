@@ -32,8 +32,8 @@ echo Using "Random Forest"
 
 # Using $PBS_ARRAYID to select parameter set
 
-Rscript code/learning/main.R $seed "Random_Forest"
-
+#Rscript code/learning/main.R $seed "Random_Forest"
+make data/process/best_hp_results_Random_Forest_$seed.csv
 
 echo "Script complete"
 echo "qsub working directory absolute is"

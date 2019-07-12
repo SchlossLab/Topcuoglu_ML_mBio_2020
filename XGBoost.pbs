@@ -32,8 +32,8 @@ echo Using "Random XGBoost"
 
 # Using $PBS_ARRAYID to select parameter set
 
-Rscript code/learning/main.R $seed "XGBoost"
-
+#Rscript code/learning/main.R $seed "XGBoost"
+make data/process/best_hp_results_XGBoost_$seed.csv
 
 echo "Script complete"
 echo "qsub working directory absolute is"
