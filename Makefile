@@ -375,7 +375,7 @@ $(FINAL)/manuscript.%	:	$(FINAL)/mbio.csl\
 
 
 write.paper :	$(FINAL)/Figure_1.pdf\
-				$(FINAL)/FIgure_2.png\
+				$(FINAL)/Figure_2.png\
 				$(FINAL)/Figure_3.png\
 				$(FINAL)/Figure_4.png\
 				$(FINAL)/Figure_5.png\
