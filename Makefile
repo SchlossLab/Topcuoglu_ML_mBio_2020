@@ -135,7 +135,7 @@ COR_IMP_REPS_FILES = $(foreach S,$(SEEDS),$(foreach O,$(OBJECTS),$(TEMP)/all_imp
 NON_COR_IMP_REPS_FILES = $(foreach S,$(SEEDS),$(foreach O,$(OBJECTS),$(TEMP)/all_imp_features_non_cor_results_$(O)_$(S).csv))
 TIME_REPS_FILES = $(foreach S,$(SEEDS),$(foreach O,$(OBJECTS),$(TEMP)/traintime_$(O)_$(S).csv))
 
-# Create variable names with patterns to describe processed files
+# Create variable names with patterns to describe processed files that are combined
 
 BEST_COMB_FILES = $(foreach O,$(OBJECTS),$(PROC)/combined_best_hp_results_$(O).csv)
 ALL_COMB_FILES = $(foreach O,$(OBJECTS),$(PROC)/combined_all_hp_results_$(O).csv)
