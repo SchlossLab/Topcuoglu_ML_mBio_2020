@@ -33,15 +33,10 @@ echo Using "Random Forest"
 # Using $PBS_ARRAYID to select parameter set
 
 #Rscript code/learning/main.R $seed "Random_Forest"
-make data/process/best_hp_results_Random_Forest_$seed.csv
+make data/temp/best_hp_results_Random_Forest_$seed.csv
 
 echo "Script complete"
 echo "qsub working directory absolute is"
 echo $PBS_O_WORKDIR
 qstat -f $PBS_JOBID
 exit
-
-
-
-
-

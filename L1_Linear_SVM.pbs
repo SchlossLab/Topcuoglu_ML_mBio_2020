@@ -12,9 +12,9 @@
 #PBS -t 1-100
 
 # Load Modules:
-#  1) R/3.5.0  
+#  1) R/3.5.0
 #  2)  r-biomed-libs
-#  3) run Rscript code/learning/load_caret_models_flux.R 
+#  3) run Rscript code/learning/load_caret_models_flux.R
 
 # -t is array parameter, the same job will be submitted the length of the input,
 # each with its own unique array id ($PBS_ARRAYID)
@@ -35,7 +35,7 @@ echo Using "L1 Linear SVM"
 # Using $PBS_ARRAYID to select parameter set
 Rscript code/learning/load_caret_models_flux.R
 #Rscript code/learning/main.R $seed "L1_Linear_SVM"
-make data/process/best_hp_results_L1_Linear_SVM_$seed.csv
+make data/temp/best_hp_results_L1_Linear_SVM_$seed.csv
 
 echo "Script complete"
 echo "qsub working directory absolute is"

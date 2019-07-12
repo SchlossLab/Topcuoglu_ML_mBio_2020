@@ -32,11 +32,10 @@ echo Using "L2 Logistic Regression"
 
 # Using $PBS_ARRAYID to select parameter set
 
-make data/process/best_hp_results_L2_Logistic_Regression_$seed.csv
+make data/temp/best_hp_results_L2_Logistic_Regression_$seed.csv
 
 echo "Script complete"
 echo "qsub working directory absolute is"
 echo $PBS_O_WORKDIR
 qstat -f $PBS_JOBID
 exit
-
