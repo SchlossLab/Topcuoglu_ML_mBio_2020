@@ -122,6 +122,7 @@ $(PROC)/best_hp_results_L2_Logistic_Regression_%.csv	:	data/baxter.0.03.subsampl
 														$(CODE)/model_selection.R
 			Rscript code/learning/main.R $* "L2_Logistic_Regression"
 
+
 SEEDS=$(shell seq 0 99)
 
 L2_LOGISTIC_REGRESSION_BEST_REPS=$(foreach S,$(SEEDS),$(PROC)/best_hp_results_L2_Logistic_Regression_$(S).csv)
@@ -256,9 +257,6 @@ $(PROC)/combined_L2_Logistic_Regression_$(DATA).tsv	:	$(L2_LOGISTIC_REGRESSION_C
 	bash code/merge_feature_ranks.sh
 
 
-
-
-
 ################################################################################
 #
 # Part 3: Figure and table generation
@@ -267,9 +265,9 @@ $(PROC)/combined_L2_Logistic_Regression_$(DATA).tsv	:	$(L2_LOGISTIC_REGRESSION_C
 #
 ################################################################################
 
-# Figure 1 shows the generalization performance of all the models tested.
-$(FIGS)/Figure_1.pdf	:	$(CODE)/functions.R\
-							$(CODE)/Figure1.R\
+# Figure 2 shows the generalization performance of all the models tested.
+$(FINAL)/Figure_2.png	:	$(CODE)/functions.R\
+							$(CODE)/Figure2.R\
 							$(PROC)/combined_best_hp_results_XGBoost.csv\
 							$(PROC)/combined_best_hp_results_Random_Forest.csv\
 							$(PROC)/combined_best_hp_results_Decision_Tree.csv\
@@ -277,11 +275,59 @@ $(FIGS)/Figure_1.pdf	:	$(CODE)/functions.R\
 							$(PROC)/combined_best_hp_results_L2_Logistic_Regression.csv\
 							$(PROC)/combined_best_hp_results_L1_Linear_SVM.csv\
 							$(PROC)/combined_best_hp_results_L2_Linear_SVM.csv
-					Rscript $(CODE)/Figure1.R
+					Rscript $(CODE)/Figure2.R
 
-# Figure 2 shows the hyper-parameter tuning of all the models tested.
-$(FIGS)/Figure_2.pdf	:	$(CODE)/functions.R\
-							$(CODE)/Figure2.R\
+# Figure 3 shows the linear model interpretation with weight rankings
+$(FINAL)/Figure_3.png	:	$(CODE)/functions.R\
+							$(CODE)/Figure3.R\
+							data/baxter.taxonomy\
+							$(PROC)/combined_L1_Linear_SVM_$(DATA).tsv\
+							$(PROC)/combined_L2_Linear_SVM_$(DATA).tsv\
+							$(PROC)/combined_L2_Logistic_Regression_$(DATA).tsv
+					Rscript $(CODE)/Figure3.R
+
+# Figure 4 shows non-linear model interpretation with permutation importance
+$(FINAL)/Figure_4.png	:	$(CODE)/functions.R\
+							$(CODE)/Figure4.R\
+							$(PROC)/combined_best_hp_results_XGBoost.csv\
+							$(PROC)/combined_best_hp_results_Random_Forest.csv\
+							$(PROC)/combined_best_hp_results_Decision_Tree.csv\
+							$(PROC)/combined_best_hp_results_RBF_SVM.csv\
+							$(PROC)/combined_best_hp_results_L2_Logistic_Regression.csv\
+							$(PROC)/combined_best_hp_results_L1_Linear_SVM.csv\
+							$(PROC)/combined_best_hp_results_L2_Linear_SVM.csv\
+							$(PROC)/combined_all_imp_features_cor_results_Decision_Tree.csv\
+							$(PROC)/combined_all_imp_features_cor_results_L1_Linear_SVM.csv\
+							$(PROC)/combined_all_imp_features_cor_results_L2_Linear_SVM.csv\
+							$(PROC)/combined_all_imp_features_cor_results_L2_Logistic_Regression.csv\
+							$(PROC)/combined_all_imp_features_cor_results_Random_Forest.csv\
+							$(PROC)/combined_all_imp_features_cor_results_RBF_SVM.csv\
+							$(PROC)/combined_all_imp_features_cor_results_XGBoost.csv\
+							$(PROC)/combined_all_imp_features_non_cor_results_Decision_Tree.csv\
+							$(PROC)/combined_all_imp_features_non_cor_results_L1_Linear_SVM.csv\
+							$(PROC)/combined_all_imp_features_non_cor_results_L2_Linear_SVM.csv\
+							$(PROC)/combined_all_imp_features_non_cor_results_L2_Logistic_Regression.csv\
+							$(PROC)/combined_all_imp_features_non_cor_results_Random_Forest.csv\
+							$(PROC)/combined_all_imp_features_non_cor_results_RBF_SVM.csv\
+							$(PROC)/combined_all_imp_features_non_cor_results_XGBoost.csv
+					Rscript $(CODE)/Figure4.R
+
+# Figure 5 shows training times of each model
+
+$(FINAL)/Figure_5.png	:	$(CODE)/functions.R\
+							$(CODE)/Figure5.R\
+							$(PROC)/traintime_XGBoost.csv\
+							$(PROC)/traintime_Random_Forest.csv\
+							$(PROC)/traintime_Decision_Tree.csv\
+							$(PROC)/traintime_RBF_SVM.csv\
+							$(PROC)/traintime_L1_Linear_SVM.csv\
+							$(PROC)/traintime_L2_Linear_SVM.csv\
+							$(PROC)/traintime_L2_Logistic_Regression.csv
+					Rscript $(CODE)/Figure5.R
+
+# Figure S1 shows the hyper-parameter tuning AUC values of linear models
+$(FINAL)/Figure_S1.png	:	$(CODE)/functions.R\
+							$(CODE)/FigureS1.R\
 							$(PROC)/combined_all_hp_results_XGBoost.csv\
 							$(PROC)/combined_all_hp_results_Random_Forest.csv\
 							$(PROC)/combined_all_hp_results_Decision_Tree.csv\
@@ -289,46 +335,26 @@ $(FIGS)/Figure_2.pdf	:	$(CODE)/functions.R\
 							$(PROC)/combined_all_hp_results_L2_Logistic_Regression.csv\
 							$(PROC)/combined_all_hp_results_L1_Linear_SVM.csv\
 							$(PROC)/combined_all_hp_results_L2_Linear_SVM.csv
-					Rscript $(CODE)/Figure2.R
+					Rscript $(CODE)/FigureS1.R
 
-# Figure 2 shows the hyper-parameter tuning of all the models tested.
-$(FIGS)/Figure_3.pdf	:	$(CODE)/functions.R\
-							$(CODE)/Figure3.R\
-							$(PROC)/traintime_XGBoost.csv\
-							$(PROC)/traintime_Random_Forest.csv\
-							$(PROC)/traintime_Decision_Tree.csv\
-							$(PROC)/traintime_RBF_SVM.csv\
-							$(PROC)/traintime_L2_Logistic_Regression.csv\
-							$(PROC)/traintime_L1_Linear_SVM.csv\
-							$(PROC)/traintime_L2_Linear_SVM.csv
-					Rscript $(CODE)/Figure3.R
+# Figure S2 shows the hyper-parameter tuning AUC values of non-linear models
 
-
-$(FIGS)/Figure_4.pdf	:	$(CODE)/functions.R\
-							$(CODE)/Figure4.R\
-							$(PROC)/combined_all_imp_features_results_Decision_Tree.csv\
-							$(PROC)/combined_all_imp_features_results_L1_Linear_SVM.csv\
-							$(PROC)/combined_all_imp_features_results_L2_Linear_SVM.csv\
-							$(PROC)/combined_all_imp_features_results_L2_Logistic_Regression.csv\
-							$(PROC)/combined_all_imp_features_results_Random_Forest.csv\
-							$(PROC)/combined_all_imp_features_results_RBF_SVM.csv\
-							$(PROC)/combined_all_imp_features_results_XGBoost.csv
-					Rscript $(CODE)/Figure4.R
+$(FINAL)/Figure_S2.png	:	$(CODE)/functions.R\
+							$(CODE)/FigureS1.R\
+							$(PROC)/combined_all_hp_results_XGBoost.csv\
+							$(PROC)/combined_all_hp_results_Random_Forest.csv\
+							$(PROC)/combined_all_hp_results_Decision_Tree.csv\
+							$(PROC)/combined_all_hp_results_RBF_SVM.csv\
+							$(PROC)/combined_all_hp_results_L2_Logistic_Regression.csv\
+							$(PROC)/combined_all_hp_results_L1_Linear_SVM.csv\
+							$(PROC)/combined_all_hp_results_L2_Linear_SVM.csv
+					Rscript $(CODE)/FigureS2.R
 
 
-# Table 1 is a summary of the properties of all the models tested.
-#$(TABLES)/Table1.pdf :	$(PROC)/model_parameters.txt\#
-#						$(TABLES)/Table1.Rmd\#
-#						$(TABLES)/header.tex#
-#	R -e "rmarkdown::render('$(TABLES)/Table1.Rmd', clean=TRUE)"
-#	rm $(TABLES)/Table1.tex
-
-
-
-
-
-
-
+# Table 1 is a summary of the compelxity properties of all the models tested.
+$(FINAL)/TableS1.pdf :	$(FINAL)/Table1.Rmd\
+						$(FINAL)/header.tex
+	R -e "rmarkdown::render('$(FINAL)/Table1.Rmd', clean=TRUE)"
 
 
 ################################################################################
@@ -340,17 +366,22 @@ $(FIGS)/Figure_4.pdf	:	$(CODE)/functions.R\
 ################################################################################
 
 
-#$(FINAL)/manuscript.% : 			\ #include data files that are needed for paper don't leave this line with a : \
-#						$(FINAL)/mbio.csl\#
-#						$(FINAL)/references.bib\#
-#						$(FINAL)/manuscript.Rmd#
-#	R -e 'render("$(FINAL)/manuscript.Rmd", clean=FALSE)'
-#	mv $(FINAL)/manuscript.knit.md submission/manuscript.md
-#	rm $(FINAL)/manuscript.utf8.md
+$(FINAL)/manuscript.%	:	$(FINAL)/mbio.csl\
+							$(FINAL)/references.bib\
+							$(FINAL)/manuscript.Rmd
+	R -e 'render("$(FINAL)/manuscript.Rmd", clean=FALSE)'
+	mv $(FINAL)/manuscript.knit.md submission/manuscript.md
+	rm $(FINAL)/manuscript.utf8.md
 
 
-#write.paper : $(TABLES)/table_1.pdf $(TABLES)/table_2.pdf\ #customize to include
-#				$(FIGS)/figure_1.pdf $(FIGS)/figure_2.pdf\	# appropriate tables and
-#				$(FIGS)/figure_3.pdf $(FIGS)/figure_4.pdf\	# figures
-#				$(FINAL)/manuscript.Rmd $(FINAL)/manuscript.md\#
-#				$(FINAL)/manuscript.tex $(FINAL)/manuscript.pdf
+write.paper :	$(FINAL)/Figure_1.pdf\
+				$(FINAL)/FIgure_2.png\
+				$(FINAL)/Figure_3.png\
+				$(FINAL)/Figure_4.png\
+				$(FINAL)/Figure_5.png\
+				$(FINAL)/Figure_S1.png\
+				$(FINAL)/Figure_S1.png\
+				$(FINAL)/manuscript.Rmd\
+				$(FINAL)/manuscript.md\
+				$(FINAL)/manuscript.tex\
+				$(FINAL)/manuscript.pdf
