@@ -32,7 +32,7 @@ echo Using "Decision Tree"
 
 # Using $PBS_ARRAYID to select parameter set
 
-make data/process/best_hp_results_Decision_Tree_$seed.csv
+make data/temp/best_hp_results_Decision_Tree_$seed.csv
 #Rscript code/learning/main.R $seed "Decision_Tree"
 
 
@@ -41,8 +41,3 @@ echo "qsub working directory absolute is"
 echo $PBS_O_WORKDIR
 qstat -f $PBS_JOBID
 exit
-
-
-
-
-
