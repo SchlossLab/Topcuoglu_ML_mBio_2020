@@ -124,63 +124,37 @@ $(TEMP)/best_hp_results_L2_Logistic_Regression_%.csv	:	data/baxter.0.03.subsampl
 														$(CODE)/model_selection.R
 			Rscript code/learning/main.R $* "L2_Logistic_Regression"
 
+# Create variable names with patterns to describe temporary files
 
 SEEDS=$(shell seq 0 99)
-
 OBJECTS=L1_Linear_SVM L2_Linear_SVM L2_Logistic_Regression RBF_SVM Decision_Tree Random_Forest XGBoost
 
 BEST_REPS_FILES = $(foreach S,$(SEEDS),$(foreach O,$(OBJECTS),$(TEMP)/best_hp_results_$(O)_$(S).csv))
-
 ALL_REPS_FILES = $(foreach S,$(SEEDS),$(foreach O,$(OBJECTS),$(TEMP)/all_hp_results_$(O)_$(S).csv))
-
 COR_IMP_REPS_FILES = $(foreach S,$(SEEDS),$(foreach O,$(OBJECTS),$(TEMP)/all_imp_features_cor_results_$(O)_$(S).csv))
-
 NON_COR_IMP_REPS_FILES = $(foreach S,$(SEEDS),$(foreach O,$(OBJECTS),$(TEMP)/all_imp_features_non_cor_results_$(O)_$(S).csv))
-
 TIME_REPS_FILES = $(foreach S,$(SEEDS),$(foreach O,$(OBJECTS),$(TEMP)/traintime_$(O)_$(S).csv))
+
+# Create variable names with patterns to describe processed files
+
+BEST_COMB_FILES = $(foreach O,$(OBJECTS),$(PROC)/combined_best_hp_results_$(O).csv)
+ALL_COMB_FILES = $(foreach O,$(OBJECTS),$(PROC)/combined_all_hp_results_$(O).csv)
+COR_COMB_FILES = $(foreach O,$(OBJECTS),$(PROC)/combined_all_imp_features_cor_results_$(O).csv)
+NON_COR_COMB_FILES = $(foreach O,$(OBJECTS),$(PROC)/combined_all_imp_features_non_cor_results_$(O).csv)
+TIME_COMB_FILES = $(foreach O,$(OBJECTS),$(PROC)/traintime_$(O).csv)
 
 # Combine all the files generated from each submitted job
 
-$(PROC)/combined_best_hp_results_XGBoost.csv\
-$(PROC)/combined_best_hp_results_Random_Forest.csv\
-$(PROC)/combined_best_hp_results_Decision_Tree.csv\
-$(PROC)/combined_best_hp_results_RBF_SVM.csv\
-$(PROC)/combined_best_hp_results_L2_Logistic_Regression.csv\
-$(PROC)/combined_best_hp_results_L1_Linear_SVM.csv\
-$(PROC)/combined_best_hp_results_L2_Linear_SVM.csv\
-$(PROC)/combined_all_hp_results_XGBoost.csv\
-$(PROC)/combined_all_hp_results_Random_Forest.csv\
-$(PROC)/combined_all_hp_results_Decision_Tree.csv\
-$(PROC)/combined_all_hp_results_RBF_SVM.csv\
-$(PROC)/combined_all_hp_results_L2_Logistic_Regression.csv\
-$(PROC)/combined_all_hp_results_L1_Linear_SVM.csv\
-$(PROC)/combined_all_hp_results_L2_Linear_SVM.csv\
-$(PROC)/combined_all_imp_features_cor_results_Decision_Tree.csv\
-$(PROC)/combined_all_imp_features_cor_results_L1_Linear_SVM.csv\
-$(PROC)/combined_all_imp_features_cor_results_L2_Linear_SVM.csv\
-$(PROC)/combined_all_imp_features_cor_results_L2_Logistic_Regression.csv\
-$(PROC)/combined_all_imp_features_cor_results_Random_Forest.csv\
-$(PROC)/combined_all_imp_features_cor_results_RBF_SVM.csv\
-$(PROC)/combined_all_imp_features_cor_results_XGBoost.csv\
-$(PROC)/combined_all_imp_features_non_cor_results_Decision_Tree.csv\
-$(PROC)/combined_all_imp_features_non_cor_results_L1_Linear_SVM.csv\
-$(PROC)/combined_all_imp_features_non_cor_results_L2_Linear_SVM.csv\
-$(PROC)/combined_all_imp_features_non_cor_results_L2_Logistic_Regression.csv\
-$(PROC)/combined_all_imp_features_non_cor_results_Random_Forest.csv\
-$(PROC)/combined_all_imp_features_non_cor_results_RBF_SVM.csv\
-$(PROC)/combined_all_imp_features_non_cor_results_XGBoost.csv\
-$(PROC)/traintime_XGBoost.csv\
-$(PROC)/traintime_Random_Forest.csv\
-$(PROC)/traintime_Decision_Tree.csv\
-$(PROC)/traintime_RBF_SVM.csv\
-$(PROC)/traintime_L1_Linear_SVM.csv\
-$(PROC)/traintime_L2_Linear_SVM.csv\
-$(PROC)/traintime_L2_Logistic_Regression.csv	:	$(BEST_REPS_FILES)\
-													$(ALL_REPS_FILES)\
-													$(COR_IMP_REPS_FILES)\
-													$(NON_COR_IMP_REPS_FILES)\
-													$(TIME_REPS_FILES)\
-													code/cat_csv_files.sh
+$(BEST_COMB_FILES)\
+$(ALL_COMB_FILES)\
+$(COR_COMB_FILES)\
+$(NON_COR_COMB_FILES)\
+$(TIME_COMB_FILES)\	:	$(BEST_REPS_FILES)\
+						$(ALL_REPS_FILES)\
+						$(COR_IMP_REPS_FILES)\
+						$(NON_COR_IMP_REPS_FILES)\
+						$(TIME_REPS_FILES)\
+						code/cat_csv_files.sh
 	bash code/cat_csv_files.sh
 
 # Take the individual correlated importance files and create feature rankings for each datasplit
@@ -209,13 +183,7 @@ $(PROC)/combined_L2_Logistic_Regression_$(DATA).tsv	:	$(L2_LOGISTIC_REGRESSION_C
 # Figure 2 shows the generalization performance of all the models tested.
 $(FINAL)/Figure_2.png	:	$(CODE)/functions.R\
 							$(CODE)/Figure2.R\
-							$(PROC)/combined_best_hp_results_XGBoost.csv\
-							$(PROC)/combined_best_hp_results_Random_Forest.csv\
-							$(PROC)/combined_best_hp_results_Decision_Tree.csv\
-							$(PROC)/combined_best_hp_results_RBF_SVM.csv\
-							$(PROC)/combined_best_hp_results_L2_Logistic_Regression.csv\
-							$(PROC)/combined_best_hp_results_L1_Linear_SVM.csv\
-							$(PROC)/combined_best_hp_results_L2_Linear_SVM.csv
+							$(BEST_COMB_FILES)
 					Rscript $(CODE)/Figure2.R
 
 # Figure 3 shows the linear model interpretation with weight rankings
@@ -230,65 +198,29 @@ $(FINAL)/Figure_3.png	:	$(CODE)/functions.R\
 # Figure 4 shows non-linear model interpretation with permutation importance
 $(FINAL)/Figure_4.png	:	$(CODE)/functions.R\
 							$(CODE)/Figure4.R\
-							$(PROC)/combined_best_hp_results_XGBoost.csv\
-							$(PROC)/combined_best_hp_results_Random_Forest.csv\
-							$(PROC)/combined_best_hp_results_Decision_Tree.csv\
-							$(PROC)/combined_best_hp_results_RBF_SVM.csv\
-							$(PROC)/combined_best_hp_results_L2_Logistic_Regression.csv\
-							$(PROC)/combined_best_hp_results_L1_Linear_SVM.csv\
-							$(PROC)/combined_best_hp_results_L2_Linear_SVM.csv\
-							$(PROC)/combined_all_imp_features_cor_results_Decision_Tree.csv\
-							$(PROC)/combined_all_imp_features_cor_results_L1_Linear_SVM.csv\
-							$(PROC)/combined_all_imp_features_cor_results_L2_Linear_SVM.csv\
-							$(PROC)/combined_all_imp_features_cor_results_L2_Logistic_Regression.csv\
-							$(PROC)/combined_all_imp_features_cor_results_Random_Forest.csv\
-							$(PROC)/combined_all_imp_features_cor_results_RBF_SVM.csv\
-							$(PROC)/combined_all_imp_features_cor_results_XGBoost.csv\
-							$(PROC)/combined_all_imp_features_non_cor_results_Decision_Tree.csv\
-							$(PROC)/combined_all_imp_features_non_cor_results_L1_Linear_SVM.csv\
-							$(PROC)/combined_all_imp_features_non_cor_results_L2_Linear_SVM.csv\
-							$(PROC)/combined_all_imp_features_non_cor_results_L2_Logistic_Regression.csv\
-							$(PROC)/combined_all_imp_features_non_cor_results_Random_Forest.csv\
-							$(PROC)/combined_all_imp_features_non_cor_results_RBF_SVM.csv\
-							$(PROC)/combined_all_imp_features_non_cor_results_XGBoost.csv
+							$(BEST_COMB_FILES)\
+							$(COR_COMB_FILES)\
+							$(NON_COR_COMB_FILES)
 					Rscript $(CODE)/Figure4.R
 
 # Figure 5 shows training times of each model
 
 $(FINAL)/Figure_5.png	:	$(CODE)/functions.R\
 							$(CODE)/Figure5.R\
-							$(PROC)/traintime_XGBoost.csv\
-							$(PROC)/traintime_Random_Forest.csv\
-							$(PROC)/traintime_Decision_Tree.csv\
-							$(PROC)/traintime_RBF_SVM.csv\
-							$(PROC)/traintime_L1_Linear_SVM.csv\
-							$(PROC)/traintime_L2_Linear_SVM.csv\
-							$(PROC)/traintime_L2_Logistic_Regression.csv
+							$(TIME_COMB_FILES)
 					Rscript $(CODE)/Figure5.R
 
 # Figure S1 shows the hyper-parameter tuning AUC values of linear models
 $(FINAL)/Figure_S1.png	:	$(CODE)/functions.R\
 							$(CODE)/FigureS1.R\
-							$(PROC)/combined_all_hp_results_XGBoost.csv\
-							$(PROC)/combined_all_hp_results_Random_Forest.csv\
-							$(PROC)/combined_all_hp_results_Decision_Tree.csv\
-							$(PROC)/combined_all_hp_results_RBF_SVM.csv\
-							$(PROC)/combined_all_hp_results_L2_Logistic_Regression.csv\
-							$(PROC)/combined_all_hp_results_L1_Linear_SVM.csv\
-							$(PROC)/combined_all_hp_results_L2_Linear_SVM.csv
+							$(ALL_COMB_FILES)
 					Rscript $(CODE)/FigureS1.R
 
 # Figure S2 shows the hyper-parameter tuning AUC values of non-linear models
 
 $(FINAL)/Figure_S2.png	:	$(CODE)/functions.R\
 							$(CODE)/FigureS1.R\
-							$(PROC)/combined_all_hp_results_XGBoost.csv\
-							$(PROC)/combined_all_hp_results_Random_Forest.csv\
-							$(PROC)/combined_all_hp_results_Decision_Tree.csv\
-							$(PROC)/combined_all_hp_results_RBF_SVM.csv\
-							$(PROC)/combined_all_hp_results_L2_Logistic_Regression.csv\
-							$(PROC)/combined_all_hp_results_L1_Linear_SVM.csv\
-							$(PROC)/combined_all_hp_results_L2_Linear_SVM.csv
+							$(ALL_COMB_FILES)
 					Rscript $(CODE)/FigureS2.R
 
 
