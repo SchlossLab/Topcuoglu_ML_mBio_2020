@@ -30,11 +30,11 @@ data/metadata.tsv	:	code/learning/load_datasets.batch
 #	These will generate 100 datasplit results for 7 models
 #
 ################################################################################
-$(PROC)/traintime_XGBoost_%.csv\
-$(PROC)/all_imp_features_cor_results_XGBoost_%.csv\
-$(PROC)/all_imp_features_non_cor_results_XGBoost_%.csv\
-$(PROC)/all_hp_results_XGBoost_%.csv\
-$(PROC)/best_hp_results_XGBoost_%.csv	:	data/baxter.0.03.subsample.shared\
+$(TEMP)/traintime_XGBoost_%.csv\
+$(TEMP)/all_imp_features_cor_results_XGBoost_%.csv\
+$(TEMP)/all_imp_features_non_cor_results_XGBoost_%.csv\
+$(TEMP)/all_hp_results_XGBoost_%.csv\
+$(TEMP)/best_hp_results_XGBoost_%.csv	:	data/baxter.0.03.subsample.shared\
 														data/metadata.tsv\
 														$(CODE)/generateAUCs.R\
 														$(CODE)/model_pipeline.R\
@@ -44,11 +44,11 @@ $(PROC)/best_hp_results_XGBoost_%.csv	:	data/baxter.0.03.subsample.shared\
 			Rscript code/learning/main.R $* "XGBoost"
 
 
-$(PROC)/traintime_Random_Forest_%.csv\
-$(PROC)/all_imp_features_cor_results_Random_Forest_%.csv\
-$(PROC)/all_imp_features_non_cor_results_Random_Forest_%.csv\
-$(PROC)/all_hp_results_Random_Forest_%.csv\
-$(PROC)/best_hp_results_Random_Forest_%.csv	:	data/baxter.0.03.subsample.shared\
+$(TEMP)/traintime_Random_Forest_%.csv\
+$(TEMP)/all_imp_features_cor_results_Random_Forest_%.csv\
+$(TEMP)/all_imp_features_non_cor_results_Random_Forest_%.csv\
+$(TEMP)/all_hp_results_Random_Forest_%.csv\
+$(TEMP)/best_hp_results_Random_Forest_%.csv	:	data/baxter.0.03.subsample.shared\
 														data/metadata.tsv\
 														$(CODE)/generateAUCs.R\
 														$(CODE)/model_pipeline.R\
@@ -57,11 +57,11 @@ $(PROC)/best_hp_results_Random_Forest_%.csv	:	data/baxter.0.03.subsample.shared\
 														$(CODE)/model_selection.R
 			Rscript code/learning/main.R $* "Random_Forest"
 
-$(PROC)/traintime_Decision_Tree_%.csv\
-$(PROC)/all_imp_features_cor_results_Decision_Tree_%.csv\
-$(PROC)/all_imp_features_non_cor_results_Decision_Tree_%.csv\
-$(PROC)/all_hp_results_Decision_Tree_%.csv\
-$(PROC)/best_hp_results_Decision_Tree_%.csv	:	data/baxter.0.03.subsample.shared\
+$(TEMP)/traintime_Decision_Tree_%.csv\
+$(TEMP)/all_imp_features_cor_results_Decision_Tree_%.csv\
+$(TEMP)/all_imp_features_non_cor_results_Decision_Tree_%.csv\
+$(TEMP)/all_hp_results_Decision_Tree_%.csv\
+$(TEMP)/best_hp_results_Decision_Tree_%.csv	:	data/baxter.0.03.subsample.shared\
 														data/metadata.tsv\
 														$(CODE)/generateAUCs.R\
 														$(CODE)/model_pipeline.R\
@@ -70,11 +70,11 @@ $(PROC)/best_hp_results_Decision_Tree_%.csv	:	data/baxter.0.03.subsample.shared\
 														$(CODE)/model_selection.R
 			Rscript code/learning/main.R $* "Decision_Tree"
 
-$(PROC)/traintime_RBF_SVM_%.csv\
-$(PROC)/all_imp_features_cor_results_RBF_SVM_%.csv\
-$(PROC)/all_imp_features_non_cor_results_RBF_SVM_%.csv\
-$(PROC)/all_hp_results_RBF_SVM_%.csv\
-$(PROC)/best_hp_results_RBF_SVM_%.csv	:	data/baxter.0.03.subsample.shared\
+$(TEMP)/traintime_RBF_SVM_%.csv\
+$(TEMP)/all_imp_features_cor_results_RBF_SVM_%.csv\
+$(TEMP)/all_imp_features_non_cor_results_RBF_SVM_%.csv\
+$(TEMP)/all_hp_results_RBF_SVM_%.csv\
+$(TEMP)/best_hp_results_RBF_SVM_%.csv	:	data/baxter.0.03.subsample.shared\
 														data/metadata.tsv\
 														$(CODE)/generateAUCs.R\
 														$(CODE)/model_pipeline.R\
@@ -83,11 +83,11 @@ $(PROC)/best_hp_results_RBF_SVM_%.csv	:	data/baxter.0.03.subsample.shared\
 														$(CODE)/model_selection.R
 			Rscript code/learning/main.R $* "RBF_SVM"
 
-$(PROC)/traintime_L1_Linear_SVM_%.csv\
-$(PROC)/all_imp_features_cor_results_L1_Linear_SVM_%.csv\
-$(PROC)/all_imp_features_non_cor_results_L1_Linear_SVM_%.csv\
-$(PROC)/all_hp_results_L1_Linear_SVM_%.csv\
-$(PROC)/best_hp_results_L1_Linear_SVM_%.csv	:	data/baxter.0.03.subsample.shared\
+$(TEMP)/traintime_L1_Linear_SVM_%.csv\
+$(TEMP)/all_imp_features_cor_results_L1_Linear_SVM_%.csv\
+$(TEMP)/all_imp_features_non_cor_results_L1_Linear_SVM_%.csv\
+$(TEMP)/all_hp_results_L1_Linear_SVM_%.csv\
+$(TEMP)/best_hp_results_L1_Linear_SVM_%.csv	:	data/baxter.0.03.subsample.shared\
 														data/metadata.tsv\
 														$(CODE)/generateAUCs.R\
 														$(CODE)/model_pipeline.R\
@@ -96,11 +96,11 @@ $(PROC)/best_hp_results_L1_Linear_SVM_%.csv	:	data/baxter.0.03.subsample.shared\
 														$(CODE)/model_selection.R
 			Rscript code/learning/main.R $* "L1_Linear_SVM"
 
-$(PROC)/traintime_L2_Linear_SVM_%.csv\
-$(PROC)/all_imp_features_cor_results_L2_Linear_SVM_%.csv\
-$(PROC)/all_imp_features_non_cor_results_L2_Linear_SVM_%.csv\
-$(PROC)/all_hp_results_L2_Linear_SVM_%.csv\
-$(PROC)/best_hp_results_L2_Linear_SVM_%.csv	:	data/baxter.0.03.subsample.shared\
+$(TEMP)/traintime_L2_Linear_SVM_%.csv\
+$(TEMP)/all_imp_features_cor_results_L2_Linear_SVM_%.csv\
+$(TEMP)/all_imp_features_non_cor_results_L2_Linear_SVM_%.csv\
+$(TEMP)/all_hp_results_L2_Linear_SVM_%.csv\
+$(TEMP)/best_hp_results_L2_Linear_SVM_%.csv	:	data/baxter.0.03.subsample.shared\
 														data/metadata.tsv\
 														$(CODE)/generateAUCs.R\
 														$(CODE)/model_pipeline.R\
@@ -109,11 +109,11 @@ $(PROC)/best_hp_results_L2_Linear_SVM_%.csv	:	data/baxter.0.03.subsample.shared\
 														$(CODE)/model_selection.R
 			Rscript code/learning/main.R $* "L2_Linear_SVM"
 
-$(PROC)/traintime_L2_Logistic_Regression_%.csv\
-$(PROC)/all_imp_features_cor_results_L2_Logistic_Regression_%.csv\
-$(PROC)/all_imp_features_non_cor_results_L2_Logistic_Regression_%.csv\
-$(PROC)/all_hp_results_L2_Logistic_Regression_%.csv\
-$(PROC)/best_hp_results_L2_Logistic_Regression_%.csv	:	data/baxter.0.03.subsample.shared\
+$(TEMP)/traintime_L2_Logistic_Regression_%.csv\
+$(TEMP)/all_imp_features_cor_results_L2_Logistic_Regression_%.csv\
+$(TEMP)/all_imp_features_non_cor_results_L2_Logistic_Regression_%.csv\
+$(TEMP)/all_hp_results_L2_Logistic_Regression_%.csv\
+$(TEMP)/best_hp_results_L2_Logistic_Regression_%.csv	:	data/baxter.0.03.subsample.shared\
 														data/metadata.tsv\
 														$(CODE)/generateAUCs.R\
 														$(CODE)/model_pipeline.R\
@@ -125,47 +125,47 @@ $(PROC)/best_hp_results_L2_Logistic_Regression_%.csv	:	data/baxter.0.03.subsampl
 
 SEEDS=$(shell seq 0 99)
 
-L2_LOGISTIC_REGRESSION_BEST_REPS=$(foreach S,$(SEEDS),$(PROC)/best_hp_results_L2_Logistic_Regression_$(S).csv)
-L2_LOGISTIC_REGRESSION_ALL_REPS=$(foreach S,$(SEEDS),$(PROC)/all_hp_results_L2_Logistic_Regression_$(S).csv)
-L2_LOGISTIC_REGRESSION_COR_IMP_REPS=$(foreach S,$(SEEDS),$(PROC)/all_imp_features_cor_results_L2_Logistic_Regression_$(S).csv)
-L2_LOGISTIC_REGRESSION_NON_COR_IMP_REPS=$(foreach S,$(SEEDS),$(PROC)/all_imp_features_non_cor_results_L2_Logistic_Regression_$(S).csv)
-L2_LOGISTIC_REGRESSION_TIME_REPS=$(foreach S,$(SEEDS),$(PROC)/traintime_L2_Logistic_Regression_$(S).csv)
+L2_LOGISTIC_REGRESSION_BEST_REPS=$(foreach S,$(SEEDS),$(TEMP)/best_hp_results_L2_Logistic_Regression_$(S).csv)
+L2_LOGISTIC_REGRESSION_ALL_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_hp_results_L2_Logistic_Regression_$(S).csv)
+L2_LOGISTIC_REGRESSION_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_cor_results_L2_Logistic_Regression_$(S).csv)
+L2_LOGISTIC_REGRESSION_NON_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_non_cor_results_L2_Logistic_Regression_$(S).csv)
+L2_LOGISTIC_REGRESSION_TIME_REPS=$(foreach S,$(SEEDS),$(TEMP)/traintime_L2_Logistic_Regression_$(S).csv)
 
-L2_LINEAR_SVM_BEST_REPS=$(foreach S,$(SEEDS),$(PROC)/best_hp_results_L2_Linear_SVM_$(S).csv)
-L2_LINEAR_SVM_ALL_REPS=$(foreach S,$(SEEDS),$(PROC)/all_hp_results_L2_Linear_SVM_$(S).csv)
-L2_LINEAR_SVM_COR_IMP_REPS=$(foreach S,$(SEEDS),$(PROC)/all_imp_features_cor_results_L2_Linear_SVM_$(S).csv)
-L2_LINEAR_SVM_NON_COR_IMP_REPS=$(foreach S,$(SEEDS),$(PROC)/all_imp_features_non_cor_results_L2_Linear_SVM_$(S).csv)
-L2_LINEAR_SVM_TIME_REPS=$(foreach S,$(SEEDS),$(PROC)/traintime_L2_Linear_SVM_$(S).csv)
+L2_LINEAR_SVM_BEST_REPS=$(foreach S,$(SEEDS),$(TEMP)/best_hp_results_L2_Linear_SVM_$(S).csv)
+L2_LINEAR_SVM_ALL_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_hp_results_L2_Linear_SVM_$(S).csv)
+L2_LINEAR_SVM_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_cor_results_L2_Linear_SVM_$(S).csv)
+L2_LINEAR_SVM_NON_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_non_cor_results_L2_Linear_SVM_$(S).csv)
+L2_LINEAR_SVM_TIME_REPS=$(foreach S,$(SEEDS),$(TEMP)/traintime_L2_Linear_SVM_$(S).csv)
 
-L1_LINEAR_SVM_BEST_REPS=$(foreach S,$(SEEDS),$(PROC)/best_hp_results_L1_Linear_SVM_$(S).csv)
-L1_LINEAR_SVM_ALL_REPS=$(foreach S,$(SEEDS),$(PROC)/all_hp_results_L1_Linear_SVM_$(S).csv)
-L1_LINEAR_SVM_COR_IMP_REPS=$(foreach S,$(SEEDS),$(PROC)/all_imp_features_cor_results_L1_Linear_SVM_$(S).csv)
-L1_LINEAR_SVM_NON_COR_IMP_REPS=$(foreach S,$(SEEDS),$(PROC)/all_imp_features_non_cor_results_L1_Linear_SVM_$(S).csv)
-L1_LINEAR_SVM_TIME_REPS=$(foreach S,$(SEEDS),$(PROC)/traintime_L1_Linear_SVM_$(S).csv)
+L1_LINEAR_SVM_BEST_REPS=$(foreach S,$(SEEDS),$(TEMP)/best_hp_results_L1_Linear_SVM_$(S).csv)
+L1_LINEAR_SVM_ALL_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_hp_results_L1_Linear_SVM_$(S).csv)
+L1_LINEAR_SVM_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_cor_results_L1_Linear_SVM_$(S).csv)
+L1_LINEAR_SVM_NON_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_non_cor_results_L1_Linear_SVM_$(S).csv)
+L1_LINEAR_SVM_TIME_REPS=$(foreach S,$(SEEDS),$(TEMP)/traintime_L1_Linear_SVM_$(S).csv)
 
-RBF_SVM_BEST_REPS=$(foreach S,$(SEEDS),$(PROC)/best_hp_results_RBF_SVM_$(S).csv)
-RBF_SVM_ALL_REPS=$(foreach S,$(SEEDS),$(PROC)/all_hp_results_RBF_SVM_$(S).csv)
-RBF_SVM_COR_IMP_REPS=$(foreach S,$(SEEDS),$(PROC)/all_imp_features_cor_results_RBF_SVM_$(S).csv)
-RBF_SVM_NON_COR_IMP_REPS=$(foreach S,$(SEEDS),$(PROC)/all_imp_features_non_cor_results_RBF_SVM_$(S).csv)
-RBF_SVM_TIME_REPS=$(foreach S,$(SEEDS),$(PROC)/traintime_RBF_SVM_$(S).csv)
+RBF_SVM_BEST_REPS=$(foreach S,$(SEEDS),$(TEMP)/best_hp_results_RBF_SVM_$(S).csv)
+RBF_SVM_ALL_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_hp_results_RBF_SVM_$(S).csv)
+RBF_SVM_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_cor_results_RBF_SVM_$(S).csv)
+RBF_SVM_NON_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_non_cor_results_RBF_SVM_$(S).csv)
+RBF_SVM_TIME_REPS=$(foreach S,$(SEEDS),$(TEMP)/traintime_RBF_SVM_$(S).csv)
 
-Decision_Tree_BEST_REPS=$(foreach S,$(SEEDS),$(PROC)/best_hp_results_Decision_Tree_$(S).csv)
-Decision_Tree_ALL_REPS=$(foreach S,$(SEEDS),$(PROC)/all_hp_results_Decision_Tree_$(S).csv)
-Decision_Tree_COR_IMP_REPS=$(foreach S,$(SEEDS),$(PROC)/all_imp_features_cor_results_Decision_Tree_$(S).csv)
-Decision_Tree_NON_COR_IMP_REPS=$(foreach S,$(SEEDS),$(PROC)/all_imp_features_non_cor_results_Decision_Tree_$(S).csv)
-Decision_Tree_TIME_REPS=$(foreach S,$(SEEDS),$(PROC)/traintime_Decision_Tree_$(S).csv)
+Decision_Tree_BEST_REPS=$(foreach S,$(SEEDS),$(TEMP)/best_hp_results_Decision_Tree_$(S).csv)
+Decision_Tree_ALL_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_hp_results_Decision_Tree_$(S).csv)
+Decision_Tree_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_cor_results_Decision_Tree_$(S).csv)
+Decision_Tree_NON_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_non_cor_results_Decision_Tree_$(S).csv)
+Decision_Tree_TIME_REPS=$(foreach S,$(SEEDS),$(TEMP)/traintime_Decision_Tree_$(S).csv)
 
-Random_Forest_BEST_REPS=$(foreach S,$(SEEDS),$(PROC)/best_hp_results_Random_Forest_$(S).csv)
-Random_Forest_ALL_REPS=$(foreach S,$(SEEDS),$(PROC)/all_hp_results_Random_Forest_$(S).csv)
-Random_Forest_COR_IMP_REPS=$(foreach S,$(SEEDS),$(PROC)/all_imp_features_cor_results_Random_Forest_$(S).csv)
-Random_Forest_NON_COR_IMP_REPS=$(foreach S,$(SEEDS),$(PROC)/all_imp_features_non_cor_results_Random_Forest_$(S).csv)
-Random_Forest_TIME_REPS=$(foreach S,$(SEEDS),$(PROC)/traintime_Random_Forest_$(S).csv)
+Random_Forest_BEST_REPS=$(foreach S,$(SEEDS),$(TEMP)/best_hp_results_Random_Forest_$(S).csv)
+Random_Forest_ALL_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_hp_results_Random_Forest_$(S).csv)
+Random_Forest_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_cor_results_Random_Forest_$(S).csv)
+Random_Forest_NON_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_non_cor_results_Random_Forest_$(S).csv)
+Random_Forest_TIME_REPS=$(foreach S,$(SEEDS),$(TEMP)/traintime_Random_Forest_$(S).csv)
 
-XGBoost_BEST_REPS=$(foreach S,$(SEEDS),$(PROC)/best_hp_results_XGBoost_$(S).csv)
-XGBoost_ALL_REPS=$(foreach S,$(SEEDS),$(PROC)/all_hp_results_XGBoost_$(S).csv)
-XGBoost_COR_IMP_REPS=$(foreach S,$(SEEDS),$(PROC)/all_imp_features_cor_results_XGBoost_$(S).csv)
-XGBoost_NON_COR_IMP_REPS=$(foreach S,$(SEEDS),$(PROC)/all_imp_features_non_cor_results_XGBoost_$(S).csv)
-XGBoost_TIME_REPS=$(foreach S,$(SEEDS),$(PROC)/traintime_XGBoost_$(S).csv)
+XGBoost_BEST_REPS=$(foreach S,$(SEEDS),$(TEMP)/best_hp_results_XGBoost_$(S).csv)
+XGBoost_ALL_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_hp_results_XGBoost_$(S).csv)
+XGBoost_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_cor_results_XGBoost_$(S).csv)
+XGBoost_NON_COR_IMP_REPS=$(foreach S,$(SEEDS),$(TEMP)/all_imp_features_non_cor_results_XGBoost_$(S).csv)
+XGBoost_TIME_REPS=$(foreach S,$(SEEDS),$(TEMP)/traintime_XGBoost_$(S).csv)
 
 # Combine all the files generated from each submitted job
 
