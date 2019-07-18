@@ -246,8 +246,23 @@ Abbreviations: AUROC, area under the receiver operating characteristic curve; SV
 Abbreviations: SVM, support vector machine; OTU, Operational Taxonomic Unit; RBF, radial basis kernel; OTU, Operational Taxonomic Unit.
 
 \newpage
-\includegraphics{TableS1.pdf}
-**Table S1. ML model complexity and hyperparameter range.** 
+\captionof{table}{Characteristics of the machine learning models in our comparative study.}
+\small
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+\rowcolor{lightgray}
+\textbf{Model} & \textbf{Description} & \textbf{Linearity} & \textbf{Interpretability} & \textbf{Refs.} \\ \hline
+\makecell[l]{Logistic \\regression} & \makecell[l]{A predictive regression analysis when the dependent \\variable is binary.} & Linear & Interpretable & $^{36}$\\ \hline
+\makecell[l]{SVM with \\linear kernel} & \makecell[l]{A classifier that is defined by an optimal linear \\seperating hyperplane that discriminates between labels.} & Linear & Interpratable & $^{37}$\\ \hline
+\makecell[l]{SVM with \\radial basis kernel} & \makecell[l]{A classifier that is defined by an optimal gaussian \\seperating hyperplane that discriminates between labels.} & Non-linear & Explainable$^*$ & $^{38}$\\ \hline
+Decision tree & \makecell[l]{A classifier that sorts samples down from the 
+root to the \\leaf node where an attribute is tested to discriminate \\between labels} & Non-linear & Interpretable & $^{39}$\\ \hline
+Random forest & \makecell[l]{A classifier that is a decision tree ensemble that \\grow randomly with subsampled data.} & Non-linear & Explainable$^*$ & $^{40-41}$  \\ \hline
+XGBoost & \makecell[l]{A classifier that is a decision tree ensemble that \\grow with additive training.} & Non-linear & Explainable$^*$ & $^{42-43}$ \\ \hline
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item[1]{$^*$Explainable models are not inherently interpretable but can be explained with post-hoc analyses.}
+\end{tablenotes}
 \newpage
 
 
