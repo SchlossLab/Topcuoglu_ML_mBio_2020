@@ -245,24 +245,59 @@ Abbreviations: AUROC, area under the receiver operating characteristic curve; SV
 **Figure S3. Interpretation of the linear ML models with permutation importance.** (A) L1-regularized SVM with linear kernel (B) L2-regularized SVM with linear kernel and (C) L2-regularized logistic regression were interpreted using permutation importance using held-out test set. The gray rectangle and the dashed line show the IQR range and median of the base testing AUROC without any permutation performed. 
 Abbreviations: SVM, support vector machine; OTU, Operational Taxonomic Unit; RBF, radial basis kernel; OTU, Operational Taxonomic Unit.
 
+
+
 \newpage
 \captionof{table}{Characteristics of the machine learning models in our comparative study.}
 \small
 \begin{tabular}{|l|l|l|l|l|}
 \hline
+
 \rowcolor{lightgray}
 \textbf{Model} & \textbf{Description} & \textbf{Linearity} & \textbf{Interpretability} & \textbf{Refs.} \\ \hline
+
 \makecell[l]{Logistic \\regression} & \makecell[l]{A predictive regression analysis when the dependent \\variable is binary.} & Linear & Interpretable & $^{36}$\\ \hline
+
 \makecell[l]{SVM with \\linear kernel} & \makecell[l]{A classifier that is defined by an optimal linear \\seperating hyperplane that discriminates between labels.} & Linear & Interpratable & $^{37}$\\ \hline
+
 \makecell[l]{SVM with \\radial basis kernel} & \makecell[l]{A classifier that is defined by an optimal gaussian \\seperating hyperplane that discriminates between labels.} & Non-linear & Explainable$^*$ & $^{38}$\\ \hline
 Decision tree & \makecell[l]{A classifier that sorts samples down from the 
 root to the \\leaf node where an attribute is tested to discriminate \\between labels} & Non-linear & Interpretable & $^{39}$\\ \hline
+
 Random forest & \makecell[l]{A classifier that is a decision tree ensemble that \\grow randomly with subsampled data.} & Non-linear & Explainable$^*$ & $^{40-41}$  \\ \hline
+
 XGBoost & \makecell[l]{A classifier that is a decision tree ensemble that \\grow with additive training.} & Non-linear & Explainable$^*$ & $^{42-43}$ \\ \hline
+
 \end{tabular}
 \begin{tablenotes}\footnotesize
 \item[1]{$^*$Explainable models are not inherently interpretable but can be explained with post-hoc analyses.}
 \end{tablenotes}
+\newpage
+
+
+
+
+\captionof{table}{An aspirational rubric for evaluating the rigor of ML practices.}
+\small
+\begin{tabular}{|l|l|l|l|}
+\hline
+
+\rowcolor{lightgray}
+\textbf{Practice} & \textbf{Good} & \textbf{Better} & \textbf{Best} \\ \hline
+
+\makecell[l]{Problem \\ definition} & \makecell[l]{Have we clearly stated \\ the ML task? \\ Do we have a priori hypotheses? \\Do we know the predictions \\ a domain expert would \\ make manually?} & \makecell[l]{Do we know the motivation \\ for solving the problem? \\ How much interpretability \\ does the problem need? } & \makecell[l]{Do we know our data? \\ Do we know the confounding \\ variables? } \\ \hline
+
+\makecell[l]{Model \\ selection} & \makecell[l]{Do we know the \\ candidate algorithms \\ for the ML problem? \\} & \makecell[l]{Do we know our \\ computational resources \\ to fully train each model?} & \makecell[l]{How much interpretibility \\ does the problem need? \\ How much each \\ candidate algorithm \\ can provide?} \\ \hline
+
+\makecell[l]{ML pipeline \\ preparation} & \makecell[l]{Do we have an held-out \\ test dataset?} & \makecell[l]{Have we tested our model \\ on many different \\ held-out datasets?} & \makecell[l]{Have we tuned our model \\ hyperparameters in \\ cross-validation?} \\ \hline
+
+\makecell[l]{Hyperparameter \\ selection} & \makecell[l]{Do we know the different \\ hyperparameters each model \\ can use and why?} & \makecell[l]{Did we use historically \\ effective hyperparameters? } & \makecell[l]{Did we search the \\ full grid space and \\optimized our model? } \\ \hline
+
+\makecell[l]{Model \\ evaluation} & \makecell[l]{Have we chosen an appropriate \\ metric to evaluate \\ predictive performance?} & \makecell[l]{Have we reported \\ the predictive performance \\ on a held-out test data?} & \makecell[l]{Have we provided an average \\ predictive performance \\ of many model runs? } \\ \hline
+
+\makecell[l]{Model \\ interpretation} & \makecell[l]{Do we know if \\ our model is \\ interpretable?} & \makecell[l]{If the model is not \\ interpretable, do we know \\how to  explain it? \\ Have we checked for \\ the effect of confounding \\ variables?} & \makecell[l]{Have we generated new \\ hypotheses based on \\ model interpretation \\ to test model results? } \\ \hline
+
+\end{tabular}
 \newpage
 
 
