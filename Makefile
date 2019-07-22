@@ -242,7 +242,7 @@ $(FINAL)/TableS1.pdf :	$(FINAL)/Table1.Rmd\
 $(FINAL)/manuscript.%	:	$(FINAL)/mbio.csl\
 							$(FINAL)/references.bib\
 							$(FINAL)/manuscript.Rmd
-	R -e 'render("$(FINAL)/manuscript.Rmd", clean=FALSE)'
+	R -e 'rmarkdown::render("$(FINAL)/manuscript.Rmd", clean=FALSE)'
 	mv $(FINAL)/manuscript.knit.md submission/manuscript.md
 	rm $(FINAL)/manuscript.utf8.md
 
