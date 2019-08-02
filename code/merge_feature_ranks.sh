@@ -25,7 +25,7 @@ tail -n +2 -q $SEARCH_DIR/L2_Logistic_Regression_"$RANK"_{202..300}.tsv >> $FINA
 #		output it to the FINAL_DIR location
 cp $SEARCH_DIR/L1_Linear_SVM_"$SCORE"_1.tsv $FINAL_DIR/combined_L1_Linear_SVM_"$SCORE".tsv
 cp $SEARCH_DIR/L2_Linear_SVM_"$SCORE"_101.tsv $FINAL_DIR/combined_L2_Linear_SVM_"$SCORE".tsv
-cp $SEARCH_DIR/L2_Logistic_Regression_"$SCORE"_201.tsv $FINAL_DIR/combined_L2_Logistic_Regression_"$SCORE".tsv
+cp $SEARCH_DIR/L2_Logistic_Regression_"$SCORE"_200.tsv $FINAL_DIR/combined_L2_Logistic_Regression_"$SCORE".tsv
 
 
 #	2. Append the other files to the end, but we want to be sure to ignore the 0 file since we don't
@@ -34,5 +34,5 @@ cp $SEARCH_DIR/L2_Logistic_Regression_"$SCORE"_201.tsv $FINAL_DIR/combined_L2_Lo
 #        "-q" tells it to not print the header with the file name
 #        ">>" adds all the tail stuff from every file to the combined file
 tail -n +2 -q $SEARCH_DIR/L1_Linear_SVM_"$SCORE"_{2..100}.tsv >> $FINAL_DIR/combined_L1_Linear_SVM_"$SCORE".tsv
-tail -n +2 -q $SEARCH_DIR/L2_Linear_SVM_"$SCORE"_{102..200}.tsv >> $FINAL_DIR/combined_L2_Linear_SVM_"$SCORE".tsv
-tail -n +2 -q $SEARCH_DIR/L2_Logistic_Regression_"$SCORE"_{202..300}.tsv >> $FINAL_DIR/combined_L2_Logistic_Regression_"$SCORE".tsv
+tail -n +2 -q $SEARCH_DIR/L2_Linear_SVM_"$SCORE"_{101..199}.tsv >> $FINAL_DIR/combined_L2_Linear_SVM_"$SCORE".tsv
+tail -n +2 -q $SEARCH_DIR/L2_Logistic_Regression_"$SCORE"_{200..299}.tsv >> $FINAL_DIR/combined_L2_Logistic_Regression_"$SCORE".tsv
