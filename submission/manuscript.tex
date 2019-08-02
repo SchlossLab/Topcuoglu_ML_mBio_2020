@@ -186,155 +186,148 @@ progress, we need to slow down, define and implement good ML practices.
 
 \subsection{Background}\label{background}
 
-Advances in sequencing technology and decreases in the costs of
-generating 16S rRNA gene sequences have allowed rapid exploration of the
-human microbiome and its health implications. Currently, the human
-microbiome field is growing at an unprecedented rate and there is an
-increasing demand for methods that identify associations between
-microbiome members and human health. However, this is difficult as human
-associated microbial communities are remarkably complex,
-high-dimensional and uneven within and between individuals with the same
-disease. It is unlikely that a single species can explain a disease.
-Instead, subsets of those communities, in relation to one another and to
-their host, account for differences in health outcomes.
+As the number of people represented in human microbiome datasets grow,
+there is an increasing desire to use microbiome data to diagnose
+disease. However, the structure of the human microbiome is remarkably
+variable between individuals to the point where it is often difficult to
+identify the bacterial populations that are associated with diseases
+using traditional statistical models. This variation is likely due to
+the ability of many bacterial populations to fill the same niche such
+that different populations cause the same disease in different
+individuals. Furthermore, a growing number of studies have shown that it
+is rare for a single bacterial species to be associated with a disease.
+Instead, subsets of the microbiome account for differences in health.
+Traditional statistical approaches do not adequately account for the
+variation in the human microbiome and typically consider the protective
+or risk effects of each bacterial population individually. Recently,
+machine learning models have grown in popularity among microbiome
+researchers because of the large amount of data that can now be
+generated and because the models are effective at accounting for the
+interpersonal microbiome variation and the ecology of the disease.
 
-Machine learning (ML) methods are effective at recognizing and
-highlighting patterns in complex microbial datasets. They learn from
-existing data to predict the outcomes of new data and allow us to infer
-on the reasons underlying that prediction. Therefore, researchers have
-started to explore the utility of ML models that use microbiota
-associated biomarkers to predict human health and to understand the
+ML models are useful for understanding the variation in the structure of
+existing data and to apply that knowledge to make predictions about new
+data. Researchers have used ML models to diagnose and understand the
 ecological basis of diseases such as liver cirrhosis, colorectal cancer,
 inflammatory bowel diseases (IBD), obesity, and type 2 diabetes (1--11).
-The high-stake task of predicting the correct diagnosis with high
-confidence relies on a ML model that is built with rigorous methods.
-However, the field's use of ML lacks clarity and consistency in which
-methods are used and how these methods are implemented (12, 13). More
-notably, we commonly see flawed ML practices such as using ML pipelines
-where there is no seperate held-out test dataset to evaluate predictive
-performance or reporting few or only the best outcomes of
-cross-validation. Even when there are seperate testing sets to evaluate
-predictive performance, there are large differences between
-cross-validation and testing performances and large confidence intervals
-in testing performances (4, 14--20). These practices prevent the
-development of generalizable models, where the model makes accurate
-predictions with newly acquired data as well as it does with the
-training data.
+The task of diagnosing an individual with high confidence relies on a ML
+model that is built with rigorous methods. However, ML methodology in
+the microbiome field has flaws that have not been addressed previously.
+There is a lack of transparency in which methods are used and how these
+methods are implemented (12, 13); models are being developed and
+evaluated without a seperate held-out test data (3, 4, 14--16); there is
+large variation between the cross-validation outcomes (16, 17) and
+between cross-validation and testing performances (18) . These practices
+limit reproducibility, cause overoptimism for model performance and
+prevent the development of generalizable models, where the model makes
+accurate predictions with newly acquired data as well as it does with
+the training data. Nevertheless, the microbiome field is making progress
+to avoid potential pitfalls of ML. More and more studies are now
+validating their models on independent datasets (7, 18, 19) and they are
+introducing frameworks to accurately use ML tools (20--23).
 
-Moreover, there is a lack of discussion on why a particular ML model is
-utilized and a lack of emphasis on the strengths and weaknesses of it.
-Recently, there is a trend towards using more complex ML models such as
-random forest, extreme gradient boosting (XGBoost) and neural networks
-without a discussion on if and how much model interpretability is
-necessary for the study (11, 21--23). These models are also called black
-box ML models because they are not inherently interpretable and require
-posthoc explanations to determine the feature importances in making a
-prediction. These explanations can be misleading and at times unreliable
-when making high-stake decisions about patient health (24). The models
-we develop for healthcare, both to predict disease and to understand
-underlying reasons behind that prediction, should be transparent and
-accountable (25).
+Among microbiome researchers, there has been a trend towards using more
+complex ML models such as random forest and neural networks (2, 11,
+24--26) over simpler models such as logistic regression or other linear
+models (18, 22, 27). There is an implicit assumption that the more
+complex models are better because they are more complex. Although these
+models may be better at incorporating non-linear relationships or yield
+better predictions, they are also called black box ML models because
+they are not inherently interpretable. These models require post hoc
+explanations to quantify the importance of each feature in making a
+prediction. Depending on the application of the model researchers may
+chose to use different modeling approaches. For example, a researcher
+trying to identify the populations causing a disease would likely want a
+more interpretable model whereas a clinician may emphasize performance.
+Although one may feel that they are sacrificing interpretability for
+performance, that tradeoff may be minimal (28, 29).
 
-The lack of transparency on model selection and interpretation as well
-as flawed modeling methods negatively impact model validity and
-reproducibility. We need to strive toward better machine learning
-practices by (1) implementing rigorous machine learning pipelines and
-(2) selecting ML models that reflect the goal of the study as it will
-inform our expectations of predictive performance, complexity,
-interpretability and computational efficiency. To showcase a rigorous ML
-pipeline and to shed light on how ML model selection can affect modeling
-results, we performed an empirical analysis comparing several different
-ML models using the same dataset and the same ML pipeline. We used a
-previously published colorectal cancer (CRC) study (3) which had fecal
-16S rRNA gene sequences of CRC patients. The human microbiome is
-hypothesized to directly contribute to the development of CRC and fecal
-16S rRNA gene sequences have been used to detect it (1, 3, 4, 26). We
-built seven ML models using fecal 16S rRNA gene sequences to predict
-healthy patients versus patients with colorectal lesions that were
-identified by colonoscopy as screen relevant neoplasias (SRN). We
-established modeling pipelines for three linear models with different
-forms of regularization; L2-regularized logistic regression, L1 and
-L2-regularized support vector machines (SVM) with linear kernel. We also
-developed four non-linear models; SVM with radial basis function kernel,
-a decision tree, random forest and XGBoost. We compared the predictive
-performance, interpretability and computational efficiency of the seven
-models to highlight the importance of model selection. We established
-standards for ML pipeline construction, predictive performance
-evaluation and model interpretation for microbiome-associated ML models
-that have a binary prediction task.
+The lack of transparency in model selection and using flawed modelling
+and interpretation methods negatively impacts model validity. To
+showcase a rigorous ML pipeline and to shed light on how ML model
+selection can affect modeling results, we performed an empirical
+analysis comparing 7 modeling approaches using the same dataset and
+pipeline. We established modeling pipelines for three linear models with
+different forms of regularization: L2-regularized logistic regression
+and L1 and L2-regularized support vector machines (SVM) with a linear
+kernel. We also developed four non-linear models: SVM with radial basis
+function kernel, a decision tree, random forest and XGBoost. We compared
+the predictive performance, interpretability and computational
+efficiency of the seven models to highlight the importance of model
+selection. To demonstrate the performance of these modelling approaches
+and our pipeline, we used data from a previously published study that
+sought to classifiy individuals as having normal colons or colonic
+lesions based on the 16S rRNA gene sequences collected from fecal
+samples (3). This dataset was selected because it is a relatively large
+collection of samples (N=490) connected to clinically significant
+disease where there is ample evidence that it is driven by variation in
+the microbiome (1, 3, 4, 30). With this dataset, we established
+standards for ML pipeline construction, evaluated predictive
+performance, and demonstrated model interpretation for models. This
+framework can be easily applied to other host-associated and
+environmental microbiome problems.
 
 \subsection{Results}\label{results}
 
-\textbf{Model selection and pipeline construction}
-
-We first determined the dataset and the ML models to use in our study.
-We used a previously published study on a CRC cohort of 490 patients
-with 261 cases of SRN. For each patient, we had 6920 features (fecal
-bacterial abundances) and a two-class label that defines their
-colorectal health (normal or SRN colorectal lesions as defined by
-colonoscopies). We established modeling pipelines for a binary
-prediction task with L2-regularized logistic regression, L1 and L2
-support vector machines (SVM) with linear and radial basis function
-kernels, a decision tree, random forest and extreme gradient boosted
-decision tree (XGBoost).
+\textbf{Model selection and pipeline construction} We established a ML
+pipeline where we train and validate each of the seven models {[}Figure
+1{]}. We randomly split the data into training and test sets so that the
+training set consisted of 80\% of the full dataset while the test set
+was composed of the remaining data {[}Figure 1{]}. Since the cases are
+not uniformly represented in the data, the data-split was stratified to
+maintain the overall label distribution in both the training and test
+sets. For example, our example dataset represented data from 490
+individuals, 261 had normal colons and 229 had a screen relevant
+neoplasia (SRN). After the data-split, the training set consisted of 393
+patients (209 SRN), while the test set was composed of 97 patients (52
+SRN). The training data was used for hyperparameter selection and the
+test set was used for evaluating predictive performance.
 
 We used ML models with different classification algorithms and
-regularization parameters. For regularized logistic regression and SVM
-with linear kernel, we used L2 regularization to keep all potentially
-important features. For comparison, we also trained an L1 regularized
-SVM model with linear kernel. L1-regularization on microbiome data lead
-to a sparser solution (i.e., force many coefficients to zero). Finally,
-to explore the potential for non-linear relationships among features and
-the outcome of interest, we trained tree based models, decision tree,
-random forest and XGBoost, as well as an SVM with non-linear kernel.
-
-We established a ML pipeline where we train and validate each of the
-seven models {[}Figure 1{]}. We randomly split the data into
-training/validation and test sets so that the training/validation set
-consisted of 80\% of the full dataset while the test set was composed of
-the remaining data {[}Figure 1{]}. Since the cases are not uniformly
-represented in the data, the initial data-split was stratified to
-maintain the overall label distribution in both the training/validation
-and test sets. Training/validation set consisted of 393 patients (209
-SRN), while the test set was composed of 97 patients (52 SRN). The
-training/validation data was used for training purposes and validation
-of hyperparameter selection, and the test set was used for evaluation
-purposes.
+regularization methods. Regularization is a technique to discourage
+overfitting by penalizing the model for learning the training data too
+well. For regularized logistic regression and SVM with linear kernel, we
+used L2 regularization to keep all potentially important features. For
+comparison, we also trained an L1 regularized SVM model with linear
+kernel. L1-regularization on microbiome data lead to a sparser solution
+(i.e., force many coefficients to zero). Finally, to explore the
+potential for non-linear relationships among features and the outcome of
+interest, we trained tree based models, decision tree, random forest and
+XGBoost, as well as an SVM with non-linear kernel.
 
 Hyperparameters are the rules that are learned from the training data in
-a classification algorithm. When they are tuned over a full grid search
-and selected by validation, they make the ML model better are
-predicting. We selected hyperparameter settings using repeated five-fold
-cross-validation on the training/validation set {[}Figure 1{]}. We chose
-the best hyperparameter setting for each model based on its predictive
-performance on the validation set using the area under the receiver
-operating characteristic curve (AUROC) metric {[}Figure S1 and S2{]}.
-The AUROC ranges from 1.0, where the model perfectly distinguishes
-between cases and controls, to 0.50, where the model's predictions are
-no different from random chance. Similar to the initial data-split,
-five-fold cross-validation for hyperparameter selection was also
-stratified to maintain the overall label distribution on the training
-and validation sets. The cross-validation of each hyperparameter setting
-was repeated over 100 randomizations to get a robust reading of
-predictive performance.
+a classification algorithm. For example regularization term (C) that
+decides how big the penalty for overfitting will be, is an
+hyperparameter. The model becomes more generalizable when we tune for
+the optimal C value. Similar to regularization term C, other
+hyperparameters can be tuned over a full grid search and selected by
+validation to build better models. We selected hyperparameter settings
+by performing repeated five-fold cross-validation (CV) on the training
+set {[}Figure 1{]}. Similar to the initial data-split, five-fold CV was
+also stratified to maintain the overall label distribution. We chose the
+best hyperparameter setting for each model based on its CV predictive
+performance using the area under the receiver operating characteristic
+curve (AUROC) metric {[}Figure S1 and S2{]}. The AUROC ranges from 1.0,
+where the model perfectly distinguishes between cases and controls, to
+0.50, where the model's predictions are no different from random chance.
+The cross-validation of each hyperparameter setting was repeated over
+100 randomizations to get a robust reading of predictive performance.
 
-We then trained the full training/validation dataset with the selected
-hyperparameters. We used the held-out test set to evaluate the
+We then trained the full training dataset with the selected
+hyperparameters. We used the held-out test set to evaluate the testing
 predictive performance of each ML model. The data-split, hyperparameter
 selection, training and testing steps were repeated 100 times to get a
 reliable and robust reading of model performance {[}Figure 1{]}.
 
 \textbf{Predictive performance and generalizability of the seven
-models.}
-
-We evaluated the predictive performances of seven binary classification
-models when applied to held-out test data using the AUROC metric
-{[}Figure 2{]}. Random forest had significantly higher test AUROC values
-than the other models for detecting SRNs when AUROC values were compared
-to the other six by Wilcoxon rank sum test (p \textless{} 0.01). The
-median AUROC of the random forest model was 0.695 (IQR 0.044).
-L2-regularized logistic regression, XGBoost, L2-regularized SVM with
-linear and radial basis function kernel AUROC values were not
+models.} We evaluated the predictive performances of seven binary
+classification models when applied to held-out test data using the AUROC
+metric {[}Figure 2{]}. Random forest had significantly higher test AUROC
+values than the other models for detecting SRNs when AUROC values were
+compared to the other six by Wilcoxon rank sum test (p \textless{}
+0.01). The median AUROC of the random forest model was 0.695 (IQR
+0.044). L2-regularized logistic regression, XGBoost, L2-regularized SVM
+with linear and radial basis function kernel AUROC values were not
 significantly different from one another. They had median AUROC values
 of 0.68 (IQR 0.055), 0.679 (IQR 0.052), 0.678 (IQR 0.056) and 0.668 (IQR
 0.056) respectively. L1-regularized SVM with linear kernel and decision
@@ -358,18 +351,16 @@ forest model was 0.59 whereas the highest was 0.81. These results showed
 that depending on the data-split, the testing AUROC values showed great
 variability {[}Figure 2{]}.
 
-\textbf{Interpretation of each ML model.}
-
-Interpretability is the degree to which humans can understand the
-reasons behind a model prediction (27). Because we often use ML models
-not just to predict a health outcome but also to learn the ecology
-behind a disease, model interpretation becomes crucial for microbiome
-studies. The ML models we built using L2-regularized logistic
-regression, L1 and L2 support vector machines (SVM) with linear and
-radial basis function kernels, a decision tree, random forest and
-XGBoost decrease in interpretability as they increase in complexity. In
-this study we highlighted two methods to interpret models with varying
-complexity.
+\textbf{Interpretation of each ML model.} Interpretability is the degree
+to which humans can understand the reasons behind a model prediction
+(31). Because we often use ML models not just to predict a health
+outcome but also to learn the ecology behind a disease, model
+interpretation becomes crucial for microbiome studies. The ML models we
+built using L2-regularized logistic regression, L1 and L2 support vector
+machines (SVM) with linear and radial basis function kernels, a decision
+tree, random forest and XGBoost decrease in interpretability as they
+increase in complexity. In this study we highlighted two methods to
+interpret models with varying complexity.
 
 We interpreted linear models (L1 and L2-regularized SVM with linear
 kernel and L2-regularized logistic regression) using the absolute
@@ -449,7 +440,7 @@ impact on human health, however ML as a tool in microbiome studies is
 still at its infancy. A framework is needed to develop rigorous ML
 models, to identify and overcome potential pitfalls. Previous studies
 generated workflows to allow ML to be widely used by the microbiome
-researchers (28--31). This study sets-up standards for developing and
+researchers (20--23). This study sets-up standards for developing and
 evaluating rigorous ML models for microbiome data {[}Table 1{]}.
 
 We benchmarked seven ML models with different classification algorithms
@@ -505,7 +496,7 @@ results showed that the testing AUROC values varied 0.23 on average
 between different data-splits. The randomization and resampling of the
 initial data-split to create a held-out test set is a crucial step in
 the ML pipeline to develop robust ML models and to report reliable
-performance metrics. We also performed a full grid search for
+performance metrics. Additionally, we performed a full grid search for
 hyperparameter settings when training our ML models. Default
 hyperparameter settings in previously developed ML packages in R,
 Python, and Matlab programming languages are inadequate for effective
@@ -580,11 +571,15 @@ classes; Normal or Screen Relevant Neoplasias (SRNs). Normal class
 includes patients with non-advanced adenomas or normal colons whereas
 SRN class includes patients with advanced adenomas or carcinomas. The
 study had 261 normal and 229 SRN samples. The bacterial abundances are
-the features used to predict colonic health of the patients. Bacterial
-abundances are discrete data in the form of Operational Taxonomic Unit
-(OTU) counts. OTU counts were set to the size of our smallest sample and
-were subsampled at the same distances. They were then transformed by
-scaling to a {[}0-1{]} range.
+the features used to predict colorectal health of the patients. For each
+patient, we had 6920 features (fecal bacterial abundances) and a
+two-class label that defines their colorectal health (normal or SRN
+colorectal lesions as defined by colonoscopies). We established modeling
+pipelines for a binary prediction task Bacterial abundances are discrete
+data in the form of Operational Taxonomic Unit (OTU) counts. OTU counts
+were set to the size of our smallest sample and were subsampled at the
+same distances. They were then transformed by scaling to a {[}0-1{]}
+range.
 
 \textbf{Model training and evaluation.}
 
@@ -703,8 +698,7 @@ statistical median as the horizontal line in the box. The whiskers show
 the farthest points that are not outliers. Outliers are data points that
 are not within 3/2 times the interquartile ranges. Abbreviations: AUROC,
 area under the receiver operating characteristic curve; SVM, support
-vector machine; XGBoost, extreme gradient boosting.\\
-\newpage
+vector machine; XGBoost, extreme gradient boosting. \newpage
 \includegraphics{Figure_S1.png}
 
 \textbf{Figure S1. Hyperparameter setting performances for linear
@@ -751,7 +745,7 @@ Unit; RBF, radial basis kernel; OTU, Operational Taxonomic Unit.
 \makecell[l]{SVM with \\linear kernel} & \makecell[l]{A classifier that is defined by an optimal linear \\separating hyperplane that discriminates between labels.} & Linear & Interpretable & $^{37}$\\ \hline
 
 \makecell[l]{SVM with \\radial basis kernel} & \makecell[l]{A classifier that is defined by an optimal Gaussian \\separating hyperplane that discriminates between labels.} & Non-linear & Explainable$^*$ & $^{38}$\\ \hline
-Decision tree & \makecell[l]{A classifier that sorts samples down from the 
+Decision tree & \makecell[l]{A classifier that sorts samples down from the
 root to the \\leaf node where an attribute is tested to discriminate \\between labels} & Non-linear & Interpretable & $^{39}$\\ \hline
 
 Random forest & \makecell[l]{A classifier that is a decision tree ensemble that \\grow randomly with subsampled data.} & Non-linear & Explainable$^*$ & $^{40-41}$  \\ \hline
@@ -904,33 +898,29 @@ E}, \textbf{O`Riordain M}, \textbf{Shanahan F}, \textbf{O`Toole PW}.
 predictive. Gut \textbf{67}:1454--1463.
 doi:\href{https://doi.org/10.1136/gutjnl-2017-314814}{10.1136/gutjnl-2017-314814}.
 
-\hypertarget{ref-dai_multi-cohort_2018}{}
-15. \textbf{Dai Z}, \textbf{Coker OO}, \textbf{Nakatsu G}, \textbf{Wu
-WKK}, \textbf{Zhao L}, \textbf{Chen Z}, \textbf{Chan FKL},
-\textbf{Kristiansen K}, \textbf{Sung JJY}, \textbf{Wong SH}, \textbf{Yu
-J}. 2018. Multi-cohort analysis of colorectal cancer metagenome
-identified altered bacteria across populations and universal bacterial
-markers. Microbiome \textbf{6}:70.
-doi:\href{https://doi.org/10.1186/s40168-018-0451-2}{10.1186/s40168-018-0451-2}.
-
 \hypertarget{ref-montassier_pretreatment_2016}{}
-16. \textbf{Montassier E}, \textbf{Al-Ghalith GA}, \textbf{Ward T},
+15. \textbf{Montassier E}, \textbf{Al-Ghalith GA}, \textbf{Ward T},
 \textbf{Corvec S}, \textbf{Gastinne T}, \textbf{Potel G}, \textbf{Moreau
 P}, \textbf{Cochetiere MF de la}, \textbf{Batard E}, \textbf{Knights D}.
 2016. Pretreatment gut microbiome predicts chemotherapy-related
 bloodstream infection. Genome Medicine \textbf{8}:49.
 doi:\href{https://doi.org/10.1186/s13073-016-0301-4}{10.1186/s13073-016-0301-4}.
 
-\hypertarget{ref-papa_non-invasive_2012}{}
-17. \textbf{Papa E}, \textbf{Docktor M}, \textbf{Smillie C},
-\textbf{Weber S}, \textbf{Preheim SP}, \textbf{Gevers D},
-\textbf{Giannoukos G}, \textbf{Ciulla D}, \textbf{Tabbaa D},
-\textbf{Ingram J}, \textbf{Schauer DB}, \textbf{Ward DV},
-\textbf{Korzenik JR}, \textbf{Xavier RJ}, \textbf{Bousvaros A},
-\textbf{Alm EJ}. 2012. Non-invasive mapping of the gastrointestinal
-microbiota identifies children with inflammatory bowel disease. PLOS ONE
-\textbf{7}:e39242.
-doi:\href{https://doi.org/10.1371/journal.pone.0039242}{10.1371/journal.pone.0039242}.
+\hypertarget{ref-ai_systematic_2017}{}
+16. \textbf{Ai L}, \textbf{Tian H}, \textbf{Chen Z}, \textbf{Chen H},
+\textbf{Xu J}, \textbf{Fang J-Y}. 2017. Systematic evaluation of
+supervised classifiers for fecal microbiota-based prediction of
+colorectal cancer. Oncotarget \textbf{8}:9546--9556.
+doi:\href{https://doi.org/10.18632/oncotarget.14488}{10.18632/oncotarget.14488}.
+
+\hypertarget{ref-dai_multi-cohort_2018}{}
+17. \textbf{Dai Z}, \textbf{Coker OO}, \textbf{Nakatsu G}, \textbf{Wu
+WKK}, \textbf{Zhao L}, \textbf{Chen Z}, \textbf{Chan FKL},
+\textbf{Kristiansen K}, \textbf{Sung JJY}, \textbf{Wong SH}, \textbf{Yu
+J}. 2018. Multi-cohort analysis of colorectal cancer metagenome
+identified altered bacteria across populations and universal bacterial
+markers. Microbiome \textbf{6}:70.
+doi:\href{https://doi.org/10.1186/s40168-018-0451-2}{10.1186/s40168-018-0451-2}.
 
 \hypertarget{ref-mossotto_classification_2017}{}
 18. \textbf{Mossotto E}, \textbf{Ashton JJ}, \textbf{Coelho T},
@@ -939,15 +929,8 @@ Classification of paediatric inflammatory bowel disease using machine
 learning. Scientific Reports \textbf{7}.
 doi:\href{https://doi.org/10.1038/s41598-017-02606-2}{10.1038/s41598-017-02606-2}.
 
-\hypertarget{ref-ai_systematic_2017}{}
-19. \textbf{Ai L}, \textbf{Tian H}, \textbf{Chen Z}, \textbf{Chen H},
-\textbf{Xu J}, \textbf{Fang J-Y}. 2017. Systematic evaluation of
-supervised classifiers for fecal microbiota-based prediction of
-colorectal cancer. Oncotarget \textbf{8}:9546--9556.
-doi:\href{https://doi.org/10.18632/oncotarget.14488}{10.18632/oncotarget.14488}.
-
 \hypertarget{ref-wong_quantitation_2017}{}
-20. \textbf{Wong SH}, \textbf{Kwong TNY}, \textbf{Chow T-C}, \textbf{Luk
+19. \textbf{Wong SH}, \textbf{Kwong TNY}, \textbf{Chow T-C}, \textbf{Luk
 AKC}, \textbf{Dai RZW}, \textbf{Nakatsu G}, \textbf{Lam TYT},
 \textbf{Zhang L}, \textbf{Wu JCY}, \textbf{Chan FKL}, \textbf{Ng SSM},
 \textbf{Wong MCS}, \textbf{Ng SC}, \textbf{Wu WKK}, \textbf{Yu J},
@@ -956,48 +939,8 @@ faecal immunochemical test in detecting advanced colorectal neoplasia.
 Gut \textbf{66}:1441--1448.
 doi:\href{https://doi.org/10.1136/gutjnl-2016-312766}{10.1136/gutjnl-2016-312766}.
 
-\hypertarget{ref-galkin_human_2018}{}
-21. \textbf{Galkin F}, \textbf{Aliper A}, \textbf{Putin E},
-\textbf{Kuznetsov I}, \textbf{Gladyshev VN}, \textbf{Zhavoronkov A}.
-2018. Human microbiome aging clocks based on deep learning and tandem of
-permutation feature importance and accumulated local effects. bioRxiv.
-doi:\href{https://doi.org/10.1101/507780}{10.1101/507780}.
-
-\hypertarget{ref-reiman_using_2017}{}
-22. \textbf{Reiman D}, \textbf{Metwally A}, \textbf{Dai Y}. 2017. Using
-convolutional neural networks to explore the microbiome, pp. 4269--4272.
-\emph{In} 2017 39th annual international conference of the IEEE
-engineering in medicine and biology society (EMBC).
-
-\hypertarget{ref-fioravanti_phylogenetic_2017}{}
-23. \textbf{Fioravanti D}, \textbf{Giarratano Y}, \textbf{Maggio V},
-\textbf{Agostinelli C}, \textbf{Chierici M}, \textbf{Jurman G},
-\textbf{Furlanello C}. 2017. Phylogenetic convolutional neural networks
-in metagenomics. arXiv:170902268 {[}cs, q-bio{]}.
-
-\hypertarget{ref-rudin_please_2018}{}
-24. \textbf{Rudin C}. 2018. Please stop explaining black box models for
-high stakes decisions. arXiv:181110154 {[}cs, stat{]}.
-
-\hypertarget{ref-rudin_optimized_2018}{}
-25. \textbf{Rudin C}, \textbf{Ustun B}. 2018. Optimized scoring systems:
-Toward trust in machine learning for healthcare and criminal justice.
-Interfaces \textbf{48}:449--466.
-doi:\href{https://doi.org/10.1287/inte.2018.0957}{10.1287/inte.2018.0957}.
-
-\hypertarget{ref-knights_human-associated_2011}{}
-26. \textbf{Knights D}, \textbf{Parfrey LW}, \textbf{Zaneveld J},
-\textbf{Lozupone C}, \textbf{Knight R}. 2011. Human-associated microbial
-signatures: Examining their predictive value. Cell Host Microbe
-\textbf{10}:292--296.
-doi:\href{https://doi.org/10.1016/j.chom.2011.09.003}{10.1016/j.chom.2011.09.003}.
-
-\hypertarget{ref-miller_explanation_2017}{}
-27. \textbf{Miller T}. 2017. Explanation in artificial intelligence:
-Insights from the social sciences. arXiv:170607269 {[}cs{]}.
-
 \hypertarget{ref-statnikov_comprehensive_2013}{}
-28. \textbf{Statnikov A}, \textbf{Henaff M}, \textbf{Narendra V},
+20. \textbf{Statnikov A}, \textbf{Henaff M}, \textbf{Narendra V},
 \textbf{Konganti K}, \textbf{Li Z}, \textbf{Yang L}, \textbf{Pei Z},
 \textbf{Blaser MJ}, \textbf{Aliferis CF}, \textbf{Alekseyenko AV}. 2013.
 A comprehensive evaluation of multicategory classification methods for
@@ -1005,13 +948,13 @@ microbiomic data. Microbiome \textbf{1}:11.
 doi:\href{https://doi.org/10.1186/2049-2618-1-11}{10.1186/2049-2618-1-11}.
 
 \hypertarget{ref-knights_supervised_2011}{}
-29. \textbf{Knights D}, \textbf{Costello EK}, \textbf{Knight R}. 2011.
+21. \textbf{Knights D}, \textbf{Costello EK}, \textbf{Knight R}. 2011.
 Supervised classification of human microbiota. FEMS Microbiology Reviews
 \textbf{35}:343--359.
 doi:\href{https://doi.org/10.1111/j.1574-6976.2010.00251.x}{10.1111/j.1574-6976.2010.00251.x}.
 
 \hypertarget{ref-wirbel_meta-analysis_2019}{}
-30. \textbf{Wirbel J}, \textbf{Pyl PT}, \textbf{Kartal E}, \textbf{Zych
+22. \textbf{Wirbel J}, \textbf{Pyl PT}, \textbf{Kartal E}, \textbf{Zych
 K}, \textbf{Kashani A}, \textbf{Milanese A}, \textbf{Fleck JS},
 \textbf{Voigt AY}, \textbf{Palleja A}, \textbf{Ponnudurai R},
 \textbf{Sunagawa S}, \textbf{Coelho LP}, \textbf{Schrotz-King P},
@@ -1028,10 +971,68 @@ that are specific for colorectal cancer. Nature Medicine
 doi:\href{https://doi.org/10.1038/s41591-019-0406-6}{10.1038/s41591-019-0406-6}.
 
 \hypertarget{ref-vangay_microbiome_2019}{}
-31. \textbf{Vangay P}, \textbf{Hillmann BM}, \textbf{Knights D}. 2019.
+23. \textbf{Vangay P}, \textbf{Hillmann BM}, \textbf{Knights D}. 2019.
 Microbiome learning repo (ML repo): A public repository of microbiome
 regression and classification tasks. Gigascience \textbf{8}.
 doi:\href{https://doi.org/10.1093/gigascience/giz042}{10.1093/gigascience/giz042}.
+
+\hypertarget{ref-galkin_human_2018}{}
+24. \textbf{Galkin F}, \textbf{Aliper A}, \textbf{Putin E},
+\textbf{Kuznetsov I}, \textbf{Gladyshev VN}, \textbf{Zhavoronkov A}.
+2018. Human microbiome aging clocks based on deep learning and tandem of
+permutation feature importance and accumulated local effects. bioRxiv.
+doi:\href{https://doi.org/10.1101/507780}{10.1101/507780}.
+
+\hypertarget{ref-reiman_using_2017}{}
+25. \textbf{Reiman D}, \textbf{Metwally A}, \textbf{Dai Y}. 2017. Using
+convolutional neural networks to explore the microbiome, pp. 4269--4272.
+\emph{In} 2017 39th annual international conference of the IEEE
+engineering in medicine and biology society (EMBC).
+
+\hypertarget{ref-fioravanti_phylogenetic_2017}{}
+26. \textbf{Fioravanti D}, \textbf{Giarratano Y}, \textbf{Maggio V},
+\textbf{Agostinelli C}, \textbf{Chierici M}, \textbf{Jurman G},
+\textbf{Furlanello C}. 2017. Phylogenetic convolutional neural networks
+in metagenomics. arXiv:170902268 {[}cs, q-bio{]}.
+
+\hypertarget{ref-thomas_metagenomic_2019}{}
+27. \textbf{Thomas AM}, \textbf{Manghi P}, \textbf{Asnicar F},
+\textbf{Pasolli E}, \textbf{Armanini F}, \textbf{Zolfo M},
+\textbf{Beghini F}, \textbf{Manara S}, \textbf{Karcher N}, \textbf{Pozzi
+C}, \textbf{Gandini S}, \textbf{Serrano D}, \textbf{Tarallo S},
+\textbf{Francavilla A}, \textbf{Gallo G}, \textbf{Trompetto M},
+\textbf{Ferrero G}, \textbf{Mizutani S}, \textbf{Shiroma H},
+\textbf{Shiba S}, \textbf{Shibata T}, \textbf{Yachida S}, \textbf{Yamada
+T}, \textbf{Wirbel J}, \textbf{Schrotz-King P}, \textbf{Ulrich CM},
+\textbf{Brenner H}, \textbf{Arumugam M}, \textbf{Bork P}, \textbf{Zeller
+G}, \textbf{Cordero F}, \textbf{Dias-Neto E}, \textbf{Setubal JC},
+\textbf{Tett A}, \textbf{Pardini B}, \textbf{Rescigno M},
+\textbf{Waldron L}, \textbf{Naccarati A}, \textbf{Segata N}. 2019.
+Metagenomic analysis of colorectal cancer datasets identifies
+cross-cohort microbial diagnostic signatures and a link with choline
+degradation. Nature Medicine \textbf{25}:667.
+doi:\href{https://doi.org/10.1038/s41591-019-0405-7}{10.1038/s41591-019-0405-7}.
+
+\hypertarget{ref-rudin_please_2018}{}
+28. \textbf{Rudin C}. 2018. Please stop explaining black box models for
+high stakes decisions. arXiv:181110154 {[}cs, stat{]}.
+
+\hypertarget{ref-rudin_optimized_2018}{}
+29. \textbf{Rudin C}, \textbf{Ustun B}. 2018. Optimized scoring systems:
+Toward trust in machine learning for healthcare and criminal justice.
+Interfaces \textbf{48}:449--466.
+doi:\href{https://doi.org/10.1287/inte.2018.0957}{10.1287/inte.2018.0957}.
+
+\hypertarget{ref-knights_human-associated_2011}{}
+30. \textbf{Knights D}, \textbf{Parfrey LW}, \textbf{Zaneveld J},
+\textbf{Lozupone C}, \textbf{Knight R}. 2011. Human-associated microbial
+signatures: Examining their predictive value. Cell Host Microbe
+\textbf{10}:292--296.
+doi:\href{https://doi.org/10.1016/j.chom.2011.09.003}{10.1016/j.chom.2011.09.003}.
+
+\hypertarget{ref-miller_explanation_2017}{}
+31. \textbf{Miller T}. 2017. Explanation in artificial intelligence:
+Insights from the social sciences. arXiv:170607269 {[}cs{]}.
 
 \hypertarget{ref-dormann_collinearity:_2013}{}
 32. \textbf{Dormann CF}, \textbf{Elith J}, \textbf{Bacher S},
