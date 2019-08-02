@@ -13,7 +13,7 @@
 ######################################################################
 #----------------- Read in necessary libraries -------------------#
 ######################################################################
-deps = c("BBmisc", "cowplot","reshape2", "cowplot", "ggplot2","knitr","rmarkdown","vegan","gtools", "tidyverse");
+deps = c("cowplot","reshape2", "cowplot", "ggplot2","knitr","rmarkdown","vegan","gtools", "tidyverse");
 for (dep in deps){
   if (dep %in% installed.packages()[,"Package"] == FALSE){
     install.packages(as.character(dep), quiet=TRUE);
@@ -40,7 +40,7 @@ create_feature_scores <- function(data, model_name){
       gather(factor_key=TRUE) 
     
     #generate z-scores using the scale() function
-    weights$value <- normalize(weights$value, method = "range", range = c(-1, 1))
+    weights$value <- scale(weights$value, center = FALSE, scale = apply(weights$value, 2, sd, na.rm = TRUE))
     
     scores <- weights %>%
       select(value, key)
