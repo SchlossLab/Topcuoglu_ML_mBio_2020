@@ -2,7 +2,7 @@ RANK=feature_ranking
 SCORE=feature_scores
 
 # Define the directories we will use in the script
-SEARCH_DIR=data/tempgit
+SEARCH_DIR=data/temp
 FINAL_DIR=data/process
 
 # 1. Keep the first line of File0 and remove the first line of all the other files (File[0-99]) and
