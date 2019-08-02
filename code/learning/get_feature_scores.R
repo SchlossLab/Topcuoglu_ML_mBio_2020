@@ -39,9 +39,10 @@ create_feature_scores <- function(data, model_name){
       select(-Bias, -model) %>%
       gather(factor_key=TRUE) 
     
+    #generate z-scores using the scale() function
+    weights$value <- scale(weights$value, center = TRUE, scale = TRUE)
+    
     scores <- weights %>%
-      #generate z-scores using the scale() function
-      scale(value, center = TRUE, scale = TRUE) %>% 
       select(value, key)
 
   return(scores)
