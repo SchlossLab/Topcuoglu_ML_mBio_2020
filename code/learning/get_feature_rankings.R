@@ -55,7 +55,7 @@ create_feature_rankings <- function(data, model_name){
       mutate(value = case_when(sign=="negative" ~ value*-1,
                               sign=="positive"~ value,
                               sign=="zero" ~ value)) %>%
-      select(key, value, rank)
+      select(key, value, rank, sign)
 
   return(ranks)
 }
