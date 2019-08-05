@@ -40,7 +40,7 @@ create_feature_scores <- function(data, model_name){
       gather(factor_key=TRUE) 
     
     #generate z-scores using the scale() function
-    weights$value <- scale(weights$value, center = TRUE, scale = TRUE)
+    #weights$value <- scale(weights$value, center = FALSE, scale = sd(weights$value))
     
     scores <- weights %>%
       select(value, key)

@@ -163,10 +163,5 @@ l2_svm_graph <- plot_feature_scores(L2_SVM_imp)  +
 ######################################################################
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
-#combine with cowplot
-
-linear <- plot_grid(l1_svm_graph, l2_svm_graph, logit_graph, labels = c("A", "B", "C"), align = 'v', ncol = 1)
-
-ggdraw(add_sub(linear, "Feature Ranks", vpadding=grid::unit(0,"lines"), y=5, x=0.7, vjust=4.75, size=15))
 
 ggsave("zscore.png", plot = last_plot(), device = 'png', path = 'submission', width = 9, height = 6)
