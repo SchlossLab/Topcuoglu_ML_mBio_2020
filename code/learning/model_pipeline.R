@@ -37,7 +37,7 @@
 ######################################################################
 
 
-pipeline <- function(dataset, model, split_number){
+pipeline <- function(dataset, model, split_number, subsample_number){
 
   # ------------------Pre-process the full Dataset------------------------->
   # We are doing the pre-processing to the full dataset and then splitting 80-20
@@ -121,7 +121,9 @@ pipeline <- function(dataset, model, split_number){
   # Save elapsed time
   train_time <- seconds$toc-seconds$tic
   # Save wall-time
-  write.csv(train_time, file=paste0("data/temp/traintime_", model, "_", split_number, ".csv"), row.names=F)
+  write.csv(train_time, file=paste0("data/temp/traintime_", model, "_", 
+                                    subsample_number, "_",
+                                    split_number, ".csv"), row.names=F)
   # ------------- Output the cvAUC and testAUC for 1 datasplit ---------------------->
   # Mean cv AUC value over repeats of the best cost parameter during training
   cv_auc <- getTrainPerf(trained_model)$TrainROC
