@@ -54,15 +54,14 @@ plot_feature_ranks <- function(data){
       theme_classic() +
       theme(plot.margin=unit(c(1.5,3,1.5,3),"mm"),
           legend.position="none",
-          axis.title = element_text(size=12),
-          axis.text = element_text(size=12),
           panel.border = element_rect(colour = "black", fill=NA, size=1),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.background = element_blank(),
           axis.title.x=element_blank(),
           axis.text.x=element_blank(),
-          axis.text.y=element_text(size = 10, colour='black'))
+          axis.title.y=element_text(size = 11, colour='black', face="bold"), 
+          axis.text.y=element_text(size = 8, colour='black'))
     return(plot)
 }
 

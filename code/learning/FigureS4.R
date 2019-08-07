@@ -97,18 +97,13 @@ base_nonlin_plot <-  function(data, name){
   # Grab the names of the OTUs that have the lowest median AUC when they are permuted
   data_first_ten <- read.delim(paste0("data/process/", name, "_non_cor_importance.tsv"), header=T, sep='\t') %>%
     arrange(imp) %>% 
-    head(5)
+    head(20)
   # Get the new test aucs for 100 datasplits for each OTU permuted
   data_full <- read_files(paste0("data/process/combined_all_imp_features_non_cor_results_", name, ".csv")) %>%
     # Only keep the OTUs and their AUCs for the ones that are in the top 5 changed (decreased the most) ones
     filter(names %in% data_first_ten$names) %>% 
     group_by(names)
-    # Keep the 5 OTU names as a list to use in the plot as factors
-  otus <- data_first_ten$names %>% 
-    droplevels() %>% 
-    as.character()
-  # Base auc at the top, then followed by the most changed OTU, followed by others ordered by median
-  data_full$names <- factor(data_full$names,levels = c(otus[10], otus[9], otus[8], otus[7], otus[6], otus[5], otus[4], otus[3], otus[2], otus[1]))
+
   # Plot boxplot
   lowerq <-  quantile(data_base$new_auc)[2]
   upperq <-  quantile(data_base$new_auc)[4]
@@ -117,7 +112,7 @@ base_nonlin_plot <-  function(data, name){
   
 
   plot <- ggplot() +
-    geom_boxplot(data=data_full, aes(x=names, y=new_auc), fill="white",  alpha=0.8) +
+    geom_boxplot(data=data_full, aes(fct_reorder(names, -new_auc), y=new_auc), fill="white",  alpha=0.8) +
     geom_rect(aes(ymin=lowerq, ymax=upperq, xmin=0, xmax=Inf), fill="grey") +
     geom_boxplot(data=data_full, aes(x=names, y=new_auc), fill="white", alpha=0.8) +
     geom_hline(yintercept = data_base_means$imp , linetype="dashed") +
@@ -176,7 +171,7 @@ l2_plot <- base_nonlin_plot(l2svm, "L2_Linear_SVM") +
 #combine with cowplot
 linear <- plot_grid(l1_plot, l2_plot, logit_plot, labels = c("A", "B", "C"), align = 'h', ncol = 1)
 
-ggsave("Figure_S3.png", plot = linear, device = 'png', path = 'submission', width = 4, height = 10)
+ggsave("Figure_S3.png", plot = linear, device = 'png', path = 'submission', width = 6, height = 10)
 
 
 

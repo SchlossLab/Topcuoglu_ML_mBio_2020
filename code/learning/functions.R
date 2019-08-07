@@ -79,7 +79,7 @@ get_interp_info <- function(data, model_name){
       # 3. Arrange from highest ranked 1, descending
       arrange(median_rank) %>%
       # 4. Grab only the highest ranked 5
-      head(n=5) %>%
+      head(n=20) %>%
       select(key, median_rank)
 
     # Here we want to only grab the data (rank info from 100 datasplits) of only the top 5 median ranked OTUs

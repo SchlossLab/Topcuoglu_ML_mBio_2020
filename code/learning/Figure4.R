@@ -83,41 +83,46 @@ xgboost <- read_files(best_files[7])
 # --------  Get the top 5 OTUs that have the largest impact on AUROC ---------->
 
 # Define the function to get the  most important top 5 OTUs
-top_five_otus <-  function(name){
+top_20_otus <-  function(name){
   
   # Order the dataframe from smallest new_auc to largest.
   # Because the smallest new_auc means that that OTU decreased AUC a lot when permuted
   
-  data_first_five <- read.delim(paste0("data/process/", name, "_non_cor_importance.tsv"),
+  data_first_20 <- read.delim(paste0("data/process/", name, "_non_cor_importance.tsv"),
                                 header=T, 
                                 sep='\t') %>%
     arrange(imp) %>% 
-    head(5)
+    head(20)
   
-  return(data_first_five)
+  return(data_first_20)
 }
 
 # --------------------------- RBF_SVM ------------------------------>
-rbf_top <- top_five_otus("RBF_SVM")
+rbf_top <- top_20_otus("RBF_SVM")
 # --------------------------- Decision Tree ------------------------>
-dt_top <- top_five_otus("Decision_Tree")
+dt_top <- top_20_otus("Decision_Tree")
 # --------------------------- Random Forest ------------------------>
-rf_top <- top_five_otus("Random_Forest")
+rf_top <- top_20_otus("Random_Forest")
 # --------------------------- XGBoost ------------------------------>
-xgboost_top <- top_five_otus("XGBoost")
+xgboost_top <- top_20_otus("XGBoost")
 # ----------------------------------------------------------------------------->
 
 
 # --------  Find the overlapping important OTUs between non-linear models ----->
-intersect_three <- Reduce(intersect, list(dt_top$names,rf_top$names,xgboost_top$names))
-intersect_rf_dt <- setdiff(intersect(dt_top$names,rf_top$names), intersect_three)
-intersect_xgboost_dt <- setdiff(intersect(dt_top$names,xgboost_top$names), intersect_three)
-intersect_xgboost_rf <- setdiff(intersect(rf_top$names,xgboost_top$names), intersect_three)
-intersect_rbf_dt <- setdiff(intersect(rbf_top$names,dt_top$names), intersect_three)
-intersect_rbf_xgboost <- setdiff(intersect(xgboost_top$names,rbf_top$names), intersect_three)
+intersect_four <- Reduce(intersect, list(dt_top$names, rf_top$names, xgboost_top$names, rbf_top$names))
+intersect_three <- setdiff(Reduce(intersect, list(dt_top$names, rf_top$names, xgboost_top$names)), intersect_four)
 
-# Create a list with all the overlapping OTUs
-list1 <- do.call(c, list(intersect_three, intersect_rf_dt, intersect_xgboost_dt, intersect_xgboost_rf, intersect_rbf_xgboost, intersect_rbf_dt))
+
+intersect_rf_dt <- setdiff(intersect(dt_top$names,rf_top$names), c(intersect_four, intersect_three))
+
+intersect_xgboost_dt <- setdiff(intersect(dt_top$names,xgboost_top$names), c(intersect_four, intersect_three))
+
+intersect_xgboost_rf <- setdiff(intersect(rf_top$names,xgboost_top$names), c(intersect_four, intersect_three))
+
+intersect_rbf_dt <- setdiff(intersect(rbf_top$names,dt_top$names), c(intersect_four, intersect_three,intersect_xgboost_dt))
+
+intersect_rbf_xgboost <- setdiff(intersect(xgboost_top$names,rbf_top$names), c(intersect_four, intersect_three,intersect_xgboost_dt))
+
 # ----------------------------------------------------------------------------->
 
 
@@ -129,7 +134,7 @@ list1 <- do.call(c, list(intersect_three, intersect_rf_dt, intersect_xgboost_dt,
     # data: the base testing AUROC dataframe
     # name: name of the model
     # list: overlapping OTUs list
-base_nonlin_plot <-  function(data, name, list){
+base_nonlin_plot <-  function(data, name){
   
   # Grab the base test auc values for 100 datasplits
   data_base <- data %>% 
@@ -146,37 +151,25 @@ base_nonlin_plot <-  function(data, name, list){
   
   # Grab the names of the OTUs that have the 5 lowest median AUC when they are permuted
   # These will be the 5 OTUs that have effect the testing AUROC the most when permuted
-  data_first_five <- read.delim(paste0("data/process/", name, "_non_cor_importance.tsv"), header=T, sep='\t') %>%
+  data_first_20 <- read.delim(paste0("data/process/", name, "_non_cor_importance.tsv"), header=T, sep='\t') %>%
     arrange(imp) %>% 
-    head(5)
+    head(20)
   
   # Get the new test aucs for 100 datasplits for each OTU permuted
   # So the full dataset with importance info on non-correlated OTUs
   data_full <- read_files(paste0("data/process/combined_all_imp_features_non_cor_results_", name, ".csv")) %>%
     # Keep OTUs and their AUCs for the ones that are in the top 5 changed 
     # (decreased the most) 
-    filter(names %in% data_first_five$names) %>% 
+    filter(names %in% data_first_20$names) %>% 
     # Create a seperate column to show which OTUs are overlapping
-    mutate(common_otus = case_when(names == list[[1]] ~ "same1",
-                                   names == list[[2]] ~ "same2",
-                                   names == list[[3]] ~ "same3",
-                                   names == list[[4]] ~ "same4",
-                                   names == list[[5]] ~ "same5",
-                                   names == list[[6]] ~ "same6",
+    mutate(common_otus = case_when(names %in% intersect_four ~ "four",
+                                   names %in% intersect_three ~ "three",
+                                   names %in% intersect_rf_dt ~ "rf_dt",
+                                   names %in% intersect_xgboost_dt ~ "xgboost_dt",
+                                   names %in% intersect_xgboost_rf ~ "xgboost_rf",
+                                   names %in% intersect_rbf_xgboost ~ "rbf_xgboost",
                                    TRUE ~ "diff")) %>% 
     group_by(names)
-  
-  # Keep the 5 OTU names as a list to use in the plot as factors
-  otus <- data_first_five$names %>% 
-    droplevels() %>% 
-    as.character()
-  
-  # Most changed OTU at the top, followed by others ordered by median
-  data_full$names <- factor(data_full$names,levels = c(otus[5], 
-                                                       otus[4], 
-                                                       otus[3], 
-                                                       otus[2], 
-                                                       otus[1]))
   
   # Plot boxplot for the base test_auc values
   lowerq <-  quantile(data_base$new_auc)[2]
@@ -185,11 +178,11 @@ base_nonlin_plot <-  function(data, name, list){
     data.frame()
   
   # Define colors for overlapping OTUs
-  cols <- c("same1" = "orange", "same2" = "lightblue", "same3" = "darkseagreen3", "same4"="red", "same5" = "lightsalmon", "same6" = "hotpink" , "diff"="white")
+  cols <- c("four" = "orange", "three" = "lightsalmon", "rf_dt" = "lightblue", "xgboost_dt" = "darkseagreen3", "xgboost_rf"="red", "rbf_xgboost" = "hotpink" , "diff"="white")
 
   # Plot the figure
   plot <- ggplot() +
-    geom_boxplot(data=data_full, aes(x=names, y=new_auc, fill=factor(common_otus)), alpha=0.7) +
+    geom_boxplot(data=data_full, aes(fct_reorder(names, -new_auc), new_auc, fill=factor(common_otus)), alpha=0.7) +
     geom_rect(aes(ymin=lowerq, ymax=upperq, xmin=0, xmax=Inf), fill="grey") +
     geom_boxplot(data=data_full, aes(x=names, y=new_auc, fill=factor(common_otus)), alpha=0.7) +
     scale_fill_manual(values=cols) +
@@ -248,16 +241,16 @@ get_taxa_info_as_labels <- function(name){
   
   # Grab the names of the OTUs that have the 5 lowest median AUC when they are permuted
   # These will be the 5 OTUs that have effect the testing AUROC the most when permuted
-  data_first_five <- read.delim(paste0("data/process/", name, "_non_cor_importance.tsv"), header=T, sep='\t') %>%
+  data_first_20 <- read.delim(paste0("data/process/", name, "_non_cor_importance.tsv"), header=T, sep='\t') %>%
     arrange(imp) %>% 
-    head(5)
+    head(20)
   
   # Grab the names of the top 5 OTUs in the order of their median rank  
   otus <- data %>% 
     group_by(names) %>% 
     summarise(imp = median(new_auc)) %>% 
-    arrange(imp) %>% 
-    filter(names %in% data_first_five$names) 
+    filter(names %in% data_first_20$names) %>% 
+    arrange(-imp)
   
   # Names of the y-axis labels
   taxa_info <- read.delim('data/baxter.taxonomy', header=T, sep='\t') %>% 
@@ -274,39 +267,35 @@ get_taxa_info_as_labels <- function(name){
     mutate(taxa=str_remove_all(taxa, "[(100)]")) %>% 
     select(names, taxa, imp) %>% 
     unite(names, taxa, names, sep="(") %>% 
-    arrange(desc(imp)) %>% 
     mutate(names = paste(names, ")", sep=""))
   
-  taxa_otus_names <- taxa_otus$names %>% 
-    as.character()
-  
-  return(taxa_otus_names)
+  return(taxa_otus$names)
 }
 
 # ----------------- SVM with radial basis function------------------------>
 # Plot most important 5 features effect on AUROC
-rbf_plot <- base_nonlin_plot(rbf, "RBF_SVM",list1) +
+rbf_plot <- base_nonlin_plot(rbf, "RBF_SVM") +
   scale_x_discrete(name = "RBF SVM ",
                    labels = get_taxa_info_as_labels("RBF_SVM")) 
 # ----------------------------------------------------------------------->
 
 # --------------------------- Decision Tree ----------------------------->
 # Plot most important 5 features effect on AUROC
-dt_plot <- base_nonlin_plot(dt, "Decision_Tree", list1) +
+dt_plot <- base_nonlin_plot(dt, "Decision_Tree") +
   scale_x_discrete(name = "Decision tree ",
                    labels = get_taxa_info_as_labels("Decision_Tree")) 
 # ----------------------------------------------------------------------->
 
 # --------------------------- Random Forest ----------------------------->
 # Plot most important 5 features effect on AUROC
-rf_plot <- base_nonlin_plot(rf, "Random_Forest", list1) +
+rf_plot <- base_nonlin_plot(rf, "Random_Forest") +
   scale_x_discrete(name = "Random forest ",
                    labels = get_taxa_info_as_labels("Random_Forest")) 
 # ----------------------------------------------------------------------->
 
 # --------------------------- XGBoost ----------------------------->
 # Plot most important 5 features effect on AUROC
-xgboost_plot <- base_nonlin_plot(xgboost, "XGBoost", list1)+
+xgboost_plot <- base_nonlin_plot(xgboost, "XGBoost")+
   scale_x_discrete(name = "XGBoost ",
                    labels = get_taxa_info_as_labels("XGBoost")) +
   theme(axis.text.x=element_text(size = 16, colour='black'))
@@ -316,10 +305,10 @@ xgboost_plot <- base_nonlin_plot(xgboost, "XGBoost", list1)+
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 #combine with cowplot
-perm_tree_based <- plot_grid(rbf_plot, dt_plot, rf_plot, xgboost_plot, labels = c("A", "B", "C", "D"), cols=1, scale = 0.97)
-ggdraw(add_sub(perm_tree_based, "AUROC with the OTU permuted randomly", size=18, vpadding=grid::unit(0,"lines"), y=5, x=0.5, vjust=4.75))
+perm_tree_based <- plot_grid(rbf_plot, dt_plot, rf_plot, xgboost_plot, labels = c("A", "B", "C", "D"), cols=2, scale = 0.97, align = "v")
+ggdraw(add_sub(perm_tree_based, "AUROC with the OTU permuted randomly", size=18, vpadding=grid::unit(0,"lines"), y=5, x=0.6, vjust=4.75))
 
-ggsave("Figure_4.png", plot = last_plot(), device = 'png', path = 'submission', width = 7, height = 10)
+ggsave("Figure_4.png", plot = last_plot(), device = 'png', path = 'submission', width = 12, height = 8)
 
 
 
