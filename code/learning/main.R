@@ -68,7 +68,7 @@ source('code/learning/permutation_importance.R')
 input <- commandArgs(trailingOnly=TRUE) 
 seed <- as.numeric(input[1])
 model <- input[2]
-subsample_number <- input[3]/490
+subsample_number <- as.numeric(input[3])/490 # To answer the question of when the model breaks
 
 ######################## DATA PREPARATION #############################
 # Features: Hemoglobin levels(FIT) and 16S rRNA gene sequences(OTUs) in the stool 
