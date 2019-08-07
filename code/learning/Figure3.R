@@ -43,29 +43,12 @@ get_feature_ranked_files <- function(file_name, model_name){
 #     2. Returns a plot. Each datapoint is the rank of the OTU at one datasplit.
                         
 plot_feature_ranks <- function(data){
-    
-    # Grab the names of the top 5 OTUs in the order of their median rank  
-    otus <- data %>% 
-    group_by(key) %>% 
-    summarise(imp = median(rank)) %>% 
-    arrange(imp) 
-    
-    # Use these names as character to create ordering
-    otus_as_character <- otus$key %>% 
-      as.character()
-    
-    # Lowest ranked OTU at the top, followed by others ordered by median
-    data$key <- factor(data$key,levels = c(otus_as_character[5], 
-                                           otus_as_character[4], 
-                                           otus_as_character[3], 
-                                           otus_as_character[2], 
-                                           otus_as_character[1]))
-    
     # Plot from highest median ranked OTU to least (only top 5) and thir ranks that lay between 1-100
-      # Rank 1 is the highest rank
-    plot <- ggplot(data, aes(data$key, data$rank)) +
-      geom_point(color = 'orange1', size=3) + # datapoints lighter color
-      stat_summary(fun.y = "median", colour = 'orangered4', geom = "point", size = 4) + # Median darker
+    # Rank 1 is the highest rank
+    plot <- ggplot(data, aes(reorder(data$key, -data$rank, FUN = median), data$rank)) +
+      geom_point(aes(colour= factor(data$sign)), size=2) + # datapoints lighter color
+      scale_color_manual(values=c("red3", "#56B4E9", "#999999")) +
+      stat_summary(fun.y = function(x) median(x), colour = 'black', geom = "point", size = 3) + # Median darker
       coord_flip() +
       scale_y_continuous(limits=c(0, 100)) + # Only keep the first 100 ranks (truncated)
       theme_classic() +
@@ -96,7 +79,7 @@ get_taxa_info_as_labels <- function(data){
   otus <- data %>% 
     group_by(key) %>% 
     summarise(imp = median(rank)) %>% 
-    arrange(imp) 
+    arrange(-imp) 
   # Names of the y-axis labels
   taxa_info <- read.delim('data/baxter.taxonomy', header=T, sep='\t') %>% 
    select(-Size) %>% 
@@ -114,11 +97,7 @@ get_taxa_info_as_labels <- function(data){
     unite(key, taxa, key, sep="(") %>% 
     mutate(key = paste(key,")", sep=""))
     
-
-  taxa_otus <- taxa_otus$key %>% 
-    as.character()
-  
-  return(taxa_otus)
+  return(taxa_otus$key)
 }
 
 ######################################################################

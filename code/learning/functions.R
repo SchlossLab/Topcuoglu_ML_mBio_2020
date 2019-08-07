@@ -62,12 +62,13 @@ get_model_name <- function(files){
 #         - New AUROC which will differ from original AUROC after permutation
 get_interp_info <- function(data, model_name){
   if("key" %in% colnames(data)){
-    # If the models are linear, we used get_feature_rankings.R and then mege_feature_ranks.sh first
+    # If the models are linear, we used get_feature_rankings.R and then merge_feature_ranks.sh first
     # The created file after those 2 steps will be used in this function,
     # Data format is:
     #         The OTU names are in 1 column(repeated for 100 datasplits)
     #         The ranks based on absolute weights are in 1 column(for each of the datasplits)
  	#		  The weight value is on another column
+  #     The sign of the weight is on another column
  	# We want to use/plot only the top 5 highest ranked OTUs
  	# Initial step is to get which are the highest 5 ranked OTUs by looking at their median rank
     # 1. We group by OTU name to make sure we are taking all the data-splits into account
