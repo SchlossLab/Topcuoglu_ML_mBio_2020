@@ -99,6 +99,7 @@ data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
 # We want the diagnosis column to be a factor
 data$dx <- factor(data$dx)
 # Stratified subsampling of the data
+set.seed(seed)
 data <- sample_frac(data, subsample_number)
 # We want the diagnosis column to be a factor
 data$dx <- factor(data$dx)

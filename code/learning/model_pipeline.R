@@ -161,15 +161,28 @@ pipeline <- function(dataset, model, split_number, subsample_number, subsample_n
     }
   }
   else{
-    # We will use the permutation_importance function here to:
-    #     1. Predict held-out test-data
-    #     2. Calculate ROC and AUROC values on this prediction
-    #     3. Get the feature importances for correlated and uncorrelated feautures
-    roc_results <- permutation_importance(trained_model, testTransformed)
-    test_auc <- roc_results[[1]]
-    # Predict the test importance
-    feature_importance_non_cor <- roc_results[2]
-    feature_importance_cor <- roc_results[3]
+    if(subsample_number==1){
+      # We will use the permutation_importance function here to:
+      #     1. Predict held-out test-data
+      #     2. Calculate ROC and AUROC values on this prediction
+      #     3. Get the feature importances for correlated and uncorrelated feautures
+      roc_results <- permutation_importance(trained_model, testTransformed)
+      test_auc <- roc_results[[1]]
+      # Predict the test importance
+      feature_importance_non_cor <- roc_results[2]
+      feature_importance_cor <- roc_results[3]
+    }
+    else{
+      print("We are doing a subsampling experiment. No need for permutation importance with lower number samples!")
+      # Get feature weights
+      feature_importance_non_cor <- NULL
+      # Get feature weights
+      feature_importance_cor <- NULL
+      # Calculate the test-auc for the actual pre-processed held-out data
+      rpartProbs <- predict(trained_model, testTransformed, type="prob")
+      test_roc <- roc(ifelse(testTransformed$dx == "cancer", 1, 0), rpartProbs[[1]])
+      test_auc <- test_roc$auc
+    }
   }
   # ---------------------------------------------------------------------------------->
 
