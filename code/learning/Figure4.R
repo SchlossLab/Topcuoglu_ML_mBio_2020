@@ -207,10 +207,6 @@ base_nonlin_plot <-  function(data, name){
           axis.text.x=element_blank(), 
           axis.ticks = element_line(colour = "black", size = 1.1)) 
   
-  #-----------------------Save median info --------------------------------------- #
-  write_tsv(data_full, paste0("data/process/", name, "_non_linear_top_five_importance.tsv"))
-  write_tsv(median, paste0("data/process/", name, "_non_linear_base_median.tsv"))
-  
   #----------------------- Take a look at correlated OTUs ------------------------ #
   # Check if the top 5 correlated OTU groups make a difference in AUROC
   if(name == "L1_Linear_SVM" || name =="L2_Linear_SVM" || name =="L2_Logistic_Regression"){

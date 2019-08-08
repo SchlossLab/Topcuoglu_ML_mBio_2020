@@ -135,11 +135,6 @@ base_nonlin_plot <-  function(data, name){
           axis.text.y=element_text(size = 10, colour='black'), 
           axis.title.x=element_blank()) 
   
-  #-----------------------Save median info ------------------------ #
-  #-----------------------Save top 5 features ------------------------ #
-  write_tsv(data_full, paste0("data/process/", name, "_non_linear_top_ten_importance.tsv"))
-  write_tsv(median, paste0("data/process/", name, "_non_linear_base_median.tsv"))
-  
   # Check if correlated OTUs make a difference in AUROC
 
   #data_cor_results <- read.delim(paste0("data/process/", name, "_cor_importance.tsv"), header=T, sep='\t') %>%
