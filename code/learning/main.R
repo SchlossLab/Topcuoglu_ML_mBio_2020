@@ -69,7 +69,7 @@ input <- commandArgs(trailingOnly=TRUE)
 seed <- as.numeric(input[1])
 model <- input[2]
 subsample_number <- as.numeric(input[3])/490 # To answer the question of when the model breaks
-
+subsample_name <- as.numeric(input[3])
 ######################## DATA PREPARATION #############################
 # Features: Hemoglobin levels(FIT) and 16S rRNA gene sequences(OTUs) in the stool 
 # Labels: - Colorectal lesions of 490 patients. 
@@ -100,6 +100,8 @@ data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
 data$dx <- factor(data$dx)
 # Stratified subsampling of the data
 data <- sample_frac(data, subsample_number)
+# We want the diagnosis column to be a factor
+data$dx <- factor(data$dx)
 # We want the first sample to be a cancer so we shuffle the dataset with a specific seed to get cancer as the first sample
 set.seed(1)
 data <- data[sample(1:nrow(data)), ]
@@ -116,7 +118,7 @@ set.seed(seed)
 # Start walltime for running model
 tic("model")
 # Run the model
-get_results(data, model, seed, subsample_number)
+get_results(data, model, seed, subsample_number, subsample_name)
 # Stop walltime for running model
 secs <- toc()
 # Save elapsed time

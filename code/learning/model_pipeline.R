@@ -37,7 +37,7 @@
 ######################################################################
 
 
-pipeline <- function(dataset, model, split_number, subsample_number){
+pipeline <- function(dataset, model, split_number, subsample_number, subsample_name){
 
   # ------------------Pre-process the full Dataset------------------------->
   # We are doing the pre-processing to the full dataset and then splitting 80-20
@@ -122,7 +122,7 @@ pipeline <- function(dataset, model, split_number, subsample_number){
   train_time <- seconds$toc-seconds$tic
   # Save wall-time
   write.csv(train_time, file=paste0("data/temp/traintime_", model, "_", 
-                                    subsample_number, "_",
+                                    subsample_name, "_",
                                     split_number, ".csv"), row.names=F)
   # ------------- Output the cvAUC and testAUC for 1 datasplit ---------------------->
   # Mean cv AUC value over repeats of the best cost parameter during training
@@ -136,6 +136,7 @@ pipeline <- function(dataset, model, split_number, subsample_number){
   #   Output the feature importances based on random permutation for non-linear models
   # Here we look at the top 10 important features
   if(model=="L1_Linear_SVM" || model=="L2_Linear_SVM" || model=="L2_Logistic_Regression"){
+    if(subsample_number==1){
     # We will use the permutation_importance function here to:
     #     1. Predict held-out test-data
     #     2. Calculate ROC and AUROC values on this prediction
@@ -146,6 +147,18 @@ pipeline <- function(dataset, model, split_number, subsample_number){
     feature_importance_non_cor <- roc_results[2]
     # Get feature weights
     feature_importance_cor <- trained_model$finalModel$W
+    }
+    else{
+      print("We are doing a subsampling experiment. No need for permutation importance with lower number samples!")
+      # Get feature weights
+      feature_importance_non_cor <- trained_model$finalModel$W
+      # Get feature weights
+      feature_importance_cor <- trained_model$finalModel$W
+      # Calculate the test-auc for the actual pre-processed held-out data
+      rpartProbs <- predict(trained_model, testTransformed, type="prob")
+      test_roc <- roc(ifelse(testTransformed$dx == "cancer", 1, 0), rpartProbs[[1]])
+      test_auc <- test_roc$auc
+    }
   }
   else{
     # We will use the permutation_importance function here to:

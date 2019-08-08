@@ -34,9 +34,9 @@
 ######################################################################
 #------------------------- DEFINE FUNCTION -------------------#
 ######################################################################
-get_results <- function(dataset, models, split_number, subsample_number){
+get_results <- function(dataset, models, split_number, subsample_number, subsample_name){
   # Save results of the modeling pipeline as a list
-  results <- pipeline(dataset, models, split_number, subsample_number) 
+  results <- pipeline(dataset, models, split_number, subsample_number, subsample_name) 
   # These results have
   # 1. cv_auc, 
   # 2. test_auc
@@ -52,7 +52,7 @@ get_results <- function(dataset, models, split_number, subsample_number){
     mutate(model=models) %>% 
     write_csv(path = paste0("data/temp/best_hp_results_", 
                             models, "_", 
-                            subsample_number, "_", 
+                            subsample_name, "_", 
                             split_number, ".csv"))
   # ------------------------------------------------------------------   
 
@@ -63,7 +63,7 @@ get_results <- function(dataset, models, split_number, subsample_number){
   dataframe <- data.frame(all_results) %>% 
     mutate(model=models) %>% 
     write_csv(path=paste0("data/temp/all_hp_results_", models,"_", 
-                          subsample_number, "_", 
+                          subsample_name, "_", 
                           split_number, ".csv"))
   # ------------------------------------------------------------------ 
   
@@ -74,7 +74,7 @@ get_results <- function(dataset, models, split_number, subsample_number){
   dataframe <- data.frame(imp_features) %>% 
     mutate(model=models) %>% 
     write_csv(path=paste0("data/temp/all_imp_features_non_cor_results_", models,"_", 
-                          subsample_number, "_", 
+                          subsample_name, "_", 
                           split_number, ".csv"))
   # ------------------------------------------------------------------ 
   
@@ -84,7 +84,7 @@ get_results <- function(dataset, models, split_number, subsample_number){
   dataframe <- data.frame(corr_imp_features) %>% 
     mutate(model=models) %>% 
     write_csv(path=paste0("data/temp/all_imp_features_cor_results_", models,"_", 
-                          subsample_number, "_", 
+                          subsample_name, "_", 
                           split_number, ".csv"), col_names = TRUE)
 
 }
