@@ -94,45 +94,72 @@ data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
     Dx_Bin== "Cancer" ~ "cancer"
   )) %>%
   select(-sample, -Dx_Bin, -fit_result) %>%
-  drop_na() %>% 
-  group_by(dx)
-
-
-# Stratified subsampling of the data
-set.seed(seed)
-data <- sample_frac(data, subsample_number)
-
-# We want the first sample to be a cancer so we shuffle the dataset with a specific seed to get cancer as the first sample
-set.seed(1)
-data <- data[sample(1:nrow(data)), ]
+  drop_na() 
 
 # We want the diagnosis column to be a factor
 data$dx <- factor(data$dx)
-data <- data %>%
-  ungroup()
 
-###################################################################
+if(subsample_number!=1){
+  # Stratified subsampling of the data
+  set.seed(seed)
+  data <- data %>% group_by(dx)
+  data <- sample_frac(data, subsample_number)
+  # We want the first sample to be a cancer so we shuffle the dataset with a specific   seed to get cancer as the first sample
+  set.seed(1)
+  data <- data[sample(1:nrow(data)), ]
+  ###################################################################
+  
+  
+  # Then arguments 1 and 2 will be placed respectively into the functions:
+  #   1. set.seed() : creates reproducibility and variability
+  #   2. get_results(): self-defined function that
+  #                     - runs the modeling pipeline
+  #                     - saves performance and hyper-parameters and imp features
+  set.seed(seed)
+  # Start walltime for running model
+  tic("model")
+  # Run the model
+  get_results(data, model, seed, subsample_number, subsample_name)
+  # Stop walltime for running model
+  secs <- toc()
+  # Save elapsed time
+  walltime <- secs$toc-secs$tic
+  # Save wall-time
+  write.csv(walltime, file=paste0("data/temp/walltime_", model, "_", 
+                                  subsample_name, "_", 
+                                  seed, ".csv"), row.names=F)
+  ###################################################################
+}
+else{
+    # No subsampling
+    # We want the first sample to be a cancer so we shuffle the dataset with a specific seed to get cancer as the first sample
+    set.seed(0)
+    data <- data[sample(1:nrow(data)), ]
+    ###################################################################
+    
+    
+    # Then arguments 1 and 2 will be placed respectively into the functions:
+    #   1. set.seed() : creates reproducibility and variability
+    #   2. get_results(): self-defined function that
+    #                     - runs the modeling pipeline
+    #                     - saves performance and hyper-parameters and imp features
+    set.seed(seed)
+    # Start walltime for running model
+    tic("model")
+    # Run the model
+    get_results(data, model, seed, subsample_number, subsample_name)
+    # Stop walltime for running model
+    secs <- toc()
+    # Save elapsed time
+    walltime <- secs$toc-secs$tic
+    # Save wall-time
+    write.csv(walltime, file=paste0("data/temp/walltime_", model, "_", 
+                                    subsample_name, "_", 
+                                    seed, ".csv"), row.names=F)
+    ###################################################################
+}
 
 
-# Then arguments 1 and 2 will be placed respectively into the functions:
-#   1. set.seed() : creates reproducibility and variability
-#   2. get_results(): self-defined function that
-#                     - runs the modeling pipeline
-#                     - saves performance and hyper-parameters and imp features
-set.seed(seed)
-# Start walltime for running model
-tic("model")
-# Run the model
-get_results(data, model, seed, subsample_number, subsample_name)
-# Stop walltime for running model
-secs <- toc()
-# Save elapsed time
-walltime <- secs$toc-secs$tic
-# Save wall-time
-write.csv(walltime, file=paste0("data/temp/walltime_", model, "_", 
-                                subsample_name, "_", 
-                                seed, ".csv"), row.names=F)
-###################################################################
 
 
 
