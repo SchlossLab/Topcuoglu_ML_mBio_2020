@@ -96,16 +96,20 @@ data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
   select(-sample, -Dx_Bin, -fit_result) %>%
   drop_na() %>% 
   group_by(dx)
-# We want the diagnosis column to be a factor
-data$dx <- factor(data$dx)
+
+
 # Stratified subsampling of the data
 set.seed(seed)
 data <- sample_frac(data, subsample_number)
-# We want the diagnosis column to be a factor
-data$dx <- factor(data$dx)
+
 # We want the first sample to be a cancer so we shuffle the dataset with a specific seed to get cancer as the first sample
 set.seed(1)
 data <- data[sample(1:nrow(data)), ]
+
+# We want the diagnosis column to be a factor
+data$dx <- factor(data$dx)
+data <- data %>%
+  ungroup()
 
 ###################################################################
 
