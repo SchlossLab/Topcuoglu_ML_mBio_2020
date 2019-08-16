@@ -53,6 +53,9 @@ rf_performance <- map_df(rf_files, read_files) %>%
   unite_("model_number", c("model","number")) %>% 
   filter(Performance != "testing")
 
+rf_performance$model_number <-  as.factor(rf_performance$model_number)
+
+rf_performance$model_number <- factor(rf_performance$model_number , c("Random_Forest_490", "Random_Forest_245", "Random_Forest_120", "Random_Forest_60", "Random_Forest_30", "Random_Forest_15"))
 ######################################################################
 #Plot the AUC values for cross validation and testing for each model #
 ######################################################################
@@ -62,7 +65,7 @@ logit_plot <- ggplot(logit_performance, aes(x = model_number, y = AUC)) +
   geom_boxplot(alpha=0.5, fatten = 4, fill="blue4") +
   geom_hline(yintercept = 0.5, linetype="dashed") +
   coord_flip() +
-  scale_y_continuous(name = "AUROC",
+  scale_y_continuous(name = "cross-validation AUROC",
                      breaks = seq(0, 1, 0.1),
                      limits=c(0, 1),
                      expand=c(0,0)) +
@@ -102,6 +105,11 @@ logit_plot <- ggplot(logit_performance, aes(x = model_number, y = AUC)) +
 ggsave("Figure_S5.png", plot = logit_plot, device = 'png', path = 'submission', width = 12, height = 9)
 
 
+
+
+
+
+
 rf_plot <- ggplot(rf_performance, aes(x = model_number, y = AUC)) +
   geom_boxplot(alpha=0.5, fatten = 4, fill="blue4") +
   geom_hline(yintercept = 0.5, linetype="dashed") +
@@ -110,7 +118,6 @@ rf_plot <- ggplot(rf_performance, aes(x = model_number, y = AUC)) +
                      breaks = seq(0, 1, 0.1),
                      limits=c(0, 1),
                      expand=c(0,0)) +
-  
   scale_x_discrete(name = "Random forest", 
                    labels=c("n=490",
                             "n=245", 

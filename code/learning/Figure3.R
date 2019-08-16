@@ -47,7 +47,7 @@ plot_feature_ranks <- function(data){
     # Rank 1 is the highest rank
     plot <- ggplot(data, aes(reorder(data$key, -data$rank, FUN = median), data$rank)) +
       geom_point(aes(colour= factor(data$sign)), size=2) + # datapoints lighter color
-      scale_color_manual(values=c("red3", "#56B4E9", "#999999")) +
+      scale_color_manual(values=c("#56B4E9","red3", "#999999")) +
       stat_summary(fun.y = function(x) median(x), colour = 'black', geom = "point", size = 3) + # Median darker
       coord_flip() +
       scale_y_continuous(limits=c(0, 100)) + # Only keep the first 100 ranks (truncated)
@@ -86,6 +86,11 @@ get_taxa_info_as_labels <- function(data){
     select(-OTU)
 
   taxa_otus <- inner_join(otus, taxa_info, by="key") %>% 
+    mutate_if(is.character, str_to_upper) %>% 
+    #mutate(key=str_replace(key, "0000", " ")) %>% 
+    #mutate(key=str_replace(key, "000", " ")) %>% 
+    #mutate(key=str_replace(key, "00", " ")) %>% 
+    #mutate(key=str_replace(key, "0", " ")) %>% 
     mutate(taxa=gsub("(.*);.*","\\1",Taxonomy)) %>% 
     mutate(taxa=gsub("(.*)_.*","\\1",Taxonomy)) %>% 
     mutate(taxa=gsub("(.*);.*","\\1",Taxonomy)) %>% 
