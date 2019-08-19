@@ -20,6 +20,7 @@ source('code/learning/functions.R')
 
 # Read in the cvAUCs, testAUCs for 100 splits.
 best_files <- list.files(path= 'data/process', pattern='combined_best.*', full.names = TRUE)
+
 best_performance <- map_df(best_files, read_files) %>% 
   melt_data()
 

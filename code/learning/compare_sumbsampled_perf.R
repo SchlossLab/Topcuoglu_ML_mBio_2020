@@ -48,16 +48,24 @@ logit_performance$model_number <- factor(logit_performance$model_number , c("L2_
 
 rf_files <- list.files(path= 'data/process', pattern='combined_best_hp_results_Random_Forest_.*', full.names = TRUE)
 
+full_rf <- read_csv("data/process/combined_best_hp_results_Random_Forest.csv") %>%
+  melt_data() %>% 
+  mutate(number="490") %>% 
+  unite_("model_number", c("model","number")) %>% 
+  filter(Performance != "testing") 
+
 rf_performance <- map_df(rf_files, read_files) %>% 
   melt_data() %>% 
   unite_("model_number", c("model","number")) %>% 
   filter(Performance != "testing")
 
+rf_performance <- bind_rows(full_rf, rf_performance)
+
 rf_performance$model_number <-  as.factor(rf_performance$model_number)
 
 rf_performance$model_number <- factor(rf_performance$model_number , c("Random_Forest_490", "Random_Forest_245", "Random_Forest_120", "Random_Forest_60", "Random_Forest_30", "Random_Forest_15"))
 ######################################################################
-#Plot the AUC values for cross validation and testing for each model #
+#Plot the AUC values for cross validation  for each model #
 ######################################################################
 
 
@@ -65,11 +73,10 @@ logit_plot <- ggplot(logit_performance, aes(x = model_number, y = AUC)) +
   geom_boxplot(alpha=0.5, fatten = 4, fill="blue4") +
   geom_hline(yintercept = 0.5, linetype="dashed") +
   coord_flip() +
-  scale_y_continuous(name = "cross-validation AUROC",
+  scale_y_continuous(name = "",
                      breaks = seq(0, 1, 0.1),
                      limits=c(0, 1),
                      expand=c(0,0)) +
-  
   scale_x_discrete(name = expression(paste(L[2], "-regularized logistic regression")), 
                    labels=c("n=490",
                             "n=245", 
@@ -78,43 +85,22 @@ logit_plot <- ggplot(logit_performance, aes(x = model_number, y = AUC)) +
                             "n=30",
                             "n=15")) +
   theme_bw() +
-  theme(plot.margin=unit(c(1.1,1.1,1.1,1.1),"cm"),
-        legend.justification=c(1,0),
-        legend.position=c(1,0),
-        #legend.position="bottom",
-        legend.title = element_blank(),
-        legend.background = element_rect(linetype="solid", color="black", size=0.5),
-        legend.box.margin=margin(c(12,12,12, 12)),
-        legend.text=element_text(size=18),
-        #legend.title=element_text(size=22),
+  theme(plot.margin=unit(c(1.5,3,1.5,3),"mm"),
         panel.grid.major.y = element_blank(),
         panel.grid.major.x = element_line( size=0.6),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
-        text = element_text(size = 12),
-        axis.text.x=element_text(size = 20, colour='black'),
-        axis.text.y=element_text(size = 20, colour='black'),
-        axis.title.y=element_text(size = 24),
-        axis.title.x=element_text(size = 24),
+        text = element_text(size = 14),
+        axis.text.y=element_text(size = 14, colour='black'),
+        axis.title.y=element_text(size = 16),
+        axis.text.x=element_blank(),
         panel.border = element_rect(linetype="solid", colour = "black", fill=NA, size=1.5))
-
-######################################################################
-#-----------------------Save figure as .pdf ------------------------ #
-######################################################################
-
-ggsave("Figure_S5.png", plot = logit_plot, device = 'png', path = 'submission', width = 12, height = 9)
-
-
-
-
-
-
 
 rf_plot <- ggplot(rf_performance, aes(x = model_number, y = AUC)) +
   geom_boxplot(alpha=0.5, fatten = 4, fill="blue4") +
   geom_hline(yintercept = 0.5, linetype="dashed") +
   coord_flip() +
-  scale_y_continuous(name = "AUROC",
+  scale_y_continuous(name = "",
                      breaks = seq(0, 1, 0.1),
                      limits=c(0, 1),
                      expand=c(0,0)) +
@@ -126,24 +112,15 @@ rf_plot <- ggplot(rf_performance, aes(x = model_number, y = AUC)) +
                             "n=30",
                             "n=15")) +
   theme_bw() +
-  theme(plot.margin=unit(c(1.1,1.1,1.1,1.1),"cm"),
-        legend.justification=c(1,0),
-        legend.position=c(1,0),
-        #legend.position="bottom",
-        legend.title = element_blank(),
-        legend.background = element_rect(linetype="solid", color="black", size=0.5),
-        legend.box.margin=margin(c(12,12,12, 12)),
-        legend.text=element_text(size=18),
-        #legend.title=element_text(size=22),
+  theme(plot.margin=unit(c(1.5,3,1.5,3),"mm"),
         panel.grid.major.y = element_blank(),
         panel.grid.major.x = element_line( size=0.6),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
-        text = element_text(size = 12),
-        axis.text.x=element_text(size = 20, colour='black'),
-        axis.text.y=element_text(size = 20, colour='black'),
-        axis.title.y=element_text(size = 24),
-        axis.title.x=element_text(size = 24),
+        text = element_text(size = 14),
+        axis.text.y=element_text(size = 14, colour='black'),
+        axis.title.y=element_text(size = 16),
+        axis.text.x=element_text(size = 14, colour='black'),
         panel.border = element_rect(linetype="solid", colour = "black", fill=NA, size=1.5))
 
 ######################################################################
@@ -152,9 +129,9 @@ rf_plot <- ggplot(rf_performance, aes(x = model_number, y = AUC)) +
 
 #combine with cowplot
 
-linear <- plot_grid(logit_plot, rf_plot, labels = c("A", "B"), align = 'v', ncol = 1)
+plots <- plot_grid(logit_plot, rf_plot, labels = c("A", "B"), align = 'v', ncol = 1)
 
-ggdraw(add_sub(linear, "AUROC", vpadding=grid::unit(0,"lines"), y=5, x=0.7, vjust=4.75, size=15))
+ggdraw(add_sub(plots, "Cross-validation AUROC", vpadding=grid::unit(0,"lines"), y=5, x=0.6, vjust=4.75, size=15))
 
 ggsave("Figure_S5.png", plot = last_plot(), device = 'png', path = 'submission', width = 6, height = 9.2)
 

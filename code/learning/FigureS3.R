@@ -171,6 +171,7 @@ get_taxa_info_as_labels <- function(name){
     select(-OTU)
   
   taxa_otus <- inner_join(otus, taxa_info, by="names") %>% 
+    mutate_if(is.character, str_to_upper) %>% 
     mutate(taxa=gsub("(.*);.*","\\1",Taxonomy)) %>% 
     mutate(taxa=gsub("(.*)_.*","\\1",Taxonomy)) %>% 
     mutate(taxa=gsub("(.*);.*","\\1",Taxonomy)) %>% 
@@ -208,7 +209,7 @@ l2_plot <- base_nonlin_plot(l2svm, "L2_Linear_SVM") +
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 #combine with cowplot
-linear <- plot_grid(l1_plot, l2_plot, logit_plot, labels = c("A", "B", "C"), align = 'h', ncol = 1, scale = 0.97)
+linear <- plot_grid(l1_plot, l2_plot, logit_plot, labels = c("A", "B", "C"), align = 'v', ncol = 1, scale = 0.97)
 
 ggdraw(add_sub(linear, "AUROC with the OTU permuted randomly", size=18, vpadding=grid::unit(0,"lines"), y=5, x=0.65, vjust=4.75))
 

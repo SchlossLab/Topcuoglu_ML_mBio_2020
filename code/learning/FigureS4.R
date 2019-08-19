@@ -1,176 +1,137 @@
 # Author: Begum Topcuoglu
-# Date: 2018-02-13
+# Date: 2018-08-18
 #
 ######################################################################
-# This script plots permutation importance results of linear models
+# This script plots Figure S5:
+#   1. cvAUC (means of 100 repeats for the best hp) of 100 datasplits
+#   2. testAUC of 100 datasplits
 ######################################################################
 
-
 ######################################################################
-#----------------- Read in necessary libraries -------------------#
+# Load in needed functions and libraries
+source('code/learning/functions.R')
+# detach("package:randomForest", unload=TRUE) to run
 ######################################################################
-deps = c("cowplot","reshape2", "cowplot", "ggplot2","knitr","rmarkdown","vegan","gtools", "tidyverse");
-for (dep in deps){
-  if (dep %in% installed.packages()[,"Package"] == FALSE){
-    install.packages(as.character(dep), quiet=TRUE);
+# -------------------- Read files ------------------------------------>
+grab_number <- function(file){
+  regmatches(file, regexpr("[0-9].*[0-9]", file)) %>% 
+    str_extract("[^_]*$")
+}
+# Read in files as delim that are saved in a list with a pattern
+read_files <- function(filenames){
+  for(file in filenames){
+    number <- grab_number(file)
+    # Read the files generated in main.R
+    # These files have cvAUCs and testAUCs for 100 data-splits
+    data <- read.delim(file, header=T, sep=',') %>% 
+      mutate(number = number)
   }
-  library(dep, verbose=FALSE, character.only=TRUE)
+  return(data)
 }
 ######################################################################
-#----------------- Call the functions we will use -----------------#
+# Load .csv data generated with modeling pipeline
 ######################################################################
 
-source("code/learning/functions.R")
+# Read in the cvAUCs, testAUCs for 100 splits.
+logit_files <- list.files(path= 'data/process/subsampling', pattern='combined_best_hp_results_L2_Logistic_Regression_.*', full.names = TRUE)
 
-######################################################################
-#--------------Run the functions and plot importance ----------#
-######################################################################
-
-# ----------- Read in saved combined feature importances ---------->
-# List the important features files by defining a pattern in the path
-
-# Correlated files are:
-# For linear models these files have the feature weights and coefficients.
-# For non-linear models these files have the correlated OTUs grouped together
-cor_files <- list.files(path= 'data/process', pattern='combined_all_imp_features_cor_.*', full.names = TRUE)
-
-# Non-correlated files are:
-# For linear models these files have the non-correlated OTUs permutation importance results
-# For non-linear models these files have non-correlated OTUs permutation importance results
-non_cor_files <-  list.files(path= 'data/process', pattern='combined_all_imp_features_non_cor_.*', full.names = TRUE)
-# -------------------------------------------------------------------->
-
-# ----------- Loops to re-organize feature importance info ---------->
-# This loop will:
-#   1. Read the model files saved in 'interp_files' list
-#   2. Get the model name from the file
-#   3. Use te get_interp_info() for each model. 
-#   4. Save the top 10 features and their mean, sd importance value in a .tsv file
-
-for(file_name in cor_files){
-  importance_data <- read_files(file_name)
-  model_name <- as.character(importance_data$model[1])# get the model name from table
-  get_interp_info(importance_data, model_name) %>% 
-    as.data.frame() %>% 
-    write_tsv(., paste0("data/process/", model_name, "_cor_importance.tsv"))
-}
-
-for(file_name in non_cor_files){
-  importance_data <- read_files(file_name)
-  model_name <- as.character(importance_data$model[1]) # get the model name from table
-  get_interp_info(importance_data, model_name) %>% 
-    as.data.frame() %>% 
-    write_tsv(., paste0("data/process/", model_name, "_non_cor_importance.tsv"))
-}
-
-
-
-# Read in the cvAUCs, testAUCs for 100 splits as base test_aucs
-best_files <- list.files(path= 'data/process', pattern='combined_best.*', full.names = TRUE)
-
-
-logit <- read_files(best_files[4])
-l2svm <- read_files(best_files[3])
-l1svm <- read_files(best_files[2])
-rbf <- read_files(best_files[6])
-rf <- read_files(best_files[5])
-dt <- read_files(best_files[1])
-xgboost <- read_files(best_files[7])
-
-
-######################################################################
-#-------------- Plot the permutation importance of all models ----------#
-######################################################################
-# -----------------------Base plot function -------------------------->
-# Define the base plot 
-base_nonlin_plot <-  function(data, name){
-  # Grab the base test auc values for 100 datasplits
-  data_base <- data %>% 
-    select(-cv_aucs) %>% 
-    mutate(new_auc = test_aucs) %>% 
-    mutate(names="base_auc") %>% 
-    select(-test_aucs)
-  # Have a median base auc value for h-line and for correlated testing
-  data_base_means <- data %>% 
-    summarise(imp = median(test_aucs), sd_imp = sd(test_aucs)) %>% 
-    mutate(names="base_auc")
-  # Grab the names of the OTUs that have the lowest median AUC when they are permuted
-  data_first_ten <- read.delim(paste0("data/process/", name, "_non_cor_importance.tsv"), header=T, sep='\t') %>%
-    arrange(imp) %>% 
-    head(20)
-  # Get the new test aucs for 100 datasplits for each OTU permuted
-  data_full <- read_files(paste0("data/process/combined_all_imp_features_non_cor_results_", name, ".csv")) %>%
-    # Only keep the OTUs and their AUCs for the ones that are in the top 5 changed (decreased the most) ones
-    filter(names %in% data_first_ten$names) %>% 
-    group_by(names)
-
-  # Plot boxplot
-  lowerq <-  quantile(data_base$new_auc)[2]
-  upperq <-  quantile(data_base$new_auc)[4]
-  median <-  median(data_base$new_auc) %>% 
-    data.frame()
+logit_performance <- map_df(logit_files, read_files) %>% 
+  melt_data() %>% 
+  unite_("model_number", c("model","number")) %>% 
+  filter(Performance != "testing") %>% 
+  group_by(model_number) 
   
+logit_performance$model_number <-  as.factor(logit_performance$model_number)
 
-  plot <- ggplot() +
-    geom_boxplot(data=data_full, aes(fct_reorder(names, -new_auc), y=new_auc), fill="white",  alpha=0.8) +
-    geom_rect(aes(ymin=lowerq, ymax=upperq, xmin=0, xmax=Inf), fill="grey") +
-    geom_boxplot(data=data_full, aes(x=names, y=new_auc), fill="white", alpha=0.8) +
-    geom_hline(yintercept = data_base_means$imp , linetype="dashed") +
-    #geom_hline(yintercept = upperq, alpha=0.5) +
-    #geom_hline(yintercept = lowerq, alpha=0.5) +
-    coord_flip() +
-    theme_classic() +
-    scale_y_continuous(name = " AUROC with the OTU permuted randomly", 
-                       limits = c(0.5,1), 
-                       expand=c(0,0)) +
-    theme(plot.margin=unit(c(1.5,3,1.5,3),"mm"),
-          legend.position="none",
-          axis.title = element_text(size=14),
-          axis.text = element_text(size=12),
-          panel.border = element_rect(colour = "black", fill=NA, size=1), 
-          panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank(),
-          panel.background = element_blank(),
-          axis.text.x=element_text(size = 12, colour='black'),
-          axis.text.y=element_text(size = 10, colour='black'), 
-          axis.title.x=element_blank()) 
-  
-  # Check if correlated OTUs make a difference in AUROC
 
-  #data_cor_results <- read.delim(paste0("data/process/", name, "_cor_importance.tsv"), header=T, sep='\t') %>%
-   # filter(!imp==data_base_means$imp) 
-  #if(nrow(data_cor_results)==0) {
-  #  print("Correlation dataframe empty. No need to plot correlated OTUs. Plot only non-correlated OTUs.")
-  #}else{
-   # print("Investigate correlated OTUs effect and plot both.")
-  #}
-  return(plot)
-}
-# ----------------------------------------------------------------------->
+logit_performance$model_number <- factor(logit_performance$model_number , c("L2_Logistic_Regression_490", "L2_Logistic_Regression_245", "L2_Logistic_Regression_120", "L2_Logistic_Regression_60", "L2_Logistic_Regression_30", "L2_Logistic_Regression_15"))
 
-# --------------------- Linear models ----------------------------------->
-logit_plot <- base_nonlin_plot(logit, "L2_Logistic_Regression") +
-  scale_x_discrete(name = "L2 Logistic Regression ") 
+rf_files <- list.files(path= 'data/process/subsampling', pattern='combined_best_hp_results_Random_Forest_.*', full.names = TRUE)
 
-l1_plot <- base_nonlin_plot(l1svm, "L1_Linear_SVM") +
-  scale_x_discrete(name = "L1 Linear SVM") 
+full_rf <- read_csv("data/process/combined_best_hp_results_Random_Forest.csv") %>%
+  melt_data() %>% 
+  mutate(number="490") %>% 
+  unite_("model_number", c("model","number")) %>% 
+  filter(Performance != "testing") 
 
-l2_plot <- base_nonlin_plot(l2svm, "L2_Linear_SVM") +
-  scale_x_discrete(name = "L2 Linear SVM ") 
+rf_performance <- map_df(rf_files, read_files) %>% 
+  melt_data() %>% 
+  unite_("model_number", c("model","number")) %>% 
+  filter(Performance != "testing")
 
-# ----------------------------------------------------------------------->
+rf_performance <- bind_rows(full_rf, rf_performance)
+
+rf_performance$model_number <-  as.factor(rf_performance$model_number)
+
+rf_performance$model_number <- factor(rf_performance$model_number , c("Random_Forest_490", "Random_Forest_245", "Random_Forest_120", "Random_Forest_60", "Random_Forest_30", "Random_Forest_15"))
+######################################################################
+#Plot the AUC values for cross validation  for each model #
+######################################################################
+
+
+logit_plot <- ggplot(logit_performance, aes(x = model_number, y = AUC)) +
+  geom_boxplot(alpha=0.5, fatten = 4, fill="blue4") +
+  geom_hline(yintercept = 0.5, linetype="dashed") +
+  coord_flip() +
+  scale_y_continuous(name = "",
+                     breaks = seq(0, 1, 0.1),
+                     limits=c(0, 1),
+                     expand=c(0,0)) +
+  scale_x_discrete(name = expression(paste(L[2], "-regularized logistic regression")), 
+                   labels=c("n=490",
+                            "n=245", 
+                            "n=120",
+                            "n=60",
+                            "n=30",
+                            "n=15")) +
+  theme_bw() +
+  theme(plot.margin=unit(c(1.5,3,1.5,3),"mm"),
+        panel.grid.major.y = element_blank(),
+        panel.grid.major.x = element_line( size=0.6),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        text = element_text(size = 14),
+        axis.text.y=element_text(size = 14, colour='black'),
+        axis.title.y=element_text(size = 16),
+        axis.text.x=element_blank(),
+        panel.border = element_rect(linetype="solid", colour = "black", fill=NA, size=1.5))
+
+rf_plot <- ggplot(rf_performance, aes(x = model_number, y = AUC)) +
+  geom_boxplot(alpha=0.5, fatten = 4, fill="blue4") +
+  geom_hline(yintercept = 0.5, linetype="dashed") +
+  coord_flip() +
+  scale_y_continuous(name = "",
+                     breaks = seq(0, 1, 0.1),
+                     limits=c(0, 1),
+                     expand=c(0,0)) +
+  scale_x_discrete(name = "Random forest", 
+                   labels=c("n=490",
+                            "n=245", 
+                            "n=120",
+                            "n=60",
+                            "n=30",
+                            "n=15")) +
+  theme_bw() +
+  theme(plot.margin=unit(c(1.5,3,1.5,3),"mm"),
+        panel.grid.major.y = element_blank(),
+        panel.grid.major.x = element_line( size=0.6),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(),
+        text = element_text(size = 14),
+        axis.text.y=element_text(size = 14, colour='black'),
+        axis.title.y=element_text(size = 16),
+        axis.text.x=element_text(size = 14, colour='black'),
+        panel.border = element_rect(linetype="solid", colour = "black", fill=NA, size=1.5))
 
 ######################################################################
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
+
 #combine with cowplot
-linear <- plot_grid(l1_plot, l2_plot, logit_plot, labels = c("A", "B", "C"), align = 'h', ncol = 1)
 
-ggsave("Figure_S3.png", plot = linear, device = 'png', path = 'submission', width = 6, height = 10)
+plots <- plot_grid(logit_plot, rf_plot, labels = c("A", "B"), align = 'v', ncol = 1)
 
+ggdraw(add_sub(plots, "Cross-validation AUROC", vpadding=grid::unit(0,"lines"), y=5, x=0.6, vjust=4.75, size=15))
 
-
-
-
-
+ggsave("Figure_S4.png", plot = last_plot(), device = 'png', path = 'submission', width = 6, height = 9.2)
 

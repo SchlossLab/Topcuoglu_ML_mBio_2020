@@ -255,6 +255,7 @@ get_taxa_info_as_labels <- function(name){
     select(-OTU)
   
   taxa_otus <- inner_join(otus, taxa_info, by="names") %>% 
+    mutate_if(is.character, str_to_upper) %>% 
     mutate(taxa=gsub("(.*);.*","\\1",Taxonomy)) %>% 
     mutate(taxa=gsub("(.*)_.*","\\1",Taxonomy)) %>% 
     mutate(taxa=gsub("(.*);.*","\\1",Taxonomy)) %>% 
