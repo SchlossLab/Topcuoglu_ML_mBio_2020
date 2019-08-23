@@ -314,7 +314,16 @@ predictive performance using the area under the receiver operating
 characteristic curve (AUROC) metric {[}Figure S1 and S2{]}. The AUROC
 ranges from 1.0, where the model perfectly distinguishes between cases
 and controls, to 0.50, where the model's predictions are no different
-from random chance.
+from random chance. To select the best performing hyperparameter, we
+performed a full grid search for hyperparameter settings when training
+our models. Default hyperparameter settings in previously developed ML
+packages in R, Python, and Matlab programming languages are inadequate
+for effective application of classification algorithms and need to be
+optimized for each new dataset used to generate a model. In the example
+of L1-regularized SVM with linear kernel {[}Figure S1{]}, the model
+showed large variability between different regularization coefficients
+(C) and was susceptible to performing poorly if the wrong regularization
+coefficient was assigned to the model by default.
 
 Finally, we trained the full training dataset with the selected
 hyperparameter values and applied the model to the held-out data to
@@ -365,13 +374,17 @@ the risk of over-optimism.
 
 To show the effect of sample size on model generalizability, we compared
 cross-validation AUROC values of L2-regularized logistic regression and
-random forest models when we subsetted our sample size from 490 to 245,
-120, 60, 30 and 15 {[}Figure S4{]}. The range among the cross-validation
-AUROC values within both models at lower sample sizes were much larger
-than when full sample size was used to train and validate the models.
-These results showed that because microbiome data has many features
-(6920 OTUs), it is important to train models using appropriate sample
-sizes to avoid generalizability issues.
+random forest models when we subsetted our original study design with
+490 subjects to 15, 30, 60, 120, and 245 subjects {[}Figure S4{]}. The
+range among the cross-validation AUROC values within both models at
+lower sample sizes were much larger than when the full collection of
+samples was used to train and validate the models. These results showed
+that because the microbiome data had many features (6920 OTUs), it was
+important to train the models using appropriate sample sizes to avoid
+problems with generalizability and over-optimism. Furthermore, it was
+encouraging that even for a small number of samples, the 95\% confidence
+interval included the median AUROC values for the larger subsetted
+datasets.
 
 \textbf{Interpretation of each ML model.} Interpretability is the degree
 to which humans can understand the reasons behind a model prediction
@@ -381,68 +394,70 @@ interpretation becomes crucial for microbiome studies. ML models
 decrease in interpretability as they increase in complexity. In this
 study we used two methods to help interpret our models.
 
-We interpreted the feature importance in the linear models (L1 and
-L2-regularized SVM with linear kernel and L2-regularized logistic
-regression) using the median rank of absolute feature weights of each
-OTU {[}Figure 3{]}. The OTUs that had the largest median rank and drove
-the detection of SRNs across the linear models contained sequences that
-were most similar to members of the Lachnospiraceae (OTU 1239, OTU 742),
-Roseburia (OTU 822, OTU00768), Clostridium (OTU 609), Blautia (OTU 659,
-OTU 12), Faecalibacterium (OTU 15), Gamella (OTU 426) Peptostreptococcus
-(OTU 367) and others {[}Figure 3{]}. Among the highest ranked OTUs
-across these three models, it was encouraging that many OTUs (e.g.~OTU
-822, OTU 1239, OTU 426, OTU 609, OTU 50) were shared among all the
-models.
+First, we interpreted the feature importance of the linear models (L1
+and L2-regularized SVM with linear kernel and L2-regularized logistic
+regression) using the median rank of absolute feature weights for each
+OTU {[}Figure 3{]}. We also reviewed at the signs of feature weights to
+determine whether an OTU is associated with classifying a subject as
+being healthy or having an SRN - negative sign indicated being healthy
+and positive sign indicated having SRN. Among the highest ranked OTUs
+across these three models, it was encouraging that many of the same OTUs
+(e.g.~OTU 50, 426, 609, 822, 1239) were important across all of the
+models. The benefit of this approach is that the results of the analysis
+are based on the trained model parameters and provide information
+regarding the sign and magnitude of the impact of each OTU. However,
+this approach is only possible with linear models.
 
-We interpreted the feature importance in the non-linear models using
-permutation importance. Whereas the absolute feature weights were
-determined from the trained models, here we measured importance using
-the held-out test data. Permutation importance analysis is a posthoc
-explanation of the model where we randomly permuted non-correlated
-features individually and groups of perfectly correlated features across
-the two groups. We then calculated how much the predictive performance
-of the model (i.e testing AUROC values) decreased when each OTU or group
-of OTUs was randomly permuted. We ranked the OTUs based on how much the
-median testing AUROC decreased when it was permuted; the OTU with the
-largest decrease ranked highest. The OTUs that had the largest impact
-and drove the detection of SRNs across the non-linear models contained
-sequences that were most similar to members of the Lachnospiraceae (OTU
-50), Ruminococcaceae (OTU 958, 8, 19), Flavonifractor (OTU 629),
-Howardella (OTU 299), Peptostrepococcus (OTU 367), Clostridium (OTU 58),
-Anaerostipes (OTU 10), Porphyromonas (OTU 110), Coprobacillus (OTU 477),
-Parvimonas (OTU 361), Roseburia (OTU 822) and others {[}Figure 4{]}.
-Among the twenty OTUs with the largest impact across these four models,
-there was only one OTU (OTU 822) that was shared among all of the
-models; however, among the tree-based models, we found three OTUs (OTU
-367, OTU 58 and OTU 110) to be consistently important. Similarly, in the
-random forest and XGBoost models, four of the twenty most important OTUs
-(OTU 361, 2, 477, 12) were shared between the models.
+Second, to analyze non-linear models we interpreted the feature
+importance. Whereas the absolute feature weights were determined from
+the trained models, here we measured importance using the held-out test
+data. Permutation importance analysis is a posthoc explanation of the
+model where we randomly permuted non-correlated features individually
+and groups of perfectly correlated features across the two groups in the
+held-out test data. We then calculated how much the predictive
+performance of the model (i.e testing AUROC values) decreased when each
+OTU or group of OTUs was randomly permuted. We ranked the OTUs based on
+how much the median testing AUROC decreased when it was permuted; the
+OTU with the largest decrease ranked highest {[}Figure 4{]}. Among the
+twenty OTUs with the largest impact for each of these models, there was
+only one OTU (OTU 822) that was shared among all of the models; however,
+we found three OTUs (OTU 58, 110, 367) that were important in each of
+the tree-based models. Similarly, the random forest and XGBoost models,
+shared four of the most important OTUs (OTU 2, 12, 361, 477).
+Permutation analysis results also revealed that with the exception of
+the decision tree model, removal of any individual OTU had a minimal
+impact on model performance. For example, if OTU 367 were permuted
+across the diagnoses from the decision tree model, the median AUROC
+dropped from 0.601 to 0.525. In contrast, if we permuted the same OTU
+from the random forest model, the AUROC only dropped from 0.695 to
+0.6799. Effectively, the complexity of the communities was more fully
+represented in the better performing models(22, 32). At least in this
+case, it was not possible to distinguish between health and disease
+using a single OTU. While permutation analysis allowed us to gauge the
+importance of an OTU, the analysis is post-hoc (i.e.~done using the test
+data) and these results did not allow us to directly interrogate the
+models to know whether an OTU is associated with classifying a subject
+as being healthy or having an SRN.
 
-To highlight the differences between the two interpretation methods, we
-used permutation importance to interpret linear models {[}Figure S3{]}.
-When we analyzed the L1-regularized SVM with linear kernel model using
-permutation importance, the approach picked out 17 out of 20 top OTUs
-(e.g.~OTU 822, OTU 1239, OTU 609) that were deemed important when we
-interpreted the model using feature rankings based on weights {[}Figure
-3{]}. Similarly, L2-regularized SVM and L2-regularized logistic
-regression each identified many OTUs that were selected by both
-interpretation methods, 9 out of 20 and 12 out of 20 respectively.
+To further highlight the differences between the two interpretation
+methods, we used permutation importance to interpret the linear models
+{[}Figure S3{]}. When we analyzed the L1-regularized SVM with linear
+kernel model using feature rankings based on weights {[}Figure 3{]} and
+permutation importance {[}Figure S3{]}, 17 out of the 20 top OTUs
+(e.g.~OTU 609, 822, 1239) were deemed important by both approaches.
+Similarly, for the L2-regularized SVM and L2-regularized logistic
+regression, 9 and 12 OTUs, respectively, were shared among the two
+approaches. These results indicate that both approaches are consistent
+in selecting the most important OTUs.
 
-Interestingly, for the all the models, except the poorly performing
-L1-regularized SVM and decision tree, the variation in the impact of
-these important OTUs was minimal. This supports the findings of others
-that a classification requires numerous OTUs, rather the presence of a
-single or a few of the OTUs (32).
-
-\textbf{The computational efficiency of each ML model.}
-
-We compared the training times of the seven ML models. As expected, the
-training times increased as the complexity of a ML model and the number
-of tuned hyperparameter settings increased and the linear models trained
-faster than non-linear models {[}Figures S1-S2; Figure 5{]}. When we
-subsetted the size of the training dataset, we observed a {[}linear,
-quadratic, etc{]} relationship between the size of the dataset and the
-training time for the random forest model.
+\textbf{The computational efficiency of each ML model.} We compared the
+training times of the seven ML models. As expected, the training times
+increased with the complexity of the model and the number of tuned
+hyperparameter settings. Also, the linear models trained faster than
+non-linear models {[}Figures S1-S2; Figure 5{]}. When we subsetted the
+size of the training dataset, we observed a {[}linear, quadratic, etc{]}
+relationship between the size of the dataset and the training time for
+the random forest model.
 
 \subsection{Discussion}\label{discussion}
 
@@ -452,117 +467,95 @@ method • Linear/non-linear not a bfd • Interpretability tradeoff Point 1
 necessarilty the best model • Good / better / best: Table S1 • ``best''
 has multiple meanings Point 2 • Our paper is concerned with developing
 models to gain greater biological insights into what's going on • Still
-need biological validation and further experimentation Point 3 • These
-models show great opportunity to use microbiome to make diagnoses • We
-talked about classification, but others have used it in microbiome data
-to do regression, mulit-class -- pipeline is the same • Others have used
-this on shotgun metagenomic data and collinearity is expected to be an
-even larger problem since 5000 genes are all correlated with each other
-• Deployment is a different question that requires independent datasets
-to test on; we currently lack decent sized parallel datasets where the
-same type of sequence data and clinical data have been collected • We
-also have a problem with OTU-based approaches Conclusion/Future
-direction • ML is awesome and there's always new methods; our framework
-gives structure to investigators wanting to try these out. We encourage
-reseraches to apply multiple models to their data and report the results
-• Things like neural nets are attractive and hold great promise, but we
-need a ton more data to apply and they are impossible to interpret
+need biological validation and further experimentation
 
-Microbiome studies use ML models, often with a classification task, to
-predict a disease but also to learn which microbes are indicators of
-that disease (2--11). Achieving either of these tasks have far-reaching
-impact on human health, however ML as a tool in microbiome studies is
-still at its infancy. A framework is needed to develop rigorous ML
-models, to identify and overcome potential pitfalls. Previous studies
-generated workflows to allow ML to be widely used by the microbiome
-researchers (20--23). This study sets-up standards for developing and
-evaluating rigorous ML models for microbiome data {[}Table 1{]}.
+Point 3 • These models show great opportunity to use microbiome to make
+diagnoses • We talked about classification, but others have used it in
+microbiome data to do regression, mulit-class -- pipeline is the same •
+Others have used this on shotgun metagenomic data and collinearity is
+expected to be an even larger problem since 5000 genes are all
+correlated with each other • Deployment is a different question that
+requires independent datasets to test on; we currently lack decent sized
+parallel datasets where the same type of sequence data and clinical data
+have been collected • We also have a problem with OTU-based approaches
+Conclusion/Future direction • ML is awesome and there's always new
+methods; our framework gives structure to investigators wanting to try
+these out. We encourage reseraches to apply multiple models to their
+data and report the results • Things like neural nets are attractive and
+hold great promise, but we need a ton more data to apply and they are
+impossible to interpret
 
-We benchmarked seven ML models with different classification algorithms
-to show that a clearly defined ML problem that is based on the goal of
-the microbiome study should inform our model selection. Our results
-showed that if the goal of a study is to learn the ecology behind a
-disease and to identify microbial biomarkers, we can create ML models
-that are inherently interpretable and easily trained without losing
-predictive power. In terms of predictive performance, random forest
-model had the best testing AUROC values compared to the other six
-models. However, the second best model was L2-regularized logistic
-regression with a median AUROC difference of only 0.015 compared to
-random forest. While random forest took 83.2 hours to train,
-L2-regularized logistic regression trained in 12 minutes. In terms of
-interpretability, random forest was a more complex ML model and could
-only be explained using methods such as permutation importance. On the
-other hand, L2-regularized logistic regression was easier to interpret
-by ranking absolute feature weights of the trained model.
+There is a growing awareness that many human diseases and environmental
+processes are not driven by single organism, but are the product of
+multiple bacterial populations. Whereas traditional statistical
+approaches are useful for identifying those cases where a single
+organism can drive a process, ML methods offer the ability to use many
+features of these communities to identify those cases. If it is possible
+to classify communities reliably, then it is hoped that we could
+identify those populations that are responsible for the classification.
+Because application of ML in microbiome studies is still in its infancy,
+we developed a framework to train rigorous, transparent and reproducible
+ML models {[}Table 1{]}.
+
+To test this framework, we benchmarked seven ML models to show that a
+clearly defined ML problem that is based on the goal of the microbiome
+study should inform our model selection. Our results showed that if the
+goal of a study is to learn the ecology behind a disease and to identify
+microbial biomarkers, we can create ML models that are inherently
+interpretable and easily trained without losing predictive power. In
+terms of predictive performance, random forest model had the best
+testing AUROC values compared to the other six models. However, the
+second best model was L2-regularized logistic regression with a median
+AUROC difference of only 0.015 compared to random forest. While random
+forest took 83.2 hours to train, L2-regularized logistic regression
+trained in 12 minutes. In terms of interpretability, random forest was a
+more complex ML model and could only be explained using post-hoc methods
+such as permutation importance. On the other hand, L2-regularized
+logistic regression was easier to interpret by ranking absolute feature
+weights of the trained model.
 
 Even with interpretable models such as L2-regularized logistic
 regression, there are potential pitfalls when it comes to identifying
-biomarkers of a disease. As domain experts, we know that
-human-associated microbial communities have complex correlation
-structures that creates collinearity in the dataset. Collinearity is a
-severe problem and needs to be addressed to reliably interpret ML models
-(33). In this study we used two different methods to interpret our
-linear models; ranking each OTU by (1) their absolute weights in the
-trained models and (2) their impact on the predictive performance based
-on permutation importance. We observed differences in the OTU rankings
-between the two interpretation methods due to collinearity in the
-dataset. To avoid misinterpreting the models, once we identify the most
-important microbes, we should check for their relationships with other
-microbes as well. These relationships will help us generate new
-hypotheses about the ecology of the disease. These hypotheses needs to
-be tested with follow-up experiments to identify the true biomarkers of
-a disease.
+biomarkers of a disease. Human-associated microbial communities have
+complex correlation structures. This can hinder our ability to reliably
+interpret models (33). In this study we used two different
+interpretation methods; ranking each OTU by (1) their absolute weights
+in the trained models and (2) their impact on the predictive performance
+based on permutation importance. The feature weights of correlated OTUs
+are influenced by and dependent on one another, which makes it harder to
+identify the importance of unique OTUs. To avoid misinterpreting the
+models, once we identify highly ranked OTUs, we should check for their
+relationships with other OTUs as well. These relationships will help us
+generate new hypotheses about the ecology of the disease and test with
+follow-up experiments. On the other hand, when we used permutation
+importance, we grouped correlated OTUs to determine their impact as a
+group. In this study, we grouped OTUs that had a perfect correlation
+with each other however, we can reduce the correlation threshold to
+further investigate the relationships among features to identify the
+true underlying factors when making a classification.
 
-In this study, we also established a rigorous ML pipeline to use 16S
-rRNA sequence counts to predict a binary health outcome. First of all,
-we used a held-out test set to illustrate the difference between
-cross-validation and testing AUROC values. When the difference between
-cross-validation and test performance is low, this suggest the models
-are not overfit and that they will perform similar with similar data. In
-all the models, the difference between median cross-validation and
-testing AUROC values did not exceed 0.021 which suggests that these
-models are generalizable and can be used to test similar new data.
-Furthermore, we performed the initial 80\%-20\% random datasplit 100
-times in our ML pipeline. Depending on how the data is split, there is
-the chance of being overoptimistic about the predictive performance of a
-model. We showed that there was variability in AUROC values between
-different random data-splits in each of the models we tested. Our
-results showed that the testing AUROC values varied 0.23 on average
-between different data-splits. The randomization and resampling of the
-initial data-split to create a held-out test set is a crucial step in
-the ML pipeline to develop robust ML models and to report reliable
-performance metrics. Additionally, we performed a full grid search for
-hyperparameter settings when training our ML models. Default
-hyperparameter settings in previously developed ML packages in R,
-Python, and Matlab programming languages are inadequate for effective
-application of classification algorithms and need to be optimized for
-each new dataset used to generate a model. In the example of
-L1-regularized SVM with linear kernel {[}Figure S1{]}, the model showed
-large variability between different regularization coefficients (C) and
-was susceptible to performing poorly if the wrong regularization
-coefficient was assigned to the model by default. And finally, we used
-the AUROC metric in our study to evaluate the predictive performance of
-the ML models. AUROC is always random at the value 0.5 and is a robust
-metric when a dataset is imbalanced.
-
-We used a balanced CRC dataset to develop ML models with a binary
-classification task. We did not evaluate multicategory classification
-methods or regression analyses to predict non-binary outcomes. However,
-the principles highlighted throughout this study {[}Table 1{]} apply to
-all ML modeling tasks with microbiome data. The models we built were
+In this study, we established a pipeline that can be generalized to any
+modeling method that uses 16S rRNA sequence counts to predict a binary
+health outcome. We used a held-out test set and we performed the initial
+80\%-20\% random datasplit to create the held-out test set 100 times in
+our ML pipeline. The models we built with this pipeline were
 generalizable despite the high number of features microbiome datasets
-usually have. The generalization performance of ML models depends on
-sample size. The more complex the model, the more data it will need. Our
-dataset had 490 samples, however microbiome studies that have smaller
-sample sizes would benefit from using less complex models. Our analysis
-was limited to shallow learning methods and did not explore deep
-learning methods such as neural networks. Microbiome datasets often
-suffer from having high dimensionality but low sample sizes which makes
-deep learning models prone to overfitting. There are studies that
-address overcoming these challenges in biomedical datasets (11, 34, 35),
-however sudies that estalish frameworks with microbiome data are
-lacking. This would be an interesting direction for future work in
-microbiome studies.
+usually have.
+
+We used a CRC dataset to develop ML models with a binary classification
+task. We did not evaluate multicategory classification methods or
+regression analyses to predict non-binary outcomes. However, the
+principles highlighted throughout this study {[}Table 2{]} apply to all
+ML modeling tasks with microbiome data. Our analysis was also limited to
+shallow learning methods and did not explore deep learning methods such
+as neural networks. Microbiome datasets often suffer from having high
+dimensionality but low sample sizes which makes deep learning models
+prone to overfitting.
+
+There are studies that address overcoming these challenges in biomedical
+datasets (11, 34, 35), however sudies that estalish frameworks with
+microbiome data are lacking. This would be an interesting direction for
+future work in microbiome studies.
 
 Paragraph about deploying a model.
 
