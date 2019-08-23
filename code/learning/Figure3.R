@@ -46,11 +46,10 @@ plot_feature_ranks <- function(data){
     # Plot from highest median ranked OTU to least (only top 5) and thir ranks that lay between 1-100
     # Rank 1 is the highest rank
     plot <- ggplot(data, aes(reorder(data$key, -data$rank, FUN = median), data$rank)) +
-      geom_point(aes(colour= factor(data$sign)), size=2) + # datapoints lighter color
+      geom_point(aes(colour= factor(data$sign)), size=1.5) + # datapoints lighter color
       scale_color_manual(values=c("#56B4E9","red3", "#999999")) +
       stat_summary(fun.y = function(x) median(x), colour = 'black', geom = "point", size = 3) + # Median darker
-      coord_flip() +
-      scale_y_continuous(limits=c(0, 100)) + # Only keep the first 100 ranks (truncated)
+      coord_flip(ylim=c(0,100)) +
       theme_classic() +
       theme(plot.margin=unit(c(1.5,3,1.5,3),"mm"),
           legend.position="none",
@@ -86,20 +85,19 @@ get_taxa_info_as_labels <- function(data){
     select(-OTU)
 
   taxa_otus <- inner_join(otus, taxa_info, by="key") %>% 
-    mutate_if(is.character, str_to_upper) %>% 
-    #mutate(key=str_replace(key, "0000", " ")) %>% 
-    #mutate(key=str_replace(key, "000", " ")) %>% 
-    #mutate(key=str_replace(key, "00", " ")) %>% 
-    #mutate(key=str_replace(key, "0", " ")) %>% 
+    mutate_if(is.character, str_to_upper) %>%
     mutate(taxa=gsub("(.*);.*","\\1",Taxonomy)) %>% 
     mutate(taxa=gsub("(.*)_.*","\\1",Taxonomy)) %>% 
     mutate(taxa=gsub("(.*);.*","\\1",Taxonomy)) %>% 
     mutate(taxa=gsub(".*;","",taxa)) %>% 
     mutate(taxa=gsub("(.*)_.*","\\1",taxa)) %>% 
+    mutate(taxa=gsub('[0-9]+', '', taxa)) %>% 
     mutate(taxa=str_remove_all(taxa, "[(100)]")) %>% 
     select(key, taxa, imp) %>% 
     unite(key, taxa, key, sep="(") %>% 
-    mutate(key = paste(key,")", sep=""))
+    mutate(key = paste(key,")", sep="")) %>% 
+    mutate(key=paste0(gsub('TU0*', 'TU ', key))) 
+    
     
   return(taxa_otus$key)
 }

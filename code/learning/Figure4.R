@@ -262,9 +262,13 @@ get_taxa_info_as_labels <- function(name){
     mutate(taxa=gsub(".*;","",taxa)) %>% 
     mutate(taxa=gsub("(.*)_.*","\\1",taxa)) %>% 
     mutate(taxa=str_remove_all(taxa, "[(100)]")) %>% 
+    mutate(taxa=gsub('[0-9]+', '', taxa)) %>% 
+    mutate(taxa=gsub('(_).*', '', taxa)) %>% 
     select(names, taxa, imp) %>% 
     unite(names, taxa, names, sep="(") %>% 
-    mutate(names = paste(names, ")", sep=""))
+    arrange(desc(imp)) %>% 
+    mutate(names = paste(names, ")", sep="")) %>% 
+    mutate(names=paste0(gsub('TU0*', 'TU ', names))) 
   
   return(taxa_otus$names)
 }
