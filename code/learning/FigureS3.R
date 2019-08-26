@@ -48,18 +48,12 @@ logit_performance$model_number <- factor(logit_performance$model_number , c("L2_
 
 rf_files <- list.files(path= 'data/process/subsampling', pattern='combined_best_hp_results_Random_Forest_.*', full.names = TRUE)
 
-full_rf <- read_csv("data/process/combined_best_hp_results_Random_Forest.csv") %>%
-  melt_data() %>% 
-  mutate(number="490") %>% 
-  unite_("model_number", c("model","number")) %>% 
-  filter(Performance != "testing") 
+  #filter(Performance != "testing") 
 
 rf_performance <- map_df(rf_files, read_files) %>% 
   melt_data() %>% 
   unite_("model_number", c("model","number")) %>% 
   filter(Performance != "Testing")
-
-rf_performance <- bind_rows(full_rf, rf_performance)
 
 rf_performance$model_number <-  as.factor(rf_performance$model_number)
 
