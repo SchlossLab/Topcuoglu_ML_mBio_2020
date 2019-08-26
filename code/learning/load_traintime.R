@@ -36,3 +36,4 @@ traintime_df <- bind_rows(min_fixed_result) %>%
 
 # Get the sorted mean traintime for each model small to large
 traintime_index <- order(traintime_df$mean_traintime) 
+

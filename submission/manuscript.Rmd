@@ -160,7 +160,7 @@ Second, to analyze non-linear models we interpreted the feature importance. Wher
 
 To further highlight the differences between the two interpretation methods, we used permutation importance to interpret the linear models [Figure S4]. When we analyzed the L1-regularized SVM with linear kernel model using feature rankings based on weights [Figure 3] and permutation importance [Figure S4], 17 out of the 20 top OTUs (e.g. OTU 609, 822, 1239) were deemed important by both approaches. Similarly, for the L2-regularized SVM and L2-regularized logistic regression, 9 and 12 OTUs, respectively, were shared among the two approaches. These results indicate that both approaches are consistent in selecting the most important OTUs.
 
-__The computational efficiency of each ML model.__ We compared the training times of the seven ML models. As expected, the training times increased with the complexity of the model and the number of tuned hyperparameter settings. Also, the linear models trained faster than non-linear models [Figures S1-S2; Figure 5]. When we subsetted the size of the training dataset, we observed a [linear, quadratic, etc] relationship between the size of the dataset and the training time for the random forest model.
+__The computational efficiency of each ML model.__ We compared the training times of the seven ML models. As expected, the training times increased with the complexity of the model and the number of tuned hyperparameter settings. Also, the linear models trained faster than non-linear models [Figures S1-S2; Figure 5]. When we subsetted the size of the training dataset, we observed an exponential relationship between the size of the dataset and the training time for the random forest model [Figure S5].
 
 
 ## Discussion
