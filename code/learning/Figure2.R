@@ -32,7 +32,8 @@ best_performance <- map_df(best_files, read_files) %>%
 performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC), y = AUC, fill = Performance)) +
   geom_boxplot(alpha=0.5, fatten = 4) +
   geom_hline(yintercept = 0.5, linetype="dashed") +
-  scale_fill_manual(values=c("blue4", "springgreen4")) +
+  scale_fill_manual(values=c("blue4", "springgreen4"), 
+                    guide = guide_legend(reverse = TRUE)) +
   coord_flip() +
   scale_y_continuous(name = "AUROC",
                      breaks = seq(0.4, 1, 0.1),

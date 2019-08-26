@@ -20,7 +20,7 @@ melt_data <-  function(data) {
   data_melt <- data %>%
     melt(measure.vars=c('cv_aucs', 'test_aucs')) %>%
     rename(AUC=value) %>%
-    mutate(Performance = case_when(variable == "cv_aucs" ~ 'cross-validation', variable == "test_aucs" ~ 'testing')) %>%
+    mutate(Performance = case_when(variable == "cv_aucs" ~ 'Cross-validation', variable == "test_aucs" ~ 'Testing')) %>%
     group_by(Performance)
   return(data_melt)
 }
