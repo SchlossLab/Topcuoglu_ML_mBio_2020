@@ -45,3 +45,14 @@ difference_model <- data.frame(difference, test_all$model)
 difference_index <- order(abs(difference_model$difference))
 
 
+# Compute what happens when OTU367 is permuted in random forest and decision tree
+
+# These will be the 5 OTUs that have effect the testing AUROC the most when permuted
+DT <- read.delim(paste0("../data/process/Decision_Tree_non_cor_importance.tsv"), header=T, sep='\t') %>%
+  arrange(imp) %>% 
+  filter(names=="Otu00367") 
+
+RF <- read.delim(paste0("../data/process/Random_Forest_non_cor_importance.tsv"), header=T, sep='\t') %>%
+  arrange(imp) %>% 
+  filter(names=="Otu00367") 
+
