@@ -25,7 +25,7 @@ test_all <- all %>%
   select(-variable) %>% 
   group_by(model, Performance) %>% 
   summarise(median_AUC = median(AUC), iqr_AUC = IQR(AUC)) %>% 
-  filter(Performance=="testing") 
+  filter(Performance=="Testing") 
 
 # Get the order index from small to large medianAUC
 performance_index <- order(test_all$median_AUC)
@@ -36,7 +36,7 @@ cv_all <- all %>%
   select(-variable) %>% 
   group_by(model, Performance) %>% 
   summarise(median_AUC = median(AUC), iqr_AUC = IQR(AUC)) %>% 
-  filter(Performance=="cross-validation") 
+  filter(Performance=="Cross-validation") 
 
 # Get the difference between mean cvAUC and testAUC for each model
 difference <- cv_all$median_AUC - test_all$median_AUC[match(cv_all$model, test_all$model)]
