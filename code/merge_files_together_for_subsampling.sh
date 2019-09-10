@@ -35,18 +35,18 @@ DATA=$2
 #   3. all_imp_features_non_cor_results
 #   4. best_hp_results
 #   5. walltime
-
+NUMBER=$3
 # Define the directories we will use in the script
 SEARCH_DIR=data/temp
-FINAL_DIR=data/process
+FINAL_DIR=data/process/subsampling
 
 # 1. Keep the first line of File0 and remove the first line of all the other files (File[0-99]) and
 #		output it to the FINAL_DIR location
-cp $SEARCH_DIR/"$DATA"_"$MODEL"_0.csv $FINAL_DIR/combined_"$DATA"_"$MODEL".csv
+cp $SEARCH_DIR/"$DATA"_"$MODEL"_"$NUMBER"_0.csv $FINAL_DIR/combined_"$DATA"_"$MODEL"_"$NUMBER".csv
 
 #	2. Append the other files to the end, but we want to be sure to ignore the 0 file since we don't
 #		want it printed twice
 #        "tail -n +2" makes tail print lines from 2nd line to the end
 #        "-q" tells it to not print the header with the file name
 #        ">>" adds all the tail stuff from every file to the combined file
-tail -n +2 -q $SEARCH_DIR/"$DATA"_"$MODEL"_{1..99}.csv >> $FINAL_DIR/combined_"$DATA"_"$MODEL".csv
+tail -n +2 -q $SEARCH_DIR/"$DATA"_"$MODEL"_"$NUMBER"_{1..99}.csv >> $FINAL_DIR/combined_"$DATA"_"$MODEL"_"$NUMBER".csv
