@@ -43,8 +43,8 @@ for (dep in deps){
 }
 # Load in needed functions and libraries
 source('code/learning/model_selection.R')
-source('code/learning/model_pipeline.R')
-source('code/learning/generateAUCs.R')
+source('code/learning/model_pipeline_subsampling.R')
+source('code/learning/generateAUCs_subsampling.R')
 source('code/learning/model_interpret.R')
 source('code/learning/permutation_importance.R')
 ######################################################################
