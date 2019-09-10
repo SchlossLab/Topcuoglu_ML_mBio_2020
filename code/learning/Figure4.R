@@ -183,7 +183,7 @@ base_nonlin_plot <-  function(data, name){
   # Plot the figure
   plot <- ggplot() +
     geom_boxplot(data=data_full, aes(fct_reorder(names, -new_auc), new_auc, fill=factor(common_otus)), alpha=0.7) +
-    geom_rect(aes(ymin=lowerq, ymax=upperq, xmin=0, xmax=Inf), fill="grey") +
+    geom_rect(aes(ymin=lowerq, ymax=upperq, xmin=0, xmax=Inf), fill="gray65") +
     geom_boxplot(data=data_full, aes(x=names, y=new_auc, fill=factor(common_otus)), alpha=0.7) +
     scale_fill_manual(values=cols) +
     geom_hline(yintercept = data_base_medians$imp , linetype="dashed") +
@@ -306,10 +306,10 @@ xgboost_plot <- base_nonlin_plot(xgboost, "XGBoost")+
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 #combine with cowplot
-perm_tree_based <- plot_grid(rbf_plot, dt_plot, rf_plot, xgboost_plot, labels = c("A", "B", "C", "D"), cols=2, scale = 0.97, align = "v")
+perm_tree_based <- plot_grid(rbf_plot, dt_plot, rf_plot, xgboost_plot, labels = c("A", "B", "C", "D"), cols=1, scale = 0.97, align = "v")
 ggdraw(add_sub(perm_tree_based, "AUROC with the OTU permuted randomly", size=18, vpadding=grid::unit(0,"lines"), y=5, x=0.6, vjust=4.75))
 
-ggsave("Figure_4.png", plot = last_plot(), device = 'png', path = 'submission', width = 12, height = 8)
+ggsave("Figure_4.png", plot = last_plot(), device = 'png', path = 'submission', width = 7, height = 14)
 
 
 
