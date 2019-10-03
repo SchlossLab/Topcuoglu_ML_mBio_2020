@@ -58,6 +58,24 @@ linear_plots <- fig_data %>%
                               expression(paste(L[2], "-regularized logistic regression"))),
                      breaks=c("L1_Linear_SVM", "L2_Linear_SVM", "L2_Logistic_Regression"),
                      values=c("#00AFBB", "#E7B800", "#FC4E07"))+
+  annotate("point", # best hp for L1 Linear SVM - highest mean cv AUROC
+           x = 0.5, 
+           y = 0.59, 
+           colour = "#00AFBB", 
+           size = 3,
+           shape = 8) +
+  annotate("point", # best hp for L2 Linear SVM - highest mean cv AUROC
+           x = 0.5, 
+           y = 0.71, 
+           colour = "#E7B800", 
+           size = 3,
+           shape = 8) +
+  annotate("point", # best hp for L2 logistic regression - highest mean cv AUROC
+           x = 0.25, 
+           y = 0.71, 
+           colour = "#FC4E07", 
+           size = 3,
+           shape = 8) +
   theme_bw() +
   theme(legend.background = element_rect(linetype="solid", color="black", size=0.5),
         legend.box.margin=margin(c(12,12,12, 12)),

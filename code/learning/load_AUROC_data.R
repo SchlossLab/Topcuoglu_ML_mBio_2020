@@ -44,7 +44,6 @@ difference_model <- data.frame(difference, test_all$model)
 # Get the order index from small to large of the differences
 difference_index <- order(abs(difference_model$difference))
 
-
 # Compute what happens when OTU367 is permuted in random forest and decision tree
 
 # These will be the 5 OTUs that have effect the testing AUROC the most when permuted

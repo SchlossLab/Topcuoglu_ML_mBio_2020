@@ -98,6 +98,12 @@ rbf_plot <- ggplot(rbf_data, aes(x = sigma, y = C, fill = mean_AUC)) +
   scale_fill_gradient(name= "SVM RBF mean cvAUROC",
                       low = "#FFFFFF",
                       high = "#012345") +
+  annotate("point", # best hp for rbf svm - highest mean cv AUROC
+           x = 0.000001, 
+           y = 0.01, 
+           colour = "#FC4E07", 
+           size = 3,
+           shape = 8) +
   #coord_fixed(ratio = 0.5) +
   #coord_equal() +
   scale_y_log10(name="regularization penalty 
@@ -133,6 +139,12 @@ xgboost_plot <- ggplot(xgboost_data, aes(x = eta, y = subsample, fill = mean_AUC
   scale_fill_gradient(name= "XGBoost mean cvAUROC",
                       low = "#FFFFFF",
                       high = "#012345") +
+  annotate("point", # best hp for xgboost - highest mean cv AUROC
+           x = 0.01, 
+           y = 0.5, 
+           colour = "#FC4E07", 
+           size = 3,
+           shape = 8) +
   scale_y_continuous(name="ratio of the training data
 (subsample)",
     breaks = c(0.4, 0.5, 0.6, 0.7),
