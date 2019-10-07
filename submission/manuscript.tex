@@ -128,7 +128,7 @@ Begüm D. Topçuoğlu\({^1}\), Nicholas A. Lesniak\({^1}\), Mack
 Ruffin\({^3}\), Jenna Wiens\({^2}\), Patrick D.
 Schloss\textsuperscript{1\(\dagger\)}
 
-\vspace{40mm}
+\vspace{38mm}
 
 \(\dagger\) To whom correspondence should be addressed:
 \href{mailto:pschloss@umich.edu}{\nolinkurl{pschloss@umich.edu}}
@@ -197,7 +197,7 @@ outcomes but can also be applied to environmental microbiology studies.
 As the number of people represented in human microbiome datasets grow,
 there is an increasing desire to use microbiome data to diagnose
 diseases. However, the structure of the human microbiome is remarkably
-variable AMONG individuals to the point where it is often difficult to
+variable among individuals to the point where it is often difficult to
 identify the bacterial populations that are associated with diseases
 using traditional statistical models. This variation is likely due to
 the ability of many bacterial populations to fill the same niche such
@@ -336,9 +336,9 @@ model performance {[}Figure 1{]}.
 \textbf{Predictive performance and generalizability of the seven
 models.} We evaluated the predictive performance of the seven models to
 classify individuals as having normal colons or SRNs {[}Figure 2{]}. The
-random forest model had significantly higher test AUROC values than the
-other models for detecting SRNs (Wilcoxon rank sum test, p \textless{}
-0.01). The median AUROC of the random forest model was 0.695 (IQR
+random forest model had higher test AUROC values than the other models
+for detecting SRNs (Resampling test from two groups, p \textless{}
+0.05). The median AUROC of the random forest model was 0.695 (IQR
 0.044). L2-regularized logistic regression, XGBoost, L2-regularized SVM
 with linear and radial basis function kernel AUROC values were not
 significantly different from one another and had median AUROC values of
@@ -348,8 +348,13 @@ tree had significantly lower AUROC values than the other ML models with
 median AUROC of 0.650 (IQR 0.066) and 0.601 (IQR 0.059), respectively
 {[}Figure 2{]}. Interestingly, these results demonstrate that the most
 complex model (XGBoost) did not have the best performance and that the
-most interpretable models (L2-regularized logistic regression and SVM
-with linear kernel) performed nearly as well non-linear models.
+most interpretable models (L2-regularized logistic regression and
+L2-regularized SVM with linear kernel) performed nearly as well
+non-linear models. To support our claim, we investigated the
+distribution of differences between random forest and L2-regularized
+logistic regression AUROC values for each data-split (Figure S3). Our
+results underscored that L2-regularized logistic regression perform
+nearly as well as random forest.
 
 To evaluate the generalizability of each model, we compared the median
 cross-validation AUROC to the median testing AUROC. If the difference
@@ -739,8 +744,15 @@ represent the highest performing hyperparameter setting for the models.
 \newpage
 \includegraphics[height=17.5cm, width=13cm]{Figure_S3.png}
 
-\textbf{Figure S3. Classification performance of ML models across cross
-validation when trained on a subset of th dataset.} (A) L2-regularized
+\textbf{Figure S3. Histogram of AUROC differences between L2-regularized
+logistic regression and random forest for each datasplit.} The
+percentage of dataplits where the difference between random forest and
+L2-regularized logistic regression was higher than or equal to 0 were
+0.75, lower than or equal to 0 were 0.25. \newpage
+\includegraphics[height=17.5cm, width=13cm]{Figure_S4.png}
+
+\textbf{Figure S4. Classification performance of ML models across cross
+validation when trained on a subset of the dataset.} (A) L2-regularized
 logistic regression and (B) Random forest models were trained using the
 original study design with 490 subjects and subsets of it with 15, 30,
 60, 120, and 245 subjects. The range among the cross-validation AUROC
@@ -751,9 +763,9 @@ datasets.
 
 \newpage
 
-\includegraphics[height=17.5cm, width=13cm]{Figure_S4.png}
+\includegraphics[height=17.5cm, width=13cm]{Figure_S5.png}
 
-\textbf{Figure S4. Interpretation of the linear ML models with
+\textbf{Figure S5. Interpretation of the linear ML models with
 permutation importance.} (A) L1-regularized SVM with linear kernel, (B)
 L2-regularized SVM with linear kernel, and (C) L2-regularized logistic
 regression were interpreted using permutation importance using held-out
@@ -761,9 +773,9 @@ test set.
 
 \newpage
 
-\includegraphics[height=17.5cm, width=13cm]{Figure_S5.png}
+\includegraphics[height=17.5cm, width=13cm]{Figure_S6.png}
 
-\textbf{Figure S5. Training times of ML models when dataset is subsetted
+\textbf{Figure S6. Training times of ML models when dataset is subsetted
 .} (A) L2-regularized logistic regression and (B) Random forest models
 were trained using the original study design with 490 subjects and
 subsets of it with 15, 30, 60, 120, and 245 subjects. As the size of the
