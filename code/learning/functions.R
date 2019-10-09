@@ -5,7 +5,7 @@
 # Place to store useful functions that will be used repeatedly throughout
 ######################################################################
 
-deps = c("reshape2", "cowplot", "ggplot2","knitr","rmarkdown","vegan","gtools", "tidyverse");
+deps = c("reshape2", "cowplot", "ggplot2","knitr","rmarkdown","vegan","gtools", "tidyverse", "ggsignif");
 for (dep in deps){
   if (dep %in% installed.packages()[,"Package"] == FALSE){
     install.packages(as.character(dep), quiet=TRUE);
@@ -145,3 +145,32 @@ wilcoxon_test <- function(data, model_name_1, model_name_2){
   wilcox_result <- wilcox.test((data %>% filter(model==model_name_1))$test_aucs, (data %>% filter(model==model_name_2))$test_aucs)
   return(wilcox_result)
 }
+
+
+# subsampling test
+perm_p_value <- function(data, model_name_1, model_name_2){
+  test_subsample <- all %>% 
+    select(-cv_aucs) %>% 
+    filter(model == model_name_1 | model == model_name_2)
+  install.packages("mosaic")
+  library(mosaic)
+  obs <- abs(diff(mosaic::mean(test_aucs ~ model, data = test_subsample)))
+  auc.null <- do(10000) * diff(mosaic::mean(test_aucs ~ shuffle(model), data = test_subsample))
+  n <- length(auc.null[,1])
+  # r = #replications at least as extreme as observed effect
+  r <- sum(abs(auc.null[,1]) >= obs)  
+  # compute Monte Carlo p-value with correction (Davison & Hinkley, 1997)
+  p.value=(r+1)/(n+1)
+ # plot <- ggplot(auc.null, aes(x=auc.null[,1], color=auc.null[,1]>=obs)) + geom_histogram(fill="white", alpha=0.5, position="identity") + scale_color_brewer(palette="Dark2")
+  detach("package:mosaic", unload=TRUE)
+  return(p.value)
+}
+
+# Find median and IQRs for each AUROC datasplit for each model
+median_iqr <- function(data, model_name){
+  median <- format(round(median((data %>% filter(model==model_name))$test_aucs), 3), nsmall=3)
+  min_iqr <- format(round(rf_median - IQR((data %>% filter(model==model_name))$test_aucs), 3), nsmall=3)
+  max_iqr <- format(round(rf_median + IQR((data %>% filter(model==model_name))$test_aucs), 3), nsmall=3)
+  return(list(median, min_iqr, max_iqr))
+}
+

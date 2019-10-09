@@ -16,8 +16,8 @@ histogram_p_value <- function(data, model_name_1, model_name_2){
   
   plot <- ggplot() + 
     aes(differences) +
-    geom_histogram(aes(y=..density..), colour="black", fill="white", bins=30)+
-    geom_density(alpha=.2, fill="blue") +
+    geom_histogram(aes(y=..density..), colour="black", fill="white", bins=100)+
+    #geom_density(alpha=.2, fill="blue") +
     geom_vline(xintercept = 0, color="red", size=1) +
     geom_hline(yintercept = 0, color="red", size=1) +
     #geom_vline(aes(xintercept=mean(differences)),
@@ -66,18 +66,9 @@ compute.p.value <- function(results, observed.effect, precision=3) {
 #  ggplot() + aes(resampled_diff, color=resampled_diff>=observed_diff) + geom_histogram(fill="white", alpha=0.5, position="identity") + scale_color_brewer(palette="Dark2")
   #}
 
-
+set.seed(101)
 
 plot <- histogram_p_value(all, "L2_Logistic_Regression","Random_Forest")
-set.seed(101)
-#resampling method shows that Random forest is best
-perm_p_value(all, "L2_Logistic_Regression","Random_Forest") # different p=0.00049995
-perm_p_value(all,"XGBoost", "L2_Logistic_Regression") # not different
-perm_p_value(all, "XGBoost", "L2_Linear_SVM") # not different
-perm_p_value(all, "RBF_SVM", "L2_Linear_SVM") # not different
-perm_p_value(all, "L1_Linear_SVM", "RBF_SVM") # different p = 0.00069993
-perm_p_value(all, "Decision_Tree", "RBF_SVM") # different p = 9.999e-05
-perm_p_value(all, "L1_Linear_SVM", "Decision_Tree") # different p =
 
 
 ggsave("Figure_S3.png", plot = plot, device = 'png', path = 'submission', width = 12, height = 9)
