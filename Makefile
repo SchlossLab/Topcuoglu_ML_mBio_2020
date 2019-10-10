@@ -157,7 +157,7 @@ $(TIME_COMB_FILES)\	:	$(BEST_REPS_FILES)\
 						code/cat_csv_files.sh
 	bash code/cat_csv_files.sh
 
-# Take the individual correlated importance files and create feature rankings for each datasplit
+# Take the individual correlated importance files of linear models which have weights of each feature for each datasplit and create feature rankings for each datasplit
 # Then combine each feature ranking into 1 combined file
 DATA=feature_ranking
 
