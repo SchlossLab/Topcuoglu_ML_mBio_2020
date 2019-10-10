@@ -48,13 +48,15 @@ cd DeepLearning
 	
 	* Everything needs to be run from project directory.
 	
-	* We download OTU abundances, colonoscopy diagnosis from Marc's Meta study by running:
+	* We download the dataset (OTU abundances and colonoscopy diagnosis of 490 patients) from *Sze MA, Schloss PD. 2018. Leveraging existing 16S rRNA gene surveys to identify reproducible biomarkers in individuals with colorectal tumors. mBio 9:e00630–18. doi:10.1128/mBio.00630-18* by running:
 	
-		```code/learning/load_datasets.batch``` 
+		```bash code/learning/load_datasets.batch``` 
 	
 	* We update the `caret` package with my modifications by running (Take a look at this script to change the R packages directory where `caret` is installed.):
 	
 		```Rscript code/learning/load_caret_models.R``` 
+		
+	These modifications are in `data/caret_models/svmLinear3.R` and `data/caret_models/svm_Linear4.R`
 	
 3. This ML pipeline is to predict a binary outcome. It is also hard-coded for predicting cancer vs healthy individuals. This feature will be updated to incorporate user-defined outcomes in the future. (Issue #6)
 	
@@ -64,7 +66,7 @@ cd DeepLearning
 	
 		```Rscript code/learning/main.R 1 "L2_Logistic_Regression"```
 	
-		The pipeline accepts 7 different models that can be specified as:
+	The `main.R` function accepts 7 different models that needs to call models as:
 	
 	    	* "L2_Logistic_Regression"
 	     	* "L1_Linear_SVM"
@@ -72,10 +74,16 @@ cd DeepLearning
 	     	* "Decision_Tree"
 	     	* "Random_Forest" 
 	     	* "XGBoost" 
+		
+	So if you want to use a random forest model you'll run
+	
+		``````Rscript code/learning/main.R 1 "Random_Forest"```
 	     
 	 2. `Rscript code/learning/main.R` sources 4 other scripts that are part of the pipeline. 
 	 
 	 	* To choose the model and model hyperparemeters:`source('code/learning/model_selection.R')`
+		
+		Depending on your ML task, the model hyperparameter range to tune will be different. This is hard-coded for our study but will be updated to integrate user-defined range in the future (Issue # 10)
 	 
 	 	* To preprocess and split the dataset 80-20 and to train the model: `source('code/learning/model_pipeline.R')`
 	 
