@@ -94,7 +94,7 @@ get_taxa_info_as_labels <- function(data){
     mutate(taxa=gsub('[0-9]+', '', taxa)) %>% 
     mutate(taxa=str_remove_all(taxa, "[(100)]")) %>% 
     select(key, taxa, imp) %>% 
-    unite(key, taxa, key, sep="(") %>% 
+    unite(key, taxa, key, sep=" (") %>% 
     mutate(key = paste(key,")", sep="")) %>% 
     mutate(key=paste0(gsub('TU0*', 'TU ', key))) 
     
