@@ -77,9 +77,12 @@ cd DeepLearning
 	     	* "Random_Forest" 
 	     	* "XGBoost" 
 		
-	So if you want to use a random forest model you'll run
+	So if you want to use a random forest model you'll run:
 	
-		```Rscript code/learning/main.R 1 "Random_Forest"```
+		
+		```
+		Rscript code/learning/main.R 1 "Random_Forest"
+		```
 	     
 	 2. `Rscript code/learning/main.R` sources 4 other scripts that are part of the pipeline. 
 	 
@@ -113,7 +116,10 @@ cd DeepLearning
 	
 	4. After we run the pipeline 100 times, we will have saved 100 files for AUROC values, 100 files for training times, 100 files for AUROC values for each tuned hyperparameter, 100 files for feature importances of perfectly correlated features, 100 files for feature importances of non-perfectly correlated features. These files will all be saved to `data/temp`. We need to merge these files.
 	
-			```bash cat_csv_files.sh```
+			```
+			bash cat_csv_files.sh
+			```
+			
 	
 			This script will save combined files to `data/process`. 
 	
