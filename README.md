@@ -43,10 +43,18 @@ cd DeepLearning
 2. Our dependencies:
 
 	* R version 3.5.0 
+	
 	* The R packages which needs to be installed in our environment: `caret` ,`rpart`, `xgboost`, `randomForest`, `kernlab`,`LiblineaR`, `pROC`, `tidyverse`, `cowplot`, `ggplot2`, `vegan`,`gtools`, `reshape2`. 
+	
 	* Everything needs to be run from project directory.
-	* We download OTU abundances, colonoscopy diagnosis from Marc's Meta study using the script ```code/learning/load_datasets.batch``` (which is included in the Makefile).
-	* We update the `caret` package with my modifications using the script ```code/learning/load_caret_models.R``` . Take a look at this script to change the R packages directory where `caret` is installed. 
+	
+	* We download OTU abundances, colonoscopy diagnosis from Marc's Meta study using the script:
+	
+	```code/learning/load_datasets.batch``` (which is included in the Makefile)
+	
+	* We update the `caret` package with my modifications using the script:
+	
+	```Rscript code/learning/load_caret_models.R``` . (Take a look at this script to change the R packages directory where `caret` is installed.)
 	
 3. This ML pipeline is to predict a binary outcome. It is also hard-coded for predicting cancer vs healthy individuals. This feature will be updated to incorporate user-defined outcomes in the future. (Issue #6)
 	
@@ -58,7 +66,7 @@ cd DeepLearning
 	
 		The pipeline accepts 7 different models that can be specified as:
 	
-	    	 * "L2_Logistic_Regression"
+	    	* "L2_Logistic_Regression"
 	     	* "L1_Linear_SVM"
 	     	* "RBF_SVM"
 	     	* "Decision_Tree"
