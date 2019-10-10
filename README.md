@@ -48,13 +48,13 @@ cd DeepLearning
 	
 	* Everything needs to be run from project directory.
 	
-	* We download OTU abundances, colonoscopy diagnosis from Marc's Meta study using the script:
+	* We download OTU abundances, colonoscopy diagnosis from Marc's Meta study by running:
 	
-	```code/learning/load_datasets.batch``` (which is included in the Makefile)
+		```code/learning/load_datasets.batch``` 
 	
-	* We update the `caret` package with my modifications using the script:
+	* We update the `caret` package with my modifications by running (Take a look at this script to change the R packages directory where `caret` is installed.):
 	
-	```Rscript code/learning/load_caret_models.R``` . (Take a look at this script to change the R packages directory where `caret` is installed.)
+		```Rscript code/learning/load_caret_models.R``` 
 	
 3. This ML pipeline is to predict a binary outcome. It is also hard-coded for predicting cancer vs healthy individuals. This feature will be updated to incorporate user-defined outcomes in the future. (Issue #6)
 	
