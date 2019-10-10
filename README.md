@@ -82,11 +82,7 @@ cd DeepLearning
 		
 	`Rscript code/learning/main.R 1 "Random_Forest"`
 	
-	`code/learning/main.R` is an R script that:
-		(i) prepares the data to plug into the ML pipeline 
-		(ii) uses the 1st argument to set a seed,  
-		(iii) uses the 2nd argument to start running the pipeline with the model type (`get_results` function is called for this) 
-		(iv) keep track of walltime
+	`code/learning/main.R` is an R script that (i) prepares the data to plug into the ML pipeline, (ii) uses the 1st argument to set a seed,(iii) uses the 2nd argument to start running the pipeline with the model type (`get_results` function is called for this) and (iv) keep track of walltime.
 	     
 	 2. `Rscript code/learning/main.R` sources 4 other scripts that are part of the pipeline. 
 	 
