@@ -31,7 +31,7 @@
 
 ### How to regenerate this repository in R
 
-Before you start, please take a look at the `Makefile` for more information about the workflow.
+Before you start, please take a look at the `Makefile` for more information about the workflow. Please also read the `submission/manuscript.pdf` to get a more detailed look on what we achieve with this ML pipeline.
 
 1. Clone the Github Repository and change directory to the project directory. 
 
@@ -48,7 +48,7 @@ cd DeepLearning
 	
 	* Everything needs to be run from project directory.
 	
-	* We download the dataset (OTU abundances and colonoscopy diagnosis of 490 patients) from *Sze MA, Schloss PD. 2018. Leveraging existing 16S rRNA gene surveys to identify reproducible biomarkers in individuals with colorectal tumors. mBio 9:e00630–18. doi:10.1128/mBio.00630-18* by running:
+	* We need to download 2 datasets (OTU abundances and colonoscopy diagnosis of 490 patients) from *Sze MA, Schloss PD. 2018. Leveraging existing 16S rRNA gene surveys to identify reproducible biomarkers in individuals with colorectal tumors. mBio 9:e00630–18. doi:10.1128/mBio.00630-18* by running:
 	
 		```bash code/learning/load_datasets.batch``` 
 	
@@ -81,6 +81,12 @@ cd DeepLearning
 	
 		
 	`Rscript code/learning/main.R 1 "Random_Forest"`
+	
+	`code/learning/main.R` is an R script that:
+		(i) prepares the data to plug into the ML pipeline 
+		(ii) uses the 1st argument to set a seed,  
+		(iii) uses the 2nd argument to start running the pipeline with the model type (`get_results` function is called for this) 
+		(iv) keep track of walltime
 	     
 	 2. `Rscript code/learning/main.R` sources 4 other scripts that are part of the pipeline. 
 	 
