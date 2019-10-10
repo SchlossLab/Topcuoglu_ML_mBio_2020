@@ -82,10 +82,12 @@ cd DeepLearning
 			```Rscript code/learning/main.R 2 "L2_Logistic_Regression"```
 	
 			```Rscript code/learning/main.R 3 "L2_Logistic_Regression"```
+			
 						`...`
+						
 			```Rscript code/learning/main.R 100 "L2_Logistic_Regression"```
 	
-		However, this is time-consuming and not DRY.
+			However, this is time-consuming and not DRY.
 	
 		2. We can run it paralellized for each datasplit (seed). We do this in our HPC by submitting an array job where the seed is automatically assigned [0-100] and each script is submitted at the same time - an example is present in the `L2_Logistic_Regression.pbs` script. You can also follow how this is done in our `Makefile`.
 	
