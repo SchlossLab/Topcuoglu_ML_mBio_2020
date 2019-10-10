@@ -43,8 +43,51 @@ cd DeepLearning
 	* R version 3.5.0 
 	* The R packages which needs to be installed in our environment: `caret` ,`rpart`, `xgboost`, `randomForest`, `kernlab`,`LiblineaR`, `pROC`, `tidyverse`, `cowplot`, `ggplot2`, `vegan`,`gtools`, `reshape2`. 
 	* Everything needs to be run from project directory.
-	* We get the OTU abundances, FIT results and Colonoscopy diagnosis from Marc's Meta study using the script ```code/learning/load_datasets.batch``` (which is included in the Makefile).
+	* We download OTU abundances, colonoscopy diagnosis from Marc's Meta study using the script ```code/learning/load_datasets.batch``` (which is included in the Makefile).
 	* We update the `caret` package with my modifications using the script ```code/learning/load_caret_models.R``` . Take a look at this script to change the R packages directory where `caret` is installed. 
+	
+3. This ML pipeline is to predict a binary outcome. It is also hard-coded for predicting cancer vs healthy individuals. This feature will be updated to incorporate user-defined outcomes in the future. (Issue #6)
+	
+3. Examples of how to run ML pipeline:
+
+	* Run the ML pipeline once (using seed=1) using L2-regularized logistic regression. Using a different seed will result in the dataset to be split to 80-20 differently. So different seeds will give slighly different results.
+	
+	```Rscript code/learning/main.R 1 "L2_Logistic_Regression"```
+	
+	The pipeline accepts 7 different models that can be specified as:
+	     - "L2_Logistic_Regression"
+	     - "L1_Linear_SVM"
+	     - "RBF_SVM"
+	     - "Decision_Tree"
+	     - "Random_Forest" 
+	     - "XGBoost" 
+	     
+	 * `Rscript code/learning/main.R` sources 4 other scripts that are part of the pipeline. 
+	 
+	 1. To choose the model and model hyperparemeters:`source('code/learning/model_selection.R')`
+	 2. To preprocess and split the dataset 80-20 and to train the model: `source('code/learning/model_pipeline.R')`
+	 3. To save the results of each model for each datasplit: `source('code/learning/generateAUCs.R')`
+	 4. To interpret the models: `source('code/learning/permutation_importance.R')`
+	
+	* We want to run the pipeline 100 times with different seeds so that we can evaluate variability in modeling results. We can do this in many different ways. 
+	
+	1. Run the scripts one by one with different seeds:
+	```Rscript code/learning/main.R 1 "L2_Logistic_Regression"```
+	```Rscript code/learning/main.R 2 "L2_Logistic_Regression"```
+	```Rscript code/learning/main.R 3 "L2_Logistic_Regression"```
+				`...`
+	```Rscript code/learning/main.R 100 "L2_Logistic_Regression"```
+	However, this is time-consuming and not DRY.
+	
+	2. We can run it paralellized for each datasplit (seed). We do this in our HPC by submitting an array job where the seed is automatically assigned [0-100] and each script is submitted at the same time - an example is present in the `L2_Logistic_Regression.pbs` script. You can also follow how this is done in our `Makefile`.
+	
+	3. After we run the pipeline 100 times, we will have saved 100 files for AUROC values, 100 files for training times, 100 files for AUROC values for each tuned hyperparameter, 100 files for feature importances of perfectly correlated features, 100 files for feature importances of non-perfectly correlated features. These files will all be saved to `data/temp`. We need to merge these files.
+	
+	```bash cat_csv_files.sh```
+	
+	This script will save combined files to `data/process`. 
+	
+	
 
 ### How to regenerate this repository in python (in progress)
 
