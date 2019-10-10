@@ -5,7 +5,7 @@
 ######################################################################
 
 ######################################################################
-# Description: 
+# Description:
 
 # This script will read in data from Baxter et al. 2016
 #     - 0.03 subsampled OTU dataset
@@ -13,21 +13,21 @@
 
 
 # It will run the following machine learning pipelines:
-#     - L2 Logistic Regression 
+#     - L2 Logistic Regression
 #     - L1 and L2 Linear SVM
 #     - RBF SVM
 #     - Decision Tree
-#     - Random Forest 
-#     - XGBoost 
+#     - Random Forest
+#     - XGBoost
 ######################################################################
 
 ######################################################################
-# Dependencies and Outputs: 
+# Dependencies and Outputs:
 
 # Be in the project directory.
 
 # The outputs are:
-#   (1) AUC values for cross-validation and testing for each data-split 
+#   (1) AUC values for cross-validation and testing for each data-split
 #   (2) meanAUC values for each hyper-parameter tested during each split.
 ######################################################################
 
@@ -45,13 +45,12 @@ for (dep in deps){
 source('code/learning/model_selection.R')
 source('code/learning/model_pipeline.R')
 source('code/learning/generateAUCs.R')
-source('code/learning/model_interpret.R')
 source('code/learning/permutation_importance.R')
 ######################################################################
 
 ######################## DATA PREPARATION #############################
-# Features: Hemoglobin levels(FIT) and 16S rRNA gene sequences(OTUs) in the stool 
-# Labels: - Colorectal lesions of 490 patients. 
+# Features: Hemoglobin levels(FIT) and 16S rRNA gene sequences(OTUs) in the stool
+# Labels: - Colorectal lesions of 490 patients.
 #         - Defined as cancer or not.(Cancer here means: SRN)
 #                                     SRNs are adv adenomas+carcinomas
 
@@ -83,11 +82,11 @@ data <- data[sample(1:nrow(data)), ]
 
 ######################## RUN PIPELINE #############################
 # Choose which classification methods we want to run on command line
-#                "L2_Logistic_Regression", 
-#                "L1_Linear_SVM", 
+#                "L2_Logistic_Regression",
+#                "L1_Linear_SVM",
 #                "L2_Linear_SVM",
-#                "RBF_SVM", 
-#                "Decision_Tree", 
+#                "RBF_SVM",
+#                "Decision_Tree",
 #                "Random_Forest",
 #                "XGBoost"
 
@@ -96,7 +95,7 @@ data <- data[sample(1:nrow(data)), ]
 #  - First argument is the seed number which is the array index
 #  - Second argument is the model name (one of the list above)
 
-input <- commandArgs(trailingOnly=TRUE) 
+input <- commandArgs(trailingOnly=TRUE)
 seed <- as.numeric(input[1])
 model <- input[2]
 
@@ -117,7 +116,3 @@ walltime <- secs$toc-secs$tic
 # Save wall-time
 write.csv(walltime, file=paste0("data/temp/walltime_", model, "_", seed, ".csv"), row.names=F)
 ###################################################################
-
-
-
-

@@ -130,18 +130,17 @@ pipeline <- function(dataset, model, split_number){
   # ---------------------------------------------------------------------------------->
 
   # -------------------------- Feature importances ----------------------------------->
-  #   Output the weights of features of linear models
-  #   Output the feature importances based on random permutation for non-linear models
-  # Here we look at the top 10 important features
+  #   if linear: Output the weights of features of linear models
+  #   else: Output the feature importances based on random permutation for non-linear models
+  # Here we look at the top 20 important features
   if(model=="L1_Linear_SVM" || model=="L2_Linear_SVM" || model=="L2_Logistic_Regression"){
     # We will use the permutation_importance function here to:
     #     1. Predict held-out test-data
     #     2. Calculate ROC and AUROC values on this prediction
     #     3. Get the feature importances for correlated and uncorrelated feautures
     roc_results <- permutation_importance(trained_model, testTransformed)
-    test_auc <- roc_results[[1]]
-    # Predict the test importance
-    feature_importance_non_cor <- roc_results[2]
+    test_auc <- roc_results[[1]]  # Predict the base test importance
+    feature_importance_non_cor <- roc_results[2] # save permutation results
     # Get feature weights
     feature_importance_cor <- trained_model$finalModel$W
   }
@@ -151,10 +150,9 @@ pipeline <- function(dataset, model, split_number){
     #     2. Calculate ROC and AUROC values on this prediction
     #     3. Get the feature importances for correlated and uncorrelated feautures
     roc_results <- permutation_importance(trained_model, testTransformed)
-    test_auc <- roc_results[[1]]
-    # Predict the test importance
-    feature_importance_non_cor <- roc_results[2]
-    feature_importance_cor <- roc_results[3]
+    test_auc <- roc_results[[1]] # Predict the base test importance
+    feature_importance_non_cor <- roc_results[2] # save permutation results of non-cor
+    feature_importance_cor <- roc_results[3] # save permutation results of cor
   }
   # ---------------------------------------------------------------------------------->
 

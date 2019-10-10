@@ -69,30 +69,30 @@ get_interp_info <- function(data, model_name){
     #         The ranks based on absolute weights are in 1 column(for each of the datasplits)
  	#		  The weight value is on another column
   #     The sign of the weight is on another column
- 	# We want to use/plot only the top 5 highest ranked OTUs
- 	# Initial step is to get which are the highest 5 ranked OTUs by looking at their median rank
+ 	# We want to use/plot only the top 20 highest ranked OTUs
+ 	# Initial step is to get which are the highest 20 ranked OTUs by looking at their median rank
     # 1. We group by OTU name to make sure we are taking all the data-splits into account
-    imp_first_5 <- data %>%
+    imp_first_20 <- data %>%
       # 2. Group by the OTU name and compute median rank for each OTU
       group_by(key) %>%
       summarise(median_rank = median(rank)) %>%
       # 3. Arrange from highest ranked 1, descending
       arrange(median_rank) %>%
-      # 4. Grab only the highest ranked 5
+      # 4. Grab only the highest ranked 20
       head(n=20) %>%
       select(key, median_rank)
 
-    # Here we want to only grab the data (rank info from 100 datasplits) of only the top 5 median ranked OTUs
-    # The imp data will be returned for Figure 3 where we plot each rank info for each data-split of the 5 top OTUs
+    # Here we want to only grab the data (rank info from 100 datasplits) of only the top 20 median ranked OTUs
+    # The imp data will be returned for Figure 3 where we plot each rank info for each data-split of the 20 top OTUs
     imp <- data %>%
-      filter(key %in% imp_first_5$key) %>%
+      filter(key %in% imp_first_20$key) %>%
       group_by(key)
 
 
 
   }
-  # If we want to calculate the permutation importance results for interpretation 
-  # Then we use the files without the weight information but the permutation results
+  # If we want to calculate the permutation importance results for interpretation
+  # Then we use the files without the weight information but with permutation results
   else{
     if("names" %in% colnames(data)){ # If the file has non-correlated OTUs
       non_correlated_data <- data %>%
@@ -119,7 +119,7 @@ get_interp_info <- function(data, model_name){
       #       We will also have all the OTU names in the group in the same row.
       imp <- correlated_data %>%
         arrange(imp) %>%
-        head(5) %>% 
+        head(5) %>%
         inner_join(data, by="X1") %>% # Add all the other OTUs in the group back to the data
         select(-new_auc, -model)
     }
@@ -149,8 +149,8 @@ wilcoxon_test <- function(data, model_name_1, model_name_2){
 
 # subsampling test
 perm_p_value <- function(data, model_name_1, model_name_2){
-  test_subsample <- all %>% 
-    select(-cv_aucs) %>% 
+  test_subsample <- all %>%
+    select(-cv_aucs) %>%
     filter(model == model_name_1 | model == model_name_2)
   install.packages("mosaic")
   library(mosaic)
@@ -158,7 +158,7 @@ perm_p_value <- function(data, model_name_1, model_name_2){
   auc.null <- do(10000) * diff(mosaic::mean(test_aucs ~ shuffle(model), data = test_subsample))
   n <- length(auc.null[,1])
   # r = #replications at least as extreme as observed effect
-  r <- sum(abs(auc.null[,1]) >= obs)  
+  r <- sum(abs(auc.null[,1]) >= obs)
   # compute Monte Carlo p-value with correction (Davison & Hinkley, 1997)
   p.value=(r+1)/(n+1)
  # plot <- ggplot(auc.null, aes(x=auc.null[,1], color=auc.null[,1]>=obs)) + geom_histogram(fill="white", alpha=0.5, position="identity") + scale_color_brewer(palette="Dark2")
@@ -173,4 +173,3 @@ median_iqr <- function(data, model_name){
   max_iqr <- format(round(rf_median + IQR((data %>% filter(model==model_name))$test_aucs), 3), nsmall=3)
   return(list(median, min_iqr, max_iqr))
 }
-
