@@ -50,7 +50,7 @@ cd DeepLearning
 	
 4. Examples of how to run ML pipeline:
 
-	1. Run the ML pipeline once (using seed=1) using L2-regularized logistic regression: (Using a different seed will result in the dataset to be split to 80-20 differently. So different seeds will give slighly different results.)
+	1. Run the ML pipeline once (using seed=1) using L2-regularized logistic regression: (Using a different seed will result in the dataset to be split to 80 training set - 20 testing set differently. Different seeds will give slightly different results.)
 	
 		```Rscript code/learning/main.R 1 "L2_Logistic_Regression"```
 	
@@ -87,7 +87,7 @@ cd DeepLearning
 						
 			```Rscript code/learning/main.R 100 "L2_Logistic_Regression"```
 	
-			However, this is time-consuming and not DRY.
+				However, this is time-consuming and not DRY.
 	
 		2. We can run it paralellized for each datasplit (seed). We do this in our HPC by submitting an array job where the seed is automatically assigned [0-100] and each script is submitted at the same time - an example is present in the `L2_Logistic_Regression.pbs` script. You can also follow how this is done in our `Makefile`.
 	
@@ -95,7 +95,7 @@ cd DeepLearning
 	
 			```bash cat_csv_files.sh```
 	
-	This script will save combined files to `data/process`. 
+			This script will save combined files to `data/process`. 
 	
 	
 
