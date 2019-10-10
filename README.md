@@ -77,7 +77,7 @@ cd DeepLearning
 		
 	So if you want to use a random forest model you'll run
 	
-		``````Rscript code/learning/main.R 1 "Random_Forest"```
+		```Rscript code/learning/main.R 1 "Random_Forest"```
 	     
 	 2. `Rscript code/learning/main.R` sources 4 other scripts that are part of the pipeline. 
 	 
