@@ -64,7 +64,9 @@ cd DeepLearning
 
 	1. Run the ML pipeline once (using seed=1) using L2-regularized logistic regression: (Using a different seed will result in the dataset to be split to 80 training set - 20 testing set differently. Different seeds will give slightly different results.)
 	
-		```Rscript code/learning/main.R 1 "L2_Logistic_Regression"```
+		```
+		Rscript code/learning/main.R 1 "L2_Logistic_Regression"
+		```
 	
 	The `main.R` function accepts 7 different models that needs to call models as:
 	
