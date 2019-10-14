@@ -57,12 +57,9 @@ performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC), y = AUC
                             "XGBoost",
                             expression(paste(L[2], "-regularized logistic regression")),
                             "Random forest")) + 
-  geom_signif(comparisons=list(c("Random_Forest", "L2_Logistic_Regression")), annotations="",
-              y_position = 0.85, tip_length = 0.02, vjust=0.3) +
-  annotate("text", x= 6.5, y= 0.9, size=4, label = paste0("P = ", round(rf_logit, 5))) + 
-  geom_signif(comparisons=list(c("RBF_SVM", "L2_Logistic_Regression")), annotations="",
+  geom_signif(comparisons=list(c("RBF_SVM", "Random_Forest")), annotations="",
               y_position = 0.83, tip_length = 0.02, vjust=0.3) +
-  annotate("text", x= 4.5, y= 0.85, size=4, label = paste0("N.S.")) + 
+  annotate("text", x= 5, y= 0.85, size=4, label = paste0("N.S.")) + 
   theme_bw() +
   theme(plot.margin=unit(c(1.1,1.1,1.1,1.1),"cm"),
         legend.justification=c(1,0),

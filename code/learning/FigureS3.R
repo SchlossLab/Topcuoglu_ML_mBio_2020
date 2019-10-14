@@ -16,24 +16,23 @@ histogram_p_value <- function(data, model_name_1, model_name_2){
   
   plot <- ggplot() + 
     aes(differences) +
-    geom_histogram(aes(y=..density..), colour="black", fill="white", bins=100)+
+    geom_histogram(colour="black", fill="white", bins=100)+
     #geom_density(alpha=.2, fill="blue") +
     geom_vline(xintercept = 0, color="red", size=1) +
-    geom_hline(yintercept = 0, color="red", size=1) +
     #geom_vline(aes(xintercept=mean(differences)),
     #           color="blue", linetype="dashed") + 
-    coord_cartesian(xlim=c(-0.2,0.2)) +
+    coord_cartesian(xlim=c(-0.2,0.2), ylim=c(0,8)) +
     scale_x_continuous(name= "The difference between random forest and L2-regularized
     logistic regression AUROC values of each datasplit") +
-    scale_y_continuous(expand=c(0,0)) +
-    theme(axis.line = element_blank(),
-          panel.background = element_blank(),
-          axis.text.y = element_blank(),
-          axis.title.y = element_blank(),
-          axis.ticks.y = element_blank(), 
-          axis.text.x=element_text(size = 20, colour='black'),
-          axis.title.x=element_text(size = 24, colour='black')) +
-    annotate("text", x= 0.15, y= 10, size=10, label = paste0("p-value = ", p_value))
+    scale_y_continuous(name="Number of datasplits",
+                       breaks = seq(0, 8, 1),
+                       expand=c(0,0)) +
+    theme(panel.background = element_blank(),
+          axis.text.x=element_text(size = 18, colour='black'),
+          axis.title.x=element_text(size = 20, colour='black'),
+          axis.text.y=element_text(size = 18, colour='black'),
+          axis.title.y=element_text(size = 20, colour='black')) +
+    annotate("text", x= 0.15, y= 6, size=6, label = paste0("p-value = ", p_value))
   
   return(plot)
 }
