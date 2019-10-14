@@ -265,7 +265,7 @@ get_taxa_info_as_labels <- function(name){
     mutate(taxa=gsub('[0-9]+', '', taxa)) %>%
     mutate(taxa=gsub('(_).*', '', taxa)) %>%
     select(names, taxa, imp) %>%
-    unite(names, taxa, names, sep="(") %>%
+    unite(names, taxa, names, sep=" (") %>%
     arrange(desc(imp)) %>%
     mutate(names = paste(names, ")", sep="")) %>%
     mutate(names=paste0(gsub('TU0*', 'TU ', names)))

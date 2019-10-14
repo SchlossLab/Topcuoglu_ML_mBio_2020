@@ -43,8 +43,8 @@ for (dep in deps){
 }
 # Load in needed functions and libraries
 source('code/learning/model_selection.R')
-source('code/learning/model_pipeline.R')
-source('code/learning/generateAUCs.R')
+source('code/learning/model_pipeline.R') # has pipeline function defined here (called within generate.AUCs.R)
+source('code/learning/generateAUCs.R') # has get_results function defined here
 source('code/learning/permutation_importance.R')
 ######################################################################
 

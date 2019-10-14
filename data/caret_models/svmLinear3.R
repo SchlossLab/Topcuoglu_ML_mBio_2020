@@ -1,3 +1,4 @@
+# Edited by Begum Topcuoglu
 modelInfo <- list(label = "L2 Regularized Support Vector Machine (dual) with Linear Kernel",
                   library = "LiblineaR",
                   type = c("Regression", "Classification"),
@@ -38,7 +39,7 @@ modelInfo <- list(label = "L2 Regularized Support Vector Machine (dual) with Lin
                     predict(modelFit, newdata)$predictions
                   },
                   prob = function(modelFit, newdata, submodels = NULL){
-                    predict(modelFit, newdata, decisionValues = TRUE)$decisionValues
+                    predict(modelFit, newdata, decisionValues = TRUE)$decisionValues #Begum's edits
                   },
                   predictors = function(x, ...) {
                     out <- colnames(x$W)

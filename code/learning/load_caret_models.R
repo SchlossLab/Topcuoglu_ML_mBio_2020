@@ -2,6 +2,7 @@
 # Download all models file from caret package
 # We will parse, create and save models.RData here:
 # ls Library/Frameworks/R.framework/Versions/3.5/Resources/library/caret/models/
+# This directory will be different for you. Make sure change the path to where caret is saved. 
 
 setwd("data/caret_models")
 
