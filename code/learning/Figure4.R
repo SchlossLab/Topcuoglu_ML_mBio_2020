@@ -162,13 +162,13 @@ base_nonlin_plot <-  function(data, name){
     # (decreased the most)
     filter(names %in% data_first_20$names) %>%
     # Create a seperate column to show which OTUs are overlapping
-    mutate(common_otus = case_when(names %in% intersect_four ~ "four",
-                                   names %in% intersect_three ~ "three",
-                                   names %in% intersect_rf_dt ~ "rf_dt",
-                                   names %in% intersect_xgboost_dt ~ "xgboost_dt",
-                                   names %in% intersect_xgboost_rf ~ "xgboost_rf",
-                                   names %in% intersect_rbf_xgboost ~ "rbf_xgboost",
-                                   TRUE ~ "diff")) %>%
+    mutate(common_otus = case_when(names %in% intersect_four ~ "all models",
+                                   names %in% intersect_three ~ "tree-based models",
+                                   names %in% intersect_rf_dt ~ "random forest and decision tree",
+                                   names %in% intersect_xgboost_dt ~ "XGBoost and decision tree",
+                                   names %in% intersect_xgboost_rf ~ "XGBoost and random forest",
+                                   names %in% intersect_rbf_xgboost ~ "XGBoost and RBF SVM",
+                                   TRUE ~ "no overlap")) %>%
     group_by(names)
 
   # Plot boxplot for the base test_auc values
@@ -178,7 +178,7 @@ base_nonlin_plot <-  function(data, name){
     data.frame()
 
   # Define colors for overlapping OTUs
-  cols <- c("four" = "orange", "three" = "lightsalmon", "rf_dt" = "lightblue", "xgboost_dt" = "darkseagreen3", "xgboost_rf"="red", "rbf_xgboost" = "hotpink" , "diff"="white")
+  cols <- c("all models" = "orange", "tree-based models" = "lightsalmon", "random forest and decision tree" = "lightblue", "XGBoost and decision tree" = "darkseagreen3", "XGBoost and random forest"="red", "XGBoost and RBF SVM" = "hotpink" , "no overlap"="white")
 
   # Plot the figure
   plot <- ggplot() +
@@ -302,11 +302,26 @@ xgboost_plot <- base_nonlin_plot(xgboost, "XGBoost")+
   theme(axis.text.x=element_text(size = 16, colour='black'))
 # ----------------------------------------------------------------------->
 
+# Extract legend
+legend <- get_legend(xgboost_plot + theme(legend.position="bottom", 
+                                          legend.title = element_blank(),
+                                          legend.direction = "horizontal",
+                                          legend.justification="center",
+                                          legend.box.just = "bottom",
+                                          legend.text=element_text(size=10),
+                                          legend.background = element_rect(linetype="solid", 
+                                                                           color="black", 
+                                                                           size=0.5),
+                                          legend.box.margin=margin(c(12,12,12,12))))
+
 ######################################################################
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 #combine with cowplot
 perm_tree_based <- plot_grid(rbf_plot, dt_plot, rf_plot, xgboost_plot, labels = c("A", "B", "C", "D"), cols=1, scale = 0.97, align = "v")
-ggdraw(add_sub(perm_tree_based, "AUROC with the OTU permuted randomly", size=18, vpadding=grid::unit(0,"lines"), y=5, x=0.6, vjust=4.75))
 
-ggsave("Figure_4.png", plot = last_plot(), device = 'png', path = 'submission', width = 7, height = 14)
+ggdraw(add_sub(perm_tree_based, "AUROC with the OTU permuted randomly", size=18, vpadding=grid::unit(0,"lines"), y=5, x=0.65, vjust=4.75))
+
+plot <- plot_grid(last_plot(), legend, ncol = 1, rel_heights=c(.92, .08))
+
+ggsave("Figure_4.png", plot = last_plot(), device = 'png', path = 'submission', width = 7, height = 15)
