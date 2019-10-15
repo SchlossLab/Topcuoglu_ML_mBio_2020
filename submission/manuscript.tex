@@ -166,14 +166,13 @@ L2-regularized logistic regression, L1 and L2-regularized support vector
 machines (SVM) with linear and radial basis function kernels, decision
 trees, random forest, and gradient boosted trees (XGBoost). The random
 forest model performed best at detecting SRNs with an AUROC of 0.695
-{[}IQR 0.651-0.739{]} but was slow to train (83.2 h) and not immidiately
+{[}IQR 0.651-0.739{]} but was slow to train (83.2 h) and not immediately
 interpretable. Despite its simplicity, L2-regularized logistic
 regression followed random forest in predictive performance with an
-AUROC of 0.680 {[}IQR 0.625-0.735{]}, trained faster (12 min), and
-yielded a model that was inherently interpretable. Our analysis
-highlights the importance of choosing an ML approach based on the goal
-of the study, as the choice will inform expectations of performance and
-interpretability.
+AUROC of 0.680 {[}IQR 0.625-0.735{]}, trained faster (12 min), and was
+inherently interpretable. Our analysis highlights the importance of
+choosing an ML approach based on the goal of the study, as the choice
+will inform expectations of performance and interpretability.
 
 \newpage
 
@@ -208,9 +207,9 @@ is rare for a single bacterial species to be associated with a disease.
 Instead, subsets of the microbiome account for differences in health.
 Traditional statistical approaches do not adequately account for the
 variation in the human microbiome and typically consider the protective
-or risk effects of each bacterial population seperately (1). Recently,
+or risk effects of each bacterial population separately (1). Recently,
 machine learning (ML) models have grown in popularity among microbiome
-researchers as our ability to to sample large numbers of individuals has
+researchers as our ability to sample large numbers of individuals has
 grown; such models can effectively account for the interpersonal
 microbiome variation and the ecology of disease.
 
@@ -415,8 +414,8 @@ analysis is a post hoc explanation of the model, in which we randomly
 permuted groups of perfectly correlated features together and other
 features individually across the two groups in the held-out test data.
 We then calculated how much the predictive performance of the model
-(i.e, testing AUROC values) decreased when each OTU or group of OTUs was
-randomly permuted. We ranked the OTUs based on how much the median
+(i.e., testing AUROC values) decreased when each OTU or group of OTUs
+was randomly permuted. We ranked the OTUs based on how much the median
 testing AUROC decreased when it was permuted; the OTU with the largest
 decrease ranked highest {[}Figure 4{]}. Among the twenty OTUs with the
 largest impact, there was only one OTU (OTU 822) that was shared among
@@ -687,7 +686,7 @@ models using AUROC values of all cross validation and testing
 performances.} The median AUROC for diagnosing individuals with SRN
 using bacterial abundances was higher than chance (depicted by
 horizontal line at 0.50) for all the ML models. The predictive
-performance of random forest model was higher than other ML models,s
+performance of random forest model was higher than other ML models,
 though not significantly (p=0.5). L2-regularized logistic regression,
 XGBoost, L2-regularized SVM with linear and radial basis function kernel
 performances were not significantly different from one another. The
@@ -812,21 +811,21 @@ Random forest & \makecell[l]{A classifier that is an ensembe of decision trees \
 \rowcolor{lightgray}
 \textbf{Practice} & \textbf{Poor} & \textbf{Good} & \textbf{Better} \\ \hline
 
-\makecell[l]{Source \\ of data} & \makecell[l]{Input data are not appropriate \\ for intended application. \\ (e.g. input data can be \\ used for diagnosis \\ but not prognosis)} & \makecell[l]{Data are generated according \\ to study design and appropriate \\ for intended application} & \makecell[l]{Data are available \\ to predict intended \\ outcomes and will be \\ available in the future } \\ \hline
+\makecell[l]{Source \\ of data} & \makecell[l]{Input data are not appropriate \\ for intended application (e.g. input \\ data provided only from \\ patients with carcinomas but \\ model is expected to predict \\ advanced adenomas.)} & \makecell[l]{Input data are generated \\ according to study design and \\ they are appropriate for intended \\ application.} & \makecell[l]{Input data are available \\ to predict intended outcomes \\ and will be available \\ in the future (e.g. same OTU \\ assignments for new fecal \\ samples)} \\ \hline
 
-\makecell[l]{Study \\ cohort} & \makecell[l]{Test data resampled to \\ remove class imbalance} & \makecell[l]{Test data are reflective \\ of the population which \\ the model will eventually \\ be applied to} & \makecell[l]{Model tested on \\ multiple cohorts \\ with different \\ class balances} \\ \hline
+\makecell[l]{Study \\ cohort} & \makecell[l]{Test data resampled to \\ remove class imbalance. \\ (e.g. test data only includes \\ patients with carcinomas but \\ model is trained to predict \\ healthy colons as well.)}  & \makecell[l]{Test data are reflective \\ of the population which \\ the model will eventually \\ be applied to.} & \makecell[l]{Model tested on multiple \\ cohorts with different \\ class balances.} \\ \hline
 
-\makecell[l]{Model \\ selection} & \makecell[l]{No justification for \\ classification method} & \makecell[l]{Model choice is justified \\ for intended application} & \makecell[l]{Different modeling \\ choices tested} \\ \hline
+\makecell[l]{Model \\ selection} & \makecell[l]{No justification for \\ classification method.} & \makecell[l]{Model choice is justified \\ for intended application.} & \makecell[l]{Different modeling \\ choices tested.} \\ \hline
 
-\makecell[l]{Model \\ development} & \makecell[l]{No hyperparameter tuning} & \makecell[l]{Tested across multiple \\ hyperparameter settings} & \makecell[l]{Cross-validation performed \\ on training set \\ with hyperparameter \\ grid search} \\ \hline
+\makecell[l]{Model \\ development} & \makecell[l]{No hyperparameter tuning.} & \makecell[l]{Model is tested across multiple \\ hyperparameter settings.} & \makecell[l]{Hyperparameter grid search \\ performed by cross-validation \\ on the training set.} \\ \hline
 
-\makecell[l]{Model \\ evaluation} & \makecell[l]{Performance reported on the data \\ used to train the model} & \makecell[l]{Performance reported on \\ held-out test data} & \makecell[l]{Performance reported on \\ multiple held-out test data } \\ \hline
+\makecell[l]{Model \\ evaluation} & \makecell[l]{Performance reported on the \\data used to train the model.} & \makecell[l]{Performance reported on \\ held-out test data.} & \makecell[l]{Performance reported on \\ multiple held-out test data.} \\ \hline
 
-\makecell[l]{Evaluation \\ metrics} & \makecell[l]{Reported a single metric that is \\ not appropriate for intended \\ application  (e.g. when predicting \\ rare outcome, accuracy metric is \\ not reliable)} & \makecell[l]{Reported multiple metrics} & \makecell[l]{Reported multiple metrics \\ with confidence intervals} \\ \hline
+\makecell[l]{Evaluation \\ metrics} & \makecell[l]{Reported a single performance \\ metric that is not appropriate for \\ intended application  (e.g. when \\ predicting rare outcome, \\ accuracy metric is not \\ reliable).} & \makecell[l]{Reported a single performance \\ metric that is appropriate \\ for intended application with \\ confidence intervals.} & \makecell[l]{Reported multiple metrics \\ with confidence intervals.} \\ \hline
 
-\makecell[l]{Model \\ interpretation} & \makecell[l]{No model interpretation} & \makecell[l]{Follow-up analyses to \\ determine what is driving \\ model performance} & \makecell[l]{Hypotheses on important \\ features are generated \\ and tested} \\ \hline
+\makecell[l]{Model \\ interpretation} & \makecell[l]{No model interpretation.} & \makecell[l]{Follow-up analyses to \\ determine what is driving \\ model performance.} & \makecell[l]{Hypotheses on important \\ features are generated \\ and tested.} \\ \hline
 
-\makecell[l]{Model \\ specification} & \makecell[l]{Only predictive performance \\ reported} & \makecell[l]{Model described \\ (e.g. feature weights)} & \makecell[l]{How to use the model \\ is explained} \\ \hline
+\makecell[l]{Model \\ specification} & \makecell[l]{Only predictive performance \\ reported.} & \makecell[l]{Model described \\ (e.g. feature weights).} & \makecell[l]{How to use the model \\ is explained.} \\ \hline
 \end{tabular}\newpage
 
 \subsection{References}\label{references}
