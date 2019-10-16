@@ -160,7 +160,7 @@ To overcome these challenges, we trained seven models that used fecal
 16S rRNA sequence data to predict the presence of colonic screen
 relevant neoplasias (SRNs; n=490 patients, 261 controls and 229 cases).
 We developed a reusable open-source pipeline to train, validate, and
-interpret the models. To show the effect of model selection, we assessed
+interpret ML models. To show the effect of model selection, we assessed
 the predictive performance, interpretability, and training time of
 L2-regularized logistic regression, L1 and L2-regularized support vector
 machines (SVM) with linear and radial basis function kernels, decision
@@ -358,11 +358,12 @@ To evaluate the generalizability of each model, we compared the median
 cross-validation AUROC to the median testing AUROC. If the difference
 between the cross-validation and testing AUROCs was large, then that
 could indicate that the models were overfit to the training data. The
-difference in median AUROCs was 0.021 in L1-regularized SVM with linear
-kernel, followed by SVM with radial basis function kernel and decision
-tree with a difference of 0.007 and 0.006, respectively {[}Figure 2{]}.
-These differences are relatively small and give us confidence in our
-estimate of the generalization performance of the models.
+largest difference in median AUROCs was 0.021 in L1-regularized SVM with
+linear kernel, followed by SVM with radial basis function kernel and
+decision tree with a difference of 0.007 and 0.006, respectively
+{[}Figure 2{]}. These differences are relatively small and give us
+confidence in our estimate of the generalization performance of the
+models.
 
 To evaluate the variation in the estimated performance, we calculated
 the range of AUROC values for each model using 100 data-splits. The
@@ -487,11 +488,13 @@ We established a pipeline that can be generalized to any modeling method
 that predicts a binary health outcome. We performed a random data-split
 to create a training set (80\% of the data) and a held-out test set
 (20\% of the data), which we used to evaluate predictive performance. We
-repeated this data-split 100 times to measure the possible variation in
-predictive performance. During training, we tuned the model
-hyperparameters with a repeated five-fold cross-validation. Despite the
-high number of features microbiome datasets typically have, the models
-we built with this pipeline generalized to the held-out test sets.
+used the AUROC metric to evaluate predictive performance as our dataset
+was highly balanced. We repeated this data-split 100 times to measure
+the possible variation in predictive performance. During training, we
+tuned the model hyperparameters with a repeated five-fold
+cross-validation. Despite the high number of features microbiome
+datasets typically have, the models we built with this pipeline
+generalized to the held-out test sets.
 
 We highlighted the importance of model interpretation to gain greater
 biological insights into microbiota-associated diseases. In this study,
@@ -582,11 +585,11 @@ class included patients with healthy colons or non-advanced adenomas,
 whereas the SRN class included patients with advanced adenomas or
 carcinomas (43). Patients with an adenoma greater than 1 cm, more than
 three adenomas of any size, or an adenoma with villous histology were
-classified as having advanced adenomas. There were 172 patients with
-normal colonoscopies, 198 with adenomas, and 120 with carcinomas. Of the
-198 adenomas, 109 were identified as advanced adenomas. Together 261
-patients were classified as healthy and 229 patients were classified as
-having an SRN.
+classified as having advanced adenomas (43). There were 172 patients
+with normal colonoscopies, 198 with adenomas, and 120 with carcinomas.
+Of the 198 adenomas, 109 were identified as advanced adenomas. Together
+261 patients were classified as healthy and 229 patients were classified
+as having an SRN.
 
 \textbf{16S rRNA gene sequencing data.} Stool samples provided by the
 patients were used for 16S rRNA gene sequencing to measure bacterial
@@ -654,7 +657,7 @@ at the same time.
 analysis, and data visualizations were performed using R (v.3.5.0) with
 the tidyverse package (v.1.2.1). We compared the performance of the
 models pairwise by calculating the difference between AUROC values from
-the same datasplit (for 100 datasplits). We determined if the models
+the same data-split (for 100 data-splits). We determined if the models
 were significantly different by calculating the empirical p-value (2 x
 min(\% of AUROC differences \(\geq\) 0, \% of AUROC differences \(\leq\)
 0) for the double tail event (e.g., Figure S3).
@@ -700,13 +703,13 @@ are not within 1.5 times the interquartile ranges. \newpage
 absolute feature weights of (A) L1-regularized SVM with linear kernel,
 (B) L2-regularized SVM with linear kernel, and (C) L2-regularized
 logistic regression, were ranked from highest rank, 1, to lowest rank,
-100, for each datasplit. The feature ranks of the 20 highest ranked OTUs
-based on their median ranks (median shown in black) are reported here.
-OTUs that were associated with classifying a subject as being healthy
-had negative signs and were shown in blue. OTUs that were associated
-with classifying a subject having an SRN had positive signs and were
-shown in red. Some of the same OTUs were identified as important in all
-of the linear models. \newpage
+100, for each data-split. The feature ranks of the 20 highest ranked
+OTUs based on their median ranks (median shown in black) are reported
+here. OTUs that were associated with classifying a subject as being
+healthy had negative signs and were shown in blue. OTUs that were
+associated with classifying a subject having an SRN had positive signs
+and were shown in red. Some of the same OTUs were identified as
+important in all of the linear models. \newpage
 \includegraphics{Figure_4.png}
 
 \textbf{Figure 4. Interpretation of the non-linear ML models.} (A) SVM
@@ -750,13 +753,13 @@ represent the highest performing hyperparameter setting for the models.
 
 \textbf{Figure S3. Histogram of AUROC differences between L2-regularized
 logistic regression and random forest for each of the hundred
-datasplits.} This histogram shows the number of datasplits in each bin.
-The percentage of dataplits where the difference between random forest
-and L2-regularized logistic regression AUROC values was higher than or
-equal to 0 were 0.75, lower than or equal to 0 were 0.25. The vertical
-red line highlights the bins where there AUROC difference between the
-two model is 0. The p-value was calculated for a double tail event.
-\newpage
+data-splits.} This histogram shows the number of data-splits in each
+bin. The percentage of dataplits where the difference between random
+forest and L2-regularized logistic regression AUROC values was higher
+than or equal to 0 were 0.75, lower than or equal to 0 were 0.25. The
+vertical red line highlights the bins where there AUROC difference
+between the two model is 0. The p-value was calculated for a double tail
+event. \newpage
 \includegraphics[height=17.5cm, width=13cm]{Figure_S4.png}
 
 \textbf{Figure S4. Classification performance of ML models across
