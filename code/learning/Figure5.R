@@ -44,7 +44,7 @@ traintime_df <- bind_rows(min_fixed_result)
 traintime_plot <- ggplot(traintime_df, aes(x = fct_reorder(model, x), y = x)) +
   geom_boxplot(fill="#0072B2", alpha=0.5, fatten = 1.5) +
   coord_flip() +
-  scale_y_continuous(name = "training time (hours)") +
+  scale_y_continuous(name = "Training time (hours)") +
   scale_x_discrete(name = "",
                    labels=c(expression(paste(L[2], "-regularized logistic regression")),
                             expression(paste(L[1], "-regularized linear SVM")),

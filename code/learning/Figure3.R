@@ -133,6 +133,6 @@ logit_graph <- plot_feature_ranks(logit_imp) +
 
 linear <- plot_grid(l1_svm_graph, l2_svm_graph, logit_graph, labels = c("A", "B", "C"), align = 'v', ncol = 1)
 
-ggdraw(add_sub(linear, "Feature Ranks", vpadding=grid::unit(0,"lines"), y=5, x=0.7, vjust=4.75, size=15))
+ggdraw(add_sub(linear, "Feature ranks", vpadding=grid::unit(0,"lines"), y=5, x=0.7, vjust=4.75, size=15))
 
 ggsave("Figure_3.png", plot = last_plot(), device = 'png', path = 'submission', width = 6, height = 9.2)

@@ -67,7 +67,7 @@ dt <- dt_all %>%
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC))
 
 dt_plot <- base_plot(dt, dt$maxdepth, dt$mean_AUC) +
-scale_x_continuous(name="maximum depth of tree") +
+scale_x_continuous(name="Maximum depth of tree") +
   scale_y_continuous(name="Decision tree
 mean cvAUROC",
                      limits = c(0.30, 1),
@@ -79,7 +79,7 @@ rf <- rf_all %>%
   summarise(mean_AUC = mean(ROC), sd_AUC = sd(ROC))
 
 rf_plot <-  base_plot(rf, rf$mtry, rf$mean_AUC) +
-scale_x_continuous(name="number of features (mtry)",
+scale_x_continuous(name="Number of features (mtry)",
                    breaks=seq(0, 1500, 250), limits = c(0, 1500)) +
   scale_y_continuous(name="Random forest
 mean cvAUROC",
@@ -106,12 +106,12 @@ rbf_plot <- ggplot(rbf_data, aes(x = sigma, y = C, fill = mean_AUC)) +
            shape = 8) +
   #coord_fixed(ratio = 0.5) +
   #coord_equal() +
-  scale_y_log10(name="regularization penalty 
+  scale_y_log10(name="Regularization penalty 
 (C)",
                 breaks = c(0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1, 10), 
                 expand = c(0, 0), 
                 labels=trans_format('log10',math_format(10^.x))) +
-  scale_x_log10(name = "the reach of a single training instance (sigma)",
+  scale_x_log10(name = "The reach of a single training instance (sigma)",
                 breaks = c(0.00000001, 0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1), 
                 expand = c(0, 0), 
                 labels=trans_format('log10',math_format(10^.x))) +
@@ -145,11 +145,11 @@ xgboost_plot <- ggplot(xgboost_data, aes(x = eta, y = subsample, fill = mean_AUC
            colour = "#FC4E07", 
            size = 3,
            shape = 8) +
-  scale_y_continuous(name="ratio of the training data
+  scale_y_continuous(name="Ratio of the training data
 (subsample)",
     breaks = c(0.4, 0.5, 0.6, 0.7),
     expand=c(0,0)) +
-  scale_x_log10(name = "learning rate (eta)",
+  scale_x_log10(name = "Learning rate (eta)",
                 breaks = c(0.001, 0.01, 0.1, 1),
                 expand = c(0, 0),
                 labels=trans_format('log10',math_format(10^.x))) +

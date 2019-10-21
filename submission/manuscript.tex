@@ -223,14 +223,14 @@ However, there are common methodological and reporting problems that
 arise when applying ML to such data, that need to be addressed for the
 field to progress. These problems include a lack of transparency in
 which methods are used and how these methods are implemented; evaluating
-models without a separate held-out test data; unreported variation
-between the predictive performance on different folds of
-cross-validation; and unreported variation between cross-validation and
-testing performances. Though the microbiome field is making progress to
-avoid some of these pitfalls including validating their models on
-independent datasets (8, 19, 20) and introducing ways to better use ML
-tools (21--24), more work is needed to improve reproducibility further
-and minimize overestimating for model performance.
+models without separate held-out test data; unreported variation between
+the predictive performance on different folds of cross-validation; and
+unreported variation between cross-validation and testing performances.
+Though the microbiome field is making progress to avoid some of these
+pitfalls including validating their models on independent datasets (8,
+19, 20) and introducing ways to better use ML tools (21--24), more work
+is needed to improve reproducibility further and minimize overestimating
+for model performance.
 
 Among microbiome researchers, the lack of justification when selecting a
 modeling approach has often been due to an implicit assumption that more
@@ -245,10 +245,10 @@ the importance of each feature in making predictions. Depending on the
 goal of the modeling, other approaches may be more appropriate. For
 example, researchers trying to identify the microbiota associated with
 disease may desire a more interpretable model, whereas clinicians may
-(but not always) emphasize predictive performance. Nonetheless, it is
-essential to understand that the benefit of more complex, less
-interpretable models may be minimal (29, 30). It is important for
-researchers to justify their choice of modeling approach.
+emphasize predictive performance. Nonetheless, it is essential to
+understand that the benefit of more complex, less interpretable models
+may be minimal (29, 30). It is important for researchers to justify
+their choice of modeling approach.
 
 To showcase a rigorous ML pipeline and to shed light on how ML model
 selection can affect modeling results, we performed an empirical
@@ -276,7 +276,7 @@ and environmental microbiome datasets.
 \textbf{Model selection and pipeline construction}. We established a
 reusable ML pipeline for model selection and evaluation, focusing on
 seven different commonly used supervised learning algorithms {[}Figure
-1{]}.
+1, Table 1{]}.
 
 First, we randomly split the data into training and test sets so that
 the training set consisted of 80\% of the full dataset, while the test
@@ -320,12 +320,13 @@ ranges from 0, where the model's predictions are perfectly incorrect, to
 An AUROC value of 0.5 indicates that the model's predictions are no
 different than random. To select hyperparameters, we performed a grid
 search for hyperparameter settings when training the models. Default
-hyperparameter settings in previously developed ML packages available in
-R, Python, and MATLAB programming languages may be inadequate for
-effective application of classification algorithms and should to be
-optimized for each new ML task. For example, L1-regularized SVM with
-linear kernel showed large variability between different regularization
-strengths (C) and benefited from tuning {[}Figure S1{]}.
+hyperparameter settings in developed ML packages available in R, Python,
+and MATLAB programming languages may be inadequate for effective
+application of classification algorithms and need to be optimized for
+each new ML task. For example, L1-regularized SVM with linear kernel
+showed large variability between different regularization strengths (C)
+and benefited from tuning as the default C parameter was 1 {[}Figure
+S1{]}.
 
 Once hyperparameters were selected, we trained the model using the full
 training dataset and applied the final model to the held-out data to
@@ -352,7 +353,7 @@ other ML models with median AUROC of 0.650 {[}IQR 0.629-0.760{]} and
 these results demonstrate that the most complex model (XGBoost) did not
 have the best performance and that the most interpretable models
 (L2-regularized logistic regression and L2-regularized SVM with linear
-kernel) performed nearly as well non-linear models.
+kernel) performed nearly as well as non-linear models.
 
 To evaluate the generalizability of each model, we compared the median
 cross-validation AUROC to the median testing AUROC. If the difference
@@ -361,7 +362,7 @@ could indicate that the models were overfit to the training data. The
 largest difference in median AUROCs was 0.021 in L1-regularized SVM with
 linear kernel, followed by SVM with radial basis function kernel and
 decision tree with a difference of 0.007 and 0.006, respectively
-{[}Figure 2{]}. These differences are relatively small and give us
+{[}Figure 2{]}. These differences were relatively small and gave us
 confidence in our estimate of the generalization performance of the
 models.
 
@@ -446,12 +447,10 @@ interpretation methods. These results indicate that both methods are
 consistent in selecting the most important OTUs.
 
 \textbf{The computational efficiency of each ML model.} We compared the
-training times of the seven ML models. We did not take advantage of
-parallelization in training, nor was the code optimized for speed.
-Still, as expected, the training times increased with the complexity of
-the model and the number of potential hyperparameter combinations. Also,
-the linear models trained faster than non-linear models {[}Figures
-S1-S2; Figure 5{]}.
+training times of the seven ML models. The training times increased with
+the complexity of the model and the number of potential hyperparameter
+combinations. Also, the linear models trained faster than non-linear
+models {[}Figures S1-S2; Figure 5{]}.
 
 \subsection{Discussion}\label{discussion}
 
@@ -488,13 +487,13 @@ We established a pipeline that can be generalized to any modeling method
 that predicts a binary health outcome. We performed a random data-split
 to create a training set (80\% of the data) and a held-out test set
 (20\% of the data), which we used to evaluate predictive performance. We
-used the AUROC metric to evaluate predictive performance as our dataset
-was highly balanced. We repeated this data-split 100 times to measure
-the possible variation in predictive performance. During training, we
-tuned the model hyperparameters with a repeated five-fold
-cross-validation. Despite the high number of features microbiome
-datasets typically have, the models we built with this pipeline
-generalized to the held-out test sets.
+used the AUROC metric to evaluate predictive performance as it is a
+clinically relevant evaluation metric for our study. We repeated this
+data-split 100 times to measure the possible variation in predictive
+performance. During training, we tuned the model hyperparameters with a
+repeated five-fold cross-validation. Despite the high number of features
+microbiome datasets typically have, the models we built with this
+pipeline generalized to the held-out test sets.
 
 We highlighted the importance of model interpretation to gain greater
 biological insights into microbiota-associated diseases. In this study,
@@ -595,7 +594,7 @@ as having an SRN.
 patients were used for 16S rRNA gene sequencing to measure bacterial
 population abundances. The sequence data used in our analyses were
 originally generated by Baxter et al. (available through NCBI Sequence
-Read Archive {[}SRP062005{]}, 2015). The OTU abundance table was
+Read Archive {[}SRP062005{]}, (5)). The OTU abundance table was
 generated by Sze et al (44), who processed the 16S rRNA sequences in
 mothur (v1.39.3) using the default quality filtering methods,
 identifying and removing chimeric sequences using VSEARCH, and assigning
@@ -619,9 +618,8 @@ and at
 respectively.
 
 For hyperparameter selection, we started with a granular grid search.
-Then we narrowed and fine-tuned the range of each hyperparameter. A grid
-search was needed to avoid large variation in prediction performance.
-For L2-regularized logistic regression, L1 and L2-regularized SVM with
+Then we narrowed and fine-tuned the range of each hyperparameter.For
+L2-regularized logistic regression, L1 and L2-regularized SVM with
 linear and radial basis function kernels, we tuned the cost
 hyperparameter, which controls the regularization strength, where
 smaller values specify stronger regularization. For SVM with radial
@@ -644,7 +642,8 @@ was reduced by parallelizing segments of the ML pipeline. We
 parallelized the training of each data-split. This allowed the 100
 data-splits to be processed through the ML pipeline simultaneously at
 the same time for each model. It is possible to further parallelize the
-cross-validation step for each hyperparameter setting.
+cross-validation step for each hyperparameter setting which we have not
+performed in this study.
 
 \textbf{Permutation importance workflow.} We calculated a Spearman's
 rank-order correlation matrix and defined correlated OTUs as having
@@ -669,167 +668,10 @@ available at \url{https://github.com/SchlossLab/Topcuoglu_ML_XXX_2019/}.
 \textbf{Acknowledgements.} We thank all the study participants of Great
 Lakes-New England Early Detection Research Network. We would like to
 thank the members of the Schloss lab for their valuable feedback. Salary
-support for M.R came from NIH grant 1R01CA215574. Salary support for
-P.D.S. came from NIH grants P30DK034933 and 1R01CA215574.
+support for MR came from NIH grant 1R01CA215574. Salary support for PDS
+came from NIH grants P30DK034933 and 1R01CA215574.
 
 \newpage
-
-\includegraphics{Figure_1.pdf} \textbf{Figure 1. Machine learning
-pipeline.} We split the data to create a training (80\%) and held-out
-test set (20\%). The splits were stratified to maintain the overall
-class distribution. We performed five-fold cross-validation on the
-training data to select the best hyperparameter setting and then used
-these hyperparameters to train the models. The model was evaluated on
-the held-out data set. Abbreviations: cvAUC, cross-validation area under
-the receiver operating characteristic curve. \newpage
-\includegraphics{Figure_2.png}
-
-\textbf{Figure 2. Generalization and classification performance of ML
-models using AUROC values of all cross-validation and testing
-performances.} The median AUROC for diagnosing individuals with SRN
-using bacterial abundances was higher than chance (depicted by a
-horizontal line at 0.50) for all the ML models. The predictive
-performance of random forest model was higher than other ML models,
-though not significantly (p \textgreater{} 0.01). L2-regularized
-logistic regression, XGBoost, L2-regularized SVM with linear and radial
-basis function kernel performances were not significantly different from
-one another. The boxplot shows quartiles at the box ends and the median
-as the horizontal line in the box. The whiskers show the farthest points
-that were not outliers. Outliers were defined as those data points that
-are not within 1.5 times the interquartile ranges. \newpage
-\includegraphics[height=17cm, width=12cm]{Figure_3.png}
-
-\textbf{Figure 3. Interpretation of the linear ML models.} The ranks of
-absolute feature weights of (A) L1-regularized SVM with linear kernel,
-(B) L2-regularized SVM with linear kernel, and (C) L2-regularized
-logistic regression, were ranked from highest rank, 1, to lowest rank,
-100, for each data-split. The feature ranks of the 20 highest ranked
-OTUs based on their median ranks (median shown in black) are reported
-here. OTUs that were associated with classifying a subject as being
-healthy had negative signs and were shown in blue. OTUs that were
-associated with classifying a subject having an SRN had positive signs
-and were shown in red. Some of the same OTUs were identified as
-important in all of the linear models. \newpage
-\includegraphics{Figure_4.png}
-
-\textbf{Figure 4. Interpretation of the non-linear ML models.} (A) SVM
-with radial basis kernel, (B) decision tree, (C) random forest, and (D)
-XGBoost feature importances were explained using permutation importance
-on the held-out test data set. The gray rectangle and the dashed line
-show the IQR range and median of the base testing AUROC without any
-permutation. The 20 OTUs that caused the largest decrease in the AUROC
-when permuted are reported here. The colors of the box plots represent
-the OTUs that were shared among the different models; yellow were OTUs
-that were shared among all the non-linear models, salmon were OTUs that
-were shared among the tree-based models, green were the OTUs shared
-among SVM with radial basis kernel, decision tree and XGBoost, pink were
-the OTUs shared among SVM with radial basis kernel and XGBoost only, red
-were the OTUs shared among random forest and XGBoost only and blue were
-the OTUs shared among decision tree and random forest only. For all of
-the tree-based models, a \emph{Peptostreptococcus} species (OTU00367)
-had the largest impact on predictive performance. \newpage
-\includegraphics{Figure_5.png}
-
-\textbf{Figure 5. Training times of seven ML models.} The median
-training time was the highest for XGBoost and shortest for
-L2-regularized logistic regression. \newpage
-\includegraphics{Figure_S1.png}
-
-\textbf{Figure S1. Hyperparameter setting performances for linear
-models.} (A) L2-regularized logistic regression, (B) L1-regularized SVM
-with linear kernel, and (C) L2-regularized SVM with linear kernel mean
-cross-validation AUROC values when different hyperparameters were used
-in training the model. The stars represent the highest performing
-hyperparameter setting for each model. \newpage
-\includegraphics[height=30cm, width=15cm]{Figure_S2.png}
-
-\textbf{Figure S2. Hyperparameter setting performances for non-linear
-models.} (A) Decision tree, (B) random forest, (C) SVM with radial basis
-kernel, and (D) XGBoost mean cross-validation AUROC values when
-different hyperparameters were used in training the model. The stars
-represent the highest performing hyperparameter setting for the models.
-\newpage
-\includegraphics[height=17.5cm, width=13cm]{Figure_S3.png}
-
-\textbf{Figure S3. Histogram of AUROC differences between L2-regularized
-logistic regression and random forest for each of the hundred
-data-splits.} This histogram shows the number of data-splits in each
-bin. The percentage of dataplits where the difference between random
-forest and L2-regularized logistic regression AUROC values was higher
-than or equal to 0 were 0.75, lower than or equal to 0 were 0.25. The
-vertical red line highlights the bins where there AUROC difference
-between the two model is 0. The p-value was calculated for a double tail
-event. \newpage
-\includegraphics[height=17.5cm, width=13cm]{Figure_S4.png}
-
-\textbf{Figure S4. Classification performance of ML models across
-cross-validation when trained on a subset of the dataset.} (A)
-L2-regularized logistic regression and (B) random forest models were
-trained using the original study design with 490 subjects and subsets of
-it with 15, 30, 60, 120, and 245 subjects. The range among the
-cross-validation AUROC values within both models at smaller sample sizes
-were much larger than when the full collection of samples was used to
-train and validate the models but included the ranges observed with the
-more complete datasets. \newpage
-\includegraphics[height=17.5cm, width=13cm]{Figure_S5.png}
-
-\textbf{Figure S5. Interpretation of the linear ML models with
-permutation importance.} (A) L1-regularized SVM with linear kernel, (B)
-L2-regularized SVM with linear kernel, and (C) L2-regularized logistic
-regression were interpreted using permutation importance using held-out
-test set.
-
-\newpage
-
-\captionsetup{labelformat=empty}
-\captionof{table}{\textbf{Table 1.} Characteristics of the machine learning models in our comparative study.}
-\small
-
-\begin{tabular}{|l|l|l|}
-\hline
-
-\rowcolor{lightgray}
-\textbf{Model} & \textbf{Description} & \textbf{Linearity} \\ \hline
-
-\makecell[l]{Logistic \\regression} & \makecell[l]{A predictive regression analysis when the dependent \\variable is binary.} & Linear \\ \hline
-
-\makecell[l]{SVM with \\linear kernel} & \makecell[l]{A classifier that is defined by an optimal linear \\separating hyperplane that discriminates between labels.} & Linear  \\ \hline
-
-\makecell[l]{SVM with \\radial basis kernel} & \makecell[l]{A classifier that is defined by an optimal non-linear \\separating hyperplane that discriminates between labels.} & Non-linear \\ \hline
-
-\makecell[l]{Decision tree} & \makecell[l]{A classifier that sorts samples down from the
-root to the \\leaf node where an attribute is tested to discriminate \\between labels.} & Non-linear \\ \hline
-
-Random forest & \makecell[l]{A classifier that is an ensembe of decision trees \\ that grows randomly with subsampled data.} & Non-linear \\ \hline
-
-\makecell[l]{Gradient Boosted Trees \\ (XGBoost)} & \makecell[l]{A classifier that is an ensembe of decision trees \\ that grows greedily.} & Non-linear \\ \hline
-
-\end{tabular}\newpage
-
-\captionof{table}{\textbf{Table S1.} An aspirational rubric for evaluating the rigor of ML practices.}
-\small
-
-\begin{tabular}{|l|l|l|l|}
-\hline
-
-\rowcolor{lightgray}
-\textbf{Practice} & \textbf{Poor} & \textbf{Good} & \textbf{Better} \\ \hline
-
-\makecell[l]{Source \\ of data} & \makecell[l]{Data do not reflect intended \\  application (e.g., data pertain \\ to only patients with carcinomas \\ but model is expected to \\ predict advanced adenomas).} & \makecell[l]{Data are appropriate \\ for intended application.} & \makecell[l]{Data reflect intended \\ use and will persist \\ (e.g., same OTU assignments \\ for new fecal samples).} \\ \hline
-
-\makecell[l]{Study \\ cohort} & \makecell[l]{Test data resampled to remove \\ class imbalance (e.g., test data \\ resampled to have an equal \\ number of patients with carcinomas \\ as patients with healthy colons, \\ which does not reflect reality.)}  & \makecell[l]{Test data are reflective \\ of the population which \\ the model will be applied to.} & \makecell[l]{Model tested on multiple \\ cohorts with potentially \\ different class balances.} \\ \hline
-
-\makecell[l]{Model \\ selection} & \makecell[l]{No justification for \\ classification method.} & \makecell[l]{Model choice is justified \\ for intended application.} & \makecell[l]{Different modeling choices \\ (justified for intended \\ application) are tested.} \\ \hline
-
-\makecell[l]{Model \\ development} & \makecell[l]{No hyperparameter tuning.} & \makecell[l]{Different hyperparameter \\ settings are explored \\ on training data.} & \makecell[l]{Hyperparameter grid search \\ performed by cross-validation \\ on the training set.} \\ \hline
-
-\makecell[l]{Model \\ evaluation} & \makecell[l]{Performance reported on the \\data used to train the model.} & \makecell[l]{Performance reported on \\ held-out test data.} & \makecell[l]{Performance reported on \\ multiple held-out test sets.} \\ \hline
-
-\makecell[l]{Evaluation \\ metrics} & \makecell[l]{Reported performance according to \\ a metric that is not appropriate \\ for intended application  (e.g. when \\  predicting rare outcome, accuracy \\ metric is not reliable).} & \makecell[l]{Reported performance in \\ terms of a metric that \\ is appropriate for intended \\ application and includes \\ confidence intervals.} & \makecell[l]{Reported multiple metrics \\ with confidence intervals.} \\ \hline
-
-\makecell[l]{Model \\ interpretation} & \makecell[l]{No model interpretation.} & \makecell[l]{Follow-up analyses to \\ determine what is driving \\ model performance.} & \makecell[l]{Hypotheses based on \\ feature importances \\ are generated and tested.} \\ \hline
-
-\end{tabular}\newpage
 
 \subsection{References}\label{references}
 
@@ -1197,6 +1039,164 @@ doi:\href{https://doi.org/10.7717/peerj.2584}{10.7717/peerj.2584}.
 \textbf{Rostamizadeh A}, \textbf{Talwalkar A}. 2016. Hyperband: A novel
 bandit-based approach to hyperparameter optimization. arXiv:160306560
 {[}cs, stat{]}.
+
+\newpage
+
+\captionsetup{labelformat=empty}
+\captionof{table}{\textbf{Table 1.} Characteristics of the machine learning models in our comparative study.}
+\small
+
+\begin{tabular}{|l|l|l|}
+\hline
+
+\rowcolor{lightgray}
+\textbf{Model} & \textbf{Description} & \textbf{Linearity} \\ \hline
+
+\makecell[l]{Logistic \\regression} & \makecell[l]{A predictive regression analysis when the dependent \\variable is binary.} & Linear \\ \hline
+
+\makecell[l]{SVM with \\linear kernel} & \makecell[l]{A classifier that is defined by an optimal linear \\separating hyperplane that discriminates between labels.} & Linear  \\ \hline
+
+\makecell[l]{SVM with \\radial basis kernel} & \makecell[l]{A classifier that is defined by an optimal non-linear \\separating hyperplane that discriminates between labels.} & Non-linear \\ \hline
+
+\makecell[l]{Decision tree} & \makecell[l]{A classifier that sorts samples down from the
+root to the \\leaf node where an attribute is tested to discriminate \\between labels.} & Non-linear \\ \hline
+
+Random forest & \makecell[l]{A classifier that is an ensembe of decision trees \\ that grows randomly with subsampled data.} & Non-linear \\ \hline
+
+\makecell[l]{Gradient Boosted Trees \\ (XGBoost)} & \makecell[l]{A classifier that is an ensembe of decision trees \\ that grows greedily.} & Non-linear \\ \hline
+
+\end{tabular}\newpage
+
+\newpage
+
+\includegraphics{Figure_1.pdf} \textbf{Figure 1. Machine learning
+pipeline.} We split the data to create a training (80\%) and held-out
+test set (20\%). The splits were stratified to maintain the overall
+class distribution. We performed five-fold cross-validation on the
+training data to select the best hyperparameter setting and then used
+these hyperparameters to train the models. The model was evaluated on
+the held-out data set. Abbreviations: cvAUC, cross-validation area under
+the receiver operating characteristic curve. \newpage
+\includegraphics{Figure_2.png}
+
+\textbf{Figure 2. Generalization and classification performance of ML
+models using AUROC values of all cross-validation and testing
+performances.} The median AUROC for diagnosing individuals with SRN
+using bacterial abundances was higher than chance (depicted by a
+horizontal line at 0.50) for all the ML models. The predictive
+performance of random forest model was higher than other ML models,
+though not significantly (p \textgreater{} 0.01). L2-regularized
+logistic regression, XGBoost, L2-regularized SVM with linear and radial
+basis function kernel performances were not significantly different from
+one another. The boxplot shows quartiles at the box ends and the median
+as the horizontal line in the box. The whiskers show the farthest points
+that were not outliers. Outliers were defined as those data points that
+are not within 1.5 times the interquartile ranges. \newpage
+\includegraphics[height=17cm, width=12cm]{Figure_3.png}
+
+\textbf{Figure 3. Interpretation of the linear ML models.} The ranks of
+absolute feature weights of (A) L1-regularized SVM with linear kernel,
+(B) L2-regularized SVM with linear kernel, and (C) L2-regularized
+logistic regression, were ranked from highest rank, 1, to lowest rank,
+100, for each data-split. The feature ranks of the 20 highest ranked
+OTUs based on their median ranks (median shown in black) are reported
+here. OTUs that were associated with classifying a subject as being
+healthy had negative signs and were shown in blue. OTUs that were
+associated with classifying a subject having an SRN had positive signs
+and were shown in red. \newpage
+\includegraphics{Figure_4.png}
+
+\textbf{Figure 4. Interpretation of the non-linear ML models.} (A) SVM
+with radial basis kernel, (B) decision tree, (C) random forest, and (D)
+XGBoost feature importances were explained using permutation importance
+on the held-out test data set. The gray rectangle and the dashed line
+show the IQR range and median of the base testing AUROC without any
+permutation. The 20 OTUs that caused the largest decrease in the AUROC
+when permuted are reported here. The colors of the box plots represent
+the OTUs that were shared among the different models; yellow were OTUs
+that were shared among all the non-linear models, salmon were OTUs that
+were shared among the tree-based models, green were the OTUs shared
+among SVM with radial basis kernel, decision tree and XGBoost, pink were
+the OTUs shared among SVM with radial basis kernel and XGBoost only, red
+were the OTUs shared among random forest and XGBoost only and blue were
+the OTUs shared among decision tree and random forest only. For all of
+the tree-based models, a \emph{Peptostreptococcus} species (OTU00367)
+had the largest impact on predictive performance. \newpage
+\includegraphics{Figure_5.png}
+
+\textbf{Figure 5. Training times of seven ML models.} The median
+training time was the highest for XGBoost and shortest for
+L2-regularized logistic regression. \newpage
+
+\captionof{table}{\textbf{Table S1.} An aspirational rubric for evaluating the rigor of ML practices applied to microbiome data.}
+\small
+
+\begin{tabular}{|l|l|l|l|}
+\hline
+
+\rowcolor{lightgray}
+\textbf{Practice} & \textbf{Poor} & \textbf{Good} & \textbf{Better} \\ \hline
+
+\makecell[l]{Source \\ of data} & \makecell[l]{Data do not reflect intended \\  application (e.g., data pertain \\ to only patients with carcinomas \\ but model is expected to \\ predict advanced adenomas).} & \makecell[l]{Data are appropriate \\ for intended application.} & \makecell[l]{Data reflect intended \\ use and will persist \\ (e.g., same OTU assignments \\ for new fecal samples).} \\ \hline
+
+\makecell[l]{Study \\ cohort} & \makecell[l]{Test data resampled to remove \\ class imbalance (e.g., test data \\ resampled to have an equal \\ number of patients with carcinomas \\ as patients with healthy colons, \\ which does not reflect reality.)}  & \makecell[l]{Test data are reflective \\ of the population which \\ the model will be applied.} & \makecell[l]{Model tested on multiple \\ cohorts with potentially \\ different class balances.} \\ \hline
+
+\makecell[l]{Model \\ selection} & \makecell[l]{No justification for \\ classification method.} & \makecell[l]{Model choice is justified \\ for intended application.} & \makecell[l]{Different modeling choices \\ (justified for intended \\ application) are tested.} \\ \hline
+
+\makecell[l]{Model \\ development} & \makecell[l]{No hyperparameter tuning.} & \makecell[l]{Different hyperparameter \\ settings are explored \\ on training data.} & \makecell[l]{Hyperparameter grid search \\ performed by cross-validation \\ on the training set.} \\ \hline
+
+\makecell[l]{Model \\ evaluation} & \makecell[l]{Performance reported on the \\data used to train the model.} & \makecell[l]{Performance reported on \\ held-out test data.} & \makecell[l]{Performance reported on \\ multiple held-out test sets.} \\ \hline
+
+\makecell[l]{Evaluation \\ metrics} & \makecell[l]{Reported performance according to \\ a metric that is not appropriate \\ for intended application  (e.g. when \\  predicting rare outcome, accuracy \\ metric is not reliable).} & \makecell[l]{Reported performance in \\ terms of a metric that \\ is appropriate for intended \\ application and includes \\ confidence intervals.} & \makecell[l]{Reported multiple metrics \\ with confidence intervals.} \\ \hline
+
+\makecell[l]{Model \\ interpretation} & \makecell[l]{No model interpretation.} & \makecell[l]{Follow-up analyses to \\ determine what is driving \\ model performance.} & \makecell[l]{Hypotheses based on \\ feature importances \\ are generated and tested.} \\ \hline
+
+\end{tabular}\newpage
+
+\includegraphics{Figure_S1.png} \textbf{Figure S1. Hyperparameter
+setting performances for linear models.} (A) L2-regularized logistic
+regression, (B) L1-regularized SVM with linear kernel, and (C)
+L2-regularized SVM with linear kernel mean cross-validation AUROC values
+when different hyperparameters were used in training the model. The
+stars represent the highest performing hyperparameter setting for each
+model. \newpage
+\includegraphics[height=30cm, width=15cm]{Figure_S2.png}
+
+\textbf{Figure S2. Hyperparameter setting performances for non-linear
+models.} (A) Decision tree, (B) random forest, (C) SVM with radial basis
+kernel, and (D) XGBoost mean cross-validation AUROC values when
+different hyperparameters were used in training the model. The stars
+represent the highest performing hyperparameter setting for the models.
+\newpage
+\includegraphics[height=17.5cm, width=13cm]{Figure_S3.png}
+
+\textbf{Figure S3. Histogram of AUROC differences between L2-regularized
+logistic regression and random forest for each of the hundred
+data-splits.} This histogram shows the number of data-splits in each
+bin. The percentage of dataplits where the difference between random
+forest and L2-regularized logistic regression AUROC values was higher
+than or equal to 0 were 0.75, lower than or equal to 0 were 0.25. The
+vertical red line highlights the bins where there AUROC difference
+between the two model is 0. The p-value was calculated for a double tail
+event. \newpage
+\includegraphics[height=17.5cm, width=13cm]{Figure_S4.png}
+
+\textbf{Figure S4. Classification performance of ML models across
+cross-validation when trained on a subset of the dataset.} (A)
+L2-regularized logistic regression and (B) random forest models were
+trained using the original study design with 490 subjects and subsets of
+it with 15, 30, 60, 120, and 245 subjects. The range among the
+cross-validation AUROC values within both models at smaller sample sizes
+were much larger than when the full collection of samples was used to
+train and validate the models but included the ranges observed with the
+more complete datasets. \newpage
+\includegraphics[height=17.5cm, width=13cm]{Figure_S5.png}
+
+\textbf{Figure S5. Interpretation of the linear ML models with
+permutation importance.} (A) L1-regularized SVM with linear kernel, (B)
+L2-regularized SVM with linear kernel, and (C) L2-regularized logistic
+regression were interpreted using permutation importance using held-out
+test set.
 
 
 \end{document}

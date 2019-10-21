@@ -47,9 +47,9 @@ linear_plots <- fig_data %>%
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.001) +
   scale_x_log10(limits=c(min=1e-4,max=1),
                 breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1),
-                name="regularization penalty (C)",
+                name="Regularization penalty (C)",
                 labels=trans_format('log10',math_format(10^.x))) +
-  scale_y_continuous(name="mean cvAUROC",
+  scale_y_continuous(name="Mean cvAUROC",
                      limits=c(0.4,1.0),
                      breaks=seq(0.4,1,0.1)) +
   scale_color_manual(name=NULL,
