@@ -58,11 +58,5 @@ new_r <- flattenCorrMatrix(r$r, r$P) %>%
   filter(p<0.01) %>% 
   write_csv("data/process/sig_flat_corr_matrix.csv")
 
-new_r <- flattenCorrMatrix(r$r, r$P) %>% 
-  filter(p<0.05) %>% 
-  filter(cor>0.5) %>% 
-  write_csv("data/process/sig_0.5_flat_corr_matrix.csv")
 
-new_r %>% 
-  filter(row=="Otu00299" | column =="Otu00299")
 
