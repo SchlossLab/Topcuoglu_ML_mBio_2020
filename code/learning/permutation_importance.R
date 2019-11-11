@@ -50,7 +50,7 @@ for (dep in deps){
 
 
 ####################### DEFINE FUNCTION  #############################
-permutation_importance <- function(model, full, first_outcome, outcome=NULL, perm=T){
+permutation_importance <- function(model, full, first_outcome, outcome=NULL){
 
   # Set outcome as first column if null
   if(is.null(outcome)){
