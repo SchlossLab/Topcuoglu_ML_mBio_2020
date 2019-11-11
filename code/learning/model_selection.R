@@ -33,8 +33,11 @@
 ######################################################################
 #------------------------- DEFINE FUNCTION -------------------#
 ######################################################################
-tuning_grid <- function(train_data, model){
-
+tuning_grid <- function(train_data, model, outcome=NULL, hyperparameters=NULL){
+  # set outcome as first column if null
+  if(is.null(outcome)){
+    outcome <- colnames(train_data)[1]
+  }
 
 # -------------------------CV method definition--------------------------------------->
 # ADDED cv index to make sure
@@ -45,7 +48,7 @@ tuning_grid <- function(train_data, model){
 #     2. Return 2class summary and save predictions to calculate cvROC
 #     3. Save the predictions and class probabilities/decision values.
   folds <- 5
-  cvIndex <- createMultiFolds(factor(train_data$dx), folds, times=100)
+  cvIndex <- createMultiFolds(factor(train_data[,outcome]), folds, times=100)
   cv <- trainControl(method="repeatedcv",
                      number=folds,
                      index = cvIndex,
