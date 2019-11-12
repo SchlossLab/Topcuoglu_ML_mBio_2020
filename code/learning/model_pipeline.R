@@ -37,7 +37,18 @@
 ######################################################################
 
 
-pipeline <- function(dataset, model, split_number){
+pipeline <- function(dataset, model, split_number, outcome=NA, hyperparameters=NULL, perm=T){
+
+  # -----------------------Get outcome variable----------------------------->
+  # If no outcome specified, use first column in dataset
+  if(is.na(outcome)){
+    outcome <- colnames(dataset)[1]
+  }else{
+    # check to see if outcome is in column names of dataset
+    if(!outcome %in% names(dataset)){
+      stop(paste('Outcome',outcome,'not in column names of dataset.'))
+    }
+  }
 
   # ------------------Pre-process the full Dataset------------------------->
   # We are doing the pre-processing to the full dataset and then splitting 80-20
@@ -46,10 +57,18 @@ pipeline <- function(dataset, model, split_number){
   dataTransformed <- predict(preProcValues, dataset)
   # ----------------------------------------------------------------------->
 
+  # Get outcome variables
+  first_outcome = as.character(dataset[,outcome][1])
+  outcome_vals = unique(dataset[,outcome])
+  if(length(outcome_vals) != 2) stop('A binary outcome variable is required.')
+  second_outcome = as.character(outcome_vals[!outcome_vals == first_outcome])
+  print(paste(c('first outcome:','second outcome:'),c(first_outcome,second_outcome)))
+
+
   # ------------------80-20 Datasplit for each seed------------------------->
   # Do the 80-20 data-split
   # Stratified data partitioning %80 training - %20 testing
-  inTraining <- createDataPartition(dataTransformed$dx, p = .80, list = FALSE)
+  inTraining <- createDataPartition(dataTransformed[,outcome], p = .80, list = FALSE)
   trainTransformed <- dataTransformed[ inTraining,]
   testTransformed  <- dataTransformed[-inTraining,]
   # ----------------------------------------------------------------------->
@@ -57,9 +76,10 @@ pipeline <- function(dataset, model, split_number){
   # -------------Define hyper-parameter and cv settings-------------------->
   # Define hyper-parameter tuning grid and the training method
   # Uses function tuning_grid() in file ('code/learning/model_selection.R')
-  grid <- tuning_grid(trainTransformed, model)[[1]]
-  method <- tuning_grid(trainTransformed, model)[[2]]
-  cv <- tuning_grid(trainTransformed, model)[[3]]
+  tune <- tuning_grid(trainTransformed, model, outcome, hyperparameters)
+  grid <- tune[[1]]
+  method <- tune[[2]]
+  cv <- tune[[3]]
   # ----------------------------------------------------------------------->
 
   # ---------------------------Train the model ---------------------------->
@@ -85,11 +105,15 @@ pipeline <- function(dataset, model, split_number){
   # - If the model is random forest, we need to add a ntree=1000 parameter.
   #         We chose ntree=1000 empirically.
   # ----------------------------------------------------------------------->
+  # Make formula based on outcome
+  f <- as.formula(paste(outcome, '~ .'))
+  print('Machine learning formula:')
+  print(f)
   # Start walltime for training model
   tic("train")
   if(model=="L2_Logistic_Regression"){
   print(model)
-  trained_model <-  train(dx ~ ., # label
+  trained_model <-  train(f, # label
                           data=trainTransformed, #total data
                           method = method,
                           trControl = cv,
@@ -99,7 +123,7 @@ pipeline <- function(dataset, model, split_number){
   }
   else if(model=="Random_Forest"){
       print(model)
-      trained_model <-  train(dx ~ .,
+      trained_model <-  train(f,
                               data=trainTransformed,
                               method = method,
                               trControl = cv,
@@ -109,7 +133,7 @@ pipeline <- function(dataset, model, split_number){
   }
   else{
     print(model)
-    trained_model <-  train(dx ~ .,
+    trained_model <-  train(f,
                             data=trainTransformed,
                             method = method,
                             trControl = cv,
@@ -133,27 +157,47 @@ pipeline <- function(dataset, model, split_number){
   #   if linear: Output the weights of features of linear models
   #   else: Output the feature importances based on random permutation for non-linear models
   # Here we look at the top 20 important features
-  if(model=="L1_Linear_SVM" || model=="L2_Linear_SVM" || model=="L2_Logistic_Regression"){
-    # We will use the permutation_importance function here to:
-    #     1. Predict held-out test-data
-    #     2. Calculate ROC and AUROC values on this prediction
-    #     3. Get the feature importances for correlated and uncorrelated feautures
-    roc_results <- permutation_importance(trained_model, testTransformed)
-    test_auc <- roc_results[[1]]  # Predict the base test importance
-    feature_importance_non_cor <- roc_results[2] # save permutation results
-    # Get feature weights
-    feature_importance_cor <- trained_model$finalModel$W
-  }
-  else{
-    # We will use the permutation_importance function here to:
-    #     1. Predict held-out test-data
-    #     2. Calculate ROC and AUROC values on this prediction
-    #     3. Get the feature importances for correlated and uncorrelated feautures
-    roc_results <- permutation_importance(trained_model, testTransformed)
-    test_auc <- roc_results[[1]] # Predict the base test importance
-    feature_importance_non_cor <- roc_results[2] # save permutation results of non-cor
-    feature_importance_cor <- roc_results[3] # save permutation results of cor
-  }
+  if(perm==T){
+    if(model=="L1_Linear_SVM" || model=="L2_Linear_SVM" || model=="L2_Logistic_Regression"){
+      # We will use the permutation_importance function here to:
+      #     1. Predict held-out test-data
+      #     2. Calculate ROC and AUROC values on this prediction
+      #     3. Get the feature importances for correlated and uncorrelated feautures
+      roc_results <- permutation_importance(trained_model, testTransformed, first_outcome)
+      test_auc <- roc_results[[1]]  # Predict the base test importance
+      feature_importance_non_cor <- roc_results[2] # save permutation results
+      # Get feature weights
+      feature_importance_cor <- trained_model$finalModel$W
+    }
+    else{
+      # We will use the permutation_importance function here to:
+      #     1. Predict held-out test-data
+      #     2. Calculate ROC and AUROC values on this prediction
+      #     3. Get the feature importances for correlated and uncorrelated feautures
+      roc_results <- permutation_importance(trained_model, testTransformed, first_outcome)
+      test_auc <- roc_results[[1]] # Predict the base test importance
+      feature_importance_non_cor <- roc_results[2] # save permutation results of non-cor
+      feature_importance_cor <- roc_results[3] # save permutation results of cor
+    }
+  }else{
+    print("No permutation test being performed.")
+    if(model=="L1_Linear_SVM" || model=="L2_Linear_SVM" || model=="L2_Logistic_Regression"){
+      # Get feature weights
+      feature_importance_non_cor <- trained_model$finalModel$W
+      # Get feature weights
+      feature_importance_cor <- trained_model$finalModel$W
+    }else{
+      # Get feature weights
+      feature_importance_non_cor <- NULL
+      # Get feature weights
+      feature_importance_cor <- NULL
+    }
+    # Calculate the test-auc for the actual pre-processed held-out data
+    rpartProbs <- predict(trained_model, testTransformed, type="prob")
+    test_roc <- roc(ifelse(testTransformed[,outcome] == first_outcome, 1, 0), rpartProbs[[1]])
+    test_auc <- test_roc$auc
+  } 
+
   # ---------------------------------------------------------------------------------->
 
   # ----------------------------Save metrics as vector ------------------------------->

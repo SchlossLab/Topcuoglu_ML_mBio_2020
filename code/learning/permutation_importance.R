@@ -50,12 +50,17 @@ for (dep in deps){
 
 
 ####################### DEFINE FUNCTION  #############################
-permutation_importance <- function(model, full){
+permutation_importance <- function(model, full, first_outcome, outcome=NULL){
+
+  # Set outcome as first column if null
+  if(is.null(outcome)){
+    outcome <- colnames(full)[1]
+  }
 
   # -----------Get the original testAUC from held-out test data--------->
   # Calculate the test-auc for the actual pre-processed held-out data
   rpartProbs <- predict(model, full, type="prob")
-  base_roc <- roc(ifelse(full$dx == "cancer", 1, 0), rpartProbs[[1]])
+  base_roc <- roc(ifelse(full[,outcome]  == first_outcome, 1, 0), rpartProbs[[1]])
   base_auc <- base_roc$auc
   # -------------------------------------------------------------------->
 
@@ -78,8 +83,11 @@ permutation_importance <- function(model, full){
   # Remove those names as columns from full test data
   # Remove the diagnosis column to only keep non-correlated features
   non_correlated_otus <- full %>%
-    select(-correlated_otus) %>%
-    select(-dx) %>%
+    select(-correlated_otus)
+  
+  non_correlated_otus[,outcome] <- NULL
+  
+  non_correlated_otus <- non_correlated_otus %>%
     colnames()
   # -------------------------------------------------------------------->
 
@@ -101,7 +109,7 @@ permutation_importance <- function(model, full){
     # Predict the diagnosis outcome with the one-feature-permuted test dataset
     rpartProbs_permuted <- predict(model, full_permuted, type="prob")
     # Calculate the new auc
-    new_auc <- roc(ifelse(full_permuted$dx == "cancer", 1, 0), rpartProbs_permuted[[1]])$auc
+    new_auc <- roc(ifelse(full_permuted[,outcome] == first_outcome, 1, 0), rpartProbs_permuted[[1]])$auc
     # Return how does this feature being permuted effect the auc
     return(new_auc)
   }))
@@ -182,7 +190,7 @@ permutation_importance <- function(model, full){
     # Predict the diagnosis outcome with the group-permuted test dataset
     rpartProbs_permuted_corr <- predict(model, full_permuted_corr, type="prob")
     # Calculate the new auc
-    new_auc <- roc(ifelse(full_permuted_corr$dx == "cancer", 1, 0), rpartProbs_permuted_corr[[1]])$auc
+    new_auc <- roc(ifelse(full_permuted_corr[,outcome] == first_outcome, 1, 0), rpartProbs_permuted_corr[[1]])$auc
     list <- list(new_auc, unlist(i))
     return(list)
   }))

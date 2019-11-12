@@ -87,6 +87,7 @@ cd DeepLearning
 	 2. `Rscript code/learning/main.R` sources 4 other scripts that are part of the pipeline. 
 	 
 	 	* To choose the model and model hyperparemeters:`source('code/learning/model_selection.R')`
+		* This function (and `get_results`) also takes an optional argument to specify your own hyperparameters to be used for cross-validation (`hyperparameters`). This argument should be a list where the names of the list are the hyperparameters and the values are the values to be tested
 		
 		Depending on your ML task, the model hyperparameter range to tune will be different. This is hard-coded for our study but will be updated to integrate user-defined range in the future (Issue # 10)
 	 
