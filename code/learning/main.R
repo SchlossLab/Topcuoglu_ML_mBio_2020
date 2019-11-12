@@ -98,9 +98,11 @@ data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
 input <- commandArgs(trailingOnly=TRUE)
 seed <- as.numeric(input[1])
 model <- input[2]
-outcome <- input[3] # pass outcome column name in quotation marks (e.g. "dx)
-permutation <- as.numeric(input[4]) # 1 if permutation performed
+permutation <- as.numeric(input[3]) # 1 if permutation performed
                                     # 0 if permutation not performed
+outcome <- input[4]
+
+
 
 # Then arguments 1 and 2 will be placed respectively into the functions:
 #   1. set.seed() : creates reproducibility and variability
@@ -111,9 +113,10 @@ set.seed(seed)
 # Start walltime for running model
 tic("model")
 # Run the model
-  # User can define the outcome here:
-  # get_results(data, model, seed, "dx", 0)
-get_results(data, model, seed, outcome, permutation)
+  # User can define the outcome and to do permutation or not here:
+  # example: get_results(data, model, seed, 0, "dx)
+  # OR pass as NA if no argument is given on the command line
+get_results(data, model, seed, permutation, outcome)
 # Stop walltime for running model
 secs <- toc()
 # Save elapsed time
