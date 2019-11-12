@@ -37,11 +37,11 @@
 ######################################################################
 
 
-pipeline <- function(dataset, model, split_number, outcome=NULL, hyperparameters=NULL, perm=T){
+pipeline <- function(dataset, model, split_number, outcome=NA, hyperparameters=NULL, perm=T){
 
   # -----------------------Get outcome variable----------------------------->
   # If no outcome specified, use first column in dataset
-  if(is.null(outcome)){
+  if(is.na(outcome)){
     outcome <- colnames(dataset)[1]
   }else{
     # check to see if outcome is in column names of dataset
