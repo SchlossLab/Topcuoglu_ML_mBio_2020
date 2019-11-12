@@ -34,7 +34,7 @@
 ######################################################################
 #------------------------- DEFINE FUNCTION -------------------#
 ######################################################################
-get_results <- function(dataset, models, split_number,outcome=NULL,perm=T,hyperparameters=NULL){
+get_results <- get_results <- function(dataset, models, split_number, perm=T, outcome=NA, hyperparameters=NULL){
   # Save results of the modeling pipeline as a list
   results <- pipeline(dataset, models, split_number,outcome=outcome,perm=perm,hyperparameters=hyperparameters) 
   # These results have
