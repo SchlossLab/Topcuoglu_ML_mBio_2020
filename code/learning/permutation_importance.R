@@ -83,8 +83,11 @@ permutation_importance <- function(model, full, first_outcome, outcome=NULL){
   # Remove those names as columns from full test data
   # Remove the diagnosis column to only keep non-correlated features
   non_correlated_otus <- full %>%
-    select(-correlated_otus) %>%
-    select(-sym(first_outcome)) %>%
+    select(-correlated_otus)
+  
+  non_correlated_otus[,outcome] <- NULL
+  
+  non_correlated_otus <- non_correlated_otus %>%
     colnames()
   # -------------------------------------------------------------------->
 
