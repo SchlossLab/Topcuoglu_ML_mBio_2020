@@ -74,10 +74,10 @@ data <- inner_join(meta, shared, by=c("sample"="Group")) %>%
   select(-sample, -Dx_Bin, -fit_result) %>%
   drop_na()
 # We want the diagnosis column to be a factor
-data$dx <- factor(data$dx)
+# data$dx <- factor(data$dx)
 # We want the first sample to be a cancer so we shuffle the dataset with a specific seed to get cancer as the first sample
-set.seed(0)
-data <- data[sample(1:nrow(data)), ]
+# set.seed(0)
+# data <- data[sample(1:nrow(data)), ]
 ###################################################################
 
 ######################## RUN PIPELINE #############################
@@ -98,6 +98,9 @@ data <- data[sample(1:nrow(data)), ]
 input <- commandArgs(trailingOnly=TRUE)
 seed <- as.numeric(input[1])
 model <- input[2]
+outcome <- input[3] # pass outcome column name in quotation marks (e.g. "dx)
+permutation <- as.numeric(input[4]) # 1 if permutation performed
+                                    # 0 if permutation not performed
 
 # Then arguments 1 and 2 will be placed respectively into the functions:
 #   1. set.seed() : creates reproducibility and variability
@@ -108,7 +111,9 @@ set.seed(seed)
 # Start walltime for running model
 tic("model")
 # Run the model
-get_results(data, model, seed)
+  # User can define the outcome here:
+  # get_results(data, model, seed, "dx", 0)
+get_results(data, model, seed, outcome, permutation)
 # Stop walltime for running model
 secs <- toc()
 # Save elapsed time
