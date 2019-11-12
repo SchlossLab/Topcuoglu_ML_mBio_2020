@@ -33,15 +33,15 @@
 ######################################################################
 #------------------------- DEFINE FUNCTION -------------------#
 ######################################################################
-tuning_grid <- function(train_data, model, outcome=NULL, hyperparameters=NULL){
+tuning_grid <- function(train_data, model, outcome, hyperparameters=NULL){
 
   # NOTE: Hyperparameters should be a list where the names of the list are the 
   # hyperparameters and the values are the values to be tested
 
   # set outcome as first column if null
-  if(is.null(outcome)){
-    outcome <- colnames(train_data)[1]
-  }
+  #if(is.null(outcome)){
+   # outcome <- colnames(train_data)[1]
+  #}
 
 # -------------------------CV method definition--------------------------------------->
 # ADDED cv index to make sure
