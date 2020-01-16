@@ -197,7 +197,7 @@ for(i in rf_les_otus){
 }
 legend("topright", legend=c("SRN", "Normal"), pch=c(21, 21), pt.bg=c("red1","lightskyblue"))
 axis(1, at=c(1e-4, 1e-3, 1e-2, 1e-1, 1), label=c("0", "0.1", "1", "10", "100"))
-mtext(logit_les_tax, at=1:length(logit_les_otus)*2-1, side=2, las=1, adj=1, line=0.5)
+mtext(rf_les_tax, at=1:length(rf_les_otus)*2-1, side=2, las=1, adj=1, line=0.5)
 mtext('A - Random forest',cex=2, font=10, side=3, adj= 0, line=0.2)
 dev.off()
 
