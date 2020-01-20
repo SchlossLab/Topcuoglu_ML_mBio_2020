@@ -18,17 +18,16 @@
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 % use microtype if available
 \IfFileExists{microtype.sty}{%
-\usepackage[]{microtype}
+\usepackage{microtype}
 \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
-\PassOptionsToPackage{hyphens}{url} % url is loaded by hyperref
-\usepackage[unicode=true]{hyperref}
-\hypersetup{
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
             pdftitle={Effective application of machine learning to a microbiome-based classification problem},
             pdfborder={0 0 0},
             breaklinks=true}
 \urlstyle{same}  % don't use monospace font for urls
-\usepackage[margin=1in]{geometry}
 \usepackage{graphicx,grffile}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -58,11 +57,31 @@
 \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
 \fi
 
-% set default figure placement to htbp
-\makeatletter
-\def\fps@figure{htbp}
-\makeatother
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
 
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{\textbf{Effective application of machine learning to a microbiome-based
+classification problem}}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{}
+    \preauthor{}\postauthor{}
+    \date{}
+    \predate{}\postdate{}
+  
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage{array}
@@ -94,11 +113,6 @@
 
 \usepackage{pdfpages}
 \floatplacement{figure}{H} % Keep the figure up top of the page
-
-\title{\textbf{Effective application of machine learning to a microbiome-based
-classification problem}}
-\author{}
-\date{\vspace{-2.5em}}
 
 \begin{document}
 \maketitle
@@ -378,13 +392,20 @@ used to train and validate the models. Because of the high
 dimensionality of the microbiome data (6920 OTUs), large sample sizes
 can lead to better models.
 
-\textbf{Interpretation of each ML model.} Interpretability is related to
-the degree to which humans can understand the reasons behind a model
-prediction (34--36). Because we often use ML models not just to predict
-a health outcome, but also to identify potential biomarkers for disease,
-model interpretation becomes crucial for microbiome studies. ML models
-often decrease in interpretability as they increase in complexity. In
-this study, we used two methods to help interpret our models.
+\textbf{Interpretation of each ML model.} To evaluate the overall
+structure of the CRC dataset and show that the structure of the human
+microbiome is remarkably variable among individuals with SRNs, we
+analyzed the Bray-Curtis distances with an NMDS ordination {[}Figure
+S5{]}. The lack of seperation between healthy patients and patients with
+SRNs, show that traditional statistical approaches do not help us to
+adequately address disease ecology. This is why we often use ML models
+not just to predict a health outcome, but also to identify potential
+biomarkers for disease. Therefore, model interpretation becomes crucial
+for microbiome studies. Interpretability is related to the degree to
+which humans can understand the reasons behind a model prediction
+(34--36). ML models often decrease in interpretability as they increase
+in complexity. In this study, we used two methods to help interpret our
+models.
 
 First, we interpreted the feature importance of the linear models (L1
 and L2-regularized SVM with linear kernel and L2-regularized logistic
@@ -393,11 +414,12 @@ OTU {[}Figure 3{]}. We also reviewed the signs of feature weights to
 determine whether an OTU was associated with classifying a subject as
 being healthy or having an SRN. It was encouraging that many of the
 highest-ranked OTUs were shared across these three models (e.g., OTUs
-50, 426, 609, 822, 1239). The benefit of this approach was that the
-results of the analysis were based on the trained model parameters and
-provided information regarding the sign and magnitude of the impact of
-each OTU. However, this approach is limited to linear models or models
-with prespecified interaction terms.
+50, 426, 609, 822, 1239). The great benefit of this approach was knowing
+the sign and magnitude of each OTU coefficient in the trained model.
+This allowed us to immidiately interpret negative and positive
+coefficient signs as protective and risk factors, respectively and the
+magnitude as the impact of these factors. However, this approach is
+limited to linear models or models with prespecified interaction terms.
 
 Second, to analyze non-linear models, we interpreted the feature
 importance using permutation importance (37). Whereas the absolute
@@ -436,6 +458,14 @@ Similarly, for the L2-regularized SVM and L2-regularized logistic
 regression, 9 and 12 OTUs, respectively, were shared among the two
 interpretation methods. These results indicate that both methods are
 consistent in selecting the most important OTUs.
+
+We also compared the top 20 OTUs selected by permutation importance in
+L2-regularized logistic regression and the highest performing tree-based
+models, random forest and XGBoost. 2 and 5 OTUs, respectively, were
+shared among the models. These results indicate that we were able to
+identify a few more OTUs that are deemed important by both linear and
+non-linear models when we used permutation importance as our
+interpretation method.
 
 \textbf{The computational efficiency of each ML model.} We compared the
 training times of the seven ML models. The training times increased with
@@ -503,11 +533,16 @@ importance, we partially accounted for collinearity by grouping
 correlated OTUs to determine their impact as a group. We grouped OTUs
 that had a perfect correlation with each other; however, we could reduce
 the correlation threshold to further investigate the relationships among
-correlated features. It is important to know the correlation structures
-of the data to avoid misinterpreting the models. This is likely to be a
-particular problem with shotgun metagenomic datasets where collinearity
-will be more pronounced due to many genes being correlated with one
-another because they come from the same chromosome. To identify the true
+correlated features. We are choosing to leave the decision to define
+correlation and setting up correlations thresholds to the researchers
+for their own microbiome questions. However, we would like to urge them
+to investigate the correlation structures of the data to avoid
+misinterpreting the models. This is likely to be a particular problem
+with shotgun metagenomic datasets where collinearity will be more
+pronounced due to many genes being correlated with one another because
+they come from the same chromosome. True causal mechanisms (e.g.~role of
+microbiome in colorectal cancer) cannot be explained solely by the
+highest performing machine learning model (39). To identify the true
 underlying microbial factors of a disease, it is crucial to follow up on
 any correlation analyses with further hypothesis testing and
 experimentation for biological validation.
@@ -525,9 +560,9 @@ required for each category to train an accurate model. We also did not
 use regression-based analyses to predict a non-categorical outcome. We
 have previously used such an approach to train random forest models to
 predict fecal short-chain fatty acid concentrations based on microbiome
-data (39). Our analysis was also limited to shallow learning methods and
+data (40). Our analysis was also limited to shallow learning methods and
 did not explore deep learning methods such as neural networks. Deep
-learning methods hold promise (12, 40, 41), but microbiome datasets
+learning methods hold promise (12, 41, 42), but microbiome datasets
 often suffer from having many features and small sample sizes, which
 result in overfitting.
 
@@ -536,12 +571,12 @@ to train, evaluate, and interpret their own ML models to generate
 hypotheses regarding which OTUs might be biologically relevant. However,
 deploying microbiome-based models to make clinical diagnoses or
 predictions is a significantly more challenging and distinct undertaking
-(42). For example, we currently lack standardized methods to collect
+(43). For example, we currently lack standardized methods to collect
 patient samples, generate sequence data, and report clinical data. We
 are also challenged by the practical constraints of OTU-based
 approaches. The de novo algorithms commonly in use are slow, require
 considerable memory, and result in different OTU assignments as new data
-are added (43). Finally, we also need independent validation cohorts to
+are added (44). Finally, we also need independent validation cohorts to
 test the performance of a diagnostic model. To realize the potential for
 using ML approaches with microbiome data, it is necessary that we direct
 our efforts to overcome these challenges.
@@ -573,9 +608,9 @@ lesions. We assigned patients into two classes: those with healthy
 colons and those with screen relevant neoplasias (SRNs). The healthy
 class included patients with healthy colons or non-advanced adenomas,
 whereas the SRN class included patients with advanced adenomas or
-carcinomas (44). Patients with an adenoma greater than 1 cm, more than
+carcinomas (45). Patients with an adenoma greater than 1 cm, more than
 three adenomas of any size, or an adenoma with villous histology were
-classified as having advanced adenomas (44). There were 172 patients
+classified as having advanced adenomas (45). There were 172 patients
 with normal colonoscopies, 198 with adenomas, and 120 with carcinomas.
 Of the 198 adenomas, 109 were identified as advanced adenomas. Together
 261 patients were classified as healthy and 229 patients were classified
@@ -586,10 +621,10 @@ patients were used for 16S rRNA gene sequencing to measure bacterial
 population abundances. The sequence data used in our analyses were
 originally generated by Baxter et al. (available through NCBI Sequence
 Read Archive {[}SRP062005{]}, (5)). The OTU abundance table was
-generated by Sze et al (45), who processed the 16S rRNA sequences in
+generated by Sze et al (46), who processed the 16S rRNA sequences in
 mothur (v1.39.3) using the default quality filtering methods,
 identifying and removing chimeric sequences using VSEARCH, and assigning
-to OTUs at 97\% similarity using the OptiClust algorithm (43, 46, 47);
+to OTUs at 97\% similarity using the OptiClust algorithm (44, 47, 48);
 (\url{https://github.com/SchlossLab/Sze_CRCMetaAnalysis_mBio_2018/blob/master/data/process/baxter/baxter.0.03.subsample.shared}).
 These OTU abundances were the features we used to predict colorectal
 health of the patients. There were 6920 OTUs. OTU abundances were
@@ -626,7 +661,7 @@ individual base learners. Performing a grid search for hyperparameter
 selection might not be feasible for when there are more than two
 hyperparameters to tune for. In such cases, it is more efficient to use
 random search or recently developed tools such as Hyperband to identify
-good hyperparameter configurations (48).
+good hyperparameter configurations (49).
 
 The computational burden during model training due to model complexity
 was reduced by parallelizing segments of the ML pipeline. We
@@ -965,27 +1000,33 @@ of methods to deal with it and a simulation study evaluating their
 performance. Ecography \textbf{36}:27--46.
 doi:\href{https://doi.org/10.1111/j.1600-0587.2012.07348.x}{10.1111/j.1600-0587.2012.07348.x}.
 
+\hypertarget{ref-li_accurate_2020}{}
+39. \textbf{Li J}, \textbf{Liu L}, \textbf{Le TD}, \textbf{Liu J}. 2020.
+Accurate data-driven prediction does not mean high reproducibility. Nat
+Mach Intell \textbf{2}:13--15.
+doi:\href{https://doi.org/10.1038/s42256-019-0140-2}{10.1038/s42256-019-0140-2}.
+
 \hypertarget{ref-sze_fecal_2019}{}
-39. \textbf{Sze MA}, \textbf{Topçuoğlu BD}, \textbf{Lesniak NA},
+40. \textbf{Sze MA}, \textbf{Topçuoğlu BD}, \textbf{Lesniak NA},
 \textbf{Ruffin MT}, \textbf{Schloss PD}. 2019. Fecal short-chain fatty
 acids are not predictive of colonic tumor status and cannot be predicted
 based on bacterial community structure. mBio \textbf{10}:e01454--19.
 doi:\href{https://doi.org/10.1128/mBio.01454-19}{10.1128/mBio.01454-19}.
 
 \hypertarget{ref-kocheturov_massive_2019}{}
-40. \textbf{Kocheturov A}, \textbf{Pardalos PM}, \textbf{Karakitsiou A}.
+41. \textbf{Kocheturov A}, \textbf{Pardalos PM}, \textbf{Karakitsiou A}.
 2019. Massive datasets and machine learning for computational
 biomedicine: Trends and challenges. Ann Oper Res \textbf{276}:5--34.
 doi:\href{https://doi.org/10.1007/s10479-018-2891-2}{10.1007/s10479-018-2891-2}.
 
 \hypertarget{ref-kim_improved_2018}{}
-41. \textbf{Kim M}, \textbf{Oh I}, \textbf{Ahn J}. 2018. An improved
+42. \textbf{Kim M}, \textbf{Oh I}, \textbf{Ahn J}. 2018. An improved
 method for prediction of cancer prognosis by network learning. Genes
 \textbf{9}:478.
 doi:\href{https://doi.org/10.3390/genes9100478}{10.3390/genes9100478}.
 
 \hypertarget{ref-wiens_no_2019}{}
-42. \textbf{Wiens J}, \textbf{Saria S}, \textbf{Sendak M},
+43. \textbf{Wiens J}, \textbf{Saria S}, \textbf{Sendak M},
 \textbf{Ghassemi M}, \textbf{Liu VX}, \textbf{Doshi-Velez F},
 \textbf{Jung K}, \textbf{Heller K}, \textbf{Kale D}, \textbf{Saeed M},
 \textbf{Ossorio PN}, \textbf{Thadaney-Israni S}, \textbf{Goldenberg A}.
@@ -994,13 +1035,13 @@ care. Nat Med \textbf{25}:1337--1340.
 doi:\href{https://doi.org/10.1038/s41591-019-0548-6}{10.1038/s41591-019-0548-6}.
 
 \hypertarget{ref-westcott_opticlust_2017}{}
-43. \textbf{Westcott SL}, \textbf{Schloss PD}. 2017. OptiClust, an
+44. \textbf{Westcott SL}, \textbf{Schloss PD}. 2017. OptiClust, an
 Improved Method for Assigning Amplicon-Based Sequence Data to
 Operational Taxonomic Units. mSphere \textbf{2}.
 doi:\href{https://doi.org/10.1128/mSphereDirect.00073-17}{10.1128/mSphereDirect.00073-17}.
 
 \hypertarget{ref-redwood_stool_2016}{}
-44. \textbf{Redwood DG}, \textbf{Asay ED}, \textbf{Blake ID},
+45. \textbf{Redwood DG}, \textbf{Asay ED}, \textbf{Blake ID},
 \textbf{Sacco PE}, \textbf{Christensen CM}, \textbf{Sacco FD},
 \textbf{Tiesinga JJ}, \textbf{Devens ME}, \textbf{Alberts SR},
 \textbf{Mahoney DW}, \textbf{Yab TC}, \textbf{Foote PH}, \textbf{Smyrk
@@ -1010,13 +1051,13 @@ Mayo Clin Proc \textbf{91}:61--70.
 doi:\href{https://doi.org/10.1016/j.mayocp.2015.10.008}{10.1016/j.mayocp.2015.10.008}.
 
 \hypertarget{ref-sze_leveraging_2018}{}
-45. \textbf{Sze MA}, \textbf{Schloss PD}. 2018. Leveraging existing 16S
+46. \textbf{Sze MA}, \textbf{Schloss PD}. 2018. Leveraging existing 16S
 rRNA gene surveys to identify reproducible biomarkers in individuals
 with colorectal tumors. mBio \textbf{9}:e00630--18.
 doi:\href{https://doi.org/10.1128/mBio.00630-18}{10.1128/mBio.00630-18}.
 
 \hypertarget{ref-schloss_introducing_2009}{}
-46. \textbf{Schloss PD}, \textbf{Westcott SL}, \textbf{Ryabin T},
+47. \textbf{Schloss PD}, \textbf{Westcott SL}, \textbf{Ryabin T},
 \textbf{Hall JR}, \textbf{Hartmann M}, \textbf{Hollister EB},
 \textbf{Lesniewski RA}, \textbf{Oakley BB}, \textbf{Parks DH},
 \textbf{Robinson CJ}, \textbf{Sahl JW}, \textbf{Stres B},
@@ -1026,13 +1067,13 @@ Community-Supported Software for Describing and Comparing Microbial
 Communities. ApplEnvironMicrobiol \textbf{75}:7537--7541.
 
 \hypertarget{ref-rognes_vsearch_2016}{}
-47. \textbf{Rognes T}, \textbf{Flouri T}, \textbf{Nichols B},
+48. \textbf{Rognes T}, \textbf{Flouri T}, \textbf{Nichols B},
 \textbf{Quince C}, \textbf{Mahé F}. 2016. VSEARCH: A versatile open
 source tool for metagenomics. PeerJ \textbf{4}:e2584.
 doi:\href{https://doi.org/10.7717/peerj.2584}{10.7717/peerj.2584}.
 
 \hypertarget{ref-li_hyperband:_2016}{}
-48. \textbf{Li L}, \textbf{Jamieson K}, \textbf{DeSalvo G},
+49. \textbf{Li L}, \textbf{Jamieson K}, \textbf{DeSalvo G},
 \textbf{Rostamizadeh A}, \textbf{Talwalkar A}. 2016. Hyperband: A novel
 bandit-based approach to hyperparameter optimization. arXiv:160306560
 {[}cs, stat{]}.
@@ -1194,10 +1235,17 @@ train and validate the models but included the ranges observed with the
 more complete datasets. \newpage
 \includegraphics[height=17.5cm, width=13cm]{Figure_S5.png}
 
-\textbf{Figure S5. Interpretation of the linear ML models with
+\textbf{Figure S5. NMDS ordination with Bray-Curtis distances.}
+
+\newpage
+
+\includegraphics[height=17.5cm, width=13cm]{Figure_S6.png}
+
+\textbf{Figure S6. Interpretation of the linear ML models with
 permutation importance.} (A) L1-regularized SVM with linear kernel, (B)
 L2-regularized SVM with linear kernel, and (C) L2-regularized logistic
 regression were interpreted using permutation importance using held-out
 test set.
+
 
 \end{document}
