@@ -165,8 +165,8 @@ base_nonlin_plot <-  function(data, name){
     mutate(common_otus = case_when(names %in% intersect_four ~ "all models",
                                    names %in% intersect_three ~ "tree-based models",
                                    names %in% intersect_rf_dt ~ "random forest and decision tree",
-                                   names %in% intersect_xgboost_dt ~ "XGBoost and decision tree",
-                                   names %in% intersect_xgboost_rf ~ "XGBoost and random forest",
+                                   names %in% intersect_xgboost_dt ~ "XGBoost, decision tree and RBF SVM",
+                                   names %in% intersect_xgboost_rf ~ "XGBoost, random forest and RBF SVM",
                                    names %in% intersect_rbf_xgboost ~ "XGBoost and RBF SVM",
                                    TRUE ~ "no overlap")) %>%
     group_by(names)
@@ -178,7 +178,7 @@ base_nonlin_plot <-  function(data, name){
     data.frame()
 
   # Define colors for overlapping OTUs
-  cols <- c("all models" = "orange", "tree-based models" = "lightsalmon", "random forest and decision tree" = "lightblue", "XGBoost and decision tree" = "darkseagreen3", "XGBoost and random forest"="red", "XGBoost and RBF SVM" = "hotpink" , "no overlap"="white")
+  cols <- c("all models" = "orange", "tree-based models" = "darkolivegreen3", "random forest and decision tree" = "deepskyblue2", "XGBoost, decision tree and RBF SVM" = "aquamarine2", "XGBoost, random forest and RBF SVM"="red", "XGBoost and RBF SVM" = "lightpink1" , "no overlap"="white")
 
   # Plot the figure
   plot <- ggplot() +
@@ -303,16 +303,16 @@ xgboost_plot <- base_nonlin_plot(xgboost, "XGBoost")+
 # ----------------------------------------------------------------------->
 
 # Extract legend
-legend <- get_legend(xgboost_plot + theme(legend.position="bottom", 
+legend <- get_legend(xgboost_plot + guides(fill=guide_legend(ncol=2)) + theme(legend.position="bottom", 
                                           legend.title = element_blank(),
                                           legend.direction = "horizontal",
-                                          legend.justification="center",
-                                          legend.box.just = "bottom",
-                                          legend.text=element_text(size=10),
-                                          legend.background = element_rect(linetype="solid", 
-                                                                           color="black", 
-                                                                           size=0.5),
-                                          legend.box.margin=margin(c(12,12,12,12))))
+                                          legend.justification="left",
+                                          #legend.box.just = "bottom",
+                                          legend.text=element_text(size=10)))
+                                          #legend.background = element_rect(linetype="solid", 
+                                                                           #color="black", 
+                                                                           #size=0.5)))
+                                          #legend.box.margin=margin(c(12,12,12,12))))
 
 ######################################################################
 #-----------------------Save figure as .pdf ------------------------ #
@@ -324,4 +324,5 @@ ggdraw(add_sub(perm_tree_based, "AUROC with the OTU permuted randomly", size=18,
 
 plot <- plot_grid(last_plot(), legend, ncol = 1, rel_heights=c(.92, .08))
 
-ggsave("Figure_4.png", plot = last_plot(), device = 'png', path = 'submission', width = 7, height = 15)
+ggsave("Figure_4.png", plot = last_plot(), device = 'png', path = 'submission', width = 8, height = 18)
+

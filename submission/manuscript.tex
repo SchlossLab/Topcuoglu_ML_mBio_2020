@@ -228,9 +228,9 @@ the predictive performance on different folds of cross-validation; and
 unreported variation between cross-validation and testing performances.
 Though the microbiome field is making progress to avoid some of these
 pitfalls including validating their models on independent datasets (8,
-19, 20) and introducing ways to better use ML tools (21--24), more work
-is needed to improve reproducibility further and minimize overestimating
-for model performance.
+19, 20) and introducing accessible and open-source ML tools (21--24),
+more work is needed to improve reproducibility further and minimize
+overestimating for model performance.
 
 Among microbiome researchers, the lack of justification when selecting a
 modeling approach has often been due to an implicit assumption that more
@@ -254,7 +254,8 @@ In this study, we provided steps toward standardization of machine
 learning methods for microbiome studies which are often poorly
 documented and executed. To showcase a rigorous ML pipeline and to shed
 light on how ML model selection can affect modeling results, we
-performed an empirical analysis comparing seven modeling approaches with
+performed an empirical analysis comparing the predictive performance,
+interpretability and training times of seven modeling approaches with
 the same dataset and pipeline. We built three linear models with
 different forms of regularization: L2-regularized logistic regression
 and L1 and L2-regularized support vector machines (SVM) with a linear
@@ -272,7 +273,11 @@ disease is driven by variation in the microbiome (2, 4, 5, 32). With
 this dataset, we developed an ML pipeline that can be used in many
 different scenarios for training and evaluating models. This framework
 can be easily applied to other host-associated and environmental
-microbiome datasets. We hope that this study \ldots{}
+microbiome datasets. We also provided an aspirational rubric for
+evaluating the rigor of ML practices applied to microbiome data
+{[}Figure S1{]} to urge the audience to be diligent with with their
+study design, model selection, development, evaluation and
+interpretation.
 
 \subsection{Results}\label{results}
 
@@ -291,21 +296,8 @@ screen relevant neoplasia (SRN; 46.7\%). A training set included 393
 individuals, of which 209 had an SRN (53\%), while the test set was
 composed of 97 individuals, of which 52 had an SRN (54\%). The training
 data were used to build and select the models, and the test set was used
-for evaluating the model.
-
-We trained seven different models using the training data {[}Table 1{]}.
-We focused on different classification algorithms and regularization
-methods. Regularization helps to prevent overfitting by penalizing a
-model that fits the training data too well (33). For regularized
-logistic regression and SVM with a linear kernel, we used
-L2-regularization to keep all potentially important features. For
-comparison, we also trained an L1-regularized SVM with a linear kernel.
-L1-regularization on microbiome data led to a sparser solution (i.e.,
-forced many coefficients to zero). To explore the potential for
-non-linear relationships among features to improve classification, we
-trained tree-based models including, a decision tree, a random forest,
-and gradient boosted trees (XGBoost) and an SVM with a non-linear
-kernel.
+for evaluating the model. We trained seven different models using the
+training data {[}Table 1{]}.
 
 Model selection requires tuning hyperparameters. Hyperparameters are
 parameters that need to be specified or tuned by the user, in order to
@@ -403,7 +395,7 @@ not just to predict a health outcome, but also to identify potential
 biomarkers for disease. Therefore, model interpretation becomes crucial
 for microbiome studies. Interpretability is related to the degree to
 which humans can understand the reasons behind a model prediction
-(34--36). ML models often decrease in interpretability as they increase
+(33--35). ML models often decrease in interpretability as they increase
 in complexity. In this study, we used two methods to help interpret our
 models.
 
@@ -422,37 +414,38 @@ magnitude as the impact of these factors. However, this approach is
 limited to linear models or models with prespecified interaction terms.
 
 Second, to analyze non-linear models, we interpreted the feature
-importance using permutation importance (37). Whereas the absolute
+importance using permutation importance (36). Whereas the absolute
 feature weights were determined from the trained models, here we
 measured importance using the held-out test data. Permutation importance
 analysis is a post hoc explanation of the model, in which we randomly
 permuted groups of perfectly correlated features together and other
-features individually across the two groups in the held-out test data.
-We then calculated how much the predictive performance of the model
-(i.e., testing AUROC values) decreased when each OTU or group of OTUs
-was randomly permuted. We ranked the OTUs based on how much the median
-testing AUROC decreased when it was permuted; the OTU with the largest
-decrease ranked highest {[}Figure 4{]}. Among the twenty OTUs with the
-largest impact, there was only one OTU (OTU 822) that was shared among
-all of the models; however, we found three OTUs (OTUs 58, 110, 367) that
-were important in each of the tree-based models. Similarly, the random
-forest and XGBoost models shared four of the most important OTUs (OTUs
-2, 12, 361, 477). Permutation analysis results also revealed that with
-the exception of the decision tree model, removal of any individual OTU
-had minimal impact on model performance. For example, if OTU 367 was
-permuted across the samples in the decision tree model, the median AUROC
-dropped from 0.601 to 0.525. In contrast, if the same OTU was permuted
-in the random forest model, the AUROC only dropped from 0.695 to 0.680,
-which indicated high degree of collinearity in the dataset. Permutation
-analysis allowed us to gauge the importance of each OTU in non-linear
-models and partially account for collinearity by grouping correlated
-OTUs to determine their impact as a group.
+features individually across the two groups in the held-out test data
+{[}Figure S6{]}. We then calculated how much the predictive performance
+of the model (i.e., testing AUROC values) decreased when each OTU or
+group of OTUs was randomly permuted. We ranked the OTUs based on how
+much the median testing AUROC decreased when it was permuted; the OTU
+with the largest decrease ranked highest {[}Figure 4{]}. Among the
+twenty OTUs with the largest impact, there was only one OTU (OTU 822)
+that was shared among all of the models; however, we found three OTUs
+(OTUs 58, 110, 367) that were important in each of the tree-based
+models. Similarly, the random forest and XGBoost models shared four of
+the most important OTUs (OTUs 2, 12, 361, 477). Permutation analysis
+results also revealed that with the exception of the decision tree
+model, removal of any individual OTU had minimal impact on model
+performance. For example, if OTU 367 was permuted across the samples in
+the decision tree model, the median AUROC dropped from 0.601 to 0.525.
+In contrast, if the same OTU was permuted in the random forest model,
+the AUROC only dropped from 0.695 to 0.680, which indicated high degree
+of collinearity in the dataset. Permutation analysis allowed us to gauge
+the importance of each OTU in non-linear models and partially account
+for collinearity by grouping correlated OTUs to determine their impact
+as a group.
 
 To further highlight the differences between the two interpretation
 methods, we used permutation importance to interpret the linear models
-{[}Figure S5{]}. When we analyzed the L1-regularized SVM with linear
+{[}Figure S7{]}. When we analyzed the L1-regularized SVM with linear
 kernel model using feature rankings based on weights {[}Figure 3{]} and
-permutation importance {[}Figure S5{]}, 17 of the 20 top OTUs (e.g., OTU
+permutation importance {[}Figure S6{]}, 17 of the 20 top OTUs (e.g., OTU
 609, 822, 1239) were deemed important by both interpretation methods.
 Similarly, for the L2-regularized SVM and L2-regularized logistic
 regression, 9 and 12 OTUs, respectively, were shared among the two
@@ -466,6 +459,8 @@ shared among the models. These results indicate that we were able to
 identify a few more OTUs that are deemed important by both linear and
 non-linear models when we used permutation importance as our
 interpretation method.
+
+Figure S7:
 
 \textbf{The computational efficiency of each ML model.} We compared the
 training times of the seven ML models. The training times increased with
@@ -524,7 +519,7 @@ on the predictive performance based on permutation importance.
 Human-associated microbial communities have complex correlation
 structures that create collinearity in the datasets. This can hinder our
 ability to reliably interpret models because the feature weights of
-correlated OTUs are influenced by one another (38). To capture all
+correlated OTUs are influenced by one another (37). To capture all
 important features, once we identify highly ranked OTUs, we should
 review their relationships with other OTUs. These relationships will
 help us generate new hypotheses about the ecology of the disease and
@@ -540,9 +535,9 @@ to investigate the correlation structures of the data to avoid
 misinterpreting the models. This is likely to be a particular problem
 with shotgun metagenomic datasets where collinearity will be more
 pronounced due to many genes being correlated with one another because
-they come from the same chromosome. True causal mechanisms (e.g.~role of
-microbiome in colorectal cancer) cannot be explained solely by the
-highest performing machine learning model (39). To identify the true
+they come from the same chromosome. True causal mechanisms (e.g., role
+of microbiome in colorectal cancer) cannot be explained solely by the
+highest performing machine learning model (38). To identify the true
 underlying microbial factors of a disease, it is crucial to follow up on
 any correlation analyses with further hypothesis testing and
 experimentation for biological validation.
@@ -560,9 +555,9 @@ required for each category to train an accurate model. We also did not
 use regression-based analyses to predict a non-categorical outcome. We
 have previously used such an approach to train random forest models to
 predict fecal short-chain fatty acid concentrations based on microbiome
-data (40). Our analysis was also limited to shallow learning methods and
+data (39). Our analysis was also limited to shallow learning methods and
 did not explore deep learning methods such as neural networks. Deep
-learning methods hold promise (12, 41, 42), but microbiome datasets
+learning methods hold promise (12, 40, 41), but microbiome datasets
 often suffer from having many features and small sample sizes, which
 result in overfitting.
 
@@ -571,12 +566,12 @@ to train, evaluate, and interpret their own ML models to generate
 hypotheses regarding which OTUs might be biologically relevant. However,
 deploying microbiome-based models to make clinical diagnoses or
 predictions is a significantly more challenging and distinct undertaking
-(43). For example, we currently lack standardized methods to collect
+(42). For example, we currently lack standardized methods to collect
 patient samples, generate sequence data, and report clinical data. We
 are also challenged by the practical constraints of OTU-based
 approaches. The de novo algorithms commonly in use are slow, require
 considerable memory, and result in different OTU assignments as new data
-are added (44). Finally, we also need independent validation cohorts to
+are added (43). Finally, we also need independent validation cohorts to
 test the performance of a diagnostic model. To realize the potential for
 using ML approaches with microbiome data, it is necessary that we direct
 our efforts to overcome these challenges.
@@ -608,9 +603,9 @@ lesions. We assigned patients into two classes: those with healthy
 colons and those with screen relevant neoplasias (SRNs). The healthy
 class included patients with healthy colons or non-advanced adenomas,
 whereas the SRN class included patients with advanced adenomas or
-carcinomas (45). Patients with an adenoma greater than 1 cm, more than
+carcinomas (44). Patients with an adenoma greater than 1 cm, more than
 three adenomas of any size, or an adenoma with villous histology were
-classified as having advanced adenomas (45). There were 172 patients
+classified as having advanced adenomas (44). There were 172 patients
 with normal colonoscopies, 198 with adenomas, and 120 with carcinomas.
 Of the 198 adenomas, 109 were identified as advanced adenomas. Together
 261 patients were classified as healthy and 229 patients were classified
@@ -621,10 +616,10 @@ patients were used for 16S rRNA gene sequencing to measure bacterial
 population abundances. The sequence data used in our analyses were
 originally generated by Baxter et al. (available through NCBI Sequence
 Read Archive {[}SRP062005{]}, (5)). The OTU abundance table was
-generated by Sze et al (46), who processed the 16S rRNA sequences in
+generated by Sze et al (45), who processed the 16S rRNA sequences in
 mothur (v1.39.3) using the default quality filtering methods,
 identifying and removing chimeric sequences using VSEARCH, and assigning
-to OTUs at 97\% similarity using the OptiClust algorithm (44, 47, 48);
+to OTUs at 97\% similarity using the OptiClust algorithm (43, 46, 47);
 (\url{https://github.com/SchlossLab/Sze_CRCMetaAnalysis_mBio_2018/blob/master/data/process/baxter/baxter.0.03.subsample.shared}).
 These OTU abundances were the features we used to predict colorectal
 health of the patients. There were 6920 OTUs. OTU abundances were
@@ -661,7 +656,7 @@ individual base learners. Performing a grid search for hyperparameter
 selection might not be feasible for when there are more than two
 hyperparameters to tune for. In such cases, it is more efficient to use
 random search or recently developed tools such as Hyperband to identify
-good hyperparameter configurations (49).
+good hyperparameter configurations (48).
 
 The computational burden during model training due to model complexity
 was reduced by parallelizing segments of the ML pipeline. We
@@ -963,34 +958,28 @@ signatures: Examining their predictive value. Cell Host Microbe
 \textbf{10}:292--296.
 doi:\href{https://doi.org/10.1016/j.chom.2011.09.003}{10.1016/j.chom.2011.09.003}.
 
-\hypertarget{ref-Ng:2004:FSL:1015330.1015435}{}
-33. \textbf{Ng AY}. 2004. Feature selection, l1 vs. l2 regularization,
-and rotational invariance, pp. 78. \emph{In} Proceedings of the
-twenty-first international conference on machine learning. ACM, New
-York, NY, USA.
-
 \hypertarget{ref-miller_explanation_2017}{}
-34. \textbf{Miller T}. 2017. Explanation in artificial intelligence:
+33. \textbf{Miller T}. 2017. Explanation in artificial intelligence:
 Insights from the social sciences. arXiv:170607269 {[}cs{]}.
 
 \hypertarget{ref-ribeiro_why_2016}{}
-35. \textbf{Ribeiro MT}, \textbf{Singh S}, \textbf{Guestrin C}. 2016.
+34. \textbf{Ribeiro MT}, \textbf{Singh S}, \textbf{Guestrin C}. 2016.
 ``Why should i trust you?'': Explaining the predictions of any
 classifier. arXiv:160204938 {[}cs, stat{]}.
 
 \hypertarget{ref-nori_interpretml:_2019}{}
-36. \textbf{Nori H}, \textbf{Jenkins S}, \textbf{Koch P},
+35. \textbf{Nori H}, \textbf{Jenkins S}, \textbf{Koch P},
 \textbf{Caruana R}. 2019. InterpretML: A unified framework for machine
 learning interpretability. arXiv:190909223 {[}cs, stat{]}.
 
 \hypertarget{ref-10.1093ux2fbioinformaticsux2fbtq134}{}
-37. \textbf{Altmann A}, \textbf{Toloşi L}, \textbf{Sander O},
+36. \textbf{Altmann A}, \textbf{Toloşi L}, \textbf{Sander O},
 \textbf{Lengauer T}. 2010. Permutation importance: a corrected feature
 importance measure. Bioinformatics \textbf{26}:1340--1347.
 doi:\href{https://doi.org/10.1093/bioinformatics/btq134}{10.1093/bioinformatics/btq134}.
 
 \hypertarget{ref-dormann_collinearity:_2013}{}
-38. \textbf{Dormann CF}, \textbf{Elith J}, \textbf{Bacher S},
+37. \textbf{Dormann CF}, \textbf{Elith J}, \textbf{Bacher S},
 \textbf{Buchmann C}, \textbf{Carl G}, \textbf{Carré G}, \textbf{Marquéz
 JRG}, \textbf{Gruber B}, \textbf{Lafourcade B}, \textbf{Leitão PJ},
 \textbf{Münkemüller T}, \textbf{McClean C}, \textbf{Osborne PE},
@@ -1001,32 +990,32 @@ performance. Ecography \textbf{36}:27--46.
 doi:\href{https://doi.org/10.1111/j.1600-0587.2012.07348.x}{10.1111/j.1600-0587.2012.07348.x}.
 
 \hypertarget{ref-li_accurate_2020}{}
-39. \textbf{Li J}, \textbf{Liu L}, \textbf{Le TD}, \textbf{Liu J}. 2020.
+38. \textbf{Li J}, \textbf{Liu L}, \textbf{Le TD}, \textbf{Liu J}. 2020.
 Accurate data-driven prediction does not mean high reproducibility. Nat
 Mach Intell \textbf{2}:13--15.
 doi:\href{https://doi.org/10.1038/s42256-019-0140-2}{10.1038/s42256-019-0140-2}.
 
 \hypertarget{ref-sze_fecal_2019}{}
-40. \textbf{Sze MA}, \textbf{Topçuoğlu BD}, \textbf{Lesniak NA},
+39. \textbf{Sze MA}, \textbf{Topçuoğlu BD}, \textbf{Lesniak NA},
 \textbf{Ruffin MT}, \textbf{Schloss PD}. 2019. Fecal short-chain fatty
 acids are not predictive of colonic tumor status and cannot be predicted
 based on bacterial community structure. mBio \textbf{10}:e01454--19.
 doi:\href{https://doi.org/10.1128/mBio.01454-19}{10.1128/mBio.01454-19}.
 
 \hypertarget{ref-kocheturov_massive_2019}{}
-41. \textbf{Kocheturov A}, \textbf{Pardalos PM}, \textbf{Karakitsiou A}.
+40. \textbf{Kocheturov A}, \textbf{Pardalos PM}, \textbf{Karakitsiou A}.
 2019. Massive datasets and machine learning for computational
 biomedicine: Trends and challenges. Ann Oper Res \textbf{276}:5--34.
 doi:\href{https://doi.org/10.1007/s10479-018-2891-2}{10.1007/s10479-018-2891-2}.
 
 \hypertarget{ref-kim_improved_2018}{}
-42. \textbf{Kim M}, \textbf{Oh I}, \textbf{Ahn J}. 2018. An improved
+41. \textbf{Kim M}, \textbf{Oh I}, \textbf{Ahn J}. 2018. An improved
 method for prediction of cancer prognosis by network learning. Genes
 \textbf{9}:478.
 doi:\href{https://doi.org/10.3390/genes9100478}{10.3390/genes9100478}.
 
 \hypertarget{ref-wiens_no_2019}{}
-43. \textbf{Wiens J}, \textbf{Saria S}, \textbf{Sendak M},
+42. \textbf{Wiens J}, \textbf{Saria S}, \textbf{Sendak M},
 \textbf{Ghassemi M}, \textbf{Liu VX}, \textbf{Doshi-Velez F},
 \textbf{Jung K}, \textbf{Heller K}, \textbf{Kale D}, \textbf{Saeed M},
 \textbf{Ossorio PN}, \textbf{Thadaney-Israni S}, \textbf{Goldenberg A}.
@@ -1035,13 +1024,13 @@ care. Nat Med \textbf{25}:1337--1340.
 doi:\href{https://doi.org/10.1038/s41591-019-0548-6}{10.1038/s41591-019-0548-6}.
 
 \hypertarget{ref-westcott_opticlust_2017}{}
-44. \textbf{Westcott SL}, \textbf{Schloss PD}. 2017. OptiClust, an
+43. \textbf{Westcott SL}, \textbf{Schloss PD}. 2017. OptiClust, an
 Improved Method for Assigning Amplicon-Based Sequence Data to
 Operational Taxonomic Units. mSphere \textbf{2}.
 doi:\href{https://doi.org/10.1128/mSphereDirect.00073-17}{10.1128/mSphereDirect.00073-17}.
 
 \hypertarget{ref-redwood_stool_2016}{}
-45. \textbf{Redwood DG}, \textbf{Asay ED}, \textbf{Blake ID},
+44. \textbf{Redwood DG}, \textbf{Asay ED}, \textbf{Blake ID},
 \textbf{Sacco PE}, \textbf{Christensen CM}, \textbf{Sacco FD},
 \textbf{Tiesinga JJ}, \textbf{Devens ME}, \textbf{Alberts SR},
 \textbf{Mahoney DW}, \textbf{Yab TC}, \textbf{Foote PH}, \textbf{Smyrk
@@ -1051,13 +1040,13 @@ Mayo Clin Proc \textbf{91}:61--70.
 doi:\href{https://doi.org/10.1016/j.mayocp.2015.10.008}{10.1016/j.mayocp.2015.10.008}.
 
 \hypertarget{ref-sze_leveraging_2018}{}
-46. \textbf{Sze MA}, \textbf{Schloss PD}. 2018. Leveraging existing 16S
+45. \textbf{Sze MA}, \textbf{Schloss PD}. 2018. Leveraging existing 16S
 rRNA gene surveys to identify reproducible biomarkers in individuals
 with colorectal tumors. mBio \textbf{9}:e00630--18.
 doi:\href{https://doi.org/10.1128/mBio.00630-18}{10.1128/mBio.00630-18}.
 
 \hypertarget{ref-schloss_introducing_2009}{}
-47. \textbf{Schloss PD}, \textbf{Westcott SL}, \textbf{Ryabin T},
+46. \textbf{Schloss PD}, \textbf{Westcott SL}, \textbf{Ryabin T},
 \textbf{Hall JR}, \textbf{Hartmann M}, \textbf{Hollister EB},
 \textbf{Lesniewski RA}, \textbf{Oakley BB}, \textbf{Parks DH},
 \textbf{Robinson CJ}, \textbf{Sahl JW}, \textbf{Stres B},
@@ -1067,13 +1056,13 @@ Community-Supported Software for Describing and Comparing Microbial
 Communities. ApplEnvironMicrobiol \textbf{75}:7537--7541.
 
 \hypertarget{ref-rognes_vsearch_2016}{}
-48. \textbf{Rognes T}, \textbf{Flouri T}, \textbf{Nichols B},
+47. \textbf{Rognes T}, \textbf{Flouri T}, \textbf{Nichols B},
 \textbf{Quince C}, \textbf{Mahé F}. 2016. VSEARCH: A versatile open
 source tool for metagenomics. PeerJ \textbf{4}:e2584.
 doi:\href{https://doi.org/10.7717/peerj.2584}{10.7717/peerj.2584}.
 
 \hypertarget{ref-li_hyperband:_2016}{}
-49. \textbf{Li L}, \textbf{Jamieson K}, \textbf{DeSalvo G},
+48. \textbf{Li L}, \textbf{Jamieson K}, \textbf{DeSalvo G},
 \textbf{Rostamizadeh A}, \textbf{Talwalkar A}. 2016. Hyperband: A novel
 bandit-based approach to hyperparameter optimization. arXiv:160306560
 {[}cs, stat{]}.
@@ -1099,7 +1088,7 @@ bandit-based approach to hyperparameter optimization. arXiv:160306560
 \makecell[l]{Decision tree} & \makecell[l]{A classifier that sorts samples down from the
 root to the \\leaf node where an attribute is tested to discriminate \\between labels.} & Non-linear \\ \hline
 
-Random forest & \makecell[l]{A classifier that is an ensembe of decision trees \\ that grows randomly with subsampled data.} & Non-linear \\ \hline
+Random forest & \makecell[l]{A classifier that is an ensemble of decision trees \\ that grows randomly with subsampled data.} & Non-linear \\ \hline
 
 \makecell[l]{Gradient Boosted Trees \\ (XGBoost)} & \makecell[l]{A classifier that is an ensembe of decision trees \\ that grows greedily.} & Non-linear \\ \hline
 
@@ -1152,7 +1141,7 @@ show the IQR range and median of the base testing AUROC without any
 permutation. The 20 OTUs that caused the largest decrease in the AUROC
 when permuted are reported here. The colors of the box plots represent
 the OTUs that were shared among the different models; yellow were OTUs
-that were shared among all the non-linear models, salmon were OTUs that
+that were shared among all the non-linear models, green were OTUs that
 were shared among the tree-based models, green were the OTUs shared
 among SVM with radial basis kernel, decision tree and XGBoost, pink were
 the OTUs shared among SVM with radial basis kernel and XGBoost only, red
@@ -1177,7 +1166,7 @@ L2-regularized logistic regression. \newpage
 
 \makecell[l]{Source \\ of data} & \makecell[l]{Data do not reflect intended \\  application (e.g., data pertain \\ to only patients with carcinomas \\ but model is expected to \\ predict advanced adenomas).} & \makecell[l]{Data are appropriate \\ for intended application.} & \makecell[l]{Data reflect intended \\ use and will persist \\ (e.g., same OTU assignments \\ for new fecal samples).} \\ \hline
 
-\makecell[l]{Study \\ cohort} & \makecell[l]{Test data resampled to remove \\ class imbalance (e.g., test data \\ resampled to have an equal \\ number of patients with carcinomas \\ as patients with healthy colons, \\ which does not reflect reality.)}  & \makecell[l]{Test data are reflective \\ of the population which \\ the model will be applied.} & \makecell[l]{Model tested on multiple \\ cohorts with potentially \\ different class balances.} \\ \hline
+\makecell[l]{Study \\ cohort} & \makecell[l]{Test data resampled to remove \\ class imbalance (e.g., test data \\ resampled to have an equal \\ number of patients with carcinomas \\ as patients with healthy colons, \\ which does not reflect reality.)}  & \makecell[l]{Test data are reflective \\ of the population to which \\ the model will be applied.} & \makecell[l]{Model tested on multiple \\ cohorts with potentially \\ different class balances.} \\ \hline
 
 \makecell[l]{Model \\ selection} & \makecell[l]{No justification for \\ classification method.} & \makecell[l]{Model choice is justified \\ for intended application.} & \makecell[l]{Different modeling choices \\ (justified for intended \\ application) are tested.} \\ \hline
 
@@ -1185,7 +1174,7 @@ L2-regularized logistic regression. \newpage
 
 \makecell[l]{Model \\ evaluation} & \makecell[l]{Performance reported on the \\data used to train the model.} & \makecell[l]{Performance reported on \\ held-out test data.} & \makecell[l]{Performance reported on \\ multiple held-out test sets.} \\ \hline
 
-\makecell[l]{Evaluation \\ metrics} & \makecell[l]{Reported performance according to \\ a metric that is not appropriate \\ for intended application  (e.g. when \\  predicting rare outcome, accuracy \\ metric is not reliable).} & \makecell[l]{Reported performance in \\ terms of a metric that \\ is appropriate for intended \\ application and includes \\ confidence intervals.} & \makecell[l]{Reported multiple metrics \\ with confidence intervals.} \\ \hline
+\makecell[l]{Evaluation \\ metrics} & \makecell[l]{Reported performance according to \\ a metric that is not appropriate \\ for intended application  (e.g., when \\  predicting rare outcome, accuracy \\ metric is not reliable).} & \makecell[l]{Reported performance in \\ terms of a metric that \\ is appropriate for intended \\ application and includes \\ confidence intervals.} & \makecell[l]{Reported multiple metrics \\ with confidence intervals.} \\ \hline
 
 \makecell[l]{Model \\ interpretation} & \makecell[l]{No model interpretation.} & \makecell[l]{Follow-up analyses to \\ determine what is driving \\ model performance.} & \makecell[l]{Hypotheses based on \\ feature importances \\ are generated and tested.} \\ \hline
 
@@ -1210,18 +1199,15 @@ represent the highest performing hyperparameter setting for the models.
 
 \textbf{Figure S3. Histogram of AUROC differences between L2-regularized
 logistic regression and random forest for each of the hundred
-data-splits.} This histogram shows the number of data-splits in each
-bin. The percentage of dataplits where the difference between random
-forest and L2-regularized logistic regression AUROC values was higher
-than or equal to 0 were 0.75, lower than or equal to 0 were 0.25. The
-vertical red line highlights the bins where there AUROC difference
-between the two model is 0. The p-value was manually calculated using
-the sampling distribution of the test statistic under the null
-hypothesis. We are testing how often random forest performs more
-accurately than L2-regularized logistic regression. We are assuming that
-the distribution of the differences between the AUROC values of random
-forest and L2 logistic regression is symmetric about 0, therefore we are
-calculating the p-value for a double-tail event. \newpage
+data-splits.} In 75\% of data-splits, the AUROC of random forest was
+greater than that of L2-regularized logistic regression. The p-value was
+manually calculated using the sampling distribution of the test
+statistic under the null hypothesis. We tested how often random forest
+performed more accurately than L2-regularized logistic regression. The
+null hypothesis is that the distribution of the difference between the
+AUROC values of random forest and L2 logistic regression is symmetric
+about 0, therefore the p-value was calculated for a double-tail event.
+\newpage
 \includegraphics[height=17.5cm, width=13cm]{Figure_S4.png}
 
 \textbf{Figure S4. Classification performance of ML models across
@@ -1241,7 +1227,17 @@ more complete datasets. \newpage
 
 \includegraphics[height=17.5cm, width=13cm]{Figure_S6.png}
 
-\textbf{Figure S6. Interpretation of the linear ML models with
+\textbf{Figure S6. Permutation importance analysis.} Permutation
+importance analysis measures the decrease in the predictive performance
+of the model after we permute (A) a feature's or (B) a group of
+correlated features' values, which breaks the relationship between the
+feature and the actual outcome.
+
+\newpage
+
+\includegraphics[height=17.5cm, width=13cm]{Figure_S7.png}
+
+\textbf{Figure S7. Interpretation of the linear ML models with
 permutation importance.} (A) L1-regularized SVM with linear kernel, (B)
 L2-regularized SVM with linear kernel, and (C) L2-regularized logistic
 regression were interpreted using permutation importance using held-out
