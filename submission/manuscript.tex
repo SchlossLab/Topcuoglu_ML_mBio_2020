@@ -456,11 +456,17 @@ We also compared the top 20 OTUs selected by permutation importance in
 L2-regularized logistic regression and the highest performing tree-based
 models, random forest and XGBoost. 2 and 5 OTUs, respectively, were
 shared among the models. These results indicate that we were able to
-identify a few more OTUs that are deemed important by both linear and
-non-linear models when we used permutation importance as our
+identify important OTUs that are shared across the highest performing
+linear and non-linear models when we use permutation importance as our
 interpretation method.
 
-Figure S7:
+We then evaluated the difference in relative abundances of the top 20
+OTUs identified in L2-regularized logistic regression and random forest
+models between healthy patients and patients with SRNs {[}Figure S8{]}.
+There were minimal differences in relative abundances across OTUs
+between different diagnoses. This supports our claim that it is not
+possible to differentiate disease vs healthy states by focusing on
+individual taxa.
 
 \textbf{The computational efficiency of each ML model.} We compared the
 training times of the seven ML models. The training times increased with
@@ -1221,7 +1227,10 @@ train and validate the models but included the ranges observed with the
 more complete datasets. \newpage
 \includegraphics[height=17.5cm, width=13cm]{Figure_S5.png}
 
-\textbf{Figure S5. NMDS ordination with Bray-Curtis distances.}
+\textbf{Figure S5. NMDS ordination of Bray-Curtis distances.} NMDS
+ordination relating the community structures of the fecal microbiota
+from 490 patients (261 patients with normal colonoscopies and 229
+patients who have screen relevant neoplasias; SRNs).
 
 \newpage
 
@@ -1231,7 +1240,7 @@ more complete datasets. \newpage
 importance analysis measures the decrease in the predictive performance
 of the model after we permute (A) a feature's or (B) a group of
 correlated features' values, which breaks the relationship between the
-feature and the actual outcome.
+feature and the diagnosis.
 
 \newpage
 
@@ -1242,6 +1251,20 @@ permutation importance.} (A) L1-regularized SVM with linear kernel, (B)
 L2-regularized SVM with linear kernel, and (C) L2-regularized logistic
 regression were interpreted using permutation importance using held-out
 test set.
+
+\newpage
+
+\includegraphics[height=20cm, width=13cm]{Figure_S8.pdf}
+
+\textbf{Figure S8. Relative abundances of the 20 most important OTUs in
+L2-regularized logistic regression and random forest models.} The most
+important 20 OTUs were chosen for (A) Random forest and (B)
+L2-regularized logistic regression models by permutation importance and
+ranking feature coefficients, respectively. The relative abundances of
+these OTUs were compared based on the diagnosis of the patients. The
+minimal differences betweeen relative abundances for these OTUs show
+that it is not possible to differentiate disease vs healthy states by
+focusing on individual taxa.
 
 
 \end{document}
