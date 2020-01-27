@@ -258,3 +258,15 @@ write.paper :	$(FINAL)/Figure_1.pdf\
 				$(FINAL)/manuscript.md\
 				$(FINAL)/manuscript.tex\
 				$(FINAL)/manuscript.pdf
+
+
+# module load perl-modules latexdiff/1.2.0
+submission/marked_up.pdf : submission/manuscript.tex
+	git cat-file -p b7118145861ded9:submission/manuscript.tex > submission/manuscript_old.tex
+	latexdiff submission/manuscript_old.tex submission/manuscript.tex > submission/marked_up.tex
+	pdflatex -output-directory=submission submission/marked_up.tex
+	rm submission/marked_up.aux
+	rm submission/marked_up.log
+	rm submission/marked_up.out
+	rm submission/marked_up.tex
+	rm submission/manuscript_old.tex
