@@ -270,3 +270,6 @@ submission/marked_up.pdf : submission/manuscript.tex
 	rm submission/marked_up.out
 	rm submission/marked_up.tex
 	rm submission/manuscript_old.tex
+
+submission/manuscript.docx : submission/manuscript.tex
+	pandoc $< -o $@
