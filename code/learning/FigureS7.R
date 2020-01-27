@@ -216,7 +216,7 @@ linear <- plot_grid(l1_plot, l2_plot, logit_plot, labels = c("A", "B", "C"), ali
 
 ggdraw(add_sub(linear, "AUROC with the OTU permuted randomly", size=18, vpadding=grid::unit(0,"lines"), y=5, x=0.65, vjust=4.75))
 
-ggsave("Figure_S7.png", plot = last_plot(), device = 'png', path = 'submission', width = 8, height = 12)
+ggsave("Figure_S7.tiff", plot = last_plot(), device = 'tiff', path = 'submission', width = 8, height = 12, dpi=300)
 
 
 

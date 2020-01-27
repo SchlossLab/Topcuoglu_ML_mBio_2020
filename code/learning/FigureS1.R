@@ -97,5 +97,5 @@ linear_plots <- fig_data %>%
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 
-ggsave("Figure_S1.png", plot = linear_plots, device = 'png', path = 'submission', width = 7, height = 5)
+ggsave("Figure_S2.tiff", plot = linear_plots, device = 'tiff', path = 'submission', width = 7, height = 5, dpi=300)
 

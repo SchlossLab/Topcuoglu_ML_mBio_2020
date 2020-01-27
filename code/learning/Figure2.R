@@ -85,4 +85,4 @@ performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC), y = AUC
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 
-ggsave("Figure_2.png", plot = performance, device = 'png', path = 'submission', width = 12, height = 9)
+ggsave("Figure_2.tiff", plot = performance, device = 'tiff', path = 'submission', width = 12, height = 9, dpi=300)

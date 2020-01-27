@@ -70,4 +70,4 @@ set.seed(101)
 plot <- histogram_p_value(all, "L2_Logistic_Regression","Random_Forest")
 
 
-ggsave("Figure_S3.png", plot = plot, device = 'png', path = 'submission', width = 12, height = 9)
+ggsave("Figure_S4.tiff", plot = plot, device = 'tiff', path = 'submission', width = 12, height = 9, dpi=300)

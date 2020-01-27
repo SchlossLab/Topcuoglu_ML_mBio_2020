@@ -127,5 +127,5 @@ plots <- plot_grid(logit_plot, rf_plot, labels = c("A", "B"), align = 'v', ncol 
 
 ggdraw(add_sub(plots, "Cross-validation AUROC", vpadding=grid::unit(0,"lines"), y=5, x=0.6, vjust=4.75, size=15))
 
-ggsave("Figure_S4.png", plot = last_plot(), device = 'png', path = 'submission', width = 6, height = 9.2)
+ggsave("Figure_S5.tiff", plot = last_plot(), device = 'tiff', path = 'submission', width = 6, height = 9.2, dpi=300)
 

@@ -324,5 +324,5 @@ ggdraw(add_sub(perm_tree_based, "AUROC with the OTU permuted randomly", size=18,
 
 plot <- plot_grid(last_plot(), legend, ncol = 1, rel_heights=c(.92, .08))
 
-ggsave("Figure_4.png", plot = last_plot(), device = 'png', path = 'submission', width = 8, height = 18)
+ggsave("Figure_4.tiff", plot = last_plot(), device = 'tiff', path = 'submission', width = 8, height = 18, dpi=300)
 

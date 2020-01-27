@@ -50,7 +50,7 @@ ggplot(data) +
     axis.text = element_text(size=12),
     panel.border = element_rect(colour = "black", fill=NA, size=1)
   ) +
-  ggsave("Figure_S5.png", plot = last_plot(), device = 'png', path = 'submission')
+  ggsave("Figure_S1.tiff", plot = last_plot(), device = 'tiff', path = 'submission', dpi=300)
 
 
 
