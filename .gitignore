@@ -20,3 +20,4 @@ results/*.DS_Store
 *.sav
 *.Rout
 /data/temp
+*.log
