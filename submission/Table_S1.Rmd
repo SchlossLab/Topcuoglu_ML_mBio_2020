@@ -1,0 +1,36 @@
+---
+csl: mbio.csl
+fontsize: 11pt
+output:
+  pdf_document:
+    includes:
+      in_header: header.tex
+    keep_tex: yes
+---
+
+\newpage
+\captionsetup{labelformat=empty}
+\captionof{table}{\textbf{Table S1.} An aspirational rubric for evaluating the rigor of ML practices applied to microbiome data.}
+\small
+\begin{tabular}{|l|l|l|l|}
+\hline
+
+\rowcolor{lightgray}
+\textbf{Practice} & \textbf{Poor} & \textbf{Good} & \textbf{Better} \\ \hline
+
+\makecell[l]{Source \\ of data} & \makecell[l]{Data do not reflect intended \\  application (e.g., data pertain \\ to only patients with carcinomas \\ but model is expected to \\ predict advanced adenomas).} & \makecell[l]{Data are appropriate \\ for intended application.} & \makecell[l]{Data reflect intended \\ use and will persist \\ (e.g., same OTU assignments \\ for new fecal samples).} \\ \hline
+
+\makecell[l]{Study \\ cohort} & \makecell[l]{Test data resampled to remove \\ class imbalance (e.g., test data \\ resampled to have an equal \\ number of patients with carcinomas \\ as patients with healthy colons, \\ which does not reflect reality.)}  & \makecell[l]{Test data are reflective \\ of the population to which \\ the model will be applied.} & \makecell[l]{Model tested on multiple \\ cohorts with potentially \\ different class balances.} \\ \hline
+
+\makecell[l]{Model \\ selection} & \makecell[l]{No justification for \\ classification method.} & \makecell[l]{Model choice is justified \\ for intended application.} & \makecell[l]{Different modeling choices \\ (justified for intended \\ application) are tested.} \\ \hline
+
+\makecell[l]{Model \\ development} & \makecell[l]{No hyperparameter tuning.} & \makecell[l]{Different hyperparameter \\ settings are explored \\ on training data.} & \makecell[l]{Hyperparameter grid search \\ performed by cross-validation \\ on the training set.} \\ \hline
+
+\makecell[l]{Model \\ evaluation} & \makecell[l]{Performance reported on the \\data used to train the model.} & \makecell[l]{Performance reported on \\ held-out test data.} & \makecell[l]{Performance reported on \\ multiple held-out test sets.} \\ \hline
+
+\makecell[l]{Evaluation \\ metrics} & \makecell[l]{Reported performance according to \\ a metric that is not appropriate \\ for intended application  (e.g., when \\  predicting rare outcome, accuracy \\ metric is not reliable).} & \makecell[l]{Reported performance in \\ terms of a metric that \\ is appropriate for intended \\ application and includes \\ confidence intervals.} & \makecell[l]{Reported multiple metrics \\ with confidence intervals.} \\ \hline
+
+\makecell[l]{Model \\ interpretation} & \makecell[l]{No model interpretation.} & \makecell[l]{Follow-up analyses to \\ determine what is driving \\ model performance.} & \makecell[l]{Hypotheses based on \\ feature importances \\ are generated and tested.} \\ \hline
+
+\end{tabular}
+\newpage
