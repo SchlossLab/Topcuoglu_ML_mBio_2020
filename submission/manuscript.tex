@@ -37,7 +37,7 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \hypersetup{
-  pdftitle={A framework for effective application of machine learning to a microbiome-based classification problem},
+  pdftitle={A framework for effective application of machine learning to microbiome-based classification problems},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 \urlstyle{same} % disable monospaced font for URLs
@@ -90,8 +90,8 @@
 \usepackage{pdfpages}
 \floatplacement{figure}{H} % Keep the figure up top of the page
 
-\title{\textbf{A framework for effective application of machine learning to a
-microbiome-based classification problem}}
+\title{\textbf{A framework for effective application of machine learning to
+microbiome-based classification problems}}
 \author{}
 \date{\vspace{-2.5em}}
 
@@ -100,7 +100,7 @@ microbiome-based classification problem}}
 
 \vspace{35mm}
 
-Running title: Machine learning framework applied to a microbiome study
+Running title: Machine learning framework to model microbiome data
 
 \vspace{35mm}
 
@@ -433,12 +433,12 @@ interpretation methods. These results indicate that both methods are
 consistent in selecting the most important OTUs.
 
 We also compared the top 20 OTUs selected by permutation importance in
-L2-regularized logistic regression and the highest performing tree-based
-models, random forest and XGBoost. 2 and 5 OTUs, respectively, were
-shared among the models. These results indicate that we were able to
-identify important OTUs that are shared across the highest performing
-linear and non-linear models when we use permutation importance as our
-interpretation method.
+L2-regularized logistic regression {[}Figure S7{]} and the highest
+performing tree-based models, random forest and XGBoost {[}Figure 4{]}.
+2 and 5 OTUs, respectively, were shared among the models. These results
+indicate that we were able to identify important OTUs that are shared
+across the highest performing linear and non-linear models when we use
+permutation importance as our interpretation method.
 
 We then evaluated the difference in relative abundances of the top 20
 OTUs identified in L2-regularized logistic regression and random forest
@@ -452,7 +452,7 @@ individual taxa.
 training times of the seven ML models. The training times increased with
 the complexity of the model and the number of potential hyperparameter
 combinations. Also, the linear models trained faster than non-linear
-models {[}Figures S1-S2; Figure 5{]}.
+models {[}Figures S2-S3; Figure 5{]}.
 
 \hypertarget{discussion}{%
 \subsection{Discussion}\label{discussion}}
@@ -1083,8 +1083,6 @@ Random forest & \makecell[l]{A classifier that is an ensemble of decision trees 
 \end{tabular}
 \newpage
 
-\newpage
-
 \textbf{Figure 1. Machine learning pipeline.} We split the data to
 create a training (80\%) and held-out test set (20\%). The splits were
 stratified to maintain the overall class distribution. We performed
@@ -1093,6 +1091,8 @@ hyperparameter setting and then used these hyperparameters to train the
 models. The model was evaluated on the held-out data set. Abbreviations:
 cvAUC, cross-validation area under the receiver operating characteristic
 curve.
+
+\hfill\break
 
 \textbf{Figure 2. Generalization and classification performance of ML
 models using AUROC values of all cross-validation and testing
@@ -1108,6 +1108,8 @@ as the horizontal line in the box. The whiskers show the farthest points
 that were not outliers. Outliers were defined as those data points that
 are not within 1.5 times the interquartile ranges.
 
+\hfill\break
+
 \textbf{Figure 3. Interpretation of the linear ML models.} The ranks of
 absolute feature weights of (A) L1-regularized SVM with linear kernel,
 (B) L2-regularized SVM with linear kernel, and (C) L2-regularized
@@ -1118,6 +1120,8 @@ here. OTUs that were associated with classifying a subject as being
 healthy had negative signs and were shown in blue. OTUs that were
 associated with classifying a subject having an SRN had positive signs
 and were shown in red.
+
+\hfill\break
 
 \textbf{Figure 4. Interpretation of the non-linear ML models.} (A) SVM
 with radial basis kernel, (B) decision tree, (C) random forest, and (D)
@@ -1136,33 +1140,11 @@ the OTUs shared among decision tree and random forest only. For all of
 the tree-based models, a \emph{Peptostreptococcus} species (OTU00367)
 had the largest impact on predictive performance.
 
+\hfill\break
+
 \textbf{Figure 5. Training times of seven ML models.} The median
 training time was the highest for XGBoost and shortest for
-L2-regularized logistic regression. \newpage
-
-\captionof{table}{\textbf{Table S1.} An aspirational rubric for evaluating the rigor of ML practices applied to microbiome data.}
-\small
-\begin{tabular}{|l|l|l|l|}
-\hline
-
-\rowcolor{lightgray}
-\textbf{Practice} & \textbf{Poor} & \textbf{Good} & \textbf{Better} \\ \hline
-
-\makecell[l]{Source \\ of data} & \makecell[l]{Data do not reflect intended \\  application (e.g., data pertain \\ to only patients with carcinomas \\ but model is expected to \\ predict advanced adenomas).} & \makecell[l]{Data are appropriate \\ for intended application.} & \makecell[l]{Data reflect intended \\ use and will persist \\ (e.g., same OTU assignments \\ for new fecal samples).} \\ \hline
-
-\makecell[l]{Study \\ cohort} & \makecell[l]{Test data resampled to remove \\ class imbalance (e.g., test data \\ resampled to have an equal \\ number of patients with carcinomas \\ as patients with healthy colons, \\ which does not reflect reality.)}  & \makecell[l]{Test data are reflective \\ of the population to which \\ the model will be applied.} & \makecell[l]{Model tested on multiple \\ cohorts with potentially \\ different class balances.} \\ \hline
-
-\makecell[l]{Model \\ selection} & \makecell[l]{No justification for \\ classification method.} & \makecell[l]{Model choice is justified \\ for intended application.} & \makecell[l]{Different modeling choices \\ (justified for intended \\ application) are tested.} \\ \hline
-
-\makecell[l]{Model \\ development} & \makecell[l]{No hyperparameter tuning.} & \makecell[l]{Different hyperparameter \\ settings are explored \\ on training data.} & \makecell[l]{Hyperparameter grid search \\ performed by cross-validation \\ on the training set.} \\ \hline
-
-\makecell[l]{Model \\ evaluation} & \makecell[l]{Performance reported on the \\data used to train the model.} & \makecell[l]{Performance reported on \\ held-out test data.} & \makecell[l]{Performance reported on \\ multiple held-out test sets.} \\ \hline
-
-\makecell[l]{Evaluation \\ metrics} & \makecell[l]{Reported performance according to \\ a metric that is not appropriate \\ for intended application  (e.g., when \\  predicting rare outcome, accuracy \\ metric is not reliable).} & \makecell[l]{Reported performance in \\ terms of a metric that \\ is appropriate for intended \\ application and includes \\ confidence intervals.} & \makecell[l]{Reported multiple metrics \\ with confidence intervals.} \\ \hline
-
-\makecell[l]{Model \\ interpretation} & \makecell[l]{No model interpretation.} & \makecell[l]{Follow-up analyses to \\ determine what is driving \\ model performance.} & \makecell[l]{Hypotheses based on \\ feature importances \\ are generated and tested.} \\ \hline
-
-\end{tabular}
+L2-regularized logistic regression.
 
 \newpage
 
@@ -1171,6 +1153,8 @@ ordination relating the community structures of the fecal microbiota
 from 490 patients (261 patients with normal colonoscopies and 229
 patients who have screen relevant neoplasias; SRNs).
 
+\hfill\break
+
 \textbf{Figure S2. Hyperparameter setting performances for linear
 models.} (A) L2-regularized logistic regression, (B) L1-regularized SVM
 with linear kernel, and (C) L2-regularized SVM with linear kernel mean
@@ -1178,11 +1162,15 @@ cross-validation AUROC values when different hyperparameters were used
 in training the model. The stars represent the highest performing
 hyperparameter setting for each model.
 
+\hfill\break
+
 \textbf{Figure S3. Hyperparameter setting performances for non-linear
 models.} (A) Decision tree, (B) random forest, (C) SVM with radial basis
 kernel, and (D) XGBoost mean cross-validation AUROC values when
 different hyperparameters were used in training the model. The stars
 represent the highest performing hyperparameter setting for the models.
+
+\hfill\break
 
 \textbf{Figure S4. Histogram of AUROC differences between L2-regularized
 logistic regression and random forest for each of the hundred
@@ -1195,6 +1183,8 @@ null hypothesis is that the distribution of the difference between the
 AUROC values of random forest and L2 logistic regression is symmetric
 about 0, therefore the p-value was calculated for a double-tail event.
 
+\hfill\break
+
 \textbf{Figure S5. Classification performance of ML models across
 cross-validation when trained on a subset of the dataset.} (A)
 L2-regularized logistic regression and (B) random forest models were
@@ -1205,17 +1195,23 @@ were much larger than when the full collection of samples was used to
 train and validate the models but included the ranges observed with the
 more complete datasets.
 
+\hfill\break
+
 \textbf{Figure S6. Permutation importance analysis.} Permutation
 importance analysis measures the decrease in the predictive performance
 of the model after we permute (A) a feature's or (B) a group of
 correlated features' values, which breaks the relationship between the
 feature and the diagnosis.
 
+\hfill\break
+
 \textbf{Figure S7. Interpretation of the linear ML models with
 permutation importance.} (A) L1-regularized SVM with linear kernel, (B)
 L2-regularized SVM with linear kernel, and (C) L2-regularized logistic
 regression were interpreted using permutation importance using held-out
 test set.
+
+\hfill\break
 
 \textbf{Figure S8. Relative abundances of the 20 most important OTUs in
 L2-regularized logistic regression and random forest models.} The most
