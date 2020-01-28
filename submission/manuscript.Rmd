@@ -239,22 +239,13 @@ Random forest & \makecell[l]{A classifier that is an ensemble of decision trees 
 \newpage
 
 \newpage
-\includegraphics{Figure_1.pdf}
 **Figure 1. Machine learning pipeline.**   We split the data to create a training (80%) and held-out test set (20%). The splits were stratified to maintain the overall class distribution. We performed five-fold cross-validation on the training data to select the best hyperparameter setting and then used these hyperparameters to train the models. The model was evaluated on the held-out data set. Abbreviations: cvAUC, cross-validation area under the receiver operating characteristic curve.
-\newpage
-\includegraphics{Figure_2.tiff}
 
 **Figure 2. Generalization and classification performance of ML models using AUROC values of all cross-validation and testing performances.** The median AUROC for diagnosing individuals with SRN using bacterial abundances was higher than chance (depicted by a horizontal line at 0.50) for all the ML models. The predictive performance of random forest model was higher than other ML models, though not significantly (p > 0.01). L2-regularized logistic regression, XGBoost, L2-regularized SVM with linear and radial basis function kernel performances were not significantly different from one another. The boxplot shows quartiles at the box ends and the median as the horizontal line in the box. The whiskers show the farthest points that were not outliers. Outliers were defined as those data points that are not within 1.5 times the interquartile ranges.
-\newpage
-\includegraphics[height=17cm, width=12cm]{Figure_3.tiff}
 
 **Figure 3. Interpretation of the linear ML models.** The ranks of absolute feature weights of (A) L1-regularized SVM with linear kernel, (B) L2-regularized SVM with linear kernel, and (C) L2-regularized logistic regression, were ranked from highest rank, 1, to lowest rank, 100, for each data-split. The feature ranks of the 20 highest ranked OTUs based on their median ranks (median shown in black) are reported here.  OTUs that were associated with classifying a subject as being healthy had negative signs and were shown in blue. OTUs that were associated with classifying a subject having an SRN had positive signs and were shown in red.
-\newpage
-\includegraphics{Figure_4.tiff}
 
 **Figure 4. Interpretation of the non-linear ML models.** (A) SVM with radial basis kernel, (B) decision tree, (C) random forest, and (D) XGBoost feature importances were explained using permutation importance on the held-out test data set. The gray rectangle and the dashed line show the IQR range and median of the base testing AUROC without any permutation. The 20 OTUs that caused the largest decrease in the AUROC when permuted are reported here. The colors of the box plots represent the OTUs that were shared among the different models; yellow were OTUs that were shared among all the non-linear models, green were OTUs that were shared among the tree-based models, green were the OTUs shared among SVM with radial basis kernel, decision tree and XGBoost, pink were the OTUs shared among SVM with radial basis kernel and XGBoost only, red were the OTUs shared among random forest and XGBoost only and blue were the OTUs shared among decision tree and random forest only. For all of the tree-based models, a *Peptostreptococcus* species (OTU00367) had the largest impact on predictive performance.
-\newpage
-\includegraphics{Figure_5.tiff}
 
 **Figure 5. Training times of seven ML models.** The median training time was the highest for XGBoost and shortest for L2-regularized logistic regression.
 \newpage
@@ -284,34 +275,19 @@ Random forest & \makecell[l]{A classifier that is an ensemble of decision trees 
 \end{tabular}
 
 \newpage
-\includegraphics[height=17.5cm, width=13cm]{Figure_S1.tiff}
 
 **Figure S1. NMDS ordination of Bray-Curtis distances.** NMDS ordination relating the community structures of the fecal microbiota from 490 patients (261 patients with normal colonoscopies and 229 patients who have screen relevant neoplasias; SRNs).
 
-\newpage
-\includegraphics{Figure_S2.tiff}
 **Figure S2. Hyperparameter setting performances for linear models.** (A) L2-regularized logistic regression, (B) L1-regularized SVM with linear kernel, and (C) L2-regularized SVM with linear kernel mean cross-validation AUROC values when different hyperparameters were used in training the model. The stars represent the highest performing hyperparameter setting for each model.
 
-\newpage
-\includegraphics[height=30cm, width=15cm]{Figure_S3.tiff}
 **Figure S3. Hyperparameter setting performances for non-linear models.** (A) Decision tree, (B) random forest, (C) SVM with radial basis kernel, and (D) XGBoost mean cross-validation AUROC values when different hyperparameters were used in training the model.  The stars represent the highest performing hyperparameter setting for the models.
 
-\newpage
-\includegraphics[height=17.5cm, width=13cm]{Figure_S4.tiff}
 **Figure S4. Histogram of AUROC differences between L2-regularized logistic regression and random forest for each of the hundred data-splits.**  In 75% of data-splits, the AUROC of random forest was greater than that of L2-regularized logistic regression. The p-value was manually calculated using the sampling distribution of the test statistic under the null hypothesis. We tested how often random forest performed more accurately than L2-regularized logistic regression. The null hypothesis is that the distribution of the difference between the AUROC values of random forest and L2 logistic regression is symmetric about 0, therefore the p-value was calculated for a double-tail event.
 
-\newpage
-\includegraphics[height=17.5cm, width=13cm]{Figure_S5.tiff}
 **Figure S5. Classification performance of ML models across cross-validation when trained on a subset of the dataset.** (A) L2-regularized logistic regression and (B) random forest models were trained using the original study design with 490 subjects and subsets of it with 15, 30, 60, 120, and 245 subjects. The range among the cross-validation AUROC values within both models at smaller sample sizes were much larger than when the full collection of samples was used to train and validate the models but included the ranges observed with the more complete datasets.
 
-\newpage
-\includegraphics[height=17.5cm, width=13cm]{Figure_S6.tiff}
 **Figure S6. Permutation importance analysis.** Permutation importance analysis measures the decrease in the predictive performance of the model after we permute (A) a feature’s or (B) a group of correlated features' values, which breaks the relationship between the feature and the diagnosis.
 
-\newpage
-\includegraphics[height=17.5cm, width=13cm]{Figure_S7.tiff}
 **Figure S7. Interpretation of the linear ML models with permutation importance.** (A) L1-regularized SVM with linear kernel, (B) L2-regularized SVM with linear kernel, and (C) L2-regularized logistic regression were interpreted using permutation importance using held-out test set.
 
-\newpage
-\includegraphics[height=20cm, width=13cm]{Figure_S8.tiff}
 **Figure S8. Relative abundances of the 20 most important OTUs in L2-regularized logistic regression and random forest models.** The most important 20 OTUs were chosen for (A) Random forest and (B) L2-regularized logistic regression models by permutation importance and ranking feature coefficients, respectively. The relative abundances of these OTUs were compared based on the diagnosis of the patients. The minimal differences betweeen relative abundances for these OTUs show that it is not possible to differentiate disease vs healthy states by focusing on individual taxa.
