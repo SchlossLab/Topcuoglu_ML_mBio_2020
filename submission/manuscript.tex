@@ -98,17 +98,17 @@ microbiome-based classification problems}}
 \begin{document}
 \maketitle
 
-\vspace{35mm}
+\vspace{30mm}
 
 Running title: Machine learning framework to model microbiome data
 
-\vspace{35mm}
+\vspace{20mm}
 
 Begüm D. Topçuoğlu\({^1}\), Nicholas A. Lesniak\({^1}\), Mack
 Ruffin\({^3}\), Jenna Wiens\({^2}\), Patrick D.
 Schloss\textsuperscript{1\(\dagger\)}
 
-\vspace{38mm}
+\vspace{30mm}
 
 \(\dagger\) To whom correspondence should be addressed:
 \href{mailto:pschloss@umich.edu}{\nolinkurl{pschloss@umich.edu}},
@@ -147,7 +147,7 @@ L2-regularized logistic regression, L1 and L2-regularized support vector
 machines (SVM) with linear and radial basis function kernels, decision
 trees, random forest, and gradient boosted trees (XGBoost). The random
 forest model performed best at detecting SRNs with an AUROC of 0.695
-{[}IQR 0.651-0.739{]} but was slow to train (83.2 h) and not immediately
+{[}IQR 0.651-0.739{]} but was slow to train (83.2 h) and not inherently
 interpretable. Despite its simplicity, L2-regularized logistic
 regression followed random forest in predictive performance with an
 AUROC of 0.680 {[}IQR 0.625-0.735{]}, trained faster (12 min), and was
@@ -160,17 +160,17 @@ will inform expectations of performance and interpretability.
 \hypertarget{importance}{%
 \subsection{Importance}\label{importance}}
 
-Prediction of diseases using machine learning (ML) is rapidly being
-adopted in microbiome studies. However, the estimated performance
-associated with these ML models is likely over-optimistic. Moreover,
-there is a trend towards using black box models without a discussion of
-the difficulty of interpreting such models when trying to identify
-microbial biomarkers of disease. This work represents a step towards
-developing more reproducible ML practices in applying ML to microbiome
-research. We implement a rigorous pipeline and emphasize the importance
-of selecting ML models that reflect the goal of the study. These
-concepts are not particular to the study of human health but can also be
-applied to environmental microbiology studies.
+Diagnosing diseases using machine learning (ML) is rapidly being adopted
+in microbiome studies. However, the estimated performance associated
+with these models is likely over-optimistic. Moreover, there is a trend
+towards using black box models without a discussion of the difficulty of
+interpreting such models when trying to identify microbial biomarkers of
+disease. This work represents a step towards developing more
+reproducible ML practices in applying ML to microbiome research. We
+implement a rigorous pipeline and emphasize the importance of selecting
+ML models that reflect the goal of the study. These concepts are not
+particular to the study of human health but can also be applied to
+environmental microbiology studies.
 
 \newpage
 
@@ -179,25 +179,27 @@ applied to environmental microbiology studies.
 
 As the number of people represented in human microbiome datasets grow,
 there is an increasing desire to use microbiome data to diagnose
-disease. However, the structure of the human microbiome is remarkably
+diseases. However, the structure of the human microbiome is remarkably
 variable among individuals to the point where it is often difficult to
 identify the bacterial populations that are associated with diseases
 using traditional statistical models. For example it is not possible to
-classify individuals as having healthy colons or colorectal lesions
-using Bray-Curtis distances based on the 16S rRNA gene sequences
-collected from fecal samples {[}Figure S1{]}. This variation is likely
-due to the ability of many bacterial populations to fill the same niche
-such that different populations cause the same disease in different
-individuals. Furthermore, a growing number of studies have shown that it
-is rare for a single bacterial species to be associated with a disease.
-Instead, subsets of the microbiome account for differences in health.
-Traditional statistical approaches do not adequately account for the
-variation in the human microbiome and typically consider the protective
-or risk effects of each bacterial population separately (1). Recently,
-machine learning (ML) models have grown in popularity among microbiome
-researchers as our ability to sample large numbers of individuals has
-grown; such models can effectively account for the interpersonal
-microbiome variation and the ecology of disease.
+classify individuals as having healthy colons or screen relevant
+neoplasia using Bray-Curtis distances based on the 16S rRNA gene
+sequences collected from fecal samples {[}Figure S1{]}. This variation
+is likely due to the ability of many bacterial populations to fill the
+same niche such that different populations cause the same disease in
+different individuals. Furthermore, a growing number of studies have
+shown that it is rare for a single bacterial species to be associated
+with a disease. Instead, subsets of the microbiome account for
+differences in health. Traditional statistical approaches do not
+adequately account for the variation in the human microbiome and
+typically consider the protective or risk effects of each bacterial
+population separately (1). Recently, machine learning (ML) models have
+grown in popularity among microbiome researchers as our ability to
+sample large numbers of individuals has grown; such models can
+effectively account for the interpersonal microbiome variation and the
+ecology of disease because they consider the relative abundance of each
+bacterial population in the context of others rather than in isolation.
 
 ML models can be used to increase our understanding of the variation in
 the structure of existing data and in making predictions about new data.
@@ -206,7 +208,7 @@ ecological basis of diseases such as liver cirrhosis, colorectal cancer,
 inflammatory bowel diseases, obesity, and type 2 diabetes (2--19). The
 task of diagnosing an individual relies on a rigorously validated model.
 However, there are common methodological and reporting problems that
-arise when applying ML to such data, that need to be addressed for the
+arise when applying ML to such data that need to be addressed for the
 field to progress. These problems include a lack of transparency in
 which methods are used and how these methods are implemented; evaluating
 models without separate held-out test data; unreported variation between
@@ -241,28 +243,28 @@ learning methods for microbiome studies which are often poorly
 documented and executed. To showcase a rigorous ML pipeline and to shed
 light on how ML model selection can affect modeling results, we
 performed an empirical analysis comparing the predictive performance,
-interpretability and training times of seven modeling approaches with
-the same dataset and pipeline. We built three linear models with
-different forms of regularization: L2-regularized logistic regression
-and L1 and L2-regularized support vector machines (SVM) with a linear
-kernel. We also trained four non-linear models: SVM with radial basis
-function kernel, a decision tree, random forest, and gradient boosted
-trees. We compared their predictive performance, interpretability, and
-training time. To demonstrate the performance of these modeling
-approaches and our pipeline on a case study, we used a data from a
-previously published study that sought to classify individuals as having
-healthy colons or colonic lesions based on the 16S rRNA gene sequences
-collected from fecal samples (4). This dataset was selected because it
-is a relatively large collection of individuals (N=490) connected to a
-clinically significant disease where there is ample evidence that the
-disease is driven by variation in the microbiome (2, 4, 5, 32). With
-this dataset, we developed an ML pipeline that can be used in many
-different scenarios for training and evaluating models. This framework
-can be easily applied to other host-associated and environmental
-microbiome datasets. We also provided an aspirational rubric for
-evaluating the rigor of ML practices applied to microbiome data {[}Table
-S1{]} to urge the audience to be diligent with with their study design,
-model selection, development, evaluation and interpretation.
+interpretability, data requirements, and training times of seven
+modeling approaches with the same dataset and pipeline. We built three
+linear models with different forms of regularization: L2-regularized
+logistic regression and L1 and L2-regularized support vector machines
+(SVM) with a linear kernel. We also trained four non-linear models: SVM
+with radial basis function kernel, a decision tree, random forest, and
+gradient boosted trees. We compared their predictive performance,
+interpretability, and training time. To demonstrate the performance of
+these modeling approaches and our pipeline, we present a case study
+using data from a previously published study that sought to classify
+individuals as having healthy colons or colonic lesions based on the 16S
+rRNA gene sequences collected from fecal samples (4). This dataset was
+selected because it is a relatively large collection of individuals
+(N=490) connected to a clinically significant disease where there is
+ample evidence that the disease is driven by variation in the microbiome
+(2, 4, 5, 32). With this dataset, we developed an ML pipeline that can
+be used in many different scenarios for training and evaluating models.
+This framework can be easily applied to other host-associated and
+environmental microbiome datasets. We also provided an aspirational
+rubric for evaluating the rigor of ML practices applied to microbiome
+data {[}Table S1{]} to urge the audience to be diligent in their study
+design and model selection, development, evaluation, and interpretation.
 
 \hypertarget{results}{%
 \subsection{Results}\label{results}}
@@ -386,12 +388,12 @@ OTU {[}Figure 3{]}. We also reviewed the signs of feature weights to
 determine whether an OTU was associated with classifying a subject as
 being healthy or having an SRN. It was encouraging that many of the
 highest-ranked OTUs were shared across these three models (e.g., OTUs
-50, 426, 609, 822, 1239). The great benefit of this approach was knowing
-the sign and magnitude of each OTU coefficient in the trained model.
-This allowed us to immidiately interpret negative and positive
-coefficient signs as protective and risk factors, respectively and the
-magnitude as the impact of these factors. However, this approach is
-limited to linear models or models with prespecified interaction terms.
+50, 426, 609, 822, 1239). The benefit of this approach was knowing the
+sign and magnitude of each OTU coefficient in the trained model. This
+allowed us to immidiately interpret negative and positive coefficient
+signs as protective and risk factors, respectively and the magnitude as
+the impact of these factors. However, this approach is limited to linear
+models or models with prespecified interaction terms.
 
 Second, to analyze non-linear models, we interpreted the feature
 importance using permutation importance (36). Whereas the absolute
@@ -435,18 +437,21 @@ consistent in selecting the most important OTUs.
 We also compared the top 20 OTUs selected by permutation importance in
 L2-regularized logistic regression {[}Figure S7{]} and the highest
 performing tree-based models, random forest and XGBoost {[}Figure 4{]}.
-2 and 5 OTUs, respectively, were shared among the models. These results
-indicate that we were able to identify important OTUs that are shared
-across the highest performing linear and non-linear models when we use
-permutation importance as our interpretation method.
+Two and five OTUs, respectively, were shared among the models. These
+results indicate that we were able to identify important OTUs that are
+shared across the highest performing linear and non-linear models when
+we use permutation importance as our interpretation method.
 
 We then evaluated the difference in relative abundances of the top 20
 OTUs identified in L2-regularized logistic regression and random forest
 models between healthy patients and patients with SRNs {[}Figure S8{]}.
-There were minimal differences in relative abundances across OTUs
-between different diagnoses. This supports our claim that it is not
-possible to differentiate disease vs healthy states by focusing on
-individual taxa.
+There were minimal differences in the median relative abundances across
+OTUs between different diagnoses. This supports our claim that it is not
+possible to differentiate disease versus healthy states by focusing on
+individual taxa. The ability for ML models to simultaneously consider
+the relative abundances of multiple OTUs and their context dependency is
+a great advantage over traditional statistical approaches that consider
+each OTU in isolation.
 
 \textbf{The computational efficiency of each ML model.} We compared the
 training times of the seven ML models. The training times increased with
@@ -481,10 +486,10 @@ regression with a median AUROC difference of less than 0.015 compared to
 random forest. While our implementation of random forest took 83.2 hours
 to train, our L2-regularized logistic regression trained in 12 minutes.
 In terms of interpretability, random forest is a non-linear ML model,
-while L2-regularized logistic regression, a linear model, is easily
-interpreted according to the feature weights. Comparing many different
-models showed us that the most complex model was not necessarily the
-best model for our ML task.
+while L2-regularized logistic regression, a linear model, was more
+easily interpreted because we could use the feature weights. Comparing
+many different models showed us that the most complex model was not
+necessarily the best model for our ML task.
 
 We established a pipeline that can be generalized to any modeling method
 that predicts a binary health outcome. We performed a random data-split
@@ -515,19 +520,20 @@ importance, we partially accounted for collinearity by grouping
 correlated OTUs to determine their impact as a group. We grouped OTUs
 that had a perfect correlation with each other; however, we could reduce
 the correlation threshold to further investigate the relationships among
-correlated features. We are choosing to leave the decision to define
-correlation and setting up correlations thresholds to the researchers
-for their own microbiome questions. However, we would like to urge them
-to investigate the correlation structures of the data to avoid
-misinterpreting the models. This is likely to be a particular problem
-with shotgun metagenomic datasets where collinearity will be more
-pronounced due to many genes being correlated with one another because
-they come from the same chromosome. True causal mechanisms (e.g., role
-of microbiome in colorectal cancer) cannot be explained solely by the
-highest performing machine learning model (38). To identify the true
-underlying microbial factors of a disease, it is crucial to follow up on
-any correlation analyses with further hypothesis testing and
-experimentation for biological validation.
+correlated features. By our approach, we identified 432 OTUs out of
+6,920 that had perfect correlations with at least one other OTU. The
+decision to establish correlation thresholds is left to researchers to
+implement for their own analyses. Regardless of the threshold,
+undestanding the correlation structures within the data is critical to
+avoid misinterpreting the models. Such structures are likely to be a
+particular problem with shotgun metagenomic datasets where collinearity
+will be more pronounced due to many genes being correlated with one
+another because they come from the same chromosome. Finally, true causal
+mechanisms (e.g., role of microbiome in colorectal cancer) cannot be
+explained solely by the highest performing machine learning model (38).
+To identify the true underlying microbial factors of a disease, it is
+crucial to follow up on any correlation analyses with further hypothesis
+testing and experimentation for biological validation.
 
 In this study, we did not consider all possible modeling approaches.
 However, the principles highlighted throughout this study apply to other
@@ -548,10 +554,10 @@ learning methods hold promise (12, 40, 41), but microbiome datasets
 often suffer from having many features and small sample sizes, which
 result in overfitting.
 
-Our framework provides a reproducible structure to investigators wanting
-to train, evaluate, and interpret their own ML models to generate
-hypotheses regarding which OTUs might be biologically relevant. However,
-deploying microbiome-based models to make clinical diagnoses or
+Our framework provides a reproducible structure for investigators
+wanting to train, evaluate, and interpret their own ML models to
+generate hypotheses regarding which OTUs might be biologically relevant.
+However, deploying microbiome-based models to make clinical diagnoses or
 predictions is a significantly more challenging and distinct undertaking
 (42). For example, we currently lack standardized methods to collect
 patient samples, generate sequence data, and report clinical data. We
@@ -1100,7 +1106,7 @@ performances.} The median AUROC for diagnosing individuals with SRN
 using bacterial abundances was higher than chance (depicted by a
 horizontal line at 0.50) for all the ML models. The predictive
 performance of random forest model was higher than other ML models,
-though not significantly (p \textgreater{} 0.01). L2-regularized
+though not significantly (p \textgreater{} 0.05). L2-regularized
 logistic regression, XGBoost, L2-regularized SVM with linear and radial
 basis function kernel performances were not significantly different from
 one another. The boxplot shows quartiles at the box ends and the median

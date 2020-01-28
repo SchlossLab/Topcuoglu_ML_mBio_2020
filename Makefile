@@ -181,13 +181,13 @@ $(PROC)/combined_L2_Logistic_Regression_$(DATA).tsv	:	$(L2_LOGISTIC_REGRESSION_C
 ################################################################################
 
 # Figure 2 shows the generalization performance of all the models tested.
-$(FINAL)/Figure_2.png	:	$(CODE)/functions.R\
+submission/Figure_2.tiff	:	$(CODE)/functions.R\
 							$(CODE)/Figure2.R\
 							$(BEST_COMB_FILES)
 					Rscript $(CODE)/Figure2.R
 
 # Figure 3 shows the linear model interpretation with weight rankings
-$(FINAL)/Figure_3.png	:	$(CODE)/functions.R\
+submission/Figure_3.tiff	:	$(CODE)/functions.R\
 							$(CODE)/Figure3.R\
 							data/baxter.taxonomy\
 							$(PROC)/combined_L1_Linear_SVM_$(DATA).tsv\
@@ -196,7 +196,7 @@ $(FINAL)/Figure_3.png	:	$(CODE)/functions.R\
 					Rscript $(CODE)/Figure3.R
 
 # Figure 4 shows non-linear model interpretation with permutation importance
-$(FINAL)/Figure_4.png	:	$(CODE)/functions.R\
+submission/Figure_4.tiff	:	$(CODE)/functions.R\
 							$(CODE)/Figure4.R\
 							$(BEST_COMB_FILES)\
 							$(COR_COMB_FILES)\
@@ -205,29 +205,29 @@ $(FINAL)/Figure_4.png	:	$(CODE)/functions.R\
 
 # Figure 5 shows training times of each model
 
-$(FINAL)/Figure_5.png	:	$(CODE)/functions.R\
+submission/Figure_5.tiff	:	$(CODE)/functions.R\
 							$(CODE)/Figure5.R\
 							$(TIME_COMB_FILES)
 					Rscript $(CODE)/Figure5.R
 
 # Figure S1 shows the hyper-parameter tuning AUC values of linear models
-$(FINAL)/Figure_S1.png	:	$(CODE)/functions.R\
+submission/Figure_S1.tiff	:	$(CODE)/functions.R\
 							$(CODE)/FigureS1.R\
 							$(ALL_COMB_FILES)
 					Rscript $(CODE)/FigureS1.R
 
 # Figure S2 shows the hyper-parameter tuning AUC values of non-linear models
 
-$(FINAL)/Figure_S2.png	:	$(CODE)/functions.R\
+submission/Figure_S2.tiff	:	$(CODE)/functions.R\
 							$(CODE)/FigureS1.R\
 							$(ALL_COMB_FILES)
 					Rscript $(CODE)/FigureS2.R
 
 
 # Table 1 is a summary of the compelxity properties of all the models tested.
-$(FINAL)/TableS1.pdf :	$(FINAL)/Table1.Rmd\
-						$(FINAL)/header.tex
-	R -e "rmarkdown::render('$(FINAL)/Table1.Rmd', clean=TRUE)"
+submission/TableS1.pdf :	submission/Table1.Rmd\
+						submission/header.tex
+	R -e "rmarkdown::render('submission/Table1.Rmd', clean=TRUE)"
 
 
 ################################################################################
@@ -239,25 +239,25 @@ $(FINAL)/TableS1.pdf :	$(FINAL)/Table1.Rmd\
 ################################################################################
 
 
-$(FINAL)/manuscript.%	:	$(FINAL)/mbio.csl\
-							$(FINAL)/references.bib\
-							$(FINAL)/manuscript.Rmd
-	R -e 'rmarkdown::render("$(FINAL)/manuscript.Rmd", clean=FALSE)'
-	mv $(FINAL)/manuscript.knit.md submission/manuscript.md
-	rm $(FINAL)/manuscript.utf8.md
+submission/manuscript.%	:	submission/mbio.csl\
+							submission/references.bib\
+							submission/manuscript.Rmd
+	R -e 'rmarkdown::render("submission/manuscript.Rmd", clean=FALSE)'
+	mv submission/manuscript.knit.md submission/manuscript.md
+	rm submission/manuscript.utf8.md
 
 
-write.paper :	$(FINAL)/Figure_1.pdf\
-				$(FINAL)/Figure_2.png\
-				$(FINAL)/Figure_3.png\
-				$(FINAL)/Figure_4.png\
-				$(FINAL)/Figure_5.png\
-				$(FINAL)/Figure_S1.png\
-				$(FINAL)/Figure_S1.png\
-				$(FINAL)/manuscript.Rmd\
-				$(FINAL)/manuscript.md\
-				$(FINAL)/manuscript.tex\
-				$(FINAL)/manuscript.pdf
+write.paper :	submission/Figure_1.tiff\
+				submission/Figure_2.tiff\
+				submission/Figure_3.tiff\
+				submission/Figure_4.tiff\
+				submission/Figure_5.tiff\
+				submission/Figure_S1.tiff\
+				submission/Figure_S1.tiff\
+				submission/manuscript.Rmd\
+				submission/manuscript.md\
+				submission/manuscript.tex\
+				submission/manuscript.pdf
 
 
 # module load perl-modules latexdiff/1.2.0
