@@ -1,46 +1,33 @@
-% Options for packages loaded elsewhere
-\PassOptionsToPackage{unicode}{hyperref}
-\PassOptionsToPackage{hyphens}{url}
-%
-\documentclass[
-  11pt,
-]{article}
+\documentclass[11pt,]{article}
 \usepackage{lmodern}
 \usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
-  \usepackage{textcomp} % provide euro and other symbols
-\else % if luatex or xetex
-  \usepackage{unicode-math}
-  \defaultfontfeatures{Scale=MatchLowercase}
-  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
 \fi
-% Use upquote if available, for straight quotes in verbatim environments
+% use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
-\IfFileExists{microtype.sty}{% use microtype if available
-  \usepackage[]{microtype}
-  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage[]{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
-\makeatletter
-\@ifundefined{KOMAClassName}{% if non-KOMA class
-  \IfFileExists{parskip.sty}{%
-    \usepackage{parskip}
-  }{% else
-    \setlength{\parindent}{0pt}
-    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
-}{% if KOMA class
-  \KOMAoptions{parskip=half}}
-\makeatother
-\usepackage{xcolor}
-\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
-\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\PassOptionsToPackage{hyphens}{url} % url is loaded by hyperref
+\usepackage[unicode=true]{hyperref}
 \hypersetup{
-  pdftitle={A framework for effective application of machine learning to microbiome-based classification problems},
-  hidelinks,
-  pdfcreator={LaTeX via pandoc}}
-\urlstyle{same} % disable monospaced font for URLs
+            pdftitle={A framework for effective application of machine learning to microbiome-based classification problems},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
 \usepackage[margin=1in]{geometry}
 \usepackage{graphicx,grffile}
 \makeatletter
@@ -51,14 +38,31 @@
 % margins by default, and it is still possible to overwrite the defaults
 % using explicit options in \includegraphics[width, height, ...]{}
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
-% Set default figure placement to htbp
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+% set default figure placement to htbp
 \makeatletter
 \def\fps@figure{htbp}
 \makeatother
-\setlength{\emergencystretch}{3em} % prevent overfull lines
-\providecommand{\tightlist}{%
-  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
-\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage{array}
@@ -124,10 +128,10 @@ of Michigan, Ann Arbor, MI 48109
 Hershey Medical Center, Hershey, PA
 
 \newpage
+
 \linenumbers
 
-\hypertarget{abstract}{%
-\subsection{Abstract}\label{abstract}}
+\subsection{Abstract}\label{abstract}
 
 Machine learning (ML) modeling of the human microbiome has the potential
 to identify microbial biomarkers and aid in the diagnosis of many
@@ -157,8 +161,7 @@ will inform expectations of performance and interpretability.
 
 \newpage
 
-\hypertarget{importance}{%
-\subsection{Importance}\label{importance}}
+\subsection{Importance}\label{importance}
 
 Diagnosing diseases using machine learning (ML) is rapidly being adopted
 in microbiome studies. However, the estimated performance associated
@@ -174,8 +177,7 @@ environmental microbiology studies.
 
 \newpage
 
-\hypertarget{background}{%
-\subsection{Background}\label{background}}
+\subsection{Background}\label{background}
 
 As the number of people represented in human microbiome datasets grow,
 there is an increasing desire to use microbiome data to diagnose
@@ -266,8 +268,7 @@ rubric for evaluating the rigor of ML practices applied to microbiome
 data {[}Table S1{]} to urge the audience to be diligent in their study
 design and model selection, development, evaluation, and interpretation.
 
-\hypertarget{results}{%
-\subsection{Results}\label{results}}
+\subsection{Results}\label{results}
 
 \textbf{Model selection and pipeline construction}. We established a
 reusable ML pipeline for model selection and evaluation, focusing on
@@ -459,8 +460,7 @@ the complexity of the model and the number of potential hyperparameter
 combinations. Also, the linear models trained faster than non-linear
 models {[}Figures S2-S3; Figure 5{]}.
 
-\hypertarget{discussion}{%
-\subsection{Discussion}\label{discussion}}
+\subsection{Discussion}\label{discussion}
 
 There is a growing awareness that many human diseases and environmental
 processes are not driven by a single organism but are the product of
@@ -512,33 +512,35 @@ studies have emphasized the difficulty of interpreting the feature
 coefficients in linear models (37) and the biases introduced by
 computing feature importance using built-in methods (e.g., gini drop) of
 tree-based models (38). Therefore, we encourage our audience to use both
-interpretation methods highlighted in this study. Human-associated
-microbial communities have complex correlation structures that create
-collinearity in the datasets. This can hinder our ability to reliably
-interpret models because the feature weights of correlated OTUs are
-influenced by one another (39). To capture all important features, once
-we identify highly ranked OTUs, we should review their relationships
-with other OTUs. These relationships will help us generate new
-hypotheses about the ecology of the disease and test them with follow-up
-experiments. When we used permutation importance, we partially accounted
-for collinearity by grouping correlated OTUs to determine their impact
-as a group. We grouped OTUs that had a perfect correlation with each
-other; however, we could reduce the correlation threshold to further
-investigate the relationships among correlated features. By our
-approach, we identified 432 OTUs out of 6,920 that had perfect
-correlations with at least one other OTU. The decision to establish
-correlation thresholds is left to researchers to implement for their own
-analyses. Regardless of the threshold, undestanding the correlation
-structures within the data is critical to avoid misinterpreting the
-models. Such structures are likely to be a particular problem with
-shotgun metagenomic datasets where collinearity will be more pronounced
-due to many genes being correlated with one another because they come
-from the same chromosome. Finally, true causal mechanisms (e.g., role of
-microbiome in colorectal cancer) cannot be explained solely by the
-highest performing machine learning model (40). To identify the true
-underlying microbial factors of a disease, it is crucial to follow up on
-any correlation analyses with further hypothesis testing and
-experimentation for biological validation.
+interpretation methods highlighted in this study as permutation
+importance is a model-agnostic tool that can be used to compared feature
+importance across different models. Human-associated microbial
+communities have complex correlation structures that create collinearity
+in the datasets. This can hinder our ability to reliably interpret
+models because the feature weights of correlated OTUs are influenced by
+one another (39). To capture all important features, once we identify
+highly ranked OTUs, we should review their relationships with other
+OTUs. These relationships will help us generate new hypotheses about the
+ecology of the disease and test them with follow-up experiments. When we
+used permutation importance, we partially accounted for collinearity by
+grouping correlated OTUs to determine their impact as a group. We
+grouped OTUs that had a perfect correlation with each other; however, we
+could reduce the correlation threshold to further investigate the
+relationships among correlated features. By our approach, we identified
+432 OTUs out of 6,920 that had perfect correlations with at least one
+other OTU. The decision to establish correlation thresholds is left to
+researchers to implement for their own analyses. Regardless of the
+threshold, undestanding the correlation structures within the data is
+critical to avoid misinterpreting the models. Such structures are likely
+to be a particular problem with shotgun metagenomic datasets where
+collinearity will be more pronounced due to many genes being correlated
+with one another because they come from the same chromosome. Finally,
+true causal mechanisms (e.g., role of microbiome in colorectal cancer)
+cannot be explained solely by the highest performing machine learning
+model (40). To identify the true underlying microbial factors of a
+disease, it is crucial to follow up on any correlation analyses with
+further hypothesis testing and experimentation for biological
+validation.
 
 In this study, we did not consider all possible modeling approaches.
 However, the principles highlighted throughout this study apply to other
@@ -578,17 +580,18 @@ Our study highlights the need to make educated choices at every step of
 developing an ML model with microbiome data. We created an aspirational
 rubric that researchers can use to identify potential pitfalls when
 using ML in microbiome studies and ways to avoid them {[}Table S1{]}. We
-have highlighted the trade-offs between model complexity and
+highlighted the trade-offs between model complexity and
 interpretability, the need for tuning hyperparameters, the utility of
 held-out test sets for evaluating predictive performance, and the
 importance of considering correlation structures in datasets for
-reliable interpretation. Furthermore, we underscored the importance of
-proper experimental design and methods to help us achieve the level of
-validity and accountability we want from models built for patient
-health.
+reliable interpretation. We showed the importance of interpretability
+for generating hypotheses to identify causal, biological relationships
+and for identifying inconsistencies in model setup. Furthermore, we
+underscored the importance of proper experimental design and methods to
+help us achieve the level of validity and accountability we want from
+models built for patient health.
 
-\hypertarget{materials-and-methods}{%
-\subsection{Materials and Methods}\label{materials-and-methods}}
+\subsection{Materials and Methods}\label{materials-and-methods}
 
 \textbf{Data collection and study population.} The original stool
 samples described in our analysis were obtained from patients recruited
@@ -613,7 +616,7 @@ as having an SRN.
 \textbf{16S rRNA gene sequencing data.} Stool samples provided by the
 patients were used for 16S rRNA gene sequencing to measure bacterial
 population abundances. The sequence data used in our analyses were
-originally generated by Baxter et al.~(available through NCBI Sequence
+originally generated by Baxter et al. (available through NCBI Sequence
 Read Archive {[}SRP062005{]}, (5)). The OTU abundance table was
 generated by Sze et al (47), who processed the 16S rRNA sequences in
 mothur (v1.39.3) using the default quality filtering methods,
@@ -693,18 +696,17 @@ came from NIH grants P30DK034933 and 1R01CA215574.
 
 \newpage
 
-\hypertarget{references}{%
-\subsection{References}\label{references}}
+\subsection{References}\label{references}
 
 \hypertarget{refs}{}
-\leavevmode\hypertarget{ref-segata_metagenomic_2011}{}%
+\hypertarget{ref-segata_metagenomic_2011}{}
 1. \textbf{Segata N}, \textbf{Izard J}, \textbf{Waldron L},
 \textbf{Gevers D}, \textbf{Miropolsky L}, \textbf{Garrett WS},
 \textbf{Huttenhower C}. 2011. Metagenomic biomarker discovery and
 explanation. Genome Biol \textbf{12}:R60.
 doi:\href{https://doi.org/10.1186/gb-2011-12-6-r60}{10.1186/gb-2011-12-6-r60}.
 
-\leavevmode\hypertarget{ref-zeller_potential_2014}{}%
+\hypertarget{ref-zeller_potential_2014}{}
 2. \textbf{Zeller G}, \textbf{Tap J}, \textbf{Voigt AY},
 \textbf{Sunagawa S}, \textbf{Kultima JR}, \textbf{Costea PI},
 \textbf{Amiot A}, \textbf{Böhm J}, \textbf{Brunetti F},
@@ -718,27 +720,27 @@ for early-stage detection of colorectal cancer. Mol Syst Biol
 \textbf{10}.
 doi:\href{https://doi.org/10.15252/msb.20145645}{10.15252/msb.20145645}.
 
-\leavevmode\hypertarget{ref-zackular_human_2014}{}%
+\hypertarget{ref-zackular_human_2014}{}
 3. \textbf{Zackular JP}, \textbf{Rogers MAM}, \textbf{Ruffin MT},
 \textbf{Schloss PD}. 2014. The human gut microbiome as a screening tool
 for colorectal cancer. Cancer Prev Res \textbf{7}:1112--1121.
 doi:\href{https://doi.org/10.1158/1940-6207.CAPR-14-0129}{10.1158/1940-6207.CAPR-14-0129}.
 
-\leavevmode\hypertarget{ref-baxter_dna_2016}{}%
+\hypertarget{ref-baxter_dna_2016}{}
 4. \textbf{Baxter NT}, \textbf{Koumpouras CC}, \textbf{Rogers MAM},
 \textbf{Ruffin MT}, \textbf{Schloss PD}. 2016. DNA from fecal
 immunochemical test can replace stool for detection of colonic lesions
 using a microbiota-based model. Microbiome \textbf{4}.
 doi:\href{https://doi.org/10.1186/s40168-016-0205-y}{10.1186/s40168-016-0205-y}.
 
-\leavevmode\hypertarget{ref-baxter_microbiota-based_2016}{}%
+\hypertarget{ref-baxter_microbiota-based_2016}{}
 5. \textbf{Baxter NT}, \textbf{Ruffin MT}, \textbf{Rogers MAM},
 \textbf{Schloss PD}. 2016. Microbiota-based model improves the
 sensitivity of fecal immunochemical test for detecting colonic lesions.
 Genome Medicine \textbf{8}:37.
 doi:\href{https://doi.org/10.1186/s13073-016-0290-3}{10.1186/s13073-016-0290-3}.
 
-\leavevmode\hypertarget{ref-hale_shifts_2017}{}%
+\hypertarget{ref-hale_shifts_2017}{}
 6. \textbf{Hale VL}, \textbf{Chen J}, \textbf{Johnson S},
 \textbf{Harrington SC}, \textbf{Yab TC}, \textbf{Smyrk TC},
 \textbf{Nelson H}, \textbf{Boardman LA}, \textbf{Druliner BR},
@@ -748,32 +750,32 @@ microbiota associated with adenomatous polyps. Cancer Epidemiol
 Biomarkers Prev \textbf{26}:85--94.
 doi:\href{https://doi.org/10.1158/1055-9965.EPI-16-0337}{10.1158/1055-9965.EPI-16-0337}.
 
-\leavevmode\hypertarget{ref-pasolli_machine_2016}{}%
+\hypertarget{ref-pasolli_machine_2016}{}
 7. \textbf{Pasolli E}, \textbf{Truong DT}, \textbf{Malik F},
 \textbf{Waldron L}, \textbf{Segata N}. 2016. Machine learning
 meta-analysis of large metagenomic datasets: Tools and biological
 insights. PLoS Comput Biol \textbf{12}.
 doi:\href{https://doi.org/10.1371/journal.pcbi.1004977}{10.1371/journal.pcbi.1004977}.
 
-\leavevmode\hypertarget{ref-sze_looking_2016}{}%
+\hypertarget{ref-sze_looking_2016}{}
 8. \textbf{Sze MA}, \textbf{Schloss PD}. 2016. Looking for a signal in
 the noise: Revisiting obesity and the microbiome. mBio \textbf{7}.
 doi:\href{https://doi.org/10.1128/mBio.01018-16}{10.1128/mBio.01018-16}.
 
-\leavevmode\hypertarget{ref-walters_meta-analyses_2014}{}%
+\hypertarget{ref-walters_meta-analyses_2014}{}
 9. \textbf{Walters WA}, \textbf{Xu Z}, \textbf{Knight R}. 2014.
 Meta-analyses of human gut microbes associated with obesity and IBD.
 FEBS Lett \textbf{588}:4223--4233.
 doi:\href{https://doi.org/10.1016/j.febslet.2014.09.039}{10.1016/j.febslet.2014.09.039}.
 
-\leavevmode\hypertarget{ref-vazquez-baeza_guiding_2018}{}%
+\hypertarget{ref-vazquez-baeza_guiding_2018}{}
 10. \textbf{Vázquez-Baeza Y}, \textbf{Gonzalez A}, \textbf{Xu ZZ},
 \textbf{Washburne A}, \textbf{Herfarth HH}, \textbf{Sartor RB},
 \textbf{Knight R}. 2018. Guiding longitudinal sampling in IBD cohorts.
 Gut \textbf{67}:1743--1745.
 doi:\href{https://doi.org/10.1136/gutjnl-2017-315352}{10.1136/gutjnl-2017-315352}.
 
-\leavevmode\hypertarget{ref-qin_alterations_2014}{}%
+\hypertarget{ref-qin_alterations_2014}{}
 11. \textbf{Qin N}, \textbf{Yang F}, \textbf{Li A}, \textbf{Prifti E},
 \textbf{Chen Y}, \textbf{Shao L}, \textbf{Guo J}, \textbf{Le Chatelier
 E}, \textbf{Yao J}, \textbf{Wu L}, \textbf{Zhou J}, \textbf{Ni S},
@@ -785,14 +787,14 @@ of the human gut microbiome in liver cirrhosis. Nature
 \textbf{513}:59--64.
 doi:\href{https://doi.org/10.1038/nature13568}{10.1038/nature13568}.
 
-\leavevmode\hypertarget{ref-geman_deep_2018}{}%
+\hypertarget{ref-geman_deep_2018}{}
 12. \textbf{Geman O}, \textbf{Chiuchisan I}, \textbf{Covasa M},
 \textbf{Doloc C}, \textbf{Milici M-R}, \textbf{Milici L-D}. 2018. Deep
 learning tools for human microbiome big data, pp. 265--275. \emph{In}
 Balas, VE, Jain, LC, Balas, MM (eds.), Soft computing applications.
 Springer International Publishing.
 
-\leavevmode\hypertarget{ref-thaiss_persistent_2016}{}%
+\hypertarget{ref-thaiss_persistent_2016}{}
 13. \textbf{Thaiss CA}, \textbf{Itav S}, \textbf{Rothschild D},
 \textbf{Meijer MT}, \textbf{Levy M}, \textbf{Moresi C},
 \textbf{Dohnalová L}, \textbf{Braverman S}, \textbf{Rozin S},
@@ -804,7 +806,7 @@ alterations modulate the rate of post-dieting weight regain. Nature
 \textbf{540}:544--551.
 doi:\href{https://doi.org/10.1038/nature20796}{10.1038/nature20796}.
 
-\leavevmode\hypertarget{ref-dadkhah_gut_2019}{}%
+\hypertarget{ref-dadkhah_gut_2019}{}
 14. \textbf{Dadkhah E}, \textbf{Sikaroodi M}, \textbf{Korman L},
 \textbf{Hardi R}, \textbf{Baybick J}, \textbf{Hanzel D}, \textbf{Kuehn
 G}, \textbf{Kuehn T}, \textbf{Gillevet PM}. 2019. Gut microbiome
@@ -812,7 +814,7 @@ identifies risk for colorectal polyps. BMJ Open Gastroenterology
 \textbf{6}:e000297.
 doi:\href{https://doi.org/10.1136/bmjgast-2019-000297}{10.1136/bmjgast-2019-000297}.
 
-\leavevmode\hypertarget{ref-flemer_oral_2018}{}%
+\hypertarget{ref-flemer_oral_2018}{}
 15. \textbf{Flemer B}, \textbf{Warren RD}, \textbf{Barrett MP},
 \textbf{Cisek K}, \textbf{Das A}, \textbf{Jeffery IB}, \textbf{Hurley
 E}, \textbf{O`Riordain M}, \textbf{Shanahan F}, \textbf{O`Toole PW}.
@@ -820,7 +822,7 @@ E}, \textbf{O`Riordain M}, \textbf{Shanahan F}, \textbf{O`Toole PW}.
 predictive. Gut \textbf{67}:1454--1463.
 doi:\href{https://doi.org/10.1136/gutjnl-2017-314814}{10.1136/gutjnl-2017-314814}.
 
-\leavevmode\hypertarget{ref-montassier_pretreatment_2016}{}%
+\hypertarget{ref-montassier_pretreatment_2016}{}
 16. \textbf{Montassier E}, \textbf{Al-Ghalith GA}, \textbf{Ward T},
 \textbf{Corvec S}, \textbf{Gastinne T}, \textbf{Potel G}, \textbf{Moreau
 P}, \textbf{Cochetiere MF de la}, \textbf{Batard E}, \textbf{Knights D}.
@@ -828,14 +830,14 @@ P}, \textbf{Cochetiere MF de la}, \textbf{Batard E}, \textbf{Knights D}.
 bloodstream infection. Genome Medicine \textbf{8}:49.
 doi:\href{https://doi.org/10.1186/s13073-016-0301-4}{10.1186/s13073-016-0301-4}.
 
-\leavevmode\hypertarget{ref-ai_systematic_2017}{}%
+\hypertarget{ref-ai_systematic_2017}{}
 17. \textbf{Ai L}, \textbf{Tian H}, \textbf{Chen Z}, \textbf{Chen H},
 \textbf{Xu J}, \textbf{Fang J-Y}. 2017. Systematic evaluation of
 supervised classifiers for fecal microbiota-based prediction of
 colorectal cancer. Oncotarget \textbf{8}:9546--9556.
 doi:\href{https://doi.org/10.18632/oncotarget.14488}{10.18632/oncotarget.14488}.
 
-\leavevmode\hypertarget{ref-dai_multi-cohort_2018}{}%
+\hypertarget{ref-dai_multi-cohort_2018}{}
 18. \textbf{Dai Z}, \textbf{Coker OO}, \textbf{Nakatsu G}, \textbf{Wu
 WKK}, \textbf{Zhao L}, \textbf{Chen Z}, \textbf{Chan FKL},
 \textbf{Kristiansen K}, \textbf{Sung JJY}, \textbf{Wong SH}, \textbf{Yu
@@ -844,14 +846,14 @@ identified altered bacteria across populations and universal bacterial
 markers. Microbiome \textbf{6}:70.
 doi:\href{https://doi.org/10.1186/s40168-018-0451-2}{10.1186/s40168-018-0451-2}.
 
-\leavevmode\hypertarget{ref-mossotto_classification_2017}{}%
+\hypertarget{ref-mossotto_classification_2017}{}
 19. \textbf{Mossotto E}, \textbf{Ashton JJ}, \textbf{Coelho T},
 \textbf{Beattie RM}, \textbf{MacArthur BD}, \textbf{Ennis S}. 2017.
 Classification of paediatric inflammatory bowel disease using machine
 learning. Scientific Reports \textbf{7}.
 doi:\href{https://doi.org/10.1038/s41598-017-02606-2}{10.1038/s41598-017-02606-2}.
 
-\leavevmode\hypertarget{ref-wong_quantitation_2017}{}%
+\hypertarget{ref-wong_quantitation_2017}{}
 20. \textbf{Wong SH}, \textbf{Kwong TNY}, \textbf{Chow T-C}, \textbf{Luk
 AKC}, \textbf{Dai RZW}, \textbf{Nakatsu G}, \textbf{Lam TYT},
 \textbf{Zhang L}, \textbf{Wu JCY}, \textbf{Chan FKL}, \textbf{Ng SSM},
@@ -861,7 +863,7 @@ faecal immunochemical test in detecting advanced colorectal neoplasia.
 Gut \textbf{66}:1441--1448.
 doi:\href{https://doi.org/10.1136/gutjnl-2016-312766}{10.1136/gutjnl-2016-312766}.
 
-\leavevmode\hypertarget{ref-statnikov_comprehensive_2013}{}%
+\hypertarget{ref-statnikov_comprehensive_2013}{}
 21. \textbf{Statnikov A}, \textbf{Henaff M}, \textbf{Narendra V},
 \textbf{Konganti K}, \textbf{Li Z}, \textbf{Yang L}, \textbf{Pei Z},
 \textbf{Blaser MJ}, \textbf{Aliferis CF}, \textbf{Alekseyenko AV}. 2013.
@@ -869,13 +871,13 @@ A comprehensive evaluation of multicategory classification methods for
 microbiomic data. Microbiome \textbf{1}:11.
 doi:\href{https://doi.org/10.1186/2049-2618-1-11}{10.1186/2049-2618-1-11}.
 
-\leavevmode\hypertarget{ref-knights_supervised_2011}{}%
+\hypertarget{ref-knights_supervised_2011}{}
 22. \textbf{Knights D}, \textbf{Costello EK}, \textbf{Knight R}. 2011.
 Supervised classification of human microbiota. FEMS Microbiology Reviews
 \textbf{35}:343--359.
 doi:\href{https://doi.org/10.1111/j.1574-6976.2010.00251.x}{10.1111/j.1574-6976.2010.00251.x}.
 
-\leavevmode\hypertarget{ref-wirbel_meta-analysis_2019}{}%
+\hypertarget{ref-wirbel_meta-analysis_2019}{}
 23. \textbf{Wirbel J}, \textbf{Pyl PT}, \textbf{Kartal E}, \textbf{Zych
 K}, \textbf{Kashani A}, \textbf{Milanese A}, \textbf{Fleck JS},
 \textbf{Voigt AY}, \textbf{Palleja A}, \textbf{Ponnudurai R},
@@ -892,32 +894,32 @@ that are specific for colorectal cancer. Nature Medicine
 \textbf{25}:679.
 doi:\href{https://doi.org/10.1038/s41591-019-0406-6}{10.1038/s41591-019-0406-6}.
 
-\leavevmode\hypertarget{ref-vangay_microbiome_2019}{}%
+\hypertarget{ref-vangay_microbiome_2019}{}
 24. \textbf{Vangay P}, \textbf{Hillmann BM}, \textbf{Knights D}. 2019.
 Microbiome learning repo (ML repo): A public repository of microbiome
 regression and classification tasks. Gigascience \textbf{8}.
 doi:\href{https://doi.org/10.1093/gigascience/giz042}{10.1093/gigascience/giz042}.
 
-\leavevmode\hypertarget{ref-galkin_human_2018}{}%
+\hypertarget{ref-galkin_human_2018}{}
 25. \textbf{Galkin F}, \textbf{Aliper A}, \textbf{Putin E},
 \textbf{Kuznetsov I}, \textbf{Gladyshev VN}, \textbf{Zhavoronkov A}.
 2018. Human microbiome aging clocks based on deep learning and tandem of
 permutation feature importance and accumulated local effects. bioRxiv.
 doi:\href{https://doi.org/10.1101/507780}{10.1101/507780}.
 
-\leavevmode\hypertarget{ref-reiman_using_2017}{}%
+\hypertarget{ref-reiman_using_2017}{}
 26. \textbf{Reiman D}, \textbf{Metwally A}, \textbf{Dai Y}. 2017. Using
 convolutional neural networks to explore the microbiome, pp. 4269--4272.
 \emph{In} 2017 39th annual international conference of the IEEE
 engineering in medicine and biology society (EMBC).
 
-\leavevmode\hypertarget{ref-fioravanti_phylogenetic_2017}{}%
+\hypertarget{ref-fioravanti_phylogenetic_2017}{}
 27. \textbf{Fioravanti D}, \textbf{Giarratano Y}, \textbf{Maggio V},
 \textbf{Agostinelli C}, \textbf{Chierici M}, \textbf{Jurman G},
 \textbf{Furlanello C}. 2017. Phylogenetic convolutional neural networks
 in metagenomics. arXiv:170902268 {[}cs, q-bio{]}.
 
-\leavevmode\hypertarget{ref-thomas_metagenomic_2019}{}%
+\hypertarget{ref-thomas_metagenomic_2019}{}
 28. \textbf{Thomas AM}, \textbf{Manghi P}, \textbf{Asnicar F},
 \textbf{Pasolli E}, \textbf{Armanini F}, \textbf{Zolfo M},
 \textbf{Beghini F}, \textbf{Manara S}, \textbf{Karcher N}, \textbf{Pozzi
@@ -935,63 +937,63 @@ cross-cohort microbial diagnostic signatures and a link with choline
 degradation. Nature Medicine \textbf{25}:667.
 doi:\href{https://doi.org/10.1038/s41591-019-0405-7}{10.1038/s41591-019-0405-7}.
 
-\leavevmode\hypertarget{ref-rudin_please_2018}{}%
+\hypertarget{ref-rudin_please_2018}{}
 29. \textbf{Rudin C}. 2018. Please stop explaining black box models for
 high stakes decisions. arXiv:181110154 {[}cs, stat{]}.
 
-\leavevmode\hypertarget{ref-rudin_optimized_2018}{}%
+\hypertarget{ref-rudin_optimized_2018}{}
 30. \textbf{Rudin C}, \textbf{Ustun B}. 2018. Optimized scoring systems:
 Toward trust in machine learning for healthcare and criminal justice.
 Interfaces \textbf{48}:449--466.
 doi:\href{https://doi.org/10.1287/inte.2018.0957}{10.1287/inte.2018.0957}.
 
-\leavevmode\hypertarget{ref-Quinn847475}{}%
+\hypertarget{ref-Quinn847475}{}
 31. \textbf{Quinn TP}, \textbf{Erb I}. 2019. Another look at
 microbemetabolite interactions: How scale invariant correlations can
 outperform a neural network. bioRxiv.
 doi:\href{https://doi.org/10.1101/847475}{10.1101/847475}.
 
-\leavevmode\hypertarget{ref-knights_human-associated_2011}{}%
+\hypertarget{ref-knights_human-associated_2011}{}
 32. \textbf{Knights D}, \textbf{Parfrey LW}, \textbf{Zaneveld J},
 \textbf{Lozupone C}, \textbf{Knight R}. 2011. Human-associated microbial
 signatures: Examining their predictive value. Cell Host Microbe
 \textbf{10}:292--296.
 doi:\href{https://doi.org/10.1016/j.chom.2011.09.003}{10.1016/j.chom.2011.09.003}.
 
-\leavevmode\hypertarget{ref-miller_explanation_2017}{}%
+\hypertarget{ref-miller_explanation_2017}{}
 33. \textbf{Miller T}. 2017. Explanation in artificial intelligence:
 Insights from the social sciences. arXiv:170607269 {[}cs{]}.
 
-\leavevmode\hypertarget{ref-ribeiro_why_2016}{}%
+\hypertarget{ref-ribeiro_why_2016}{}
 34. \textbf{Ribeiro MT}, \textbf{Singh S}, \textbf{Guestrin C}. 2016.
-"Why should i trust you?": Explaining the predictions of any classifier.
-arXiv:160204938 {[}cs, stat{]}.
+``Why should i trust you?'': Explaining the predictions of any
+classifier. arXiv:160204938 {[}cs, stat{]}.
 
-\leavevmode\hypertarget{ref-nori_interpretml:_2019}{}%
+\hypertarget{ref-nori_interpretml:_2019}{}
 35. \textbf{Nori H}, \textbf{Jenkins S}, \textbf{Koch P},
 \textbf{Caruana R}. 2019. InterpretML: A unified framework for machine
 learning interpretability. arXiv:190909223 {[}cs, stat{]}.
 
-\leavevmode\hypertarget{ref-10.1093ux2fbioinformaticsux2fbtq134}{}%
+\hypertarget{ref-10.1093ux2fbioinformaticsux2fbtq134}{}
 36. \textbf{Altmann A}, \textbf{Toloşi L}, \textbf{Sander O},
 \textbf{Lengauer T}. 2010. Permutation importance: a corrected feature
 importance measure. Bioinformatics \textbf{26}:1340--1347.
 doi:\href{https://doi.org/10.1093/bioinformatics/btq134}{10.1093/bioinformatics/btq134}.
 
-\leavevmode\hypertarget{ref-breiman_statistical_2001}{}%
+\hypertarget{ref-breiman_statistical_2001}{}
 37. \textbf{Breiman L}. 2001. Statistical modeling: The two cultures
 (with comments and a rejoinder by the author). Statist Sci
 \textbf{16}:199--231.
 doi:\href{https://doi.org/10.1214/ss/1009213726}{10.1214/ss/1009213726}.
 
-\leavevmode\hypertarget{ref-strobl_bias_2007}{}%
+\hypertarget{ref-strobl_bias_2007}{}
 38. \textbf{Strobl C}, \textbf{Boulesteix A-L}, \textbf{Zeileis A},
 \textbf{Hothorn T}. 2007. Bias in random forest variable importance
 measures: Illustrations, sources and a solution. BMC Bioinformatics
 \textbf{8}:25.
 doi:\href{https://doi.org/10.1186/1471-2105-8-25}{10.1186/1471-2105-8-25}.
 
-\leavevmode\hypertarget{ref-dormann_collinearity:_2013}{}%
+\hypertarget{ref-dormann_collinearity:_2013}{}
 39. \textbf{Dormann CF}, \textbf{Elith J}, \textbf{Bacher S},
 \textbf{Buchmann C}, \textbf{Carl G}, \textbf{Carré G}, \textbf{Marquéz
 JRG}, \textbf{Gruber B}, \textbf{Lafourcade B}, \textbf{Leitão PJ},
@@ -1002,32 +1004,32 @@ of methods to deal with it and a simulation study evaluating their
 performance. Ecography \textbf{36}:27--46.
 doi:\href{https://doi.org/10.1111/j.1600-0587.2012.07348.x}{10.1111/j.1600-0587.2012.07348.x}.
 
-\leavevmode\hypertarget{ref-li_accurate_2020}{}%
+\hypertarget{ref-li_accurate_2020}{}
 40. \textbf{Li J}, \textbf{Liu L}, \textbf{Le TD}, \textbf{Liu J}. 2020.
 Accurate data-driven prediction does not mean high reproducibility. Nat
 Mach Intell \textbf{2}:13--15.
 doi:\href{https://doi.org/10.1038/s42256-019-0140-2}{10.1038/s42256-019-0140-2}.
 
-\leavevmode\hypertarget{ref-sze_fecal_2019}{}%
+\hypertarget{ref-sze_fecal_2019}{}
 41. \textbf{Sze MA}, \textbf{Topçuoğlu BD}, \textbf{Lesniak NA},
 \textbf{Ruffin MT}, \textbf{Schloss PD}. 2019. Fecal short-chain fatty
 acids are not predictive of colonic tumor status and cannot be predicted
 based on bacterial community structure. mBio \textbf{10}:e01454--19.
 doi:\href{https://doi.org/10.1128/mBio.01454-19}{10.1128/mBio.01454-19}.
 
-\leavevmode\hypertarget{ref-kocheturov_massive_2019}{}%
+\hypertarget{ref-kocheturov_massive_2019}{}
 42. \textbf{Kocheturov A}, \textbf{Pardalos PM}, \textbf{Karakitsiou A}.
 2019. Massive datasets and machine learning for computational
 biomedicine: Trends and challenges. Ann Oper Res \textbf{276}:5--34.
 doi:\href{https://doi.org/10.1007/s10479-018-2891-2}{10.1007/s10479-018-2891-2}.
 
-\leavevmode\hypertarget{ref-kim_improved_2018}{}%
+\hypertarget{ref-kim_improved_2018}{}
 43. \textbf{Kim M}, \textbf{Oh I}, \textbf{Ahn J}. 2018. An improved
 method for prediction of cancer prognosis by network learning. Genes
 \textbf{9}:478.
 doi:\href{https://doi.org/10.3390/genes9100478}{10.3390/genes9100478}.
 
-\leavevmode\hypertarget{ref-wiens_no_2019}{}%
+\hypertarget{ref-wiens_no_2019}{}
 44. \textbf{Wiens J}, \textbf{Saria S}, \textbf{Sendak M},
 \textbf{Ghassemi M}, \textbf{Liu VX}, \textbf{Doshi-Velez F},
 \textbf{Jung K}, \textbf{Heller K}, \textbf{Kale D}, \textbf{Saeed M},
@@ -1036,13 +1038,13 @@ doi:\href{https://doi.org/10.3390/genes9100478}{10.3390/genes9100478}.
 care. Nat Med \textbf{25}:1337--1340.
 doi:\href{https://doi.org/10.1038/s41591-019-0548-6}{10.1038/s41591-019-0548-6}.
 
-\leavevmode\hypertarget{ref-westcott_opticlust_2017}{}%
+\hypertarget{ref-westcott_opticlust_2017}{}
 45. \textbf{Westcott SL}, \textbf{Schloss PD}. 2017. OptiClust, an
 Improved Method for Assigning Amplicon-Based Sequence Data to
 Operational Taxonomic Units. mSphere \textbf{2}.
 doi:\href{https://doi.org/10.1128/mSphereDirect.00073-17}{10.1128/mSphereDirect.00073-17}.
 
-\leavevmode\hypertarget{ref-redwood_stool_2016}{}%
+\hypertarget{ref-redwood_stool_2016}{}
 46. \textbf{Redwood DG}, \textbf{Asay ED}, \textbf{Blake ID},
 \textbf{Sacco PE}, \textbf{Christensen CM}, \textbf{Sacco FD},
 \textbf{Tiesinga JJ}, \textbf{Devens ME}, \textbf{Alberts SR},
@@ -1052,13 +1054,13 @@ for screening detection of colorectal neoplasia in alaska native people.
 Mayo Clin Proc \textbf{91}:61--70.
 doi:\href{https://doi.org/10.1016/j.mayocp.2015.10.008}{10.1016/j.mayocp.2015.10.008}.
 
-\leavevmode\hypertarget{ref-sze_leveraging_2018}{}%
+\hypertarget{ref-sze_leveraging_2018}{}
 47. \textbf{Sze MA}, \textbf{Schloss PD}. 2018. Leveraging existing 16S
 rRNA gene surveys to identify reproducible biomarkers in individuals
 with colorectal tumors. mBio \textbf{9}:e00630--18.
 doi:\href{https://doi.org/10.1128/mBio.00630-18}{10.1128/mBio.00630-18}.
 
-\leavevmode\hypertarget{ref-schloss_introducing_2009}{}%
+\hypertarget{ref-schloss_introducing_2009}{}
 48. \textbf{Schloss PD}, \textbf{Westcott SL}, \textbf{Ryabin T},
 \textbf{Hall JR}, \textbf{Hartmann M}, \textbf{Hollister EB},
 \textbf{Lesniewski RA}, \textbf{Oakley BB}, \textbf{Parks DH},
@@ -1068,13 +1070,13 @@ Introducing mothur: Open-Source, Platform-Independent,
 Community-Supported Software for Describing and Comparing Microbial
 Communities. ApplEnvironMicrobiol \textbf{75}:7537--7541.
 
-\leavevmode\hypertarget{ref-rognes_vsearch_2016}{}%
+\hypertarget{ref-rognes_vsearch_2016}{}
 49. \textbf{Rognes T}, \textbf{Flouri T}, \textbf{Nichols B},
 \textbf{Quince C}, \textbf{Mahé F}. 2016. VSEARCH: A versatile open
 source tool for metagenomics. PeerJ \textbf{4}:e2584.
 doi:\href{https://doi.org/10.7717/peerj.2584}{10.7717/peerj.2584}.
 
-\leavevmode\hypertarget{ref-li_hyperband:_2016}{}%
+\hypertarget{ref-li_hyperband:_2016}{}
 50. \textbf{Li L}, \textbf{Jamieson K}, \textbf{DeSalvo G},
 \textbf{Rostamizadeh A}, \textbf{Talwalkar A}. 2016. Hyperband: A novel
 bandit-based approach to hyperparameter optimization. arXiv:160306560
@@ -1085,6 +1087,7 @@ bandit-based approach to hyperparameter optimization. arXiv:160306560
 \captionsetup{labelformat=empty}
 \captionof{table}{\textbf{Table 1.} Characteristics of the machine learning models in our comparative study.}
 \small
+
 \begin{tabular}{|l|l|l|}
 \hline
 
@@ -1104,8 +1107,7 @@ Random forest & \makecell[l]{A classifier that is an ensemble of decision trees 
 
 \makecell[l]{Gradient Boosted Trees \\ (XGBoost)} & \makecell[l]{A classifier that is an ensembe of decision trees \\ that grows greedily.} & Non-linear \\ \hline
 
-\end{tabular}
-\newpage
+\end{tabular}\newpage
 
 \textbf{Figure 1. Machine learning pipeline.} We split the data to
 create a training (80\%) and held-out test set (20\%). The splits were
