@@ -91,7 +91,7 @@ Running title: Machine learning framework to model microbiome data
 \vspace{20mm}
 
 
-Begüm D. Topçuoğlu${^1}$, Nicholas A. Lesniak${^1}$, Mack Ruffin${^3}$, Jenna Wiens${^2}$, Patrick D. Schloss^1$\dagger$^
+Begüm D. Topçuoğlu${^1}$, Nicholas A. Lesniak${^1}$, Mack Ruffin${^3}$, Jenna Wiens^2$\dagger$^, Patrick D. Schloss^1$\dagger$^
 
 \vspace{30mm}
 
