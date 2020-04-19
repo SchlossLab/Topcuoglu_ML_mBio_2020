@@ -163,7 +163,7 @@ We also compared the top 20 OTUs selected by permutation importance in L2-regula
 
 We then evaluated the difference in relative abundances of the top 20 OTUs identified in L2-regularized logistic regression and random forest models between healthy patients and patients with SRNs [Figure S8]. There were minimal differences in the median relative abundances across OTUs between different diagnoses. This supports our claim that it is not possible to differentiate disease versus healthy states by focusing on individual taxa. The ability for ML models to simultaneously consider the relative abundances of multiple OTUs and their context dependency is a great advantage over traditional statistical approaches that consider each OTU in isolation.
 
-__The computational efficiency of each ML model.__ We compared the training times of the seven ML models. The training times increased with the complexity of the model and the number of potential hyperparameter combinations. Also, the linear models trained faster than non-linear models [Figures S2-S3; Figure 5].
+__The computational efficiency of each ML model.__ We compared the training times of the seven ML models. The training times increased with the complexity of the model and the number of potential hyperparameter combinations. Also, the linear models trained faster than non-linear models [Figure 5].
 
 
 ## Discussion
@@ -213,8 +213,8 @@ The computational burden during model training due to model complexity was reduc
 \newpage
 
 
-\captionsetup{labelformat=empty}
-\captionof{table}{\textbf{Table 1.} Characteristics of the machine learning models in our comparative study.}
+**Table 1.** Characteristics of the machine learning models in our comparative study.
+
 \small
 \begin{tabular}{|l|l|l|}
 \hline
@@ -222,18 +222,18 @@ The computational burden during model training due to model complexity was reduc
 \rowcolor{lightgray}
 \textbf{Model} & \textbf{Description} & \textbf{Linearity} \\ \hline
 
-\makecell[l]{Logistic \\regression} & \makecell[l]{A predictive regression analysis when the dependent \\variable is binary.} & Linear \\ \hline
+\makecell[l]{Logistic regression} & \makecell[l]{A predictive regression analysis when the dependent variable is binary.} & Linear \\ \hline
 
-\makecell[l]{SVM with \\linear kernel} & \makecell[l]{A classifier that is defined by an optimal linear \\separating hyperplane that discriminates between labels.} & Linear  \\ \hline
+\makecell[l]{SVM with linear kernel} & \makecell[l]{A classifier that is defined by an optimal linear separating hyperplane that discriminates between labels.} & Linear  \\ \hline
 
-\makecell[l]{SVM with \\radial basis kernel} & \makecell[l]{A classifier that is defined by an optimal non-linear \\separating hyperplane that discriminates between labels.} & Non-linear \\ \hline
+\makecell[l]{SVM with radial basis kernel} & \makecell[l]{A classifier that is defined by an optimal non-linear separating hyperplane that discriminates between labels.} & Non-linear \\ \hline
 
 \makecell[l]{Decision tree} & \makecell[l]{A classifier that sorts samples down from the
-root to the \\leaf node where an attribute is tested to discriminate \\between labels.} & Non-linear \\ \hline
+root to the leaf node where an attribute is tested to discriminate between labels.} & Non-linear \\ \hline
 
-Random forest & \makecell[l]{A classifier that is an ensemble of decision trees \\ that grows randomly with subsampled data.} & Non-linear \\ \hline
+Random forest & \makecell[l]{A classifier that is an ensemble of decision trees that grows randomly with subsampled data.} & Non-linear \\ \hline
 
-\makecell[l]{Gradient Boosted Trees \\ (XGBoost)} & \makecell[l]{A classifier that is an ensembe of decision trees \\ that grows greedily.} & Non-linear \\ \hline
+\makecell[l]{Gradient Boosted Trees (XGBoost)} & \makecell[l]{A classifier that is an ensembe of decision trees that grows greedily.} & Non-linear \\ \hline
 
 \end{tabular}
 \newpage

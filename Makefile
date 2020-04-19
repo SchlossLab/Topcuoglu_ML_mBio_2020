@@ -272,4 +272,4 @@ submission/marked_up.pdf : submission/manuscript.tex
 	rm submission/manuscript_old.tex
 
 submission/manuscript.docx : submission/manuscript.tex
-	pandoc $< -o $@
+	pandoc submission/manuscript.tex -o submission/manuscript.docx
