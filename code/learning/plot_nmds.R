@@ -50,7 +50,8 @@ ggplot(data) +
         axis.text = element_text(size=12),
         panel.border = element_rect(colour = "black", fill=NA, size=1)
   ) +
-  ggsave("submission/nmds_figure.png")
+  ggsave("Figure_S1.tiff", device = 'tiff', path = 'submission', width = 5, height = 5, units="in", dpi=300)
+
 
 
 
