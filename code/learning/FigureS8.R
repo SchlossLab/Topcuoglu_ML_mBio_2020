@@ -165,7 +165,7 @@ rf_les_otus <- as.character(rf_otus$names)
 rf_les_tax <- rf_taxa_otus$names
 
 #Stripchart of abundances
-tiff('submission/Figure_S8.tiff', units="in", width=8, height=12, res=300)
+tiff('submission/Figure_S8.tiff', units="in", width=6.8, height=9, res=300)
 layout(matrix(2:1, nrow=2), widths=c(0.5,1))
 
 # L2-logistic-regression
@@ -182,7 +182,7 @@ for(i in logit_les_otus){
 legend("topright", legend=c("SRN", "Normal"), pch=c(21, 21), pt.bg=c("red3","lightskyblue"))
 axis(1, at=c(1e-4, 1e-3, 1e-2, 1e-1, 1), label=c("0", "0.1", "1", "10", "100"))
 mtext(logit_les_tax, at=1:length(logit_les_otus)*2-1, side=2, las=1, adj=1, line=0.5)
-mtext('B - L2 regularized logistic regression',cex=2, font=10, side=3, adj= 0, line=0.5)
+mtext('B - L2 logistic regression',cex=1.5, font=8, side=3, adj= 0, line=0.5)
 
 # random forest
 par(mar=c(4,12,1.8,1.8))
@@ -198,6 +198,6 @@ for(i in rf_les_otus){
 legend("topright", legend=c("SRN", "Normal"), pch=c(21, 21), pt.bg=c("red1","lightskyblue"))
 axis(1, at=c(1e-4, 1e-3, 1e-2, 1e-1, 1), label=c("0", "0.1", "1", "10", "100"))
 mtext(rf_les_tax, at=1:length(rf_les_otus)*2-1, side=2, las=1, adj=1, line=0.5)
-mtext('A - Random forest',cex=2, font=10, side=3, adj= 0, line=0.2)
+mtext('A - Random forest',cex=1.5, font=8, side=3, adj= 0, line=0.2)
 dev.off()
 

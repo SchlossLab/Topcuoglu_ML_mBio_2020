@@ -69,7 +69,7 @@ traintime_plot <- ggplot(traintime_df, aes(x = fct_reorder(model, x), y = x)) +
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 
-ggsave("Figure_5.tiff", plot = traintime_plot, device = 'tiff', path = 'submission', width = 4, height = 2, dpi=300)
+ggsave("Figure_5.tiff", plot = traintime_plot, device = 'tiff', path = 'submission', width = 4, height = 2, units="in", dpi=300)
 
 
             

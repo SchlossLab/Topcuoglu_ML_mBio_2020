@@ -135,4 +135,4 @@ linear <- plot_grid(l1_svm_graph, l2_svm_graph, logit_graph, labels = c("A", "B"
 
 ggdraw(add_sub(linear, "Feature ranks", vpadding=grid::unit(0,"lines"), y=5, x=0.7, vjust=4.75, size=15))
 
-ggsave("Figure_3.tiff", plot = last_plot(), device = 'tiff', path = 'submission', width = 6, height = 9.2, dpi=300)
+ggsave("Figure_3.tiff", plot = last_plot(), device = 'tiff', path = 'submission', width = 6, height = 9, units="in", dpi=300)

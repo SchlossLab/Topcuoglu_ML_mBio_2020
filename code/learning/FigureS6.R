@@ -126,13 +126,13 @@ base_nonlin_plot <-  function(data, name){
                        expand=c(0,0)) +
     theme(plot.margin=unit(c(1.5,3,1.5,3),"mm"),
           legend.position="none",
-          axis.title = element_text(size=15),
-          axis.text = element_text(size=15),
+          axis.title = element_text(size=10),
+          axis.text = element_text(size=8),
           panel.border = element_rect(colour = "black", fill=NA, size=2), 
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.background = element_blank(),
-          axis.text.y=element_text(size = 12, colour='black'), 
+          axis.text.y=element_text(size = 8, colour='black'), 
           axis.title.x=element_blank(),
           axis.text.x=element_blank(), 
           axis.ticks = element_line(colour = "black")) 
@@ -216,7 +216,7 @@ linear <- plot_grid(l1_plot, l2_plot, logit_plot, labels = c("A", "B", "C"), ali
 
 ggdraw(add_sub(linear, "AUROC with the OTU permuted randomly", size=18, vpadding=grid::unit(0,"lines"), y=5, x=0.65, vjust=4.75))
 
-ggsave("Figure_S6.tiff", plot = last_plot(), device = 'tiff', path = 'submission', width = 8, height = 12, dpi=300)
+ggsave("Figure_S6.tiff", plot = last_plot(), device = 'tiff', path = 'submission', width = 6, height = 9, dpi=300)
 
 
 

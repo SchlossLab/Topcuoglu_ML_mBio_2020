@@ -43,7 +43,7 @@ linear_plots <- fig_data %>%
   ggplot(aes(x=cost, y=mean_AUC, color=model)) +
   geom_hline(yintercept=0.5, linetype="dashed") +
   geom_line(size=1.5) +
-  geom_point(size=5) +
+  geom_point(size=3) +
   geom_errorbar(aes(ymin=mean_AUC-sd_AUC, ymax=mean_AUC+sd_AUC), width=.001) +
   scale_x_log10(limits=c(min=1e-4,max=1),
                 breaks=c(1e-4, 1e-3, 1e-2, 1e-1, 1),
@@ -62,34 +62,34 @@ linear_plots <- fig_data %>%
            x = 0.5, 
            y = 0.59, 
            colour = "#00AFBB", 
-           size = 3,
+           size = 2,
            shape = 8) +
   annotate("point", # best hp for L2 Linear SVM - highest mean cv AUROC
            x = 0.5, 
            y = 0.71, 
            colour = "#E7B800", 
-           size = 3,
+           size = 2,
            shape = 8) +
   annotate("point", # best hp for L2 logistic regression - highest mean cv AUROC
            x = 0.25, 
            y = 0.71, 
            colour = "#FC4E07", 
-           size = 3,
+           size = 2,
            shape = 8) +
   theme_bw() +
   theme(legend.background = element_rect(linetype="solid", color="black", size=0.5),
         legend.box.margin=margin(c(12,12,12, 12)),
-        legend.text=element_text(size=18),
+        legend.text=element_text(size=9),
         legend.title=element_blank(),
         legend.position=c(0.65, 0.85),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
-        text = element_text(size = 18),
-        axis.text.x=element_text(size = 20, colour='black'),
-        axis.text.y=element_text(size = 20, colour='black'),
-        axis.title.y=element_text(size = 24),
-        axis.title.x=element_text(size = 24),
+        text = element_text(size = 8),
+        axis.text.x=element_text(size = 10, colour='black'),
+        axis.text.y=element_text(size = 10, colour='black'),
+        axis.title.y=element_text(size = 12),
+        axis.title.x=element_text(size = 12),
         panel.border = element_rect(linetype="solid", colour = "black", fill=NA, size=1.5))
 
 
@@ -97,5 +97,5 @@ linear_plots <- fig_data %>%
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 
-ggsave("Figure_S2.tiff", plot = linear_plots, device = 'tiff', path = 'submission', width = 7, height = 5, dpi=300)
+ggsave("Figure_S2.tiff", plot = linear_plots, device = 'tiff', path = 'submission', width = 6, height = 4, dpi=300)
 

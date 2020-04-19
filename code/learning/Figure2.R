@@ -61,28 +61,28 @@ performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC), y = AUC
               y_position = 0.83, tip_length = 0.02, vjust=0.3) +
   annotate("text", x= 5, y= 0.85, size=4, label = paste0("N.S.")) + 
   theme_bw() +
-  theme(plot.margin=unit(c(1.1,1.1,1.1,1.1),"cm"),
+  theme(plot.margin=unit(c(0,1.1,0,0),"cm"),
         legend.justification=c(1,0),
         legend.position=c(1,0),
         #legend.position="bottom",
         legend.title = element_blank(),
         legend.background = element_rect(linetype="solid", color="black", size=0.5),
-        legend.box.margin=margin(c(12,12,12, 12)),
-        legend.text=element_text(size=18),
+        legend.box.margin=margin(c(10,10,10, 10)),
+        legend.text=element_text(size=10),
         #legend.title=element_text(size=22),
         panel.grid.major.y = element_blank(),
         panel.grid.major.x = element_line( size=0.6),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         text = element_text(size = 12),
-        axis.text.x=element_text(size = 20, colour='black'),
-        axis.text.y=element_text(size = 20, colour='black'),
-        axis.title.y=element_text(size = 24),
-        axis.title.x=element_text(size = 24),
+        axis.text.x=element_text(size = 10, colour='black'),
+        axis.text.y=element_text(size = 10, colour='black'),
+        axis.title.y=element_text(size = 10),
+        axis.title.x=element_text(size = 10),
         panel.border = element_rect(linetype="solid", colour = "black", fill=NA, size=1.5))
 
 ######################################################################
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
 
-ggsave("Figure_2.tiff", plot = performance, device = 'tiff', path = 'submission', width = 12, height = 9, dpi=300)
+ggsave("Figure_2.tiff", compression = "lzw", plot = performance, device = 'tiff', path = 'submission', units="in",width=6.875, height=4.5)

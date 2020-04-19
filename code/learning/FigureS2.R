@@ -49,16 +49,16 @@ base_plot <-  function(data, x_axis, y_axis){
   geom_point() +
   theme_bw() +
   geom_hline(yintercept = 0.5, linetype="dashed") +
-  theme(legend.text=element_text(size=10),
-        legend.title=element_text(size=10),
+  theme(legend.text=element_text(size=6),
+        legend.title=element_text(size=7),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
-        text = element_text(size = 10),
-        axis.text.x=element_text(size = 8, colour='black'),
-        axis.text.y=element_text(size = 8, colour='black'),
-        axis.title.y=element_text(size = 10),
-        axis.title.x=element_text(size = 10))
+        text = element_text(size = 6),
+        axis.text.x=element_text(size = 6, colour='black'),
+        axis.text.y=element_text(size = 6, colour='black'),
+        axis.title.y=element_text(size = 7),
+        axis.title.x=element_text(size = 7))
   return(plot)
 }
 
@@ -117,17 +117,17 @@ rbf_plot <- ggplot(rbf_data, aes(x = sigma, y = C, fill = mean_AUC)) +
                 labels=trans_format('log10',math_format(10^.x))) +
   theme(legend.background = element_rect(size=0.5, linetype="solid", color="black"),
         legend.box.margin=margin(c(1,1,1,1)),
-        legend.text=element_text(size=8),
-        legend.title=element_text(size=10), 
+        legend.text=element_text(size=5),
+        legend.title=element_text(size=5), 
         legend.position="bottom",
-        axis.title = element_text(size=10),
-        axis.text = element_text(size=10),
+        axis.title = element_text(size=6),
+        axis.text = element_text(size=6),
         panel.border = element_rect(colour = "black", fill=NA, size=3), 
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
-        axis.text.x=element_text(size = 8, colour='black'),
-        axis.text.y=element_text(size = 8, colour='black'))
+        axis.text.x=element_text(size = 6, colour='black'),
+        axis.text.y=element_text(size = 6, colour='black'))
 
 xgboost_data <- xgboost_all %>%
   group_by(eta, subsample) %>%
@@ -154,18 +154,18 @@ xgboost_plot <- ggplot(xgboost_data, aes(x = eta, y = subsample, fill = mean_AUC
                 expand = c(0, 0),
                 labels=trans_format('log10',math_format(10^.x))) +
   guides(fill=guide_colourbar(barwidth = 8, barheight = 1)) + 
-  theme(axis.title = element_text(size=10),
-        axis.text = element_text(size=10),
+  theme(axis.title = element_text(size=6),
+        axis.text = element_text(size=6),
         panel.border = element_rect(colour = "black", fill=NA, size=3),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
-        axis.text.x=element_text(size = 8, colour='black'),
-        axis.text.y=element_text(size = 8, colour='black'),
+        axis.text.x=element_text(size = 6, colour='black'),
+        axis.text.y=element_text(size = 6, colour='black'),
         legend.background = element_rect(size=0.5, linetype="solid", color="black"),
         legend.box.margin=margin(c(1,1,1,1)),
-        legend.text=element_text(size=8),
-        legend.title=element_text(size=10), legend.position="bottom")
+        legend.text=element_text(size=5),
+        legend.title=element_text(size=5), legend.position="bottom")
 
 
 non_linear_models <- plot_grid(dt_plot, rf_plot, rbf_plot, xgboost_plot, labels = c("A", "B", "C", "D"), ncol=2)
@@ -173,4 +173,4 @@ non_linear_models <- plot_grid(dt_plot, rf_plot, rbf_plot, xgboost_plot, labels 
 ######################################################################
 #-----------------------Save figure as .pdf ------------------------ #
 ######################################################################
-ggsave("Figure_S3.tiff", plot = non_linear_models, device = 'png', path = 'submission', width = 9, height = 7, dpi=300)
+ggsave("Figure_S3.tiff", plot = non_linear_models, device = 'tiff', path = 'submission', width = 6, height = 5, dpi=300)

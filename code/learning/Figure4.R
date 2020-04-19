@@ -196,13 +196,13 @@ base_nonlin_plot <-  function(data, name){
                        expand=c(0,0)) +
     theme(plot.margin=unit(c(1.5,3,1.5,3),"mm"),
           legend.position="none",
-          axis.title = element_text(size=20),
-          axis.text = element_text(size=20),
+          axis.title = element_text(size=10),
+          axis.text = element_text(size=10),
           panel.border = element_rect(colour = "black", fill=NA, size=2),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank(),
           panel.background = element_blank(),
-          axis.text.y=element_text(size = 12, colour='black'),
+          axis.text.y=element_text(size = 8, colour='black'),
           axis.title.x=element_blank(),
           axis.text.x=element_blank(),
           axis.ticks = element_line(colour = "black", size = 1.1))
@@ -299,7 +299,7 @@ rf_plot <- base_nonlin_plot(rf, "Random_Forest") +
 xgboost_plot <- base_nonlin_plot(xgboost, "XGBoost")+
   scale_x_discrete(name = "XGBoost ",
                    labels = get_taxa_info_as_labels("XGBoost")) +
-  theme(axis.text.x=element_text(size = 16, colour='black'))
+  theme(axis.text.x=element_text(size = 10, colour='black'))
 # ----------------------------------------------------------------------->
 
 # Extract legend
@@ -308,7 +308,7 @@ legend <- get_legend(xgboost_plot + guides(fill=guide_legend(ncol=2)) + theme(le
                                           legend.direction = "horizontal",
                                           legend.justification="left",
                                           #legend.box.just = "bottom",
-                                          legend.text=element_text(size=10)))
+                                          legend.text=element_text(size=8)))
                                           #legend.background = element_rect(linetype="solid", 
                                                                            #color="black", 
                                                                            #size=0.5)))
@@ -320,9 +320,9 @@ legend <- get_legend(xgboost_plot + guides(fill=guide_legend(ncol=2)) + theme(le
 #combine with cowplot
 perm_tree_based <- plot_grid(rbf_plot, dt_plot, rf_plot, xgboost_plot, labels = c("A", "B", "C", "D"), cols=1, scale = 0.97, align = "v")
 
-ggdraw(add_sub(perm_tree_based, "AUROC with the OTU permuted randomly", size=18, vpadding=grid::unit(0,"lines"), y=5, x=0.65, vjust=4.75))
+ggdraw(add_sub(perm_tree_based, "AUROC with the OTU permuted randomly", size=10, vpadding=grid::unit(0,"lines"), y=5, x=0.65, vjust=4.75))
 
-plot <- plot_grid(last_plot(), legend, ncol = 1, rel_heights=c(.92, .08))
+#plot <- plot_grid(last_plot(), legend, ncol = 1, rel_heights=c(.92, .1))
 
-ggsave("Figure_4.tiff", plot = last_plot(), device = 'tiff', path = 'submission', width = 8, height = 18, dpi=300)
+ggsave("Figure_4.tiff", plot = last_plot(), device = 'tiff', path = 'submission', width = 4, height = 9, units="in", dpi=300)
 
