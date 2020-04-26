@@ -40,7 +40,7 @@ perm_p_value(all, "Decision_Tree", "RBF_SVM") # different p = 9.999e-05
 perm_p_value(all, "L1_Linear_SVM", "Decision_Tree") # different p = 9.999e-05
 
 performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC), y = AUC, fill = Performance)) +
-  geom_boxplot(alpha=0.5, fatten = 4) +
+  geom_boxplot(alpha=0.5, fatten = 2) +
   geom_hline(yintercept = 0.5, linetype="dashed") +
   scale_fill_manual(values=c("blue4", "springgreen4"), 
                     guide = guide_legend(reverse = TRUE)) +
@@ -86,3 +86,4 @@ performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC), y = AUC
 ######################################################################
 
 ggsave("Figure_2.tiff", compression = "lzw", plot = performance, device = 'tiff', path = 'submission', units="in",width=6.875, height=4.5)
+
