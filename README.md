@@ -1,3 +1,9 @@
+## A framework for effective application of machine learning to microbiome-based classification problems
+
+### Abstract
+
+Machine learning (ML) modeling of the human microbiome has the potential to identify microbial biomarkers and aid in the diagnosis of many diseases such as inflammatory bowel disease, diabetes, and colorectal cancer. Progress has been made towards developing ML models that predict health outcomes using bacterial abundances, but inconsistent adoption of training and evaluation methods call the validity of these models into question. Furthermore, there appears to be a preference by many researchers to favor increased model complexity over interpretability. To overcome these challenges, we trained seven models that used fecal 16S rRNA sequence data to predict the presence of colonic screen relevant neoplasias (SRNs; n=490 patients, 261 controls and 229 cases). We developed a reusable open-source pipeline to train, validate, and interpret ML models. To show the effect of model selection, we assessed the predictive performance, interpretability, and training time of L2-regularized logistic regression, L1 and L2-regularized support vector machines (SVM) with linear and radial basis function kernels, decision trees, random forest, and gradient boosted trees (XGBoost). The random forest model performed best at detecting SRNs with an AUROC of 0.695 [IQR 0.651-0.739] but was slow to train (83.2 h) and not inherently interpretable. Despite its simplicity, L2-regularized logistic regression followed random forest in predictive performance with an AUROC of 0.680 [IQR 0.625-0.735], trained faster (12 min), and was inherently interpretable. Our analysis highlights the importance of choosing an ML approach based on the goal of the study, as the choice will inform expectations of performance and interpretability.
+
 ### Overview
 
 	project
@@ -19,11 +25,11 @@
 	|
 	|- submission/
 	| |- manuscript.Rmd 			# executable Rmarkdown for this study, if applicable
-	| |- manuscript.md 			# Markdown (GitHub) version of the *.Rmd file 
-	| |- manuscript.tex 			# TeX version of *.Rmd file 
-	| |- manuscript.pdf 			# PDF version of *.Rmd file 
-	| |- header.tex 			# LaTeX header file to format pdf version of manuscript 
-	| |- references.bib 			# BibTeX formatted references 
+	| |- manuscript.md 			# Markdown (GitHub) version of the *.Rmd file
+	| |- manuscript.tex 			# TeX version of *.Rmd file
+	| |- manuscript.pdf 			# PDF version of *.Rmd file
+	| |- header.tex 			# LaTeX header file to format pdf version of manuscript
+	| |- references.bib 			# BibTeX formatted references
 	|
 	|- Makefile	 # Reproduce the manuscript, figures and tables
 
@@ -33,7 +39,7 @@
 
 Before you start, please take a look at the `Makefile` for more information about the workflow. Please also read the `submission/manuscript.pdf` to get a more detailed look on what we achieve with this ML pipeline.
 
-1. Clone the Github Repository and change directory to the project directory. 
+1. Clone the Github Repository and change directory to the project directory.
 
 ```
 git clone https://github.com/SchlossLab/Topcuoglu_ML_XXX_2019.git
@@ -42,86 +48,86 @@ cd DeepLearning
 
 2. Our dependencies:
 
-	* R version 3.5.0 
-	
-	* The R packages which needs to be installed in our environment: `caret` ,`rpart`, `xgboost`, `randomForest`, `kernlab`,`LiblineaR`, `pROC`, `tidyverse`, `cowplot`, `ggplot2`, `vegan`,`gtools`, `reshape2`. 
-	
+	* R version 3.5.0
+
+	* The R packages which needs to be installed in our environment: `caret` ,`rpart`, `xgboost`, `randomForest`, `kernlab`,`LiblineaR`, `pROC`, `tidyverse`, `cowplot`, `ggplot2`, `vegan`,`gtools`, `reshape2`.
+
 	* Everything needs to be run from project directory.
-	
+
 	* We need to download 2 datasets (OTU abundances and colonoscopy diagnosis of 490 patients) from *Sze MA, Schloss PD. 2018. Leveraging existing 16S rRNA gene surveys to identify reproducible biomarkers in individuals with colorectal tumors. mBio 9:e00630–18. doi:10.1128/mBio.00630-18* by running:
-	
-		```bash code/learning/load_datasets.batch``` 
-	
+
+		```bash code/learning/load_datasets.batch```
+
 	* We update the `caret` package with my modifications by running (Take a look at this script to change the R packages directory where `caret` is installed.):
-	
-		```Rscript code/learning/load_caret_models.R``` 
-		
+
+		```Rscript code/learning/load_caret_models.R```
+
 	These modifications are in `data/caret_models/svmLinear3.R` and `data/caret_models/svm_Linear4.R`
-	
+
 3. This ML pipeline is to predict a binary outcome. It is also hard-coded for predicting cancer vs healthy individuals. This feature will be updated to incorporate user-defined outcomes in the future. (Issue #6)
-	
+
 4. Examples of how to run ML pipeline:
 
 	1. Run the ML pipeline once (using seed=1) using L2-regularized logistic regression: (Using a different seed will result in the dataset to be split to 80 training set - 20 testing set differently. Different seeds will give slightly different results.)
-	
+
 		```
 		Rscript code/learning/main.R 1 "L2_Logistic_Regression"
 		```
-	
+
 	The `main.R` function accepts 7 different models that needs to call models as:
-	
+
 	    	* "L2_Logistic_Regression"
 	     	* "L1_Linear_SVM"
 	     	* "RBF_SVM"
 	     	* "Decision_Tree"
-	     	* "Random_Forest" 
-	     	* "XGBoost" 
-		
+	     	* "Random_Forest"
+	     	* "XGBoost"
+
 	So if you want to use a random forest model you'll run:
-	
-		
+
+
 	`Rscript code/learning/main.R 1 "Random_Forest"`
-	
+
 	`code/learning/main.R` is an R script that (i) prepares the data to plug into the ML pipeline, (ii) uses the 1st argument to set a seed,(iii) uses the 2nd argument to start running the pipeline with the model type (`get_results` function is called for this) and (iv) keep track of walltime.
-	     
-	 2. `Rscript code/learning/main.R` sources 4 other scripts that are part of the pipeline. 
-	 
+
+	 2. `Rscript code/learning/main.R` sources 4 other scripts that are part of the pipeline.
+
 	 	* To choose the model and model hyperparemeters:`source('code/learning/model_selection.R')`
-		
+
 		Depending on your ML task, the model hyperparameter range to tune will be different. This is hard-coded for our study but will be updated to integrate user-defined range in the future (Issue # 10)
-	 
+
 	 	* To preprocess and split the dataset 80-20 and to train the model: `source('code/learning/model_pipeline.R')`
-	 
+
 	 	* To save the results of each model for each datasplit: `source('code/learning/generateAUCs.R')`
-	 
+
 	 	* To interpret the models: `source('code/learning/permutation_importance.R')`
-	
-	 3. We want to run the pipeline 100 times with different seeds so that we can evaluate variability in modeling results. We can do this in many different ways. 
-	
+
+	 3. We want to run the pipeline 100 times with different seeds so that we can evaluate variability in modeling results. We can do this in many different ways.
+
 		1. Run the scripts one by one with different seeds:
-	
+
 			```Rscript code/learning/main.R 1 "L2_Logistic_Regression"```
-	
+
 			```Rscript code/learning/main.R 2 "L2_Logistic_Regression"```
-	
+
 			```Rscript code/learning/main.R 3 "L2_Logistic_Regression"```
-			
+
 						`...`
-						
+
 			```Rscript code/learning/main.R 100 "L2_Logistic_Regression"```
-	
+
 				However, this is time-consuming and not DRY.
-	
+
 		2. We can run it paralellized for each datasplit (seed). We do this in our HPC by submitting an array job where the seed is automatically assigned [0-100] and each script is submitted at the same time - an example is present in the `L2_Logistic_Regression.pbs` script. You can also follow how this is done in our `Makefile`.
-	
+
 	4. After we run the pipeline 100 times, we will have saved 100 files for AUROC values, 100 files for training times, 100 files for AUROC values for each tuned hyperparameter, 100 files for feature importances of perfectly correlated features, 100 files for feature importances of non-perfectly correlated features. These files will all be saved to `data/temp`. We need to merge these files.
-	
+
 		`bash cat_csv_files.sh`
-			
-	
-		This script will save combined files to `data/process`. 
-	
-	
+
+
+		This script will save combined files to `data/process`.
+
+
 
 ### How to regenerate this repository in python (in progress)
 
@@ -130,10 +136,8 @@ cd DeepLearning
 1. Generate tab-delimited files: Cross-validation and testing AUC scores of each model.
 2. Generate tab-delimited files: The AUC scores of each hyper-parameter tested for each model.
 3. Generate a comma-seperated file: The hyper-parameters tuned for each model in one file.
-4. Generate ROC curve figures: The cross-validation and testing ROC curves for each model. 
+4. Generate ROC curve figures: The cross-validation and testing ROC curves for each model.
 
 ```
 python code/learning/main.py
 ```
-
-
