@@ -247,22 +247,9 @@ submission/manuscript.%	:	submission/mbio.csl\
 	rm submission/manuscript.utf8.md
 
 
-write.paper :	submission/Figure_1.tiff\
-				submission/Figure_2.tiff\
-				submission/Figure_3.tiff\
-				submission/Figure_4.tiff\
-				submission/Figure_5.tiff\
-				submission/Figure_S1.tiff\
-				submission/Figure_S1.tiff\
-				submission/manuscript.Rmd\
-				submission/manuscript.md\
-				submission/manuscript.tex\
-				submission/manuscript.pdf
-
-
 # module load perl-modules latexdiff/1.2.0
 submission/marked_up.pdf : submission/manuscript.tex
-	git cat-file -p b7118145861ded9:submission/manuscript.tex > submission/manuscript_old.tex
+	git cat-file -p 9b2670432e7:submission/manuscript.tex > submission/manuscript_old.tex
 	latexdiff submission/manuscript_old.tex submission/manuscript.tex > submission/marked_up.tex
 	pdflatex -output-directory=submission submission/marked_up.tex
 	rm submission/marked_up.aux
@@ -270,6 +257,7 @@ submission/marked_up.pdf : submission/manuscript.tex
 	rm submission/marked_up.out
 	rm submission/marked_up.tex
 	rm submission/manuscript_old.tex
+
 
 submission/manuscript.docx : submission/manuscript.tex
 	pandoc submission/manuscript.tex -o submission/manuscript.docx

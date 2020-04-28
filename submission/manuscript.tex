@@ -42,6 +42,15 @@
   pdfcreator={LaTeX via pandoc}}
 \urlstyle{same} % disable monospaced font for URLs
 \usepackage[margin=1in]{geometry}
+\usepackage{longtable,booktabs}
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
 \usepackage{graphicx,grffile}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -195,10 +204,9 @@ differences in health. Traditional statistical approaches do not
 adequately account for the variation in the human microbiome and
 typically consider the protective or risk effects of each bacterial
 population separately (1). Recently, machine learning (ML) models have
-grown in popularity among microbiome researchers as our ability to
-sample large numbers of individuals has grown; such models can
+grown in popularity among microbiome researchers because ML models can
 effectively account for the interpersonal microbiome variation and the
-ecology of disease because they consider the relative abundance of each
+ecology of disease as they consider the relative abundance of each
 bacterial population in the context of others rather than in isolation.
 
 ML models can be used to increase our understanding of the variation in
@@ -279,13 +287,13 @@ the training set consisted of 80\% of the full dataset, while the test
 set was composed of the remaining 20\% {[}Figure 1{]}. To maintain the
 distribution of controls and cases found in the full dataset, we
 performed stratified splits. For example, our full dataset included 490
-individuals. Of these, 261 had healthy colons (53\%) and 229 had a
+individuals. Of these, 261 had healthy colons (53.3\%) and 229 had a
 screen relevant neoplasia (SRN; 46.7\%). A training set included 393
-individuals, of which 209 had an SRN (53\%), while the test set was
-composed of 97 individuals, of which 52 had an SRN (54\%). The training
-data were used to build and select the models, and the test set was used
-for evaluating the model. We trained seven different models using the
-training data {[}Table 1{]}.
+individuals, of which 184 had an SRN (46.8\%), while the test set was
+composed of 97 individuals, of which 45 had an SRN (46.4\%). The
+training data were used to build and select the models, and the test set
+was used for evaluating the model. We trained seven different models
+using the training data {[}Table 1{]}.
 
 Model selection requires tuning hyperparameters. Hyperparameters are
 parameters that need to be specified or tuned by the user, in order to
@@ -408,20 +416,19 @@ group of OTUs was randomly permuted. We ranked the OTUs based on how
 much the median testing AUROC decreased when it was permuted; the OTU
 with the largest decrease ranked highest {[}Figure 4{]}. Among the
 twenty OTUs with the largest impact, there was only one OTU (OTU 822)
-that was shared among all of the models; however, we found three OTUs
-(OTUs 58, 110, 367) that were important in each of the tree-based
-models. Similarly, the random forest and XGBoost models shared four of
-the most important OTUs (OTUs 2, 12, 361, 477). Permutation analysis
-results also revealed that with the exception of the decision tree
-model, removal of any individual OTU had minimal impact on model
-performance. For example, if OTU 367 was permuted across the samples in
-the decision tree model, the median AUROC dropped from 0.601 to 0.525.
-In contrast, if the same OTU was permuted in the random forest model,
-the AUROC only dropped from 0.695 to 0.680, which indicated high degree
-of collinearity in the dataset. Permutation analysis allowed us to gauge
-the importance of each OTU in non-linear models and partially account
-for collinearity by grouping correlated OTUs to determine their impact
-as a group.
+that was shared among all of the models. We also found that three OTUs
+(OTUs 58, 110, 367) were important in each of the tree-based models.
+Similarly, the random forest and XGBoost models shared four of the most
+important OTUs (OTUs 2, 12, 361, 477). Permutation analysis results also
+revealed that with the exception of the decision tree model, removal of
+any individual OTU had minimal impact on model performance. For example,
+if OTU 367 was permuted across the samples in the decision tree model,
+the median AUROC dropped from 0.601 to 0.525. In contrast, if the same
+OTU was permuted in the random forest model, the AUROC only dropped from
+0.695 to 0.680, which indicated high degree of collinearity in the
+dataset. Permutation analysis allowed us to gauge the importance of each
+OTU in non-linear models and partially account for collinearity by
+grouping correlated OTUs to determine their impact as a group.
 
 To further highlight the differences between the two interpretation
 methods, we used permutation importance to interpret the linear models
@@ -457,7 +464,7 @@ each OTU in isolation.
 training times of the seven ML models. The training times increased with
 the complexity of the model and the number of potential hyperparameter
 combinations. Also, the linear models trained faster than non-linear
-models {[}Figures S2-S3; Figure 5{]}.
+models {[}Figure 5{]}.
 
 \hypertarget{discussion}{%
 \subsection{Discussion}\label{discussion}}
@@ -561,20 +568,20 @@ learning methods hold promise (12, 42, 43), but microbiome datasets
 often suffer from having many features and small sample sizes, which
 result in overfitting.
 
-Our framework provides a reproducible structure for investigators
-wanting to train, evaluate, and interpret their own ML models to
-generate hypotheses regarding which OTUs might be biologically relevant.
-However, deploying microbiome-based models to make clinical diagnoses or
-predictions is a significantly more challenging and distinct undertaking
-(44). For example, we currently lack standardized methods to collect
-patient samples, generate sequence data, and report clinical data. We
-are also challenged by the practical constraints of OTU-based
-approaches. The de novo algorithms commonly in use are slow, require
-considerable memory, and result in different OTU assignments as new data
-are added (45). Finally, we also need independent validation cohorts to
-test the performance of a diagnostic model. To realize the potential for
-using ML approaches with microbiome data, it is necessary that we direct
-our efforts to overcome these challenges.
+Our framework provides a reproducible pipeline to train, evaluate, and
+interpret microbiome-based ML models and generate hypotheses to explain
+the underlying microbiology of the model prediction. However, deploying
+microbiome-based models to make clinical diagnoses or predictions is a
+significantly more challenging and distinct undertaking (44). For
+example, we currently lack standardized methods to collect patient
+samples, generate sequence data, and report clinical data. We are also
+challenged by the practical constraints of OTU-based approaches. The de
+novo algorithms commonly in use are slow, require considerable memory,
+and result in different OTU assignments as new data are added (45).
+Finally, we also need independent validation cohorts to test the
+performance of a diagnostic model. To realize the potential for using ML
+approaches with microbiome data, it is necessary that we direct our
+efforts to overcome these challenges.
 
 Our study highlights the need to make educated choices at every step of
 developing an ML model with microbiome data. We created an aspirational
@@ -636,9 +643,9 @@ calculate decision values for models generated using L2-regularized SVM
 with linear kernel and L1-regularized SVM with linear kernel. The code
 for these changes on L2-regularized SVM with linear kernel and
 L1-regularized SVM with linear kernel models are available at
-\url{https://github.com/SchlossLab/Topcuoglu_ML_XXX_2019/blob/master/data/caret_models/svmLinear3.R}
+\url{https://github.com/SchlossLab/Topcuoglu_ML_mBio_2020/blob/master/data/caret_models/svmLinear3.R}
 and at
-\url{https://github.com/SchlossLab/Topcuoglu_ML_XXX_2019/blob/master/data/caret_models/svmLinear4.R},
+\url{https://github.com/SchlossLab/Topcuoglu_ML_mBio_2020/blob/master/data/caret_models/svmLinear4.R},
 respectively.
 
 For hyperparameter selection, we started with a granular grid search.
@@ -687,7 +694,8 @@ min(\% of AUROC differences \(\geq\) 0, \% of AUROC differences \(\leq\)
 
 \textbf{Code availability.} The code for all sequence curation and
 analysis steps including an Rmarkdown version of this manuscript is
-available at \url{https://github.com/SchlossLab/Topcuoglu_ML_XXX_2019/}.
+available at
+\url{https://github.com/SchlossLab/Topcuoglu_ML_mBio_2020/}.
 
 \textbf{Acknowledgements.} We thank all the study participants of Great
 Lakes-New England Early Detection Research Network. We would like to
@@ -1086,29 +1094,71 @@ bandit-based approach to hyperparameter optimization. arXiv:160306560
 
 \newpage
 
-\captionsetup{labelformat=empty}
-\captionof{table}{\textbf{Table 1.} Characteristics of the machine learning models in our comparative study.}
-\small
-\begin{tabular}{|l|l|l|}
-\hline
+\textbf{Table 1.} Characteristics of the machine learning models in our
+comparative study.
 
-\rowcolor{lightgray}
-\textbf{Model} & \textbf{Description} & \textbf{Linearity} \\ \hline
+\begin{longtable}[]{@{}lll@{}}
+\toprule
+\begin{minipage}[b]{0.23\columnwidth}\raggedright
+\textbf{Model}\strut
+\end{minipage} & \begin{minipage}[b]{0.36\columnwidth}\raggedright
+\textbf{Description}\strut
+\end{minipage} & \begin{minipage}[b]{0.32\columnwidth}\raggedright
+\textbf{Linearity}\strut
+\end{minipage}\tabularnewline
+\midrule
+\endhead
+\begin{minipage}[t]{0.23\columnwidth}\raggedright
+Logistic regression\strut
+\end{minipage} & \begin{minipage}[t]{0.36\columnwidth}\raggedright
+A predictive regression analysis when the dependent variable is
+binary\strut
+\end{minipage} & \begin{minipage}[t]{0.32\columnwidth}\raggedright
+Linear\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.23\columnwidth}\raggedright
+SVM with linear kernel\strut
+\end{minipage} & \begin{minipage}[t]{0.36\columnwidth}\raggedright
+A classifier that is defined by an optimal linear separating hyperplane
+that discriminates between labels\strut
+\end{minipage} & \begin{minipage}[t]{0.32\columnwidth}\raggedright
+Linear\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.23\columnwidth}\raggedright
+SVM with radial basis kernel\strut
+\end{minipage} & \begin{minipage}[t]{0.36\columnwidth}\raggedright
+A classifier that is defined by an optimal non-linear separating
+hyperplane that discriminates between labels\strut
+\end{minipage} & \begin{minipage}[t]{0.32\columnwidth}\raggedright
+Non-linear\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.23\columnwidth}\raggedright
+Decision tree\strut
+\end{minipage} & \begin{minipage}[t]{0.36\columnwidth}\raggedright
+A classifier that sorts samples down from the root to the leaf node
+where an attribute is tested to discriminate between labels\strut
+\end{minipage} & \begin{minipage}[t]{0.32\columnwidth}\raggedright
+Non-linear\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.23\columnwidth}\raggedright
+Random forest\strut
+\end{minipage} & \begin{minipage}[t]{0.36\columnwidth}\raggedright
+A classifier that is an ensemble of decision trees that grows randomly
+with subsampled data\strut
+\end{minipage} & \begin{minipage}[t]{0.32\columnwidth}\raggedright
+Non-linear\strut
+\end{minipage}\tabularnewline
+\begin{minipage}[t]{0.23\columnwidth}\raggedright
+Gradient Boosted Trees (XGBoost)\strut
+\end{minipage} & \begin{minipage}[t]{0.36\columnwidth}\raggedright
+A classifier that is an ensembe of decision trees that grows
+greedily\strut
+\end{minipage} & \begin{minipage}[t]{0.32\columnwidth}\raggedright
+Non-linear\strut
+\end{minipage}\tabularnewline
+\bottomrule
+\end{longtable}
 
-\makecell[l]{Logistic \\regression} & \makecell[l]{A predictive regression analysis when the dependent \\variable is binary.} & Linear \\ \hline
-
-\makecell[l]{SVM with \\linear kernel} & \makecell[l]{A classifier that is defined by an optimal linear \\separating hyperplane that discriminates between labels.} & Linear  \\ \hline
-
-\makecell[l]{SVM with \\radial basis kernel} & \makecell[l]{A classifier that is defined by an optimal non-linear \\separating hyperplane that discriminates between labels.} & Non-linear \\ \hline
-
-\makecell[l]{Decision tree} & \makecell[l]{A classifier that sorts samples down from the
-root to the \\leaf node where an attribute is tested to discriminate \\between labels.} & Non-linear \\ \hline
-
-Random forest & \makecell[l]{A classifier that is an ensemble of decision trees \\ that grows randomly with subsampled data.} & Non-linear \\ \hline
-
-\makecell[l]{Gradient Boosted Trees \\ (XGBoost)} & \makecell[l]{A classifier that is an ensembe of decision trees \\ that grows greedily.} & Non-linear \\ \hline
-
-\end{tabular}
 \newpage
 
 \textbf{Figure 1. Machine learning pipeline.} We split the data to
@@ -1126,13 +1176,13 @@ curve.
 models using AUROC values of all cross-validation and testing
 performances.} The median AUROC for diagnosing individuals with SRN
 using bacterial abundances was higher than chance (depicted by a
-horizontal line at 0.50) for all the ML models. The predictive
-performance of random forest model was higher than other ML models,
-though not significantly (p \textgreater{} 0.05). L2-regularized
-logistic regression, XGBoost, L2-regularized SVM with linear and radial
-basis function kernel performances were not significantly different from
-one another. The boxplot shows quartiles at the box ends and the median
-as the horizontal line in the box. The whiskers show the farthest points
+vertical line at 0.50) for all the ML models. The predictive performance
+of random forest model was higher than other ML models, though not
+significantly (p \textgreater{} 0.05). L2-regularized logistic
+regression, XGBoost, L2-regularized SVM with linear and radial basis
+function kernel performances were not significantly different from one
+another. The boxplot shows quartiles at the box ends and the median as
+the horizontal line in the box. The whiskers show the farthest points
 that were not outliers. Outliers were defined as those data points that
 are not within 1.5 times the interquartile ranges.
 
@@ -1160,7 +1210,7 @@ permutation. The 20 OTUs that caused the largest decrease in the AUROC
 when permuted are reported here. The colors of the box plots represent
 the OTUs that were shared among the different models; yellow were OTUs
 that were shared among all the non-linear models, green were OTUs that
-were shared among the tree-based models, green were the OTUs shared
+were shared among the tree-based models, turqoise were the OTUs shared
 among SVM with radial basis kernel, decision tree and XGBoost, pink were
 the OTUs shared among SVM with radial basis kernel and XGBoost only, red
 were the OTUs shared among random forest and XGBoost only and blue were
@@ -1250,5 +1300,10 @@ these OTUs were compared based on the diagnosis of the patients. The
 minimal differences betweeen relative abundances for these OTUs show
 that it is not possible to differentiate disease vs healthy states by
 focusing on individual taxa.
+
+\hfill\break
+
+\textbf{Table S1. An aspirational rubric for evaluating the rigor of ML
+practices applied to microbiome data.}
 
 \end{document}
