@@ -216,13 +216,13 @@ The computational burden during model training due to model complexity was reduc
 **Table 1.** Characteristics of the machine learning models in our comparative study.
 
 | **Model** | **Description** | **Linearity** |
-|-----------|-----------------|---------------|
-|  Logistic regression |  A predictive regression analysis when the dependent variable is binary | Linear  |
-|  SVM with linear kernel | A classifier that is defined by an optimal linear separating hyperplane that discriminates between labels  | Linear  |
-|  SVM with radial basis kernel | A classifier that is defined by an optimal non-linear separating hyperplane that discriminates between labels  | Non-linear  |
-|  Decision tree | A classifier that sorts samples down from the root to the leaf node where an attribute is tested to discriminate between labels  | Non-linear  |
-|  Random forest | A classifier that is an ensemble of decision trees that grows randomly with subsampled data  | Non-linear |
-|  Gradient Boosted Trees (XGBoost) | A classifier that is an ensembe of decision trees that grows greedily  | Non-linear  |
+|--------------------|--------------------------------------------|---------------|
+| Logistic regression | A predictive regression analysis when the dependent variable is binary |  Linear  |
+| SVM with linear kernel  |  A classifier that is defined by an optimal linear separating hyperplane that discriminates between labels  | Linear  |
+| SVM with radial basis kernel  | A classifier that is defined by an optimal non-linear separating hyperplane that discriminates between labels | Non-linear  |
+| Decision tree | A classifier that sorts samples down from the root to the leaf node where an attribute is tested to discriminate between labels | Non-linear  |
+| Random forest | A classifier that is an ensemble of decision trees that grows randomly with subsampled data  | Non-linear  |
+| Gradient Boosted Trees (XGBoost)  | A classifier that is an ensembe of decision trees that grows greedily | Non-linear  |
 
 
 

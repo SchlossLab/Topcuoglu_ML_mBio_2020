@@ -59,7 +59,7 @@ performance <- ggplot(best_performance, aes(x = fct_reorder(model, AUC), y = AUC
                             "Random forest")) + 
   geom_signif(comparisons=list(c("RBF_SVM", "Random_Forest")), annotations="",
               y_position = 0.83, tip_length = 0.02, vjust=0.3) +
-  annotate("text", x= 5, y= 0.85, size=4, label = paste0("N.S.")) + 
+  annotate("text", x= 5, y= 0.86, size=4, label = paste0("N.S.")) + 
   theme_bw() +
   theme(plot.margin=unit(c(0,1.1,0,0),"cm"),
         legend.justification=c(1,0),
