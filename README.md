@@ -58,9 +58,7 @@ cd DeepLearning
 
 	* Everything needs to be run from project directory.
 
-	* We need to download 2 datasets (OTU abundances and colonoscopy diagnosis of 490 patients) from *Sze MA, Schloss PD. 2018. Leveraging existing 16S rRNA gene surveys to identify reproducible biomarkers in individuals with colorectal tumors. mBio 9:e00630–18. doi:10.1128/mBio.00630-18* by running:
-
-		```bash code/learning/load_datasets.batch```
+	* We need to download 2 datasets (OTU abundances and colonoscopy diagnosis of 490 patients) from *Sze MA, Schloss PD. 2018. Leveraging existing 16S rRNA gene surveys to identify reproducible biomarkers in individuals with colorectal tumors. mBio 9:e00630–18. 
 
 	* We update the `caret` package with my modifications by running (Take a look at this script to change the R packages directory where `caret` is installed.):
 
@@ -68,31 +66,10 @@ cd DeepLearning
 
 	These modifications are in `data/caret_models/svmLinear3.R` and `data/caret_models/svm_Linear4.R`
 
-3. Examples of how to run ML pipeline:
-
-	1. Run the ML pipeline once (using seed=1) using L2-regularized logistic regression: (Using a different seed will result in the dataset to be split to 80 training set - 20 testing set differently. Different seeds will give slightly different results.)
-
-		```
-		Rscript code/learning/main.R 1 "L2_Logistic_Regression"
-		```
-
-	The `main.R` function accepts 7 different models that needs to call models as:
-
-	    	* "L2_Logistic_Regression"
-	     	* "L1_Linear_SVM"
-	     	* "RBF_SVM"
-	     	* "Decision_Tree"
-	     	* "Random_Forest"
-	     	* "XGBoost"
-
-	So if you want to use a random forest model you'll run:
+3. Follow the Makefile to generate the manuscript.
 
 
-	`Rscript code/learning/main.R 1 "L2_Logistic_Regression"`
-
-	`code/learning/main.R` is an R script that (i) prepares the data to plug into the ML pipeline, (ii) uses the 1st argument to set a seed,(iii) uses the 2nd argument to start running the pipeline with the model type (`get_results` function is called for this) and (iv) keep track of walltime.
-
-	 2. `Rscript code/learning/main.R` sources 4 other scripts that are part of the pipeline.
+	 * The Makefile uses `code/learning/main.R` to run the pipeline which sources 4 other scripts that are part of the pipeline.
 
 	 	* To choose the model and model hyperparemeters:`source('code/learning/model_selection.R')`
 
@@ -103,30 +80,4 @@ cd DeepLearning
 	 	* To save the results of each model for each datasplit: `source('code/learning/generateAUCs.R')`
 
 	 	* To interpret the models: `source('code/learning/permutation_importance.R')`
-
-	 3. We want to run the pipeline 100 times with different seeds so that we can evaluate variability in modeling results. We can do this in many different ways.
-
-		1. Run the scripts one by one with different seeds:
-
-			```Rscript code/learning/main.R 1 "L2_Logistic_Regression"```
-
-			```Rscript code/learning/main.R 2 "L2_Logistic_Regression"```
-
-			```Rscript code/learning/main.R 3 "L2_Logistic_Regression"```
-
-						`...`
-
-			```Rscript code/learning/main.R 100 "L2_Logistic_Regression"```
-
-				However, this is time-consuming and not DRY.
-
-		2. We can run it paralellized for each datasplit (seed). We do this in our HPC by submitting an array job where the seed is automatically assigned [0-100] and each script is submitted at the same time - an example is present in the `L2_Logistic_Regression.pbs` script. You can also follow how this is done in our `Makefile`.
-
-	4. After we run the pipeline 100 times, we will have saved 100 files for AUROC values, 100 files for training times, 100 files for AUROC values for each tuned hyperparameter, 100 files for feature importances of perfectly correlated features, 100 files for feature importances of non-perfectly correlated features. These files will all be saved to `data/temp`. We need to merge these files.
-
-		`bash cat_csv_files.sh`
-
-
-		This script will save combined files to `data/process`.
-
 
