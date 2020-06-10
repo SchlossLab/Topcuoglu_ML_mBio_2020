@@ -33,11 +33,15 @@ Machine learning (ML) modeling of the human microbiome has the potential to iden
 	|
 	|- Makefile	 # Reproduce the manuscript, figures and tables
 
+### How to use the outlined ML pipeline for your own project 
 
+* Please go to https://github.com/SchlossLab/Topcuoglu_ML_mBio_2020. 
+
+* The current repository is to reproduce the manuscript but the provided link will take you to a user-friendly version of our pipeline. 
 
 ### How to regenerate this repository in R
 
-Before you start, please take a look at the `Makefile` for more information about the workflow. Please also read the `submission/manuscript.pdf` to get a more detailed look on what we achieve with this ML pipeline.
+Please take a look at the `Makefile` for more information about the workflow. Please also read the `submission/manuscript.pdf` to get a more detailed look on what we achieve with this ML pipeline.
 
 1. Clone the Github Repository and change directory to the project directory.
 
@@ -64,9 +68,7 @@ cd DeepLearning
 
 	These modifications are in `data/caret_models/svmLinear3.R` and `data/caret_models/svm_Linear4.R`
 
-3. This ML pipeline is to predict a binary outcome. It is also hard-coded for predicting cancer vs healthy individuals. This feature will be updated to incorporate user-defined outcomes in the future. (Issue #6)
-
-4. Examples of how to run ML pipeline:
+3. Examples of how to run ML pipeline:
 
 	1. Run the ML pipeline once (using seed=1) using L2-regularized logistic regression: (Using a different seed will result in the dataset to be split to 80 training set - 20 testing set differently. Different seeds will give slightly different results.)
 
@@ -86,7 +88,7 @@ cd DeepLearning
 	So if you want to use a random forest model you'll run:
 
 
-	`Rscript code/learning/main.R 1 "Random_Forest"`
+	`Rscript code/learning/main.R 1 "L2_Logistic_Regression"`
 
 	`code/learning/main.R` is an R script that (i) prepares the data to plug into the ML pipeline, (ii) uses the 1st argument to set a seed,(iii) uses the 2nd argument to start running the pipeline with the model type (`get_results` function is called for this) and (iv) keep track of walltime.
 
@@ -128,16 +130,3 @@ cd DeepLearning
 		This script will save combined files to `data/process`.
 
 
-
-### How to regenerate this repository in python (in progress)
-
-
-#### To run L2 Logistic Regression, L1 and L2 Linear SVM, RBF SVM, Decision Tree, Random Forest and XGBoost in Python
-1. Generate tab-delimited files: Cross-validation and testing AUC scores of each model.
-2. Generate tab-delimited files: The AUC scores of each hyper-parameter tested for each model.
-3. Generate a comma-seperated file: The hyper-parameters tuned for each model in one file.
-4. Generate ROC curve figures: The cross-validation and testing ROC curves for each model.
-
-```
-python code/learning/main.py
-```
