@@ -71,13 +71,11 @@ cd DeepLearning
 
 	 * The Makefile uses `code/learning/main.R` to run the pipeline which sources 4 other scripts that are part of the pipeline.
 
-	 	* To choose the model and model hyperparemeters:`source('code/learning/model_selection.R')`
+	 	* To choose the model and model hyperparemeters:`code/learning/model_selection.R'`
 
-		Depending on your ML task, the model hyperparameter range to tune will be different. This is hard-coded for our study but will be updated to integrate user-defined range in the future (Issue # 10)
+	 	* To preprocess and split the dataset 80-20 and to train the model: `code/learning/model_pipeline.R`
 
-	 	* To preprocess and split the dataset 80-20 and to train the model: `source('code/learning/model_pipeline.R')`
+	 	* To save the results of each model for each datasplit: `code/learning/generateAUCs.R`
 
-	 	* To save the results of each model for each datasplit: `source('code/learning/generateAUCs.R')`
-
-	 	* To interpret the models: `source('code/learning/permutation_importance.R')`
+	 	* To interpret the models: `code/learning/permutation_importance.R`
 
