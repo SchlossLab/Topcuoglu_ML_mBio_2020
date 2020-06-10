@@ -35,7 +35,7 @@ Machine learning (ML) modeling of the human microbiome has the potential to iden
 
 ### How to use the outlined ML pipeline for your own project 
 
-* Please go to https://github.com/SchlossLab/Topcuoglu_ML_mBio_2020. 
+* Please go to https://github.com/SchlossLab/ML_pipeline_microbiome.
 
 * The current repository is to reproduce the manuscript but the provided link will take you to a user-friendly version of our pipeline. 
 
